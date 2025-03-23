@@ -4,7 +4,7 @@ import domain.events.dtos as dtos
 import domain.events.entities as entities
 
 
-class Eventsrepository(metaclass=ABCMeta):
+class EventsRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(self, dto: dtos.CreateEventDto) -> entities.Event: ...
 

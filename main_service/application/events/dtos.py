@@ -5,26 +5,24 @@ from domain.events.enums import WeekDayEnum
 
 
 @dataclass
-class EventSingle:
+class UpdateEventDto:
+    event_id: int
+    title: str
+    members: list[int]
+    roles: list[int]
+
+
+@dataclass
+class MakeSingleEventDto:
     event_id: int
     start_date: datetime
     end_date: datetime
 
 
 @dataclass
-class EventRepeatable:
+class MakeRepeatableEventDto:
     event_id: int
     start_time: time
     end_time: time
     start_day: WeekDayEnum
     end_day: WeekDayEnum
-
-
-@dataclass
-class Event:
-    id: int
-    title: str
-    organization_id: int
-    members: list[int]
-    single: EventSingle | None
-    repeatable: EventRepeatable | None
