@@ -7,7 +7,8 @@ class CreateUserDto:
     fullname: str
     password: str
 
+
 @dataclass
-class ReadUserDto:
+class ReadUsersDto:
     page: int
     page_size: int

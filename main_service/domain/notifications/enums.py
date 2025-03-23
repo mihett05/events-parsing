@@ -1,8 +1,10 @@
 from enum import Enum
 
+
 class NotificationTypeEnum(Enum):
     EMAIL = "EMAIL"
     TELEGRAM = "TELEGRAM"
+
 
 class NotificationFormatEnum(Enum):
     HTML = "HTML"

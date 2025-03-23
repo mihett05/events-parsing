@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, time
 
-from MainService.Domain.Events.Enums import WeekDayEnum
+from domain.events.enums import WeekDayEnum
 
 
 @dataclass
@@ -10,6 +10,7 @@ class EventSingle:
     start_date: datetime
     end_date: datetime
 
+
 @dataclass
 class EventRepitable:
     event_id: int
@@ -17,6 +18,7 @@ class EventRepitable:
     end_time: time
     start_day: WeekDayEnum
     end_day: WeekDayEnum
+
 
 @dataclass
 class Event:

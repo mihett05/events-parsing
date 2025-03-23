@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from MainService.Domain.User.Entities import User
+from domain.users.entities import User
+
 
 @dataclass
 class CreateNotificationDto:
@@ -9,8 +10,9 @@ class CreateNotificationDto:
     reply_to: int | None
     owner: User
 
+
 @dataclass
-class ReadNotificationDto:
+class ReadNotificationsDto:
     chat_id: int
     page: int
     page_size: int

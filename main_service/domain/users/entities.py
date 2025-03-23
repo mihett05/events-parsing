@@ -6,6 +6,7 @@ class TelegramProfile:
     user_id: int
     telegram_id: int
 
+
 @dataclass
 class User:
     id: int

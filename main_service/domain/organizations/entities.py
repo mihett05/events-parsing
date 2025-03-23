@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from MainService.Domain.Organization.Enums import RoleEnum
+from domain.organizations.enums import RoleEnum
 
 
 @dataclass
@@ -9,6 +9,7 @@ class Organization:
     title: str
     roles: list[int]
     members: list[int]
+
 
 @dataclass
 class UserOrganizationRole:

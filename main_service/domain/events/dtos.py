@@ -9,11 +9,13 @@ class CreateEventDto:
     start_date: datetime
     end_date: datetime
 
+
 @dataclass
 class ReadUserEventsDto:
     user_id: int
     page: int
     page_size: int
+
 
 @dataclass
 class ReadOrganizationEventsDto:

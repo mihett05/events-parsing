@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-import MainService.Domain.Notification.Dtos as dtos
+import domain.notifications.dtos as dtos
+
 
 @dataclass
 class Notification:
