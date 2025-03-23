@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from MainService.Domain.Organization.enums import RoleEnum
+from MainService.Domain.Organization.Enums import RoleEnum
 
 
 @dataclass
