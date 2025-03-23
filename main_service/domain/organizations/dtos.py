@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
-from MainService.Domain.Organization.enums import RoleEnum
+from domain.organizations.enums import RoleEnum
 
 
 @dataclass
 class CreateOrganizationDto:
     title: str
+
 
 @dataclass
 class CreateUserOrganizationRoleDto:
@@ -13,10 +14,12 @@ class CreateUserOrganizationRoleDto:
     owner_id: int
     organization_id: int
 
+
 @dataclass
 class ReadOrganizationsDto:
     page: int
     page_size: int
+
 
 @dataclass
 class ReadUserOrganizationRolesDto:
