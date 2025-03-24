@@ -12,22 +12,17 @@ from domain.users.entities import User
 
 class UpdateEventUseCase:
     def __init__(
-            self,
-            repository: EventsRepository,
-            tx: TransactionsGateway,
-            read_uc: ReadEventUseCase,
-            builder: PermissionBuilder,
+        self,
+        repository: EventsRepository,
+        tx: TransactionsGateway,
+        read_uc: ReadEventUseCase,
+        builder: PermissionBuilder,
     ):
         self.__repository = repository
         self.__transaction = tx
 
         self.__read_use_case = read_uc
         self.__builder = builder
-
-    @staticmethod
-    def set_model_attrs(event: Event, dto: UpdateEventDto):
-        event.type = dto.title
-        event.members = dto.members
 
     async def __call__(self, dto: UpdateEventDto, actor: User) -> Event:
         async with self.__transaction:
@@ -37,7 +32,9 @@ class UpdateEventUseCase:
                 PermissionsEnum.CAN_UPDATE_EVENT,
             ).apply()
 
-            self.set_model_attrs(event, dto)  # PS: it's plug
+            event.title = dto.title
+            event.members = dto.members
+
             await self.__repository.update(event)
 
         return event

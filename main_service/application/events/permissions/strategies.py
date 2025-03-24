@@ -1,41 +1,39 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from application.auth.enums import PermissionsEnum
 
 
 class PermissionStrategy(ABC):
-    @abstractmethod
-    def get_permissions(
-        self,
-    ) -> set[PermissionsEnum]: ...
+    __perms: set[PermissionsEnum]
+
+    @property
+    def permissions(self) -> set[PermissionsEnum]:
+        return self.__perms.copy()
 
 
 class OwnerPermissionStrategy(PermissionStrategy):
-    def get_permissions(self):
-        return {
-            PermissionsEnum.CAN_READ_EVENT,
-            PermissionsEnum.CAN_UPDATE_EVENT,
-            PermissionsEnum.CAN_DELETE_EVENT,
-        }
+    __perms = {
+        PermissionsEnum.CAN_READ_EVENT,
+        PermissionsEnum.CAN_UPDATE_EVENT,
+        PermissionsEnum.CAN_DELETE_EVENT,
+        PermissionsEnum.CAN_SET_OWNER,
+    }
 
 
 class AdminPermissionStrategy(PermissionStrategy):
-    def get_permissions(self):
-        return {
-            PermissionsEnum.CAN_READ_EVENT,
-            PermissionsEnum.CAN_UPDATE_EVENT,
-        }
+    __perms = {
+        PermissionsEnum.CAN_READ_EVENT,
+        PermissionsEnum.CAN_UPDATE_EVENT,
+    }
 
 
 class MemberPermissionStrategy(PermissionStrategy):
-    def get_permissions(self):
-        return {
-            PermissionsEnum.CAN_READ_EVENT,
-        }
+    __perms = {
+        PermissionsEnum.CAN_READ_EVENT,
+    }
 
 
 class PublicPermissionStrategy(PermissionStrategy):
-    def get_permissions(self):
-        return {
-            PermissionsEnum.CAN_READ_EVENT,
-        }
+    __perms = {
+        PermissionsEnum.CAN_READ_EVENT,
+    }

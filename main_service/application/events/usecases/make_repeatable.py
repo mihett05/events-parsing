@@ -32,16 +32,14 @@ class MakeRepeatableEventTypeUseCase:
                 PermissionsEnum.CAN_UPDATE_EVENT,
             ).apply()
 
-            event_single = EventRepeatable(
+            event.single = None
+            event.repeatable = EventRepeatable(
                 event_id=dto.event_id,
                 start_time=dto.start_time,
                 end_time=dto.end_time,
                 start_day=dto.start_day,
                 end_day=dto.end_day,
             )
-
-            event.single = event_single
-            event.repeatable = None
 
             await self.__repository.update(event)
 

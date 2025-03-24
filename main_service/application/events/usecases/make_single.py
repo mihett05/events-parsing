@@ -32,13 +32,11 @@ class MakeSingleEventTypeUseCase:
                 PermissionsEnum.CAN_UPDATE_EVENT,
             ).apply()
 
-            event_single = EventSingle(
+            event.single = EventSingle(
                 event_id=dto.event_id,
                 start_date=dto.start_date,
                 end_date=dto.end_date,
             )
-
-            event.single = event_single
             event.repeatable = None
 
             await self.__repository.update(event)

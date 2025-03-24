@@ -20,4 +20,4 @@ class EventPermissionProvider(PermissionProvider):
             return strategies.PublicPermissionStrategy()
 
     def __call__(self):
-        return self.strategy and self.strategy.get_permissions() or set()
+        return self.strategy and self.strategy.permissions or set()
