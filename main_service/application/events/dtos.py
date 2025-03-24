@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, time
 
+from application.auth.enums import PermissionsEnum
 from domain.events.enums import WeekDayEnum
 
 
@@ -8,8 +9,13 @@ from domain.events.enums import WeekDayEnum
 class UpdateEventDto:
     event_id: int
     title: str
-    members: list[int]
-    roles: list[int]
+    members: tuple[int]
+
+
+@dataclass
+class SetEventPermissionDto:
+    event_id: int
+    permissions: tuple[int, tuple[PermissionsEnum]]
 
 
 @dataclass

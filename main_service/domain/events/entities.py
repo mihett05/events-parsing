@@ -24,7 +24,14 @@ class EventRepeatable:
 class Event:
     id: int
     title: str
-    organization_id: int
-    members: list[int]
+
+    organization_id: int | None  # None for personal events
+
+    owner_id: int
+    admins: set[int]  # Empty for personal events
+    members: set[int]  # Empty for personal events
+
     single: EventSingle | None
     repeatable: EventRepeatable | None
+
+    is_visible: bool = True

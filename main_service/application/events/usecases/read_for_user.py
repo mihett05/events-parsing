@@ -4,7 +4,7 @@ from domain.events.entities import Event
 from domain.events.repositories import EventsRepository
 
 
-class ReadUserEventUseCase:
+class ReadUserEventsUseCase:
     def __init__(self, repository: EventsRepository):
         self.__repository = repository
 
