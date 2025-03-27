@@ -7,8 +7,9 @@ class PermissionBuilder:
         self.permissions = set()
         self.necessary = set()
 
-    def providers(self, provider: PermissionProvider) -> "PermissionBuilder":
-        self.permissions |= provider()
+    def providers(self, *providers: PermissionProvider) -> "PermissionBuilder":
+        for provider in providers:
+            self.permissions |= provider()
         return self
 
     def add(self, *args: PermissionsEnum) -> "PermissionBuilder":
@@ -16,5 +17,5 @@ class PermissionBuilder:
         return self
 
     def apply(self):
-        if not self.necessary.issubset(self.permissions):
+        if not self.necessary <= self.permissions:
             raise PermissionError("Permission denied")

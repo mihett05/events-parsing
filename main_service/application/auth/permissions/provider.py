@@ -1,11 +1,7 @@
-from abc import ABC
-from typing import Any
+from abc import ABCMeta
 
 from application.auth.enums import PermissionsEnum
 
 
-class PermissionProvider(ABC):
-    def __call__(
-        self,
-        *args: Any,
-    ) -> set[PermissionsEnum]: ...
+class PermissionProvider(metaclass=ABCMeta):
+    def __call__(self) -> set[PermissionsEnum]: ...

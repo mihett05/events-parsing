@@ -25,11 +25,10 @@ class Event:
     id: int
     title: str
 
-    organization_id: int | None  # None for personal events
+    organization_id: int
 
-    owner_id: int
-    admins: set[int]  # Empty for personal events
-    members: set[int]  # Empty for personal events
+    admins: set[int]
+    members: set[int]
 
     single: EventSingle | None
     repeatable: EventRepeatable | None
