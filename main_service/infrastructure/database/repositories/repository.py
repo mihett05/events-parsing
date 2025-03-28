@@ -34,12 +34,12 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
         return select(self.model).order_by(self.model.id)
 
     def add_where_entity(
-            self, statement: Select | Update | Delete, entity: Entity
+        self, statement: Select | Update | Delete, entity: Entity
     ) -> Select | Update | Delete:
         return self.add_where_id(statement, self.extract_id_from_entity(entity))
 
     def add_where_id(
-            self, statement: Select | Update | Delete, id: Id
+        self, statement: Select | Update | Delete, id: Id
     ) -> Select | Update | Delete:
         return statement.where(self.model.id == id)
 
@@ -59,12 +59,16 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
 class PostgresRepository(metaclass=ABCMeta):
     config: PostgresRepositoryConfig
 
-    def __init__(self, session: AsyncSession, config: PostgresRepositoryConfig) -> None:
+    def __init__(
+        self, session: AsyncSession, config: PostgresRepositoryConfig
+    ) -> None:
         self.session = session
         self.config = config
 
     async def get_models_from_query(self, query: Select) -> list[ModelType]:
-        return list((await self.session.scalars(self.config.add_options(query))).all())
+        return list(
+            (await self.session.scalars(self.config.add_options(query))).all()
+        )
 
     async def get_entities_from_query(self, query: Select) -> list[Entity]:
         return [
@@ -73,7 +77,7 @@ class PostgresRepository(metaclass=ABCMeta):
         ]
 
     async def run_query_and_get_scalar_or_none(
-            self, query: Update | Insert | Delete
+        self, query: Update | Insert | Delete
     ) -> ModelType | None:
         return (
             await self.session.execute(
@@ -82,7 +86,7 @@ class PostgresRepository(metaclass=ABCMeta):
         ).scalar_one_or_none()
 
     async def create_models(
-            self, query: Insert, kwargs: list[dict[str, Any]]
+        self, query: Insert, kwargs: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
         return list(
             (
@@ -96,16 +100,18 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def read(self, id: Id) -> Entity:
         if model := await self.session.get(
-                self.config.model,
-                id,
-                options=self.config.get_options(),
-                populate_existing=True,
+            self.config.model,
+            id,
+            options=self.config.get_options(),
+            populate_existing=True,
         ):
             return self.config.entity_mapper(model)
         raise self.config.not_found_exception()
 
     async def read_all(self) -> list[Entity]:
-        return await self.get_entities_from_query(self.config.get_select_all_query())
+        return await self.get_entities_from_query(
+            self.config.get_select_all_query()
+        )
 
     async def create(self, entity: CreateEntity | Entity) -> Entity:
         model = (self.config.create_mapper or self.config.model_mapper)(entity)
@@ -131,7 +137,7 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def delete(self, entity: Entity) -> Entity:
         if model := await self.session.get(
-                self.config.model, self.config.extract_id_from_entity(entity)
+            self.config.model, self.config.extract_id_from_entity(entity)
         ):
             await self.session.delete(model)
             if self._should_commit():

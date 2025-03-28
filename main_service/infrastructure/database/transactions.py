@@ -25,8 +25,9 @@ class TransactionsDatabaseGateway(TransactionsGateway):
     __token: Token | None = None
 
     def __init__(
-            self, session: AsyncSession,
-            transaction: AsyncSessionTransaction | None = None
+        self,
+        session: AsyncSession,
+        transaction: AsyncSessionTransaction | None = None,
     ):
         self.__session = session
         self.__transaction = transaction
