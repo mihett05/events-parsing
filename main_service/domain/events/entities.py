@@ -22,15 +22,12 @@ class EventRepeatable:
 
 @dataclass
 class Event:
-    id: int
     title: str
+    description: str
 
-    organization_id: int
+    end_date: datetime
+    start_date: datetime
 
-    admins: set[int]
-    members: set[int]
-
-    single: EventSingle | None
-    repeatable: EventRepeatable | None
-
+    id: int | None = None
+    created_at: datetime = None
     is_visible: bool = True

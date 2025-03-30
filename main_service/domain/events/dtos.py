@@ -5,6 +5,7 @@ from datetime import datetime
 @dataclass
 class CreateEventDto:
     title: str
+    description: str
     organization_id: int
     start_date: datetime
     end_date: datetime
@@ -20,5 +21,11 @@ class ReadUserEventsDto:
 @dataclass
 class ReadOrganizationEventsDto:
     organization_id: int
+    page: int
+    page_size: int
+
+
+@dataclass
+class ReadAllEventsDto:
     page: int
     page_size: int

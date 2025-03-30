@@ -12,11 +12,11 @@ from domain.users.entities import User
 
 class UpdateEventUseCase:
     def __init__(
-        self,
-        repository: EventsRepository,
-        tx: TransactionsGateway,
-        read_uc: ReadEventUseCase,
-        builder: PermissionBuilder,
+            self,
+            repository: EventsRepository,
+            tx: TransactionsGateway,
+            read_uc: ReadEventUseCase,
+            builder: PermissionBuilder,
     ):
         self.__repository = repository
         self.__transaction = tx
@@ -24,7 +24,7 @@ class UpdateEventUseCase:
         self.__read_use_case = read_uc
         self.__builder = builder
 
-    async def __call__(self, dto: UpdateEventDto, actor: User) -> Event:
+    async def __call__(self, dto: UpdateEventDto, actor: User | None) -> Event:
         async with self.__transaction:
             event = await self.__read_use_case(dto.event_id)
 
@@ -33,7 +33,8 @@ class UpdateEventUseCase:
             ).apply()
 
             event.title = dto.title
-            event.members = dto.members
+            event.description = dto.description
+            # event.members = dto.members
 
             await self.__repository.update(event)
 
