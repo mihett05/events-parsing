@@ -11,7 +11,7 @@ from .models import EventDbModel
 from ..repository import PostgresRepositoryConfig, PostgresRepository, Id
 
 
-class EventsDatabaseRepository(EventsRepository):
+class EventsDbRepository(EventsRepository):
     class Config(PostgresRepositoryConfig):
         def __init__(self):
             super().__init__(
@@ -51,7 +51,7 @@ class EventsDatabaseRepository(EventsRepository):
         raise NotImplementedError("Method is unavailable for now")
 
     async def read_for_organization(
-        self, dto: dtos.ReadOrganizationEventsDto
+            self, dto: dtos.ReadOrganizationEventsDto
     ) -> list[Event]:
         raise NotImplementedError("Method is unavailable for now")
 

@@ -1,4 +1,4 @@
 from .models import EventDbModel
-from .repository import EventsDatabaseRepository
+from .repository import EventsDbRepository
 
-__all__ = ["EventDbModel", "EventsDatabaseRepository"]
+__all__ = ["EventDbModel", "EventsDbRepository"]

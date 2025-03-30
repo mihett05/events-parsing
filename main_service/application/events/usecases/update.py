@@ -12,11 +12,11 @@ from domain.users.entities import User
 
 class UpdateEventUseCase:
     def __init__(
-        self,
-        repository: EventsRepository,
-        tx: TransactionsGateway,
-        read_uc: ReadEventUseCase,
-        builder: PermissionBuilder,
+            self,
+            repository: EventsRepository,
+            tx: TransactionsGateway,
+            read_uc: ReadEventUseCase,
+            builder: PermissionBuilder,
     ):
         self.__repository = repository
         self.__transaction = tx
@@ -34,7 +34,6 @@ class UpdateEventUseCase:
 
             event.title = dto.title
             event.description = dto.description
-            # event.members = dto.members
 
             await self.__repository.update(event)
 
