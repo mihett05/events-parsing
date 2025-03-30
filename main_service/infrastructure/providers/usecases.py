@@ -6,7 +6,8 @@ from application.events.usecases import (
     ReadEventUseCase,
     ReadOrganizationEventsUseCase,
     ReadUserEventsUseCase,
-    UpdateEventUseCase, ReadAllEventUseCase,
+    UpdateEventUseCase,
+    ReadAllEventUseCase,
 )
 
 

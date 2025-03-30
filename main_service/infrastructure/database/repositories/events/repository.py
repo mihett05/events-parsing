@@ -51,7 +51,7 @@ class EventsDatabaseRepository(EventsRepository):
         raise NotImplementedError("Method is unavailable for now")
 
     async def read_for_organization(
-            self, dto: dtos.ReadOrganizationEventsDto
+        self, dto: dtos.ReadOrganizationEventsDto
     ) -> list[Event]:
         raise NotImplementedError("Method is unavailable for now")
 
