@@ -1,7 +1,8 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
-import { MonthCalendar } from '../../../widgets/MonthCalendar';
-import { CalendarEvent } from '../../../entities/Event';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import { MonthCalendar } from '@widgets/MonthCalendar';
+import { CalendarEvent } from '@entities/Event';
 import { parseISO } from 'date-fns';
 
 const mockEvents: CalendarEvent[] = [

@@ -1,5 +1,10 @@
 import React from 'react';
-import { Box, Typography, IconButton, Button, Stack } from '@mui/material';
+// import { Box, Typography, IconButton, Button, Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,

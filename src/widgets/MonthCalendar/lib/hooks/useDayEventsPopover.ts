@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
-import { CalendarEvent } from '../../../../entities/Event';
+import { CalendarEvent } from '@entities/Event';
 
 interface UseDayEventsPopoverProps {
   singleDayEventsByDate: Record<string, CalendarEvent[]>;

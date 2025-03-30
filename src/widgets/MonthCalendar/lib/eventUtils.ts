@@ -1,5 +1,5 @@
 import { format, isSameDay, startOfDay } from 'date-fns';
-import { CalendarEvent } from '../../../entities/Event';
+import { CalendarEvent } from '@entities/Event';
 
 interface ProcessedEvents {
   singleDayEventsByDate: Record<string, CalendarEvent[]>;

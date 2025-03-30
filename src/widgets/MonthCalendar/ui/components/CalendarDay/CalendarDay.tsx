@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Typography, Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import { format, isToday as isTodayDateFns } from 'date-fns';
-import { CalendarDayData } from '../../../../../shared/lib/types';
-import { CalendarEvent, EventItem } from '../../../../../entities/Event';
-import { DATE_NUMBER_AREA_HEIGHT } from '../../../lib/constants';
+import { CalendarDayData } from '@shared/lib/types';
+import { CalendarEvent, EventItem } from '@entities/Event';
+import { DATE_NUMBER_AREA_HEIGHT } from '@widgets/MonthCalendar/lib/constants';
 import { calculateVisibleLayout } from './calculateVisibleLayout';
 
 const MAX_VISIBLE_SINGLE_DAY_EVENTS = 3;

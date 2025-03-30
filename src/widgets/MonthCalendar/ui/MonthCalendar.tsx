@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { Box, Paper, Popover } from '@mui/material';
-import { CalendarEvent } from '../../../entities/Event';
+import { CalendarEvent } from '@entities/Event';
 import {
   getDayNames,
   useGridDimensions,

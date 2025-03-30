@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { CalendarEvent } from '../../../../entities/Event';
+import { CalendarEvent } from '@entities/Event';
 import { generateCalendarDays } from '../generateCalendarDays';
 import { processEvents } from '../eventUtils';
 import { useMultiDayEventLayout } from './useMultiDayEventLayout';

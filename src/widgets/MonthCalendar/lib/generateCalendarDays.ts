@@ -8,7 +8,7 @@ import {
   isSaturday,
   addDays,
 } from 'date-fns';
-import { CalendarDayData } from '../../../shared/lib/types';
+import { CalendarDayData } from '@shared/lib/types';
 
 const WEEKS_TO_DISPLAY = 6;
 

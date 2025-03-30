@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import { MultiDayEventLayout } from '../../lib/hooks/useMultiDayEventLayout';
+import { MultiDayEventLayout } from '@widgets/MonthCalendar/lib/hooks/useMultiDayEventLayout';
 import {
   MULTI_DAY_EVENT_HEIGHT,
   MULTI_DAY_EVENT_VERTICAL_GAP,
   DATE_NUMBER_AREA_HEIGHT,
-} from '../../lib/constants';
-import { getEventBackgroundColor } from '../../lib/eventUtils';
+} from '@widgets/MonthCalendar/lib/constants';
+import { getEventBackgroundColor } from '@widgets/MonthCalendar/lib/eventUtils';
 
 interface MultiDayEventOverlayProps {
   multiDayLayout: MultiDayEventLayout[];

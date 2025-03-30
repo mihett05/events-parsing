@@ -1,10 +1,14 @@
 import React from 'react';
-import { Box, Typography, Stack, IconButton, Divider } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
 import CloseIcon from '@mui/icons-material/Close';
 import { format } from 'date-fns';
-import { CalendarEvent, EventItem } from '../../../../entities/Event';
+import { CalendarEvent, EventItem } from '@entities/Event';
 import { useTheme } from '@mui/material/styles';
-import { getEventBackgroundColor } from '../../lib/eventUtils';
+import { getEventBackgroundColor } from '@widgets/MonthCalendar/lib/eventUtils';
 
 interface DayEventsPopoverContentProps {
   date: Date;

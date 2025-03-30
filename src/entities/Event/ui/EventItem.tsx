@@ -1,4 +1,6 @@
-import { Box, Typography, Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import { CalendarEvent } from '../model/types';
 
 interface EventItemProps {
@@ -10,7 +12,7 @@ const eventColorMapping: { [key: string]: string } = {
   red: '#f44336',
   green: '#4caf50',
   blue: '#2196f3',
-  lightGreen: '#69f0ae',
+  lightgreen: '#69f0ae',
 };
 
 export const EventItem: React.FC<EventItemProps> = ({ event }) => {

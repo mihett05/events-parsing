@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid } from '@mui/material';
-import { CalendarDayData } from '../../../../shared/lib/types';
-import { CalendarEvent } from '../../../../entities/Event';
+import Grid from '@mui/material/Grid';
+import { CalendarDayData } from '@shared/lib/types';
+import { CalendarEvent } from '@entities/Event';
 import { CalendarDay } from './CalendarDay/CalendarDay';
 import { format } from 'date-fns';
 
