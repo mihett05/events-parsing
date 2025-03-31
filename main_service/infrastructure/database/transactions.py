@@ -21,17 +21,17 @@ class DatabaseTransaction(Transaction):
 
 
 class TransactionsDatabaseGateway(TransactionsGateway):
-    __transaction: AsyncSessionTransaction | None = None
     __token: Token | None = None
+    __transaction: AsyncSessionTransaction | None = None
 
     def __init__(
         self,
         session: AsyncSession,
         transaction: AsyncSessionTransaction | None = None,
     ):
+        self.__token = None
         self.__session = session
         self.__transaction = transaction
-        self.__token = None
 
     async def __aenter__(self) -> Transaction:
         if not self.__transaction:

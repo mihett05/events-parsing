@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from domain.exceptions import EntityNotFound, EntityAlreadyExists
+from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
-from .api import v1_router
 
 
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:

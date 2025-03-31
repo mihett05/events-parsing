@@ -13,7 +13,7 @@ class PermissionBuilder:
         return self
 
     def add(self, *args: PermissionsEnum) -> "PermissionBuilder":
-        self.necessary |= args
+        self.necessary |= set(args)
         return self
 
     def apply(self):

@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
 
-import domain.users.entities as entities
 import domain.users.dtos as dtos
+import domain.users.entities as entities
 
 
-class UserRepository(metaclass=ABCMeta):
+class UsersRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(self, dto: dtos.CreateUserDto) -> entities.User: ...
 

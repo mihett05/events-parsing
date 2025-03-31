@@ -3,12 +3,11 @@ from dishka import Provider, provide_all, Scope
 from application.events.usecases import (
     CreateEventUseCase,
     DeleteEventUseCase,
-    MakeRepeatableEventTypeUseCase,
-    MakeSingleEventTypeUseCase,
     ReadEventUseCase,
     ReadOrganizationEventsUseCase,
     ReadUserEventsUseCase,
     UpdateEventUseCase,
+    ReadAllEventUseCase,
 )
 
 
@@ -18,10 +17,9 @@ class UseCasesProvider(Provider):
     events = provide_all(
         CreateEventUseCase,
         DeleteEventUseCase,
-        MakeRepeatableEventTypeUseCase,
-        MakeSingleEventTypeUseCase,
         ReadEventUseCase,
         ReadOrganizationEventsUseCase,
         ReadUserEventsUseCase,
+        ReadAllEventUseCase,
         UpdateEventUseCase,
     )

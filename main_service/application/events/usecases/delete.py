@@ -23,7 +23,7 @@ class DeleteEventUseCase:
         self.__read_use_case = read_uc
         self.__builder = builder
 
-    async def __call__(self, event_id: int, actor: User) -> Event:
+    async def __call__(self, event_id: int, actor: User | None) -> Event:
         async with self.__transaction:
             event = await self.__read_use_case(event_id)
 

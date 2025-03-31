@@ -8,7 +8,8 @@ from domain.events.enums import WeekDayEnum
 class UpdateEventDto:
     event_id: int
     title: str
-    members: list[int]
+    description: str
+    # members: list[int] = field(default_factory=list[int])
 
 
 @dataclass

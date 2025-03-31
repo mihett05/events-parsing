@@ -15,16 +15,16 @@ class UpdateEventUseCase:
         self,
         repository: EventsRepository,
         tx: TransactionsGateway,
-        read_uc: ReadEventUseCase,
+        read_event: ReadEventUseCase,
         builder: PermissionBuilder,
     ):
         self.__repository = repository
         self.__transaction = tx
 
-        self.__read_use_case = read_uc
+        self.__read_use_case = read_event
         self.__builder = builder
 
-    async def __call__(self, dto: UpdateEventDto, actor: User) -> Event:
+    async def __call__(self, dto: UpdateEventDto, actor: User | None) -> Event:
         async with self.__transaction:
             event = await self.__read_use_case(dto.event_id)
 
@@ -33,7 +33,7 @@ class UpdateEventUseCase:
             ).apply()
 
             event.title = dto.title
-            event.members = dto.members
+            event.description = dto.description
 
             await self.__repository.update(event)
 
