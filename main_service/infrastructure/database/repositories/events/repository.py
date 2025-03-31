@@ -7,15 +7,15 @@ from domain.events.entities import Event
 from domain.events.exceptions import EventNotFound, EventAlreadyExists
 from domain.events.repositories import EventsRepository
 from .mappers import map_from_db, map_to_db
-from .models import EventDbModel
+from .models import EventDatabaseModel
 from ..repository import PostgresRepositoryConfig, PostgresRepository, Id
 
 
-class EventsDbRepository(EventsRepository):
+class EventsDatabaseRepository(EventsRepository):
     class Config(PostgresRepositoryConfig):
         def __init__(self):
             super().__init__(
-                model=EventDbModel,
+                model=EventDatabaseModel,
                 entity=Event,
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
@@ -26,7 +26,7 @@ class EventsDbRepository(EventsRepository):
         def extract_id_from_entity(self, entity: Event) -> Id:
             return entity.id
 
-        def extract_id_from_model(self, model: EventDbModel) -> Id:
+        def extract_id_from_model(self, model: EventDatabaseModel) -> Id:
             return model.id
 
         def get_options(self) -> list[LoaderOption]:
@@ -36,7 +36,7 @@ class EventsDbRepository(EventsRepository):
             return (
                 select(self.model)
                 .order_by(self.model.id)
-                .offset((dto.page - 1) * dto.page_size)
+                .offset(dto.page * dto.page_size)
                 .limit(dto.page_size)
             )
 
@@ -51,7 +51,7 @@ class EventsDbRepository(EventsRepository):
         raise NotImplementedError("Method is unavailable for now")
 
     async def read_for_organization(
-            self, dto: dtos.ReadOrganizationEventsDto
+        self, dto: dtos.ReadOrganizationEventsDto
     ) -> list[Event]:
         raise NotImplementedError("Method is unavailable for now")
 

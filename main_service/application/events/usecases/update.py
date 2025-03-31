@@ -12,16 +12,16 @@ from domain.users.entities import User
 
 class UpdateEventUseCase:
     def __init__(
-            self,
-            repository: EventsRepository,
-            tx: TransactionsGateway,
-            read_uc: ReadEventUseCase,
-            builder: PermissionBuilder,
+        self,
+        repository: EventsRepository,
+        tx: TransactionsGateway,
+        read_event: ReadEventUseCase,
+        builder: PermissionBuilder,
     ):
         self.__repository = repository
         self.__transaction = tx
 
-        self.__read_use_case = read_uc
+        self.__read_use_case = read_event
         self.__builder = builder
 
     async def __call__(self, dto: UpdateEventDto, actor: User | None) -> Event:

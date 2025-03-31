@@ -14,7 +14,7 @@ router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 @router.get("/", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadAllEventUseCase],
-    page: int = 1,
+    page: int = 0,
     page_size: int = 50,
 ):
     return map(
