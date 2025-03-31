@@ -1,5 +1,11 @@
+import { CalendarPage } from '@/pages/CalendarPage';
+
 function App() {
-  return <>hi</>;
+  return (
+    <>
+      <CalendarPage />
+    </>
+  );
 }
 
 export default App;
