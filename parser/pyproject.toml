@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "parser"
+version = "0.1.0"
+description = ""
+authors = ["mihett05 <mihett05@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+torch = {version = "^2.6.0+cpu", source = "pytorch_cpu"}
+torchvision = {version = "^0.21.0+cpu", source = "pytorch_cpu"}
+transformers = "^4.49.0"
+sentence-transformers = "^4.0.1"
+nltk = "^3.9.1"
+openai = "^1.69.0"
+faststream = "^0.5.37"
+pydantic = "^2.11.1"
+pydantic-settings = "^2.8.1"
+
+
+[[tool.poetry.source]]
+name = "pytorch_cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
