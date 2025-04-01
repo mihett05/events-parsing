@@ -11,7 +11,6 @@ nltk.download("stopwords")
 nltk.download("punkt")
 nltk.download("punkt_tab")
 
-
 topic_descriptions = {
     "hackathon": "Мероприятие, где участники работают в командах над решением технических задач в ограниченное время.",
     "conference": "Мероприятие, где люди собираются, чтобы обсудить и обменяться идеями по определенной теме.",
@@ -20,7 +19,7 @@ topic_descriptions = {
 
 
 def is_text_relates_to_topics(
-    text: str, descriptions: dict[str, str], threshhold: float = 0.3
+        text: str, descriptions: dict[str, str], threshhold: float = 0.3
 ) -> bool:
     text = preprocess_text(text)
     text_emb = model.encode([text])

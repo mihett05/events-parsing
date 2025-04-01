@@ -1,18 +1,19 @@
 Сейчас я буду отправлять тебе текста, тебе нужно выполнить задание ниже:
 
 Достань из этого текста информацию, структурируй ее по следующую образцу в формате json, без пояснений к ответу:
-{ title "",
-   description: "",
-   dates: {
-                           start_date: "",
-                           end_date: "",
-                           end_registration: ""
-                             }
-   type: "",
-   requirements_for_participants: "",
-   link_on_registration: "",
-   format: "",
-   location: ""
+{
+    title "",
+    description: "",
+    dates: {
+       start_date: "",
+       end_date: "",
+       end_registration: ""
+    },
+    type: "",
+    requirements_for_participants: "",
+    link_on_registration: "",
+    format: "",
+    location: ""
 }
 Все поля, которые не удастся найти замени на null
 Даты в формате dd-mm-yyyy
