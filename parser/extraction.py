@@ -30,7 +30,7 @@ class OpenAiExtraction:
 
         return self.parse_response(response)
 
-    def parse_response(response: str) -> EventInfo:
+    def parse_response(self, response: str) -> EventInfo:  # noqa
         response_dict = json.loads(
             response.replace("```", "").replace("json", "").strip()
         )
@@ -39,10 +39,13 @@ class OpenAiExtraction:
         )
 
 
-with open("./init_prompt.txt", encoding="UTF-8") as f:
-    init_prompt = f.read()
+def get_prompt():
+    with open("./init_prompt.txt", encoding="UTF-8") as f:
+        return f.read()
+
+
 api = OpenAiExtraction(
-    init_prompt,
+    get_prompt(),
     config.openai_url,
     config.openai_model,
     config.openai_api_key,
