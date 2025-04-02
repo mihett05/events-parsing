@@ -9,7 +9,7 @@ class Config(BaseSettings):
         env_file=".env", env_file_encoding="utf-8"
     )
 
-    cors_origins: tuple[str] = ("http://localhost:5173",)
+    cors_origins: list[str] = ["http://localhost:5173"]
 
     server_host: str = "localhost"
     server_port: int = 8081
