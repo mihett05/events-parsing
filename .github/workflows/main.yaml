@@ -21,7 +21,7 @@ jobs:
           REGISTRY: ${{ secrets.REGISTRY }}
           REPOSITORY: main-service
         run: |
-          docker buildx build \
+          docker build \
             -t $REGISTRY/$REPOSITORY:${{ github.sha }} \
             -t $REGISTRY/$REPOSITORY:latest ./main_service
           docker push --all-tags $REGISTRY/$REPOSITORY

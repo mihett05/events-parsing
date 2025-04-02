@@ -10,6 +10,4 @@ RUN poetry install --no-root
 
 COPY . /app
 
-RUN chmod +x ./entrypoint.sh
-
 CMD ["poetry", "run", "python3", "main.py"]
