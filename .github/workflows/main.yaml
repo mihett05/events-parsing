@@ -67,19 +67,18 @@ jobs:
       - name: Install python
         uses: actions/setup-python@v5
       
-      - name: Install passlib
-        run: pip3 install passlib
+      - name: Install ansible
+        run: pip install ansible passlib
 
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v3
-        with:
-          playbook: deploy.yaml
-          directory: ./deploy
-          key: ${{ secrets.CI_PRIVATE_KEY }}
-          inventory: |
+        run: |
+          cd deploy
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook deploy.yaml \
+          --key-file "${{ secrets.CI_PRIVATE_KEY }}" \
+          --inventory .hosts \
+          --vault-password "${{ secrets.VAULT_PASSWORD }}"
+        env:
+          ANSIBLE_INVENTORY: |
             [master]
             ${{ secrets.CI_SERVER }}
-          vault_password: ${{ secrets.VAULT_PASSWORD }}
-          requirements: requirements.yaml
-          options:
-            --inventory .hosts
