@@ -71,14 +71,20 @@ jobs:
         run: pip install ansible passlib
 
       - name: Run playbook
-        run: |
-          cd deploy
-          ansible-galaxy install -r requirements.yaml
-          ansible-playbook deploy.yaml \
-          --key-file "${{ secrets.CI_PRIVATE_KEY }}" \
-          --inventory .hosts \
-          --vault-password "${{ secrets.VAULT_PASSWORD }}"
         env:
-          ANSIBLE_INVENTORY: |
+          KEY: ${{ secrets.CI_PRIVATE_KEY }}
+          VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
+          INVENTORY: |
             [master]
             ${{ secrets.CI_SERVER }}
+        run: |
+          cd deploy
+          echo "$KEY" > .ansible_key
+          echo "$VAULT_PASSWORD" > .ansible_vault_password
+          echo "$INVENTORY" > .ansible_inventory
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook deploy.yaml \
+          --key-file .ansible_key \
+          --inventory .ansible_inventory \
+          --vault-password .ansible_vault_password
+        
