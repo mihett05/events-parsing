@@ -6,7 +6,6 @@ from infrastructure.database.repositories.events import EventsDatabaseRepository
 from infrastructure.database.repositories.mails import MailsDatabaseRepository
 
 
-
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
 

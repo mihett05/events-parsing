@@ -10,6 +10,7 @@ class DatesInfo:
 
 @dataclass
 class EventInfo:
+    mail_id: int
     title: str | None
     description: str | None
     dates: DatesInfo
