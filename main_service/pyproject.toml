@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "events-parsing"
+version = "0.1.0"
+description = ""
+authors = ["AlexandrVino <alexander-vin0@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+uvicorn = "^0.34.0"
+fastapi = "^0.115.12"
+pydantic = "^2.11.1"
+pydantic-settings = "^2.8.1"
+asyncpg = "^0.30.0"
+sqlalchemy = "^2.0.40"
+alembic = "^1.15.2"
+dishka = "^1.5.2"
+adaptix = "^3.0.0b9"
+alembic-postgresql-enum = "^1.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
