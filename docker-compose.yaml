@@ -1,6 +1,9 @@
 services:
   postgres:
     image: postgres:17.3
+    container_name: postgres
+    restart: always
+
     ports:
       - 5432:5432
     volumes:
@@ -8,16 +11,47 @@ services:
     env_file:
       - main_service/.env
 
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"  # Порт для AMQP
+      - "15672:15672"  # Порт для веба
+    env_file:
+      - main_service/.env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
+    depends_on:
+      - postgres
     links:
       - "postgres:postgres"
-    container_name: backend-app
+    container_name: events-parsing-backend
     restart: always
-    build: main_service
+    build: main_service/docker/main_service
     env_file:
       - main_service/.env
     ports:
       - 5000:5000
+
+  coordinator:
+    depends_on:
+      - rabbitmq
+      - postgres
+    links:
+      - "postgres:postgres"
+    container_name: events-parsing-coordinator
+    restart: always
+    build: main_service/docker/coordinator
+    env_file:
+      - main_service/.env
 
   adminer:
     links:

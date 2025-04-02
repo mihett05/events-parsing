@@ -27,6 +27,7 @@ class Event:
 
     end_date: datetime
     start_date: datetime
+    end_registration: datetime
 
     id: int | None = None
     created_at: datetime = None

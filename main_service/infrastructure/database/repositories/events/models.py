@@ -17,6 +17,7 @@ class EventDatabaseModel(Base):
 
     end_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    end_registration: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     title: Mapped[str]
     description: Mapped[str]

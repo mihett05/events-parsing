@@ -8,4 +8,4 @@ done
 
 echo "Docker is fully configured successfully."
 
-exec poetry run python3 main.py
+exec poetry run python3 main_service.py

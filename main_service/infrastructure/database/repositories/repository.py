@@ -74,7 +74,7 @@ class PostgresRepository(metaclass=ABCMeta):
         ]
 
     async def run_query_and_get_scalar_or_none(
-        self, query: Update | Insert | Delete
+        self, query: Update | Insert | Delete | Select
     ) -> ModelType | None:
         return (
             await self.session.execute(

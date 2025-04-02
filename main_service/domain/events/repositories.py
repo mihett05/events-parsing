@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Any
 
 import domain.events.dtos as dtos
 import domain.events.entities as entities
@@ -9,7 +10,10 @@ class EventsRepository(metaclass=ABCMeta):
     async def create(self, dto: dtos.CreateEventDto) -> entities.Event: ...
 
     @abstractmethod
-    async def read(self, id_: int) -> entities.Event: ...
+    async def find(self, dto: Any) -> entities.Event | None: ...
+
+    @abstractmethod
+    async def read(self, event_id: int) -> entities.Event: ...
 
     @abstractmethod
     async def read_all(

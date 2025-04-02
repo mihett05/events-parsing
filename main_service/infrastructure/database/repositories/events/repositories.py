@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.events.dtos as dtos
+from application.events.dtos import EventInfo
 from domain.events.entities import Event
 from domain.events.exceptions import EventNotFound, EventAlreadyExists
 from domain.events.repositories import EventsRepository
@@ -42,7 +43,24 @@ class EventsDatabaseRepository(EventsRepository):
 
     def __init__(self, session: AsyncSession):
         self.__session = session
-        self.__repository = PostgresRepository(session, self.Config())
+        self.config = self.Config()
+        self.__repository = PostgresRepository(session, self.config)
+
+    async def find(self, event_info: EventInfo) -> Event | None:
+        query = select(EventDatabaseModel).where(
+            EventDatabaseModel.title.ilike(event_info.title),
+            EventDatabaseModel.end_date == event_info.dates.end_date,
+            EventDatabaseModel.start_date == event_info.dates.start_date,
+            EventDatabaseModel.end_registration
+            == event_info.dates.end_registration,
+        )
+        model: (
+            EventDatabaseModel | None
+        ) = await self.__repository.run_query_and_get_scalar_or_none(query)
+        return model and self.config.entity_mapper(model)
+
+    async def read(self, event_id: int) -> Event:
+        return await self.__repository.read(event_id)
 
     async def read_all(self, dto: dtos.ReadAllEventsDto) -> list[Event]:
         return await self.__repository.read_all(dto)
@@ -61,11 +79,9 @@ class EventsDatabaseRepository(EventsRepository):
             description=dto.description,
             end_date=dto.end_date,
             start_date=dto.start_date,
+            end_registration=dto.end_registration,
         )
         return await self.__repository.create(event)
-
-    async def read(self, event_id: int) -> Event:
-        return await self.__repository.read(event_id)
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)
