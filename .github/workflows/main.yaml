@@ -61,15 +61,19 @@ jobs:
     needs: [build-main, build-frontend]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v3
         with:
-          playbook: deploy/deploy.yaml
+          playbook: deploy.yaml
+          directory: ./deploy
           key: ${{ secrets.CI_PRIVATE_KEY }}
           inventory: |
             [master]
             ${{ secrets.CI_SERVER }}
           vault_password: ${{ secrets.VAULT_PASSWORD }}
-          requirements: deploy/requirements.yaml
+          requirements: requirements.yaml
           options:
             --inventory .hosts
