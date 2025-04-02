@@ -64,6 +64,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install python
+        uses: actions/setup-python@v5
+      
+      - name: Install passlib
+        run: pip3 install passlib
+
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v3
         with:
