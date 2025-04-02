@@ -81,11 +81,12 @@ jobs:
         run: |
           cd deploy
           echo "$KEY" > .ansible_key
+          chmod 600 .ansible_key
           echo "$VAULT_PASSWORD" > .ansible_vault_password
           echo "$INVENTORY" > .ansible_inventory
           ansible-galaxy install -r requirements.yaml
           ansible-playbook deploy.yaml \
           --key-file .ansible_key \
           --inventory .ansible_inventory \
-          --vault-password .ansible_vault_password
+          --vault-password-file .ansible_vault_password
         
