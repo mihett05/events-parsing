@@ -1,0 +1,11 @@
+registry.events.lovepaw.ru {
+    reverse_proxy registry:5000
+}
+
+events.lovepaw.ru {
+    reverse_proxy frontend:3000
+}
+
+api.events.lovepaw.ru {
+    reverse_proxy main-service:8080
+}

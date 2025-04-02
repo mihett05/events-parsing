@@ -1,0 +1,62 @@
+- name: Deploy on single node
+  hosts: master
+  become: true
+
+  vars_files:
+    - ./vars/secrets.yaml
+    - ./vars/deploy.yaml
+
+  roles:
+    - geerlingguy.docker
+
+  tasks:
+    - name: Create user
+      ansible.builtin.user:
+        name: web
+        password: "{{ user.password | password_hash('sha512') }}"
+        state: present
+        createhome: true
+        groups:
+          - docker
+    - name: Create project root
+      ansible.builtin.file:
+        path: /var/www/events
+        state: directory
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy env
+      ansible.builtin.template:
+        src: ./.env.j2
+        dest: /var/www/events/.env
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy main service env
+      ansible.builtin.template:
+        src: ./main-service.env.j2
+        dest: /var/www/events/main-service.env
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy compose
+      ansible.builtin.copy:
+        src: ./docker-compose.yaml
+        dest: /var/www/events/docker-compose.yaml
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy caddy config
+      ansible.builtin.copy:
+        src: ./caddy
+        dest: /var/www/events
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Run compose
+      community.docker.docker_compose_v2:
+        project_src: /var/www/events
+        pull: always
+        remove_orphans: true
+        files:
+          - docker-compose.yaml

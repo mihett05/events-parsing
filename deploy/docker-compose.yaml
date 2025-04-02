@@ -1,0 +1,87 @@
+services:
+  registry:
+    image: registry:2
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - registry
+    volumes:
+      - registry-data:/var/lib/registry
+
+  postgres:
+    image: postgres:17
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  caddy:
+    image: caddy:2.9
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - registry
+      - caddy
+    volumes:
+      - ./caddy/conf:/etc/caddy
+      - caddy-data:/data
+      - caddy-config:/config
+  
+
+  main-service:
+    image: ${MAIN_SERVICE_IMAGE}
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres
+      - caddy
+    env_file:
+      - ./main-service.env
+  main-service-migrations:
+    image: ${MAIN_SERVICE_MIGRATIONS}
+    networks:
+      - postgres
+    env_file:
+      - ./main-service.env
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - caddy
+
+
+networks:
+  registry:
+    driver: bridge
+  postgres:
+    driver: bridge
+  caddy:
+    driver: bridge
+
+volumes:
+  registry-data:
+    driver: local
+  postgres-data:
+    driver: local
+  caddy-data:
+    driver: local
+  caddy-config:
+    driver: local
