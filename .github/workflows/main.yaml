@@ -65,7 +65,6 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v3
         with:
           playbook: deploy/deploy.yaml
-          directory: ./
           key: ${{ secrets.CI_PRIVATE_KEY }}
           inventory: |
             [master]
