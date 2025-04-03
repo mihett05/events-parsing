@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { CalendarEvent } from '../model/types';
+import { useModalContext } from '@/widgets/MonthCalendar/lib/hooks/useModalContext';
 
 interface EventItemProps {
   event: CalendarEvent;
@@ -17,6 +18,7 @@ const eventColorMapping: { [key: string]: string } = {
 
 export const EventItem: React.FC<EventItemProps> = ({ event }) => {
   const dotColor = eventColorMapping[event.color.toLowerCase()] || event.color;
+  const { setSelectedEvent } = useModalContext();
 
   return (
     <Stack
@@ -24,6 +26,7 @@ export const EventItem: React.FC<EventItemProps> = ({ event }) => {
       alignItems="center"
       spacing={0.5}
       sx={{ width: '100%', overflow: 'hidden', mb: '2px' }}
+      onClick={() => setSelectedEvent(event)}
     >
       <Box
         component="span"
