@@ -1,4 +1,5 @@
 import json
+from dataclasses import asdict
 
 from faststream.rabbit import RabbitBroker, RabbitExchange, RabbitQueue
 
@@ -14,7 +15,7 @@ class RabbitMQCoordinatorGatewayPublisher(CoordinatorGateway):
 
     async def run(self, mails: list[Mail]):
         message = json.dumps(
-            map(lambda x: x.asdict(), mails),
+            map(lambda x: asdict(x), mails),
             ensure_ascii=False,
         )
 
