@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { CalendarEvent, EventItem } from '@entities/Event';
 import { useTheme } from '@mui/material/styles';
 import { getEventBackgroundColor } from '@widgets/MonthCalendar/lib/eventUtils';
+import { useModalContext } from '../../lib/hooks/useModalContext';
 
 interface DayEventsPopoverContentProps {
   date: Date;
@@ -24,10 +25,10 @@ export const DayEventsPopoverContent: React.FC<DayEventsPopoverContentProps> = (
   onClose,
 }) => {
   const theme = useTheme();
+  const { setSelectedEvent } = useModalContext();
 
   return (
     <Box sx={{ p: 2, minWidth: 250, maxWidth: 350 }}>
-      {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
         <Typography variant="subtitle1" fontWeight="bold">
           {format(date, 'EEEE, MMM d')}
@@ -38,10 +39,11 @@ export const DayEventsPopoverContent: React.FC<DayEventsPopoverContentProps> = (
       </Stack>
       <Divider sx={{ mb: 1.5 }} />
 
-      <Stack spacing={0.5} sx={{ maxHeight: 300, overflowY: 'auto' }}>
+      <Stack spacing={0.5} sx={{ maxHeight: 300, overflowY: 'auto', cursor: 'pointer' }}>
         {multiDayEvents.map((event) => (
           <Box
             key={`pop-${event.id}`}
+            onClick={() => setSelectedEvent(event)}
             sx={{
               backgroundColor: getEventBackgroundColor(event),
               color: theme.palette.getContrastText(getEventBackgroundColor(event)),

@@ -7,6 +7,7 @@ import {
   DATE_NUMBER_AREA_HEIGHT,
 } from '@widgets/MonthCalendar/lib/constants';
 import { getEventBackgroundColor } from '@widgets/MonthCalendar/lib/eventUtils';
+import { useModalContext } from '@widgets/MonthCalendar/lib/hooks/useModalContext';
 
 interface MultiDayEventOverlayProps {
   multiDayLayout: MultiDayEventLayout[];
@@ -22,6 +23,7 @@ export const MultiDayEventOverlay: React.FC<MultiDayEventOverlayProps> = ({
   headerHeight,
 }) => {
   const theme = useTheme();
+  const { setSelectedEvent } = useModalContext();
 
   if (cellWidth <= 0 || rowHeight <= 0) {
     return null;
@@ -54,6 +56,7 @@ export const MultiDayEventOverlay: React.FC<MultiDayEventOverlayProps> = ({
         return (
           <Box
             key={`${layoutItem.event.id}-${layoutItem.weekIndex}`}
+            onClick={() => setSelectedEvent(layoutItem.event)}
             sx={{
               position: 'absolute',
               top: `${topPosition}px`,
