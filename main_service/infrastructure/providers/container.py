@@ -2,6 +2,7 @@ from dishka import make_async_container, AsyncContainer, Provider
 
 from .config import ConfigProvider
 from .database import DatabaseProvider
+from .gateways import GatewaysProvider
 from .permissions import PermissionProvider
 from .repositories import RepositoriesProvider
 from .usecases import UseCasesProvider
@@ -11,6 +12,7 @@ def get_container_infrastructure() -> list[Provider]:
     return [
         PermissionProvider(),
         ConfigProvider(),
+        GatewaysProvider(),
         DatabaseProvider(),
         RepositoriesProvider(),
     ]

@@ -5,16 +5,28 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from faststream import FastStream
+from faststream.rabbit import RabbitBroker
 
 from domain.exceptions import EntityNotFound, EntityAlreadyExists
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 
 
+async def create_rabbit_app(container: AsyncContainer) -> FastStream:
+    broker = await container.get(RabbitBroker)
+    app = FastStream(broker)
+
+    return app
+
+
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
+        rabbit_app = await create_rabbit_app(container)
+        await rabbit_app.broker.start()
         yield
+        await rabbit_app.broker.close()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(
