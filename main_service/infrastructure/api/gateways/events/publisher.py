@@ -11,7 +11,7 @@ from infrastructure.config import Config
 class RabbitMQCoordinatorGatewayPublisher(CoordinatorGateway):
     def __init__(self, broker: RabbitBroker, config: Config):
         self.__broker = broker
-        self.__queue = RabbitQueue(config.default_rabbitmq_queue)
+        self.__queue = RabbitQueue(config.default_publish_rabbitmq_queue)
 
     async def run(self, mails: list[Mail]):
         message = json.dumps(

@@ -25,7 +25,8 @@ class Config(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
-    default_rabbitmq_queue: str = "default"
+    default_publish_rabbitmq_queue: str = "subscribe"
+    default_subscribe_rabbitmq_queue: str = "publish"
 
     @computed_field
     @property
