@@ -19,7 +19,7 @@ topic_descriptions = {
 
 
 def is_text_relates_to_topics(
-        text: str, descriptions: dict[str, str], threshhold: float = 0.3
+    text: str, descriptions: dict[str, str], threshhold: float = 0.3
 ) -> bool:
     text = preprocess_text(text)
     text_emb = model.encode([text])

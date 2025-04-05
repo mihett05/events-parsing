@@ -35,23 +35,11 @@ services:
       - "postgres:postgres"
     container_name: events-parsing-backend
     restart: always
-    build: main_service/docker/main_service
+    build: main_service/
     env_file:
       - main_service/.env
     ports:
       - 5000:5000
-
-  coordinator:
-    depends_on:
-      - rabbitmq
-      - postgres
-    links:
-      - "postgres:postgres"
-    container_name: events-parsing-coordinator
-    restart: always
-    build: main_service/docker/coordinator
-    env_file:
-      - main_service/.env
 
   adminer:
     links:
@@ -66,3 +54,4 @@ services:
 
 volumes:
   postgres-data:
+  rabbitmq_data:

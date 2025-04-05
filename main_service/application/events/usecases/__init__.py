@@ -6,6 +6,7 @@ from .read import ReadEventUseCase
 from .read_all import ReadAllEventUseCase
 from .read_for_organization import ReadOrganizationEventsUseCase
 from .read_for_user import ReadUserEventsUseCase
+from .pasrse import ParseEventsUseCase
 from .update import UpdateEventUseCase
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "ReadOrganizationEventsUseCase",
     "ReadUserEventsUseCase",
     "ReadAllEventUseCase",
+    "ParseEventsUseCase",
     "UpdateEventUseCase",
 ]

@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 
 from dishka import AsyncContainer
@@ -5,16 +6,47 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from faststream import FastStream
+from faststream.rabbit import RabbitBroker
 
+from application.events.usecases import ParseEventsUseCase
 from domain.exceptions import EntityNotFound, EntityAlreadyExists
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 
 
+async def create_rabbit_app(container: AsyncContainer) -> FastStream:
+    broker = await container.get(RabbitBroker)
+    app = FastStream(broker)
+
+    return app
+
+
+async def periodic_task(container: AsyncContainer):
+    while True:
+        async with container() as request_container:
+            parse = await request_container.get(ParseEventsUseCase)
+            await parse()
+        await asyncio.sleep(60 * 30)
+
+
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
+        task = asyncio.create_task(periodic_task(container))
+
+        rabbit_app = await create_rabbit_app(container)
+        await rabbit_app.broker.start()
         yield
+
+        # cancel background task
+        try:
+            task.cancel()
+            await task
+        except asyncio.CancelledError:
+            pass
+
+        await rabbit_app.broker.close()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(

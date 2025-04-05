@@ -9,6 +9,7 @@ class UseCasesProvider(Provider):
 
     events = provide_all(
         event_use_cases.CreateEventUseCase,
+        event_use_cases.DeduplicateEventUseCase,
         event_use_cases.DeleteEventUseCase,
         event_use_cases.FindEventUseCase,
         event_use_cases.ReadEventUseCase,

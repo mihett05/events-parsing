@@ -1,7 +1,3 @@
-import json
-from datetime import datetime, timedelta
-from pydantic import TypeAdapter, parse_obj_as
-
 from infrastructure.api.models import CamelModel
 
 
@@ -13,9 +9,9 @@ class DatesInfoModel(CamelModel):
 
 class EventInfoModel(CamelModel):
     mail_id: int
-    title: str | None
+    title: str
     description: str | None
     dates: DatesInfoModel
-    type: str | None
-    format: str | None
+    type: str
+    format: str
     location: str | None
