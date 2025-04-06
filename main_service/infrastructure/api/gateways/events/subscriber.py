@@ -1,3 +1,4 @@
+from dishka import AsyncContainer
 from faststream.rabbit import RabbitBroker, RabbitQueue
 
 from application.events.dtos import EventInfo
@@ -11,14 +12,14 @@ from infrastructure.config import Config
 
 class RabbitMQCoordinatorGatewaySubscriber:
     def __init__(
-        self,
-        broker: RabbitBroker,
-        config: Config,
-        event_deduplication_use_case: DeduplicateEventUseCase,
+            self,
+            broker: RabbitBroker,
+            config: Config,
+            container: AsyncContainer,
     ):
         self.__broker = broker
         self.__queue = RabbitQueue(config.default_subscribe_rabbitmq_queue)
-        self.__event_deduplication_use_case = event_deduplication_use_case
+        self.__container = container
 
         self.__broker.subscriber(self.__queue)(self.receive)
 
@@ -26,4 +27,6 @@ class RabbitMQCoordinatorGatewaySubscriber:
         dto: EventInfo = map_event_info_from_pydantic(
             EventInfoModel.model_validate_json(message)
         )
-        return await self.__event_deduplication_use_case(dto)
+        async with self.__container() as request_container:
+            deduplicate = await request_container.get(DeduplicateEventUseCase)
+            return await deduplicate(dto)

@@ -10,15 +10,19 @@ class EventDatabaseModel(Base):
     __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
 
-    end_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    end_registration: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    end_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    end_registration: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
 
     title: Mapped[str]
-    description: Mapped[str]
-    is_visible: Mapped[bool]
+    description: Mapped[str | None] = mapped_column(nullable=True, default=None)
+    is_visible: Mapped[bool] = mapped_column(default=True)

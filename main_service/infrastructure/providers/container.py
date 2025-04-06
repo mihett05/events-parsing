@@ -18,8 +18,10 @@ def get_container_infrastructure() -> list[Provider]:
     ]
 
 
-def get_container_application() -> tuple[Provider]:
-    return (UseCasesProvider(),)
+def get_container_application() -> list[Provider]:
+    return [
+        UseCasesProvider(),
+    ]
 
 
 def create_container() -> AsyncContainer:
