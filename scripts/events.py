@@ -14,4 +14,3 @@ class Event:
     end_date: datetime | None = None
     created_at: datetime | None = None
     end_registration: datetime | None = None
-
