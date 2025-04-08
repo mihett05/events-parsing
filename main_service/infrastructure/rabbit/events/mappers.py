@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from adaptix.conversion import coercer
+from application.events.dtos import DatesInfo, EventInfo
 
-from application.events.dtos import EventInfo, DatesInfo
-from infrastructure.api.gateways.events.models import (
-    EventInfoModel,
-    DatesInfoModel,
-)
 from infrastructure.api.retort import pydantic_retort
+from infrastructure.rabbit.events.models import (
+    DatesInfoModel,
+    EventInfoModel,
+)
 
 retort = pydantic_retort.extend(recipe=[])
 

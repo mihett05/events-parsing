@@ -1,4 +1,4 @@
-from dishka import make_async_container, AsyncContainer, Provider
+from dishka import AsyncContainer, Provider, make_async_container
 
 from .config import ConfigProvider
 from .database import DatabaseProvider

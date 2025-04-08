@@ -1,20 +1,40 @@
 import logging
 from dataclasses import asdict
-
-from faststream import FastStream
-from faststream.rabbit import RabbitBroker, RabbitQueue
-
+from datetime import datetime
 from parser.config import get_config
-from parser.events import EventInfo
+from parser.events import DatesInfo, EventInfo
 from parser.pipeline import pipeline
+
+from faststream import Depends, FastStream
+from faststream.rabbit import (
+    ExchangeType,
+    RabbitBroker,
+    RabbitExchange,
+    RabbitQueue,
+)
 
 config = get_config()
 broker = RabbitBroker(config.rabbitmq_url, log_level=logging.DEBUG)
 app = FastStream(broker)
-publish_queue = RabbitQueue(config.rabbitmq_queue)
-subscribe_queue = RabbitQueue(
-    config.rabbitmq_queue,
+
+exchange = RabbitExchange(
+    "main",
+    type=ExchangeType.TOPIC,
+    auto_delete=False,
+    durable=True,
+)
+publish_queue = RabbitQueue(
+    name="publish",
+    durable=True,
     auto_delete=True,
+    routing_key="mails.parsed",
+)
+
+subscribe_queue = RabbitQueue(
+    name="publish",
+    durable=True,
+    auto_delete=True,
+    routing_key="events.mails",
 )
 
 

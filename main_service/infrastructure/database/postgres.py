@@ -1,9 +1,9 @@
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import (
-    create_async_engine,
+    AsyncAttrs,
     AsyncEngine,
     async_sessionmaker,
-    AsyncAttrs,
+    create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase
 

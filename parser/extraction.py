@@ -1,9 +1,8 @@
 import json
 
-from openai import OpenAI
-
 from config import get_config
 from events import DatesInfo, EventInfo
+from openai import OpenAI
 
 config = get_config()
 

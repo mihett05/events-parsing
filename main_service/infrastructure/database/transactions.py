@@ -1,8 +1,7 @@
 from contextvars import ContextVar, Token
 
+from application.transactions import Transaction, TransactionsGateway
 from sqlalchemy.ext.asyncio import AsyncSession, AsyncSessionTransaction
-
-from application.transactions import TransactionsGateway, Transaction
 
 transaction_var: ContextVar[AsyncSessionTransaction | None] = ContextVar(
     "transaction_var", default=None

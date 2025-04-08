@@ -1,28 +1,32 @@
 import asyncio
 import contextlib
 
+from application.events.usecases import ParseEventsUseCase
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
+from dishka.integrations.faststream import (
+    setup_dishka as faststream_setup_dishka,
+)
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
 
-from application.events.usecases import ParseEventsUseCase
-from domain.exceptions import EntityNotFound, EntityAlreadyExists
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
+from infrastructure.rabbit import router
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
     broker = await container.get(RabbitBroker)
+    broker.include_router(router)
     app = FastStream(broker)
-
     return app
 
 
-async def periodic_task(container: AsyncContainer):
+async def parse_mails(container: AsyncContainer):
     while True:
         async with container() as request_container:
             parse = await request_container.get(ParseEventsUseCase)
@@ -33,9 +37,11 @@ async def periodic_task(container: AsyncContainer):
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
-        task = asyncio.create_task(periodic_task(container))
+        task = asyncio.create_task(parse_mails(container))
 
         rabbit_app = await create_rabbit_app(container)
+        faststream_setup_dishka(container, rabbit_app, auto_inject=True)
+
         await rabbit_app.broker.start()
         yield
 

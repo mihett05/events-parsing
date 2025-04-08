@@ -1,15 +1,15 @@
+import domain.events.dtos as dtos
+from application.events.dtos import EventInfo
+from domain.events.entities import Event
+from domain.events.exceptions import EventAlreadyExists, EventNotFound
+from domain.events.repositories import EventsRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 
-import domain.events.dtos as dtos
-from application.events.dtos import EventInfo
-from domain.events.entities import Event
-from domain.events.exceptions import EventNotFound, EventAlreadyExists
-from domain.events.repositories import EventsRepository
+from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_from_db, map_to_db
 from .models import EventDatabaseModel
-from ..repository import PostgresRepositoryConfig, PostgresRepository, Id
 
 
 class EventsDatabaseRepository(EventsRepository):
@@ -56,7 +56,7 @@ class EventsDatabaseRepository(EventsRepository):
         )
         model: (
             EventDatabaseModel | None
-        ) = await self.__repository.run_query_and_get_scalar_or_none(query)
+        ) = await self.__repository.get_scalar_or_none(query)
         return model and self.config.entity_mapper(model)
 
     async def read(self, event_id: int) -> Event:

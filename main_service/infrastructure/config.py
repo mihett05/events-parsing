@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import computed_field, PostgresDsn
+from pydantic import PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -24,9 +24,6 @@ class Config(BaseSettings):
     rabbitmq_port: str
     rabbitmq_user: str
     rabbitmq_password: str
-
-    default_publish_rabbitmq_queue: str = "subscribe"
-    default_subscribe_rabbitmq_queue: str = "publish"
 
     @computed_field
     @property

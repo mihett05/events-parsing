@@ -8,7 +8,7 @@ class DatesInfoModel(CamelModel):
 
 
 class EventInfoModel(CamelModel):
-    mail_id: int
+    mail_id: int | None
     title: str
     description: str | None
     dates: DatesInfoModel

@@ -1,6 +1,6 @@
-from dishka import Provider, provide, Scope
+from dishka import Provider, Scope, provide
 
-from infrastructure.config import get_config, Config
+from infrastructure.config import Config, get_config
 
 
 class ConfigProvider(Provider):

@@ -1,12 +1,12 @@
 from .create import CreateEventUseCase
-from .delete import DeleteEventUseCase
 from .deduplicate import DeduplicateEventUseCase
+from .delete import DeleteEventUseCase
 from .find import FindEventUseCase
+from .pasrse import ParseEventsUseCase
 from .read import ReadEventUseCase
 from .read_all import ReadAllEventUseCase
 from .read_for_organization import ReadOrganizationEventsUseCase
 from .read_for_user import ReadUserEventsUseCase
-from .pasrse import ParseEventsUseCase
 from .update import UpdateEventUseCase
 
 __all__ = [

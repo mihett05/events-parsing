@@ -18,9 +18,6 @@ class Config(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
-    default_publish_rabbitmq_queue: str = "publish"
-    default_subscribe_rabbitmq_queue: str = "subscribe"
-
     @computed_field
     @property
     def rabbitmq_url(self) -> str:

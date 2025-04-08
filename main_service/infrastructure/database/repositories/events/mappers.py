@@ -1,8 +1,9 @@
 from adaptix import P
 from adaptix._internal.conversion.facade.provider import link_function
-
 from domain.events.entities import Event
+
 from infrastructure.database.mappers import postgres_retort
+
 from .models import EventDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])

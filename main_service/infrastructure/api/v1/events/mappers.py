@@ -1,10 +1,11 @@
 from adaptix import P
 from adaptix.conversion import link_function
-
 from application.events.dtos import UpdateEventDto
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
+
 from infrastructure.api.retort import pydantic_retort
+
 from .dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
