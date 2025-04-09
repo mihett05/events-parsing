@@ -1,7 +1,7 @@
-from application.events.dtos import EventInfo
 from domain.events.entities import Event
-
 from domain.events.repositories import EventsRepository
+
+from application.events.dtos import EventInfo
 
 
 class FindEventUseCase:

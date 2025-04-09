@@ -1,6 +1,5 @@
 from domain.mails.dtos import ReadAllMailsDto
 from domain.mails.entities import Mail
-
 from domain.mails.repositories import MailsRepository
 
 

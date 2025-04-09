@@ -1,7 +1,8 @@
 from .create import CreateEventUseCase
-from .delete import DeleteEventUseCase
 from .deduplicate import DeduplicateEventUseCase
+from .delete import DeleteEventUseCase
 from .find import FindEventUseCase
+from .pasrse import ParseEventsUseCase
 from .read import ReadEventUseCase
 from .read_all import ReadAllEventUseCase
 from .read_for_organization import ReadOrganizationEventsUseCase
@@ -17,5 +18,6 @@ __all__ = [
     "ReadOrganizationEventsUseCase",
     "ReadUserEventsUseCase",
     "ReadAllEventUseCase",
+    "ParseEventsUseCase",
     "UpdateEventUseCase",
 ]

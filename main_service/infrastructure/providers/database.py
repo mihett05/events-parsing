@@ -1,8 +1,8 @@
 import asyncio
 from typing import AsyncIterable
 
-from dishka import Provider, provide, Scope
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession
+from dishka import Provider, Scope, provide
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from infrastructure.config import Config
 from infrastructure.database.postgres import get_engine, get_session_maker

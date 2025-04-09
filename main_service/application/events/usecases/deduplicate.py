@@ -1,15 +1,13 @@
-from collections import namedtuple
-
-from application.events.dtos import EventInfo
-from application.events.usecases import FindEventUseCase, CreateEventUseCase
-from application.mails.dtos import UpdateMailDto
-from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
-from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 
-pair = namedtuple("pair", ["mail", "event"])
+from application.mails.dtos import UpdateMailDto
+from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
+
+from ..dtos import EventInfo
+from .create import CreateEventUseCase
+from .find import FindEventUseCase
 
 
 class DeduplicateEventUseCase:
@@ -25,12 +23,12 @@ class DeduplicateEventUseCase:
         self.event_find_use_case = event_find_use_case
         self.event_create_use_case = event_create_use_case
 
-    async def __call__(self, dto: EventInfo) -> pair:
+    async def __call__(self, dto: EventInfo):
         event: Event | None = await self.event_find_use_case(dto)
 
         if event is None:
             create_dto = CreateEventDto(
-                title=dto.title or "",
+                title=dto.title,
                 description=dto.description or "",
                 organization_id=-1,
                 end_date=dto.dates.end_date,
@@ -39,11 +37,11 @@ class DeduplicateEventUseCase:
             )
             event: Event = await self.event_create_use_case(create_dto)
 
-        mail: Mail = await self.mail_update_use_case(
-            UpdateMailDto(
-                id=dto.mail_id,
-                state=MailStateEnum.PROCESSED,
-                event_id=event.id,
+        if dto.mail_id is not None:
+            await self.mail_update_use_case(
+                UpdateMailDto(
+                    id=dto.mail_id,
+                    state=MailStateEnum.PROCESSED,
+                    event_id=event.id,
+                )
             )
-        )
-        return pair(mail=mail, event=event)

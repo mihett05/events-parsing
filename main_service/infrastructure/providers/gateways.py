@@ -1,16 +1,29 @@
-from dishka import Provider, Scope, provide
-from faststream.rabbit import RabbitBroker
+import logging
 
 from application.events.coordinator.gateway import CoordinatorGateway
-from infrastructure.api.gateways.events.publisher import (
-    RabbitMQCoordinatorGatewayPublisher,
+from application.events.usecases import DeduplicateEventUseCase
+from dishka import Provider, Scope, provide
+from faststream.broker.message import StreamMessage
+from faststream.rabbit import RabbitBroker
+
+from infrastructure.config import Config
+from infrastructure.rabbit.events import (
+    RabbitMQCoordinatorGateway,
 )
 
 
 class GatewaysProvider(Provider):
     scope = Scope.APP
 
-    broker = provide(source=RabbitBroker)
+    @provide
+    def broker(self, config: Config) -> RabbitBroker:
+        return RabbitBroker(config.rabbitmq_url, log_level=logging.DEBUG)
+
+    @provide(scope=Scope.REQUEST)
+    def create_use_case(
+        self, event: StreamMessage
+    ) -> DeduplicateEventUseCase: ...
+
     coordinator_publisher = provide(
-        source=RabbitMQCoordinatorGatewayPublisher, provides=CoordinatorGateway
+        source=RabbitMQCoordinatorGateway, provides=CoordinatorGateway
     )

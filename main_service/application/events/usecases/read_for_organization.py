@@ -1,6 +1,5 @@
 from domain.events.dtos import ReadOrganizationEventsDto
 from domain.events.entities import Event
-
 from domain.events.repositories import EventsRepository
 
 

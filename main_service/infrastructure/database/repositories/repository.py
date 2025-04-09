@@ -2,13 +2,13 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from sqlalchemy import Delete, Insert, Select, Update, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
@@ -74,12 +74,17 @@ class PostgresRepository(metaclass=ABCMeta):
         ]
 
     async def run_query_and_get_scalar_or_none(
-        self, query: Update | Insert | Delete | Select
+        self, query: Update | Insert | Delete
     ) -> ModelType | None:
         return (
             await self.session.execute(
                 self.config.add_options(query.returning(self.config.model))
             )
+        ).scalar_one_or_none()
+
+    async def get_scalar_or_none(self, query: Select) -> ModelType | None:
+        return (
+            await self.session.execute(self.config.add_options(query))
         ).scalar_one_or_none()
 
     async def create_models(

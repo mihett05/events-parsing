@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import func, DateTime, ForeignKey
+from domain.mails.enums import MailStateEnum
+from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column
 
-from domain.mails.enums import MailStateEnum
 from infrastructure.database.postgres import Base
 
 
