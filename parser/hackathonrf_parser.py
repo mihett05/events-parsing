@@ -5,7 +5,6 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-
 from events import Event
 
 URL = "https://www.хакатоны.рф/"
@@ -42,7 +41,9 @@ def parse_date(date_str: str, year: str):
         if not re.search(r"\d{4}", end_part):
             end_part = f"{end_part} {year}"
         if not re.search(r"\d{4}", start_part):
-            start_part = f"{start_part} {re.search(r'(\d{4})', end_part).group(1)}"
+            start_part = "{0} {1}".format(
+                start_part, re.search(r"\d{4}", end_part).group(1)
+            )
         start_part = parse_date_part(start_part)
         end_part = parse_date_part(end_part)
         return start_part, end_part
@@ -83,8 +84,12 @@ def parser(url: str = URL) -> list[Event]:
             else:
                 start_date = end_date = dates
 
-            registration_match = re.search(r"Регистрация:\s*до\s*(.*?)\n", description)
-            end_registration = parse_date(registration_match.group(1).strip(), "2024")
+            registration_match = re.search(
+                r"Регистрация:\s*до\s*(.*?)\n", description
+            )
+            end_registration = parse_date(
+                registration_match.group(1).strip(), "2024"
+            )
         except:
             continue
         events.append(
@@ -106,5 +111,7 @@ def write(data: list[Event]):
         for event in events:
             event["start_date"] = event["start_date"].strftime("%d-%m-%Y")
             event["end_date"] = event["end_date"].strftime("%d-%m-%Y")
-            event["end_registration"] = event["end_registration"].strftime("%d-%m-%Y")
+            event["end_registration"] = event["end_registration"].strftime(
+                "%d-%m-%Y"
+            )
         json.dump(events, file, ensure_ascii=False, indent=4)

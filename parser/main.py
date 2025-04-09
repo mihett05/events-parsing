@@ -1,5 +1,5 @@
 import asyncio
-from parser.gateway import app
+from gateway import app
 
 
 async def main():
