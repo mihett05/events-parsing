@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec poetry run python main.py
+exec poetry run python -u main.py

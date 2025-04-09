@@ -26,7 +26,7 @@ exchange = RabbitExchange(
     durable=True,
 )
 publish_queue = RabbitQueue(
-    name="publish",
+    name="consume",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",
@@ -48,8 +48,8 @@ async def fill_data():
             title=x.title,
             description=None,
             dates=DatesInfo(
-                x.start_date.strptime("%d-%m-%Y"),
-                x.end_date.strptime("%d-%m-%Y"),
+                x.start_date.strftime("%d-%m-%Y"),
+                x.end_date.strftime("%d-%m-%Y"),
                 x.end_registration.strftime("%d-%m-%Y"),
             ),
             type="Test",
@@ -60,7 +60,7 @@ async def fill_data():
     )
 
     for event in data:
-        await broker.publish(asdict(event), publish_queue)
+        await broker.publish(asdict(event), publish_queue, exchange=exchange)
 
 
 @broker.subscriber(subscribe_queue)

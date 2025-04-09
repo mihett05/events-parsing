@@ -101,7 +101,7 @@ def parser(url: str = URL) -> list[Event]:
                 description=description,
             )
         )
-        # print(events[-1])
+
     return events
 
 
