@@ -1,8 +1,9 @@
 from adaptix import P
 from adaptix._internal.conversion.facade.provider import link_function
-
 from domain.mails.entities import Mail
+
 from infrastructure.database.mappers import postgres_retort
+
 from .models import MailDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])

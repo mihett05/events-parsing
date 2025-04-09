@@ -1,10 +1,11 @@
 from adaptix import P
 from adaptix.conversion import link_function
-
 from application.events.dtos import UpdateEventDto
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
+
 from infrastructure.api.retort import pydantic_retort
+
 from .dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
@@ -23,7 +24,11 @@ map_create_dto_from_pydantic = retort.get_converter(
         link_function(
             lambda event: event.id,
             P[EventModel].id,
-        )
+        ),
+        link_function(
+            lambda event: event.created_at,
+            P[EventModel].created_at,
+        ),
     ]
 )
 def map_to_pydantic(event: Event) -> EventModel: ...

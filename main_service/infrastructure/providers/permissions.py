@@ -1,9 +1,8 @@
-from dishka import Provider, Scope, provide
-
 from application.auth.permissions import PermissionBuilder
+from dishka import Provider, Scope, provide
 
 
 class PermissionProvider(Provider):
     scope = Scope.REQUEST
 
-    events_repository = provide(source=PermissionBuilder)
+    builder = provide(source=PermissionBuilder)

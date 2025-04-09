@@ -1,5 +1,5 @@
 from domain.events.entities import Event
-from domain.exceptions import EntityNotFound, EntityAlreadyExists
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 
 
 class MailNotFound(EntityNotFound):

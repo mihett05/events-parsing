@@ -32,3 +32,21 @@ class MakeRepeatableEventDto:
     end_time: time
     start_day: WeekDayEnum
     end_day: WeekDayEnum
+
+
+@dataclass
+class DatesInfo:
+    start_date: datetime | None
+    end_date: datetime | None
+    end_registration: datetime | None
+
+
+@dataclass
+class EventInfo:
+    mail_id: int | None
+    title: str
+    description: str | None
+    dates: DatesInfo
+    type: str
+    format: str
+    location: str | None

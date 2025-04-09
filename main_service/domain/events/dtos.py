@@ -7,8 +7,9 @@ class CreateEventDto:
     title: str
     description: str
     organization_id: int
-    start_date: datetime
     end_date: datetime
+    start_date: datetime
+    end_registration: datetime
 
 
 @dataclass

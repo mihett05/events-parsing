@@ -1,9 +1,9 @@
+from domain.mails.entities import Mail
+from domain.mails.repositories import MailsRepository
+
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases.read import ReadMailUseCase
 from application.transactions import TransactionsGateway
-from domain.mails.entities import Mail
-
-from domain.mails.repositories import MailsRepository
 
 
 class UpdateMailUseCase:

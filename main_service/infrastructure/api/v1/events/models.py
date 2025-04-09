@@ -4,12 +4,13 @@ from infrastructure.api.models import CamelModel
 
 
 class EventModel(CamelModel):
-    id: int
     title: str
-    description: str
-
-    is_visible: bool
     created_at: datetime
-
-    end_date: datetime
     start_date: datetime
+
+    id: int
+    is_visible: bool
+    description: str | None
+
+    end_date: datetime | None
+    end_registration: datetime | None = None

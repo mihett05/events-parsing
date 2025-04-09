@@ -1,10 +1,9 @@
 from dishka import Provider, Scope, provide
-
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
+
 from infrastructure.database.repositories.events import EventsDatabaseRepository
 from infrastructure.database.repositories.mails import MailsDatabaseRepository
-
 
 
 class RepositoriesProvider(Provider):
