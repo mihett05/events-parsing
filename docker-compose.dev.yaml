@@ -31,15 +31,18 @@ services:
   backend:
     depends_on:
       - postgres
+      - rabbitmq
     links:
       - "postgres:postgres"
+      - "rabbitmq:rabbitmq"
     container_name: events-parsing-backend
-    restart: always
-    build: main_service/
+    build:
+      context: main_service
+      dockerfile: dev/Dockerfile
     env_file:
       - main_service/.env
     ports:
-      - 5000:5000
+      - 8000:8000
 
   adminer:
     links:

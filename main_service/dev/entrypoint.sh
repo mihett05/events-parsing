@@ -8,4 +8,4 @@ done
 
 echo "Docker is fully configured successfully."
 
-CMD ["poetry", "run", "uvicorn", "infrastructure.server:app", "--host", "0.0.0.0", "--port", "8080"]
+exec poetry run uvicorn infrastructure.server:app --host 0.0.0.0 --port 8000
