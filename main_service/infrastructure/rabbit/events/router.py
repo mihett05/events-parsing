@@ -32,6 +32,5 @@ queue = RabbitQueue(
 async def consume(
     model: EventInfoModel, deduplicate: FromDishka[DeduplicateEventUseCase]
 ):
-    print(model)
     dto: EventInfo = map_event_info_from_pydantic(model)
     return await deduplicate(dto)

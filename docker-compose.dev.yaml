@@ -35,7 +35,10 @@ services:
     links:
       - "postgres:postgres"
       - "rabbitmq:rabbitmq"
-    container_name: events-parsing-backend
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
     build:
       context: main_service
       dockerfile: dev/Dockerfile
@@ -43,6 +46,22 @@ services:
       - main_service/.env
     ports:
       - 8000:8000
+
+  parser:
+    depends_on:
+      - backend
+      - rabbitmq
+    links:
+      - "rabbitmq:rabbitmq"
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
+    build:
+      context: parser
+      dockerfile: dev/Dockerfile
+    env_file:
+      - main_service/.env
 
   adminer:
     links:
