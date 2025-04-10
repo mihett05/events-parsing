@@ -78,7 +78,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build-main, build-frontend]
+    needs: [build-main, build-frontend, build-parser]
 
     steps:
       - name: Checkout
