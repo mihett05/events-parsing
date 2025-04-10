@@ -28,6 +28,25 @@ services:
       timeout: 5s
       retries: 5
   
+  rabbit:
+    image: rabbitmq:3.13-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rabbit
+  
   caddy:
     image: caddy:2.9
     restart: always
@@ -51,14 +70,24 @@ services:
     networks:
       - postgres
       - caddy
+      - rabbit
     env_file:
       - ./main-service.env
   main-service-migrations:
-    image: ${MAIN_SERVICE_MIGRATIONS}
+    image: ${MAIN_SERVICE_MIGRATIONS_IMAGE}
     networks:
       - postgres
     env_file:
       - ./main-service.env
+
+  parser:
+    image: ${PARSER_IMAGE}
+    restart: always
+    networks:
+      - rabbit
+    env_file:
+      - ./parser.env
+  
   frontend:
     image: ${FRONTEND_IMAGE}
     restart: always
@@ -75,6 +104,8 @@ networks:
     driver: bridge
   caddy:
     driver: bridge
+  rabbit:
+    driver: bridge
 
 volumes:
   registry-data:
@@ -84,4 +115,6 @@ volumes:
   caddy-data:
     driver: local
   caddy-config:
+    driver: local
+  rabbitmq-data:
     driver: local

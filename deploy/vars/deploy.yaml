@@ -2,3 +2,4 @@ images:
   main_service: registry.events.lovepaw.ru/main-service:latest
   main_service_migrations: registry.events.lovepaw.ru/main-service-migrations:latest
   frontend: registry.events.lovepaw.ru/frontend:latest
+  parser: registry.events.lovepaw.ru/parser:latest
