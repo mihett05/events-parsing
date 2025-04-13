@@ -23,6 +23,8 @@ class EventInfo:
 @dataclass
 class Event:
     title: str
+    type: str
+    format: str
     start_date: datetime
 
     id: int | None = None

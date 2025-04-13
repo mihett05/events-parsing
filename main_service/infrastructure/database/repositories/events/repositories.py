@@ -76,6 +76,8 @@ class EventsDatabaseRepository(EventsRepository):
     async def create(self, dto: dtos.CreateEventDto) -> Event:
         event = Event(
             title=dto.title,
+            type=dto.type,
+            format=dto.format,
             description=dto.description,
             end_date=dto.end_date,
             start_date=dto.start_date,

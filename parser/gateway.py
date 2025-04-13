@@ -46,7 +46,7 @@ async def fill_data():
         lambda x: EventInfo(
             mail_id=None,
             title=x.title,
-            description=None,
+            description=x.description,
             dates=DatesInfo(
                 x.start_date.strftime("%d-%m-%Y"),
                 x.end_date.strftime("%d-%m-%Y"),
