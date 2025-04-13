@@ -99,6 +99,8 @@ def parser(url: str = URL) -> list[Event]:
                 end_date=end_date,
                 end_registration=end_registration,
                 description=description,
+                type='collect cotton',
+                format='nigger'
             )
         )
 
