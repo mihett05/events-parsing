@@ -5,6 +5,8 @@ from datetime import datetime
 @dataclass
 class CreateEventDto:
     title: str
+    type: str
+    format: str
     description: str
     organization_id: int
     end_date: datetime

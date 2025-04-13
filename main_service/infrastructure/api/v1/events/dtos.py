@@ -5,6 +5,8 @@ from infrastructure.api.models import CamelModel
 
 class CreateEventModelDto(CamelModel):
     title: str
+    type: str
+    format: str
     description: str
     organization_id: int
     end_date: datetime
