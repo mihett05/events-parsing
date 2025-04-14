@@ -4,8 +4,8 @@ import { MonthCalendar } from '@widgets/MonthCalendar';
 import { parseISO } from 'date-fns';
 import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
 import { CircularProgress } from '@mui/material';
-// import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
-import { mockEvents } from '@/shared/lib/mockEvents';
+import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
+// import { mockEvents } from '@/shared/lib/mockEvents';
 
 const initialCalendarDate = parseISO('2025-03-01');
 
@@ -24,8 +24,8 @@ export const CalendarPage: React.FC = () => {
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>
       <Box>
-        <MonthCalendar initialDate={initialCalendarDate} events={mockEvents} />
-        {/* <MonthCalendar initialDate={initialCalendarDate} events={formatEvents(events as ApiEvent[])} /> */}
+        {/* <MonthCalendar initialDate={initialCalendarDate} events={mockEvents} /> */}
+        <MonthCalendar initialDate={initialCalendarDate} events={formatEvents(events as ApiEvent[])} />
       </Box>
     </Container>
   );
