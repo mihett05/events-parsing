@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from dataclasses import asdict
 from typing import Iterable
@@ -40,8 +41,7 @@ subscribe_queue = RabbitQueue(
 )
 
 
-@app.after_startup
-async def fill_data():
+async def start_parsing():
     data: Iterable[EventInfo] = map(
         lambda x: EventInfo(
             mail_id=None,
@@ -61,6 +61,11 @@ async def fill_data():
 
     for event in data:
         await broker.publish(asdict(event), publish_queue, exchange=exchange)
+
+
+@app.after_startup
+async def fill_data():
+    asyncio.create_task(start_parsing())
 
 
 @broker.subscriber(subscribe_queue)
