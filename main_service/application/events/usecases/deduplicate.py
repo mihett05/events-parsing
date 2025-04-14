@@ -34,6 +34,8 @@ class DeduplicateEventUseCase:
                 end_date=dto.dates.end_date,
                 start_date=dto.dates.start_date,
                 end_registration=dto.dates.end_registration,
+                format=dto.format,
+                type=dto.type,
             )
             event: Event = await self.event_create_use_case(create_dto)
 
