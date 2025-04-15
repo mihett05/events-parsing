@@ -5,7 +5,7 @@ export interface CalendarEvent {
   endDate?: Date;
   isMultiDay?: boolean;
   description: string;
-  type: "hackaton" | "conference" | "other";
-  format: "online" | "offline" | "hybrid";
+  type: string;
+  format: string;
   color: string;
 }
