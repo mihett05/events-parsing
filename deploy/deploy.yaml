@@ -39,6 +39,13 @@
         owner: web
         group: web
         mode: "0777"
+    - name: Copy main service env
+      ansible.builtin.template:
+        src: ./parser.env.j2
+        dest: /var/www/events/parser.env
+        owner: web
+        group: web
+        mode: "0777"
     - name: Copy compose
       ansible.builtin.copy:
         src: ./docker-compose.yaml
