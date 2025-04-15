@@ -1,5 +1,5 @@
-import { CalendarEvent } from '../../../../../entities/Event';
-import { ESTIMATED_SINGLE_EVENT_HEIGHT, ESTIMATED_MORE_LINK_HEIGHT } from '../../../lib/constants';
+import { CalendarEvent } from '@entities/Event';
+import { ESTIMATED_SINGLE_EVENT_HEIGHT, ESTIMATED_MORE_LINK_HEIGHT } from '@widgets/MonthCalendar/lib/constants';
 
 interface CalculateVisibleLayoutParams {
   allSingleEvents: CalendarEvent[];

@@ -7,25 +7,31 @@ import { CircularProgress } from '@mui/material';
 import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
 // import { mockEvents } from '@/shared/lib/mockEvents';
 
-const initialCalendarDate = parseISO('2025-03-01');
+const initialCalendarDate = parseISO(new Date().toISOString());
 
 export const CalendarPage: React.FC = () => {
   const {
     data: events,
-    error,
+    // error,
     isLoading,
   } = useReadAllEventsV1EventsGetQuery({ page: 0, pageSize: 100000 });
-  console.log(events, error, isLoading);
 
   if (isLoading) {
-    return <CircularProgress />;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>
       <Box>
         {/* <MonthCalendar initialDate={initialCalendarDate} events={mockEvents} /> */}
-        <MonthCalendar initialDate={initialCalendarDate} events={formatEvents(events as ApiEvent[])} />
+        <MonthCalendar
+          initialDate={initialCalendarDate}
+          events={formatEvents(events as ApiEvent[])}
+        />
       </Box>
     </Container>
   );
