@@ -23,26 +23,16 @@ class DeduplicateEventUseCase:
         self.event_find_use_case = event_find_use_case
         self.event_create_use_case = event_create_use_case
 
-    async def __call__(self, dto: EventInfo):
+    async def __call__(self, mail_id: int | None, dto: CreateEventDto):
         event: Event | None = await self.event_find_use_case(dto)
 
         if event is None:
-            create_dto = CreateEventDto(
-                title=dto.title,
-                description=dto.description or "",
-                organization_id=-1,
-                end_date=dto.dates.end_date,
-                start_date=dto.dates.start_date,
-                end_registration=dto.dates.end_registration,
-                format=dto.format,
-                type=dto.type,
-            )
-            event: Event = await self.event_create_use_case(create_dto)
+            event: Event = await self.event_create_use_case(dto)
 
-        if dto.mail_id is not None:
+        if mail_id is not None:
             await self.mail_update_use_case(
                 UpdateMailDto(
-                    id=dto.mail_id,
+                    id=mail_id,
                     state=MailStateEnum.PROCESSED,
                     event_id=event.id,
                 )

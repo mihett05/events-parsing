@@ -2,6 +2,7 @@ import json
 import re
 from dataclasses import asdict
 from datetime import datetime
+from random import randint
 
 import requests
 from bs4 import BeautifulSoup
@@ -74,24 +75,15 @@ def parser(url: str = URL) -> list[Event]:
             br.replace_with("\n")
         description = description.text.strip()
 
-        dates_match = re.search(r"Хакатон:\s*(.*?)\n", description)
-        if not dates_match:
-            continue
-        try:
-            dates = parse_date(dates_match.group(1).strip(), "2024")
-            if isinstance(dates, tuple):
-                start_date, end_date = dates
-            else:
-                start_date = end_date = dates
+        year = randint(2025, 2025)
+        st_month, st_day = randint(4, 8), randint(9, 14)
+        end_month, end_day = randint(st_month, 12), randint(st_day, 28)
+        end_reg_month, end_reg_day = randint(1, st_month), randint(1, st_day)
 
-            registration_match = re.search(
-                r"Регистрация:\s*до\s*(.*?)\n", description
-            )
-            end_registration = parse_date(
-                registration_match.group(1).strip(), "2024"
-            )
-        except:
-            continue
+        start_date = datetime(year=year, month=st_month, day=st_day)
+        end_date = datetime(year=year, month=end_month, day=end_day)
+        end_registration = datetime(year=year, month=end_reg_month, day=end_reg_day)
+
         events.append(
             Event(
                 title=title,
@@ -99,8 +91,9 @@ def parser(url: str = URL) -> list[Event]:
                 end_date=end_date,
                 end_registration=end_registration,
                 description=description,
-                type="collect cotton",
-                format="nigger",
+                type="Хакатон",
+                format="Очно",
+                location='Unknown'
             )
         )
 
@@ -117,3 +110,7 @@ def write(data: list[Event]):
                 "%d-%m-%Y"
             )
         json.dump(events, file, ensure_ascii=False, indent=4)
+
+
+if __name__ == "__main__":
+    write(parser())

@@ -25,6 +25,7 @@ class Event:
     title: str
     type: str
     format: str
+    location: str | None
     start_date: datetime
 
     id: int | None = None
