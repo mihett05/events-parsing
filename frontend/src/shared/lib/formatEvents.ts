@@ -6,15 +6,15 @@ export interface ApiEvent {
   description: string;
   endDate: string;
   endRegistration: string;
+  format: string;
   id: number;
   isVisible: boolean;
   startDate: string;
   title: string;
+  type: string;
 }
 
 export const formatEvents = (events: ApiEvent[]): CalendarEvent[] => {
-  const typePossible = ['hackaton', 'Blah-blah-blah', 'Olympiad'];
-  const formatPossible = ['online', 'offline', 'hybrid'];
   const colors = [
     '#FF6B6B', // Красный
     '#4ECDC4', // Бирюзовый
@@ -34,8 +34,8 @@ export const formatEvents = (events: ApiEvent[]): CalendarEvent[] => {
       endDate: end,
       isMultiDay: Math.abs(differenceInDays(start, end)) > 0,
       description: value.description,
-      type: typePossible[Math.floor(Math.random() * typePossible.length)],
-      format: formatPossible[Math.floor(Math.random() * formatPossible.length)],
+      type: value.type,
+      format: value.format,
       color: colors[index % colors.length],
     };
 
