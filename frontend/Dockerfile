@@ -9,6 +9,9 @@ RUN pnpm i
 
 COPY . .
 
+ARG VITE_BASE_API_URL
+ENV VITE_BASE_API_URL=$VITE_BASE_API_URL
+
 RUN pnpm run build
 
 
