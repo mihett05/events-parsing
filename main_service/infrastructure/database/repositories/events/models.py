@@ -26,6 +26,7 @@ class EventDatabaseModel(Base):
     type: Mapped[str]
     title: Mapped[str]
     format: Mapped[str]
+    location: Mapped[str | None]
 
     description: Mapped[str | None] = mapped_column(nullable=True, default=None)
     is_visible: Mapped[bool] = mapped_column(default=True)

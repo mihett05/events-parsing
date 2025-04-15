@@ -7,8 +7,8 @@ class CreateEventDto:
     title: str
     type: str
     format: str
-    description: str
-    organization_id: int
+    location: str | None
+    description: str | None
     end_date: datetime
     start_date: datetime
     end_registration: datetime

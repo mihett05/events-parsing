@@ -8,7 +8,8 @@ from faststream.rabbit import (
     RabbitRouter,
 )
 
-from infrastructure.rabbit.events.mappers import map_event_info_from_pydantic
+from infrastructure.rabbit.events.mappers import map_event_info_from_pydantic, \
+    map_event_info_to_create_dto
 from infrastructure.rabbit.events.models import EventInfoModel
 
 router = RabbitRouter()
@@ -32,5 +33,6 @@ queue = RabbitQueue(
 async def consume(
     model: EventInfoModel, deduplicate: FromDishka[DeduplicateEventUseCase]
 ):
-    dto: EventInfo = map_event_info_from_pydantic(model)
-    return await deduplicate(dto)
+    event_info: EventInfo = map_event_info_from_pydantic(model)
+    dto = map_event_info_to_create_dto(event_info)
+    return await deduplicate(event_info.mail_id, dto)
