@@ -1,7 +1,7 @@
 import json
 import re
 from dataclasses import asdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import randint
 
 import requests
@@ -76,13 +76,11 @@ def parser(url: str = URL) -> list[Event]:
         description = description.text.strip()
 
         year = randint(2025, 2025)
-        st_month, st_day = randint(4, 8), randint(9, 14)
-        end_month, end_day = randint(st_month, 12), randint(st_day, 28)
-        end_reg_month, end_reg_day = randint(1, st_month), randint(1, st_day)
+        st_month, st_day = randint(1, 10), randint(1, 28)
 
         start_date = datetime(year=year, month=st_month, day=st_day)
-        end_date = datetime(year=year, month=end_month, day=end_day)
-        end_registration = datetime(year=year, month=end_reg_month, day=end_reg_day)
+        end_date = start_date + timedelta(randint(1, 10))
+        end_registration = start_date - timedelta(randint(1, 10))
 
         events.append(
             Event(
