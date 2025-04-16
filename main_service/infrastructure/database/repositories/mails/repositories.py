@@ -1,14 +1,15 @@
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
+
 import domain.mails.dtos as dtos
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 from domain.mails.exceptions import MailAlreadyExists, MailNotFound
 from domain.mails.repositories import MailsRepository
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
-from .mappers import map_from_db, map_to_db
+from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import MailDatabaseModel
 
 
@@ -20,6 +21,7 @@ class MailsDatabaseRepository(MailsRepository):
                 entity=Mail,
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
+                create_model_mapper=map_create_dto_to_model,
                 not_found_exception=MailNotFound,
                 already_exists_exception=MailAlreadyExists,
             )
@@ -50,13 +52,7 @@ class MailsDatabaseRepository(MailsRepository):
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateMailDto) -> Mail:
-        event = Mail(
-            theme=dto.theme,
-            sender=dto.sender,
-            raw_content=dto.raw_content,
-            state=dto.state,
-        )
-        return await self.__repository.create(event)
+        return await self.__repository.create(dto)
 
     async def read(self, mail_id: int) -> Mail:
         return await self.__repository.read(mail_id)

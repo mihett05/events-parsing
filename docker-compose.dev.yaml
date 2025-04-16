@@ -45,7 +45,7 @@ services:
     env_file:
       - main_service/dev/.env
     ports:
-      - 8000:8000
+      - 8000:8080
 
   parser:
     depends_on:
@@ -62,17 +62,6 @@ services:
       dockerfile: ./Dockerfile
     env_file:
       - main_service/dev/.env
-
-  adminer:
-    links:
-      - "postgres:postgres"
-    container_name: adminer
-    image: adminer
-    restart: always
-    environment:
-      host: localhost
-    ports:
-      - 8080:8080
 
 volumes:
   postgres-data:

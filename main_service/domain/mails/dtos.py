@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.mails.enums import MailStateEnum
 
@@ -10,7 +10,7 @@ class CreateMailDto:
     sender: str
 
     raw_content: bytes
-    created_at: datetime
+    received_date: date
     state: MailStateEnum = MailStateEnum.UNPROCESSED
 
 

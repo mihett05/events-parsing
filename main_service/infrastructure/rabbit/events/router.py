@@ -1,5 +1,3 @@
-from application.events.dtos import EventInfo
-from application.events.usecases import DeduplicateEventUseCase
 from dishka import FromDishka
 from faststream.rabbit import (
     ExchangeType,
@@ -8,8 +6,12 @@ from faststream.rabbit import (
     RabbitRouter,
 )
 
-from infrastructure.rabbit.events.mappers import map_event_info_from_pydantic, \
-    map_event_info_to_create_dto
+from application.events.dtos import EventInfo
+from application.events.usecases import DeduplicateEventUseCase
+from infrastructure.rabbit.events.mappers import (
+    map_event_info_from_pydantic,
+    map_event_info_to_create_dto,
+)
 from infrastructure.rabbit.events.models import EventInfoModel
 
 router = RabbitRouter()

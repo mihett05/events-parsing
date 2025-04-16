@@ -91,7 +91,7 @@ def parser(url: str = URL) -> list[Event]:
                 description=description,
                 type="Хакатон",
                 format="Очно",
-                location='Unknown'
+                location="Unknown",
             )
         )
 

@@ -2,19 +2,19 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from sqlalchemy import Delete, Insert, Select, Update, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
-CreateEntity = TypeVar("CreateEntity")
 ModelType = TypeVar("ModelType")
+CreateModelType = TypeVar("CreateModelType")
 
 
 @dataclass
@@ -23,6 +23,7 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     entity: type[Entity]
     entity_mapper: Callable[[ModelType], Entity]
     model_mapper: Callable[[Entity], ModelType]
+    create_model_mapper: Callable[[CreateModelType], ModelType]
     not_found_exception: type[EntityNotFound] = EntityNotFound
     already_exists_exception: type[EntityAlreadyExists] = EntityAlreadyExists
 
@@ -115,8 +116,8 @@ class PostgresRepository(metaclass=ABCMeta):
             self.config.get_select_all_query(dto)
         )
 
-    async def create(self, entity: Entity) -> Entity:
-        model = self.config.model_mapper(entity)
+    async def create(self, dto: CreateModelType) -> Entity:
+        model = self.config.create_model_mapper(dto)
         try:
             self.session.add(model)
             if self._should_commit():
