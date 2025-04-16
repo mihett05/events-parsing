@@ -12,7 +12,7 @@ class UpdateUserOrganizationRoleUsecase:
 
     async def __call__(self, dto: UpdateUserOrganizationRoleDto, actor: User) -> UserOrganizationRole:
         async with self.__transaction:
-            role = await self.__repository.read(UpdateUserOrganizationRoleDto.id)
+            role = await self.__repository.read(dto.id)
             role.role = dto.role
             await self.__repository.update(role)
         return role
