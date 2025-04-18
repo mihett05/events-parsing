@@ -17,7 +17,7 @@ exchange = RabbitExchange(
     durable=True,
 )
 queue = RabbitQueue(
-    name="publish",
+    name="process-mails",
     durable=True,
     auto_delete=True,
     routing_key="events.mails",

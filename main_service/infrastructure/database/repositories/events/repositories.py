@@ -1,5 +1,4 @@
 import domain.events.dtos as dtos
-from application.events.dtos import EventInfo
 from domain.events.entities import Event
 from domain.events.exceptions import EventAlreadyExists, EventNotFound
 from domain.events.repositories import EventsRepository
@@ -8,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
-from .mappers import map_from_db, map_to_db, map_create_dto_to_entity
+from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import EventDatabaseModel
 
 
@@ -20,6 +19,7 @@ class EventsDatabaseRepository(EventsRepository):
                 entity=Event,
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
+                create_model_mapper=map_create_dto_to_model,
                 not_found_exception=EventNotFound,
                 already_exists_exception=EventAlreadyExists,
             )
@@ -51,8 +51,7 @@ class EventsDatabaseRepository(EventsRepository):
             EventDatabaseModel.title.ilike(event_info.title),
             EventDatabaseModel.end_date == event_info.end_date,
             EventDatabaseModel.start_date == event_info.start_date,
-            EventDatabaseModel.end_registration
-            == event_info.end_registration,
+            EventDatabaseModel.end_registration == event_info.end_registration,
         )
         model: (
             EventDatabaseModel | None
@@ -74,8 +73,7 @@ class EventsDatabaseRepository(EventsRepository):
         raise NotImplementedError("Method is unavailable for now")
 
     async def create(self, dto: dtos.CreateEventDto) -> Event:
-        event = map_create_dto_to_entity(dto)
-        return await self.__repository.create(event)
+        return await self.__repository.create(dto)
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)

@@ -8,8 +8,10 @@ from faststream.rabbit import (
     RabbitRouter,
 )
 
-from infrastructure.rabbit.events.mappers import map_event_info_from_pydantic, \
-    map_event_info_to_create_dto
+from infrastructure.rabbit.events.mappers import (
+    map_event_info_from_pydantic,
+    map_event_info_to_create_dto,
+)
 from infrastructure.rabbit.events.models import EventInfoModel
 
 router = RabbitRouter()

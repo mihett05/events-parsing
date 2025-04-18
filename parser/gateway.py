@@ -3,6 +3,8 @@ import logging
 from dataclasses import asdict
 from typing import Iterable
 
+from config import get_config
+from events import DatesInfo, EventInfo
 from faststream import FastStream
 from faststream.rabbit import (
     ExchangeType,
@@ -10,9 +12,6 @@ from faststream.rabbit import (
     RabbitExchange,
     RabbitQueue,
 )
-
-from config import get_config
-from events import DatesInfo, EventInfo
 from hackathonrf_parser import parser as parse_data
 from pipeline import pipeline
 
@@ -27,14 +26,14 @@ exchange = RabbitExchange(
     durable=True,
 )
 publish_queue = RabbitQueue(
-    name="consume",
+    name="process-events",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",
 )
 
 subscribe_queue = RabbitQueue(
-    name="publish",
+    name="process-mails",
     durable=True,
     auto_delete=True,
     routing_key="events.mails",
