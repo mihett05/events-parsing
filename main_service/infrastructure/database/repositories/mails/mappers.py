@@ -3,9 +3,9 @@ from adaptix._internal.conversion.facade.provider import (
     allow_unlinked_optional,
     link_function,
 )
-
 from domain.mails.dtos import CreateMailDto
 from domain.mails.entities import Mail
+
 from infrastructure.database.mappers import postgres_retort
 
 from .models import MailDatabaseModel
@@ -38,7 +38,7 @@ def map_to_db(mail: Mail) -> MailDatabaseModel: ...
         allow_unlinked_optional(P[MailDatabaseModel].id),
         allow_unlinked_optional(P[MailDatabaseModel].event_id),
         allow_unlinked_optional(P[MailDatabaseModel].created_at),
-        allow_unlinked_optional(P[MailDatabaseModel].ded_line),
+        allow_unlinked_optional(P[MailDatabaseModel].retry_after),
     ]
 )
 def map_create_dto_to_model(dto: CreateMailDto) -> MailDatabaseModel: ...

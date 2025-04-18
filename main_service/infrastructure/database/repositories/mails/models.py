@@ -1,10 +1,10 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 
+from domain.mails.enums import MailStateEnum
 from sqlalchemy import Date, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column
 
-from domain.mails.enums import MailStateEnum
 from infrastructure.database.postgres import Base
 
 
@@ -18,11 +18,9 @@ class MailDatabaseModel(Base):
 
     received_date: Mapped[date] = mapped_column(Date)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False), server_default=func.now()
+        DateTime(timezone=True), server_default=func.now()
     )
-    ded_line: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False), server_default=func.now() + timedelta(minutes=30)
-    )
+    retry_after: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     theme: Mapped[str]
     sender: Mapped[str]

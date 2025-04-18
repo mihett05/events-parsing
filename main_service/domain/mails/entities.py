@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from datetime import date, datetime
+from dataclasses import dataclass, field
+from datetime import date, datetime, timedelta
 
 from .enums import MailStateEnum
 
@@ -11,9 +11,9 @@ class Mail:
     received_date: date
 
     raw_content: bytes
+    retry_after: datetime
     state: MailStateEnum
 
     created_at: datetime = None
-    ded_line: datetime = None
     id: int | None = None
     event_id: int | None = None

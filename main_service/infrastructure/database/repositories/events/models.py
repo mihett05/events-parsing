@@ -11,16 +11,16 @@ class EventDatabaseModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False), server_default=func.now()
+        DateTime(timezone=True), server_default=func.now()
     )
 
-    start_date: Mapped[datetime] = mapped_column(DateTime(timezone=False))
+    start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     end_date: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=False), default=None
+        DateTime(timezone=True), default=None
     )
     end_registration: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=False), default=None
+        DateTime(timezone=True), default=None
     )
 
     type: Mapped[str]

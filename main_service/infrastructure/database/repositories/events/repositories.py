@@ -1,11 +1,10 @@
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
-
 import domain.events.dtos as dtos
 from domain.events.entities import Event
 from domain.events.exceptions import EventAlreadyExists, EventNotFound
 from domain.events.repositories import EventsRepository
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db

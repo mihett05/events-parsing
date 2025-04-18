@@ -45,7 +45,7 @@ class MailsMemoryRepository(MailsRepository):
             mail
             for mail in data
             if mail.state == MailStateEnum.UNPROCESSED
-            and mail.ded_line >= datetime.utcnow()
+            and mail.retry_after >= datetime.utcnow()
         ]
 
     async def update(self, mail: Mail) -> Mail:

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from datetime import date, datetime
+from dataclasses import dataclass, field
+from datetime import date, datetime, timedelta
 
 from domain.mails.enums import MailStateEnum
 
@@ -12,6 +12,9 @@ class CreateMailDto:
     raw_content: bytes
     received_date: date
     state: MailStateEnum = MailStateEnum.UNPROCESSED
+    retry_after: datetime = field(
+        default_factory=lambda: datetime.now() + timedelta(minutes=30)
+    )
 
 
 @dataclass

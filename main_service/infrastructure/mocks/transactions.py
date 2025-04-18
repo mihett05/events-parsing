@@ -1,4 +1,4 @@
-from application.transactions import TransactionsGateway, Transaction
+from application.transactions import Transaction, TransactionsGateway
 
 
 class MockTransaction(Transaction):
