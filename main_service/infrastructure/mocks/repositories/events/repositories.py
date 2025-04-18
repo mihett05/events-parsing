@@ -62,7 +62,7 @@ class EventsMemoryRepository(EventsRepository):
 
     async def read_all(self, dto: ReadAllEventsDto) -> list[Event]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size:(dto.page + 1) * dto.page_size]
+        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)

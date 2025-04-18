@@ -5,6 +5,5 @@ from domain.mails.entities import Mail
 
 
 class MemoryCoordinatorGateway(CoordinatorGateway):
-
     async def run(self, mails: list[Mail]):
         await asyncio.sleep(1)  # imitation of publishing mails to process

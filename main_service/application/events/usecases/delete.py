@@ -1,12 +1,11 @@
-from domain.events.entities import Event
-from domain.events.repositories import EventsRepository
-from domain.users.entities import User
-
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.events.permissions import EventPermissionProvider
 from application.events.usecases.read import ReadEventUseCase
 from application.transactions import TransactionsGateway
+from domain.events.entities import Event
+from domain.events.repositories import EventsRepository
+from domain.users.entities import User
 
 
 class DeleteEventUseCase:

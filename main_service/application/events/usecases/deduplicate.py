@@ -3,17 +3,18 @@ from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
 from domain.mails.enums import MailStateEnum
+
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
 
 
 class DeduplicateEventUseCase:
     def __init__(
-            self,
-            mail_read_use_case: ReadMailUseCase,
-            mail_update_use_case: UpdateMailUseCase,
-            event_find_use_case: FindEventUseCase,
-            event_create_use_case: CreateEventUseCase,
+        self,
+        mail_read_use_case: ReadMailUseCase,
+        mail_update_use_case: UpdateMailUseCase,
+        event_find_use_case: FindEventUseCase,
+        event_create_use_case: CreateEventUseCase,
     ):
         self.mail_read_use_case = mail_read_use_case
         self.mail_update_use_case = mail_update_use_case
