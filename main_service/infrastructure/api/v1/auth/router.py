@@ -32,7 +32,7 @@ async def login_user(
         content=UserWithToken(
             user=map_to_pydantic(user),
             access_token=tokens_pair.access_token,
-        ).model_dump(by_alias=True),
+        ).model_dump_json(by_alias=True),
     )
     response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token)
     return response
@@ -51,7 +51,7 @@ async def register_user(
         content=UserWithToken(
             user=map_to_pydantic(user),
             access_token=tokens_pair.access_token,
-        ).model_dump(by_alias=True),
+        ).model_dump_json(by_alias=True),
     )
     response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token)
     return response

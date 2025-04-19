@@ -8,7 +8,7 @@ from domain.users.exceptions import UserAlreadyExists, UserNotFound
 from domain.users.repositories import UsersRepository
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
-from .mappers import map_from_db, map_to_db, map_create_dto_to_db
+from .mappers import map_from_db, map_to_db
 from .models import UserDatabaseModel
 
 
@@ -20,7 +20,7 @@ class UsersDatabaseRepository(UsersRepository):
                 entity=User,
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
-                create_model_mapper=map_create_dto_to_db,
+                create_model_mapper=None,
                 not_found_exception=UserNotFound,
                 already_exists_exception=UserAlreadyExists,
             )
@@ -44,8 +44,8 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[entities.User]:
         return await self.__repository.read_all(dto)
 
-    async def create(self, dto: dtos.CreateUserDto) -> User:
-        return await self.__repository.create_from_dto(dto)
+    async def create(self, user: User) -> User:
+        return await self.__repository.create_from_entity(user)
 
     async def read(self, user_id: int) -> User:
         return await self.__repository.read(user_id)
