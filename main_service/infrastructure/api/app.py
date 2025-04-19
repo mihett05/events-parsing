@@ -1,19 +1,20 @@
 import asyncio
 import contextlib
 
-from application.events.usecases import ParseEventsUseCase
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
 
+from application.auth.exceptions import InvalidCredentialsError
+from application.events.usecases import ParseEventsUseCase
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
@@ -78,6 +79,15 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     ):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(exc)},
+        )
+
+    @app.exception_handler(InvalidCredentialsError)
+    async def invalid_credentials_exception_handler(
+        _: Request, exc: InvalidCredentialsError
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": str(exc)},
         )
 

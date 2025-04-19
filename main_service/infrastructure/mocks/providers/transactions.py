@@ -1,5 +1,6 @@
-from application.transactions import TransactionsGateway
 from dishka import Provider, Scope, provide
+
+from application.transactions import TransactionsGateway
 
 from ..transactions import TransactionsMockGateway
 

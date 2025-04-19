@@ -1,11 +1,10 @@
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
+from application.auth.tokens.dtos import PasswordDto
 from application.auth.tokens.gateways import SecurityGateway
 from domain.users.entities import User
 from domain.users.exceptions import UserNotFound
 from domain.users.repositories import UsersRepository
-
-from application.auth.tokens.dtos import PasswordDto
 
 
 class AuthenticateUseCase:

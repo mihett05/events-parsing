@@ -4,10 +4,10 @@ from datetime import datetime
 
 @dataclass
 class User:
-    id: int
     email: str
 
     fullname: str
+    id: int | None = None
     is_active: bool = True
 
     salt: str = None

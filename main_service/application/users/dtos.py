@@ -3,6 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class UpdateUserDto:
-    id: int
+    user_id: int
     fullname: str
     telegram_id: int | None = None

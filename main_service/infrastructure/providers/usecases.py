@@ -1,6 +1,9 @@
+from dishka import Provider, Scope, provide_all
+
+import application.auth.usecases as auth_use_cases
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
-from dishka import Provider, Scope, provide_all
+import application.users.usecases as users_use_cases
 
 
 class UseCasesProvider(Provider):
@@ -24,4 +27,20 @@ class UseCasesProvider(Provider):
         mails_use_cases.ReadMailUseCase,
         mails_use_cases.ReadUnprocessedMailUseCase,
         mails_use_cases.UpdateMailUseCase,
+    )
+
+    users = provide_all(
+        users_use_cases.ReadUserUseCase,
+        users_use_cases.UpdateUserUseCase,
+        users_use_cases.DeleteUserUseCase,
+        users_use_cases.ReadAllUsersUseCase,
+        users_use_cases.CreateUserUseCase,
+    )
+
+    auth = provide_all(
+        auth_use_cases.RegisterUseCase,
+        auth_use_cases.LoginUseCase,
+        auth_use_cases.AuthenticateUseCase,
+        auth_use_cases.AuthorizeUseCase,
+        auth_use_cases.CreateTokenPairUseCase,
     )

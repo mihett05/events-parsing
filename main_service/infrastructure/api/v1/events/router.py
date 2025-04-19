@@ -1,11 +1,11 @@
-import application.events.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.events.dtos import ReadAllEventsDto
 from fastapi import APIRouter
 
+import application.events.usecases as use_cases
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
+from domain.events.dtos import ReadAllEventsDto
 from infrastructure.api.models import ErrorModel
 
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
@@ -18,7 +18,7 @@ async def read_all_events(
     page_size: int = 50,
 ):
     return map(
-        lambda event: mappers.map_to_pydantic(event),
+        mappers.map_to_pydantic,
         await use_case(ReadAllEventsDto(page=page, page_size=page_size)),
     )
 
