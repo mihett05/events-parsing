@@ -1,4 +1,5 @@
 import json
+from http.client import responses
 
 from config import get_config
 from events import DatesInfo, EventInfo
@@ -37,6 +38,35 @@ class OpenAiExtraction:
             **{**response_dict, "dates": DatesInfo(**response_dict["dates"])}
         )
 
+    def extract_list(self, text: str) -> list[EventInfo]:
+        result = []
+        completion = self.client.chat.completions.create(
+            extra_body={},
+            model=self.model,
+            messages=[
+                {"role": "user", "content": self.init_prompt},
+                {"role": "user", "content": text},
+            ],
+        )
+        print(completion)
+        r = completion.choices[0].message.content
+        try:
+            response_dict = json.loads(
+            r.replace("```", "").replace("json", "").strip()
+            )
+        except:
+            return result
+        for item in response_dict:
+            try:
+                result.append(EventInfo(
+                    **{**item, "dates": DatesInfo(**item["dates"])}
+                ))
+                print(result[-1])
+            except:
+                continue
+        return result
+
+
 
 def get_prompt():
     with open("./init_prompt.txt", encoding="UTF-8") as f:
@@ -53,3 +83,6 @@ api = OpenAiExtraction(
 
 def extract_features(text: str) -> EventInfo:
     return api.extract(text)
+
+def extract_list(text: str) -> list[EventInfo]:
+    return api.extract_list(text)

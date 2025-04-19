@@ -1,112 +1,40 @@
 import json
-import re
 from dataclasses import asdict
-from datetime import datetime, timedelta
-from random import randint
 
 import requests
 from bs4 import BeautifulSoup
-from events import Event
+from events import EventInfo
+from extraction import extract_list
 
 URL = "https://www.хакатоны.рф/"
-MONTH_NUM = {
-    "января": "01",
-    "февраля": "02",
-    "марта": "03",
-    "апреля": "04",
-    "мая": "05",
-    "июня": "06",
-    "июля": "07",
-    "августа": "08",
-    "сентября": "09",
-    "октября": "10",
-    "ноября": "11",
-    "декабря": "12",
-}
 
-
-def clear_date(date_str: str):
-    date_str = date_str.lower().replace("до", "").replace("г.", "")
-    date_str = date_str.replace("с", "").replace("по", "-")
-    date_str = re.sub(r"[—–]", "-", date_str)
-    date_str = date_str.replace(" - ", "-").strip()
-    return date_str
-
-
-def parse_date(date_str: str, year: str):
-    date_str = clear_date(date_str)
-    if "-" in date_str:
-        start_part, end_part = date_str.split("-")
-        if not re.search(r"[а-я]{3,}", start_part):
-            start_part = f"{start_part} {end_part.split()[1]}"
-        if not re.search(r"\d{4}", end_part):
-            end_part = f"{end_part} {year}"
-        if not re.search(r"\d{4}", start_part):
-            start_part = "{0} {1}".format(
-                start_part, re.search(r"\d{4}", end_part).group(1)
-            )
-        start_part = parse_date_part(start_part)
-        end_part = parse_date_part(end_part)
-        return start_part, end_part
-    else:
-        if not re.search(r"\d{4}", date_str):
-            date_str = f"{date_str} {year}"
-        return parse_date_part(date_str)
-
-
-def parse_date_part(date_str: str):
-    day, month, year = date_str.split()
-    month = MONTH_NUM.get(month, "01")
-    return datetime.strptime(f"{day}-{month}-{year}", "%d-%m-%Y")
-
-
-def parser(url: str = URL) -> list[Event]:
+def parser(url: str = URL) -> list[EventInfo]:
     response = requests.get(url)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
     events = []
 
-    for item in soup.select("div.t776__textwrapper"):
-        title = item.select_one(".t776__title").text.strip()
-
-        description = item.select_one(".t776__descr")
-        for br in description.select("br"):
-            br.replace_with("\n")
-        description = description.text.strip()
-
-        year = randint(2025, 2025)
-        st_month, st_day = randint(1, 10), randint(1, 28)
-
-        start_date = datetime(year=year, month=st_month, day=st_day)
-        end_date = start_date + timedelta(randint(1, 10))
-        end_registration = start_date - timedelta(randint(1, 10))
-
-        events.append(
-            Event(
-                title=title,
-                start_date=start_date,
-                end_date=end_date,
-                end_registration=end_registration,
-                description=description,
-                type="Хакатон",
-                format="Очно",
-                location="Unknown",
-            )
-        )
-
+    items = soup.find_all('div', attrs={'data-record-type': lambda x: x in ['396', '776']})
+    year = "2025"
+    text = ""
+    for item in items:
+        if item.get('data-record-type') == '396':
+            year = item.text.strip()
+        else:
+            for event in item.select("div.t776__textwrapper"):
+                add_part = str(year) + " год\n" + event.text.strip() + "\n" + "-"*3 + "\n"
+                if len(text + add_part) > 5000:
+                    events += (extract_list(text))
+                    text = add_part
+                else:
+                    text += add_part
     return events
 
 
-def write(data: list[Event]):
+def write(data: list[EventInfo]):
     with open("output.json", "w", encoding="utf8") as file:
         events = list(map(asdict, data))
-        for event in events:
-            event["start_date"] = event["start_date"].strftime("%d-%m-%Y")
-            event["end_date"] = event["end_date"].strftime("%d-%m-%Y")
-            event["end_registration"] = event["end_registration"].strftime(
-                "%d-%m-%Y"
-            )
         json.dump(events, file, ensure_ascii=False, indent=4)
 
 
