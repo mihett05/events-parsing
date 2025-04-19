@@ -1,5 +1,4 @@
 import json
-from http.client import responses
 
 from config import get_config
 from events import DatesInfo, EventInfo

@@ -27,14 +27,14 @@ exchange = RabbitExchange(
     durable=True,
 )
 publish_queue = RabbitQueue(
-    name="consume",
+    name="process-events",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",
 )
 
 subscribe_queue = RabbitQueue(
-    name="publish",
+    name="process-mails",
     durable=True,
     auto_delete=True,
     routing_key="events.mails",
