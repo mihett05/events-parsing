@@ -12,6 +12,9 @@ class UsersRepository(metaclass=ABCMeta):
     async def read(self, user_id: int) -> entities.User: ...
 
     @abstractmethod
+    async def read_by_email(self, email: str) -> entities.User: ...
+
+    @abstractmethod
     async def read_all(
         self, dto: dtos.ReadAllUsersDto
     ) -> list[entities.User]: ...
