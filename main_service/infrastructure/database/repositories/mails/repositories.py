@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
@@ -38,7 +40,8 @@ class MailsDatabaseRepository(MailsRepository):
         def get_select_all_query(self, dto: dtos.ReadAllMailsDto) -> Select:
             return (
                 select(self.model)
-                .filter_by(state=MailStateEnum.UNPROCESSED)
+                .where(self.model.state == MailStateEnum.UNPROCESSED)
+                .where(self.model.retry_after < datetime.now(timezone.utc))
                 .order_by(self.model.id.desc())
                 .offset(dto.page * dto.page_size)
                 .limit(dto.page_size)
