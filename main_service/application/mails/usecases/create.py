@@ -9,3 +9,11 @@ class CreateMailUseCase:
 
     async def __call__(self, dto: CreateMailDto) -> Mail:
         return await self.__repository.create(dto)
+
+
+class CreateMailsUseCase:
+    def __init__(self, repository: MailsRepository):
+        self.__repository = repository
+
+    async def __call__(self, dtos: list[CreateMailDto]) -> list[Mail]:
+        return await self.__repository.create_many(dtos)
