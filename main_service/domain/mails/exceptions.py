@@ -1,5 +1,5 @@
 from domain.events.entities import Event
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExists, EntityNotFound, EntityException
 
 
 class MailNotFound(EntityNotFound):
@@ -8,5 +8,11 @@ class MailNotFound(EntityNotFound):
 
 
 class MailAlreadyExists(EntityAlreadyExists):
+    def __init__(self):
+        super().__init__(Event)
+
+
+class FailedParseMailError(EntityException):
+
     def __init__(self):
         super().__init__(Event)

@@ -18,3 +18,6 @@ class MailsRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def update(self, event: entities.Mail) -> entities.Mail: ...
+
+    @abstractmethod
+    async def create_many(self, dtos: list[dtos.CreateMailDto]) -> list[entities.Mail]: ...

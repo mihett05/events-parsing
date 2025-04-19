@@ -38,6 +38,17 @@ exceptiongroup = ">=1,<2"
 yarl = "*"
 
 [[package]]
+name = "aioimaplib"
+version = "2.0.1"
+description = "Python asyncio IMAP4rev1 client library"
+optional = false
+python-versions = "<4.0,>=3.9"
+files = [
+    {file = "aioimaplib-2.0.1-py3-none-any.whl", hash = "sha256:727e00c35cf25106bd34611dddd6e2ddf91a5f1a7e72d9269f3ce62486b31e14"},
+    {file = "aioimaplib-2.0.1.tar.gz", hash = "sha256:5a494c3b75f220977048f5eb2c7ba9c0570a3148aaf38bee844e37e4d7af8648"},
+]
+
+[[package]]
 name = "aiormq"
 version = "6.8.1"
 description = "Pure python AMQP asynchronous client library"
@@ -1245,4 +1256,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "198ce66dd111806f83a73e9494301603dfdf03aa4e45f46a2e620edfa1b59b7b"
+content-hash = "82584d0856921d2b2de451b85026d1a0f615ac8c359c6e6581d932ce8cd89366"
