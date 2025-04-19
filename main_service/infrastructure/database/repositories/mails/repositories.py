@@ -25,15 +25,6 @@ class MailsDatabaseRepository(MailsRepository):
                 already_exists_exception=MailAlreadyExists,
             )
 
-        def extract_id_from_entity(self, entity: Mail) -> Id:
-            return entity.id
-
-        def extract_id_from_model(self, model: MailDatabaseModel) -> Id:
-            return model.id
-
-        def get_options(self) -> list[LoaderOption]:
-            return []
-
         def get_select_all_query(self, dto: dtos.ReadAllMailsDto) -> Select:
             return (
                 select(self.model)
@@ -51,7 +42,7 @@ class MailsDatabaseRepository(MailsRepository):
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateMailDto) -> Mail:
-        return await self.__repository.create(dto)
+        return await self.__repository.create_from_dto(dto)
 
     async def read(self, mail_id: int) -> Mail:
         return await self.__repository.read(mail_id)

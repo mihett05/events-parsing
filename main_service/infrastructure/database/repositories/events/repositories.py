@@ -4,9 +4,8 @@ from domain.events.exceptions import EventAlreadyExists, EventNotFound
 from domain.events.repositories import EventsRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
 
-from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
+from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import EventDatabaseModel
 
@@ -23,15 +22,6 @@ class EventsDatabaseRepository(EventsRepository):
                 not_found_exception=EventNotFound,
                 already_exists_exception=EventAlreadyExists,
             )
-
-        def extract_id_from_entity(self, entity: Event) -> Id:
-            return entity.id
-
-        def extract_id_from_model(self, model: EventDatabaseModel) -> Id:
-            return model.id
-
-        def get_options(self) -> list[LoaderOption]:
-            return []
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
             return (
@@ -73,7 +63,7 @@ class EventsDatabaseRepository(EventsRepository):
         raise NotImplementedError("Method is unavailable for now")
 
     async def create(self, dto: dtos.CreateEventDto) -> Event:
-        return await self.__repository.create(dto)
+        return await self.__repository.create_from_dto(dto)
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)

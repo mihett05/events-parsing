@@ -116,8 +116,7 @@ class PostgresRepository(metaclass=ABCMeta):
             self.config.get_select_all_query(dto)
         )
 
-    async def create(self, dto: CreateModelType) -> Entity:
-        model = self.config.create_model_mapper(dto)
+    async def __create(self, model: ModelType) -> Entity:
         try:
             self.session.add(model)
             if self._should_commit():
@@ -126,6 +125,14 @@ class PostgresRepository(metaclass=ABCMeta):
             return await self.read(self.config.extract_id_from_model(model))
         except IntegrityError:
             raise self.config.already_exists_exception()
+
+    async def create_from_dto(self, dto: CreateModelType) -> Entity:
+        model = self.config.create_model_mapper(dto)
+        return await self.__create(model)
+
+    async def create_from_entity(self, entity: Entity) -> Entity:
+        model = self.config.model_mapper(entity)
+        return await self.__create(model)
 
     async def update(self, entity: Entity) -> Entity:
         try:

@@ -1,18 +1,17 @@
 from dataclasses import dataclass
-
-
-@dataclass
-class TelegramProfile:
-    user_id: int
-    telegram_id: int
+from datetime import datetime
 
 
 @dataclass
 class User:
     id: int
     email: str
-    is_active: bool
+
     fullname: str
-    salt: str
-    hashed_password: str
-    profile: TelegramProfile | None
+    is_active: bool = True
+
+    salt: str = None
+    hashed_password: str = None
+
+    telegram_id: int | None = None
+    created_at: datetime = None
