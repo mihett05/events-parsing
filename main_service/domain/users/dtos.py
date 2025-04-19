@@ -4,11 +4,12 @@ from dataclasses import dataclass
 @dataclass
 class CreateUserDto:
     email: str
-    fullname: str
     password: str
+    fullname: str = ""
+    is_active: bool = True
 
 
 @dataclass
-class ReadUsersDto:
+class ReadAllUsersDto:
     page: int
     page_size: int

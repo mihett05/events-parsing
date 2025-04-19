@@ -1,11 +1,11 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import (
+from adaptix.conversion import (
     allow_unlinked_optional,
     link_function,
 )
+
 from domain.mails.dtos import CreateMailDto
 from domain.mails.entities import Mail
-
 from infrastructure.database.mappers import postgres_retort
 
 from .models import MailDatabaseModel

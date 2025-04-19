@@ -25,6 +25,8 @@ class Config(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
+    secret_key: str
+
     @computed_field
     @property
     def postgres_url(self) -> PostgresDsn:
