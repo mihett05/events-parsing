@@ -3,7 +3,7 @@ from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.dtos import PasswordDto
 from application.auth.tokens.gateways import SecurityGateway
 from domain.users.entities import User
-from domain.users.exceptions import UserNotFound
+from domain.users.exceptions import UserNotFoundError
 from domain.users.repositories import UsersRepository
 
 
@@ -28,5 +28,5 @@ class AuthenticateUseCase:
             if not is_password_valid:
                 raise InvalidCredentialsError("password")
             return user
-        except UserNotFound:
+        except UserNotFoundError:
             raise InvalidCredentialsError("email")

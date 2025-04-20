@@ -6,8 +6,8 @@ from domain.mails.dtos import CreateMailDto
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 from domain.mails.exceptions import (
-    MailAlreadyExists,
-    MailNotFound,
+    MailAlreadyExistsError,
+    MailNotFoundError,
 )
 from domain.mails.repositories import MailsRepository
 
@@ -20,8 +20,8 @@ class MailsMemoryRepository(MailsRepository):
         def __init__(self):
             super().__init__(
                 entity=Mail,
-                not_found_exception=MailNotFound,
-                already_exists_exception=MailAlreadyExists,
+                not_found_exception=MailNotFoundError,
+                already_exists_exception=MailAlreadyExistsError,
             )
 
         def extract_id(self, entity: Mail) -> Id:

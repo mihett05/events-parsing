@@ -2,7 +2,7 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
@@ -11,8 +11,10 @@ Entity = TypeVar("Entity")
 @dataclass
 class MockRepositoryConfig(metaclass=ABCMeta):
     entity: type[Entity]
-    not_found_exception: type[EntityNotFound] = EntityNotFound
-    already_exists_exception: type[EntityAlreadyExists] = EntityAlreadyExists
+    not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
+    already_exists_exception: type[EntityAlreadyExistsError] = (
+        EntityAlreadyExistsError
+    )
 
     def extract_id(self, entity: Entity) -> Id:
         return entity.id

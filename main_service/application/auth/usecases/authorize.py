@@ -1,7 +1,7 @@
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.dtos import TokenInfoDto
 from domain.users.entities import User
-from domain.users.exceptions import UserNotFound
+from domain.users.exceptions import UserNotFoundError
 from domain.users.repositories import UsersRepository
 
 
@@ -12,5 +12,5 @@ class AuthorizeUseCase:
     async def __call__(self, dto: TokenInfoDto) -> User:
         try:
             return await self.users_repository.read_by_email(dto.subject)
-        except UserNotFound:
+        except UserNotFoundError:
             raise InvalidCredentialsError("email")

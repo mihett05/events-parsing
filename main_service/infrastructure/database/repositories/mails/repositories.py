@@ -1,14 +1,13 @@
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.mails.dtos as dtos
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
-from domain.mails.exceptions import MailAlreadyExists, MailNotFound
+from domain.mails.exceptions import MailAlreadyExistsError, MailNotFoundError
 from domain.mails.repositories import MailsRepository
 
-from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
+from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import MailDatabaseModel
 
@@ -22,8 +21,8 @@ class MailsDatabaseRepository(MailsRepository):
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
                 create_model_mapper=map_create_dto_to_model,
-                not_found_exception=MailNotFound,
-                already_exists_exception=MailAlreadyExists,
+                not_found_exception=MailNotFoundError,
+                already_exists_exception=MailAlreadyExistsError,
             )
 
         def get_select_all_query(self, dto: dtos.ReadAllMailsDto) -> Select:

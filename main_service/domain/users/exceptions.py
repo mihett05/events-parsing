@@ -1,12 +1,12 @@
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users.entities import User
 
 
-class UserNotFound(EntityNotFound):
+class UserNotFoundError(EntityNotFoundError):
     def __init__(self):
         super().__init__(User)
 
 
-class UserAlreadyExists(EntityAlreadyExists):
+class UserAlreadyExistsError(EntityAlreadyExistsError):
     def __init__(self):
         super().__init__(User)

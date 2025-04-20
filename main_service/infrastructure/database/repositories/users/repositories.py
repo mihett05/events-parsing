@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import domain.users.dtos as dtos
 from domain.users import entities as entities
 from domain.users.entities import User
-from domain.users.exceptions import UserAlreadyExists, UserNotFound
+from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import UsersRepository
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -21,8 +21,8 @@ class UsersDatabaseRepository(UsersRepository):
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
                 create_model_mapper=None,
-                not_found_exception=UserNotFound,
-                already_exists_exception=UserAlreadyExists,
+                not_found_exception=UserNotFoundError,
+                already_exists_exception=UserAlreadyExistsError,
             )
 
         def get_select_by_email_query(self, email: str) -> Select:

@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
@@ -24,8 +24,10 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     entity_mapper: Callable[[ModelType], Entity]
     model_mapper: Callable[[Entity], ModelType]
     create_model_mapper: Callable[[CreateModelType], ModelType]
-    not_found_exception: type[EntityNotFound] = EntityNotFound
-    already_exists_exception: type[EntityAlreadyExists] = EntityAlreadyExists
+    not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
+    already_exists_exception: type[EntityAlreadyExistsError] = (
+        EntityAlreadyExistsError
+    )
 
     def get_select_query(self, model_id: Id) -> Select:
         return self.add_where_id(select(self.model), model_id)
@@ -137,7 +139,7 @@ class PostgresRepository(metaclass=ABCMeta):
     async def update(self, entity: Entity) -> Entity:
         try:
             await self.read(self.config.extract_id_from_entity(entity))
-        except EntityNotFound:
+        except EntityNotFoundError:
             raise self.config.not_found_exception()
 
         model = self.config.model_mapper(entity)

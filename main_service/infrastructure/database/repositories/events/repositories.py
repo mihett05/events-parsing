@@ -3,7 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import domain.events.dtos as dtos
 from domain.events.entities import Event
-from domain.events.exceptions import EventAlreadyExists, EventNotFound
+from domain.events.exceptions import (
+    EventAlreadyExistsErrorError,
+    EventNotFoundErrorError,
+)
 from domain.events.repositories import EventsRepository
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -20,8 +23,8 @@ class EventsDatabaseRepository(EventsRepository):
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
                 create_model_mapper=map_create_dto_to_model,
-                not_found_exception=EventNotFound,
-                already_exists_exception=EventAlreadyExists,
+                not_found_exception=EventNotFoundErrorError,
+                already_exists_exception=EventAlreadyExistsErrorError,
             )
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
