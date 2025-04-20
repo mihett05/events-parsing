@@ -9,7 +9,7 @@ config = get_config()
 
 
 class OpenAiExtraction:
-    def __init__(self, init_prompt: str, url: str, model: str, key: str):
+    def __init__(self, init_prompt: dict[str, str], url: str, model: str, key: str):
         self.client = OpenAI(
             base_url=url,
             api_key=key,
@@ -22,7 +22,7 @@ class OpenAiExtraction:
             extra_body={},
             model=self.model,
             messages=[
-                {"role": "user", "content": self.init_prompt},
+                {"role": "user", "content": self.init_prompt["single"]},
                 {"role": "user", "content": text},
             ],
         )
@@ -44,7 +44,7 @@ class OpenAiExtraction:
             extra_body={},
             model=self.model,
             messages=[
-                {"role": "user", "content": self.init_prompt + text},
+                {"role": "user", "content": self.init_prompt["list"] + text},
             ],
         )
         try:
@@ -69,10 +69,13 @@ class OpenAiExtraction:
         return result
 
 
-def get_prompt():
+def get_prompt() -> dict[str, str]:
+    result = {}
     with open("./init_prompt.txt", encoding="UTF-8") as f:
-        return f.read()
-
+        result["single"] = f.read()
+    with open("./init_prompt_for_list.txt", encoding="UTF-8") as f:
+        result["list"] = f.read()
+    return result
 
 api = OpenAiExtraction(
     get_prompt(),
