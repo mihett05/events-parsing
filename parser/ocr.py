@@ -7,9 +7,6 @@ import io
 import cv2
 import numpy as np
 
-# Тут по идее надо его поставить
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
 
 def extract_text_from_image(image_path):
     try:
@@ -17,8 +14,7 @@ def extract_text_from_image(image_path):
         text = pytesseract.image_to_string(img, lang='rus')
         return text
     except Exception as e:
-        print(f"Ошибка при обработке изображения {image_path}: {str(e)}")
-        return ""
+        return None
 
 
 # круто работает если pdf приведенный
@@ -65,8 +61,7 @@ def extract_text_from_docx(docx_path):
         doc = Document(docx_path)
         return "\n".join([para.text for para in doc.paragraphs])
     except Exception as e:
-        print(f"Ошибка при обработке DOCX {docx_path}: {str(e)}")
-        return ""
+      return None
 
 
 def get_file_type(file_path):
@@ -90,8 +85,7 @@ def process_file(file_path):
     elif file_type == 'docx':
         return extract_text_from_docx(file_path)
     else:
-        print(f"Формат не поддерживается: {file_path}")
-        return ""
+        return None
 
 
 def process_files(file_list, output_dir="output_texts"):
