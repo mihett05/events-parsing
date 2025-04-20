@@ -42,8 +42,7 @@ subscribe_queue = RabbitQueue(
 
 
 async def start_parsing():
-    data: Iterable[EventInfo] = parse_data()
-    for event in data:
+    for event in parse_data():
         await broker.publish(asdict(event), publish_queue, exchange=exchange)
 
 

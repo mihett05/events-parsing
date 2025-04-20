@@ -47,11 +47,10 @@ class OpenAiExtraction:
                 {"role": "user", "content": self.init_prompt + text},
             ],
         )
-        # print(completion)
         try:
             r = completion.choices[0].message.content
         except TypeError:
-            print(completion)
+            print("Tokens")
             return result
         try:
             response_dict = json.loads(

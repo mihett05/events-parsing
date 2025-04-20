@@ -1,5 +1,6 @@
 import json
 from dataclasses import asdict
+from typing import Iterator
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ from extraction import extract_list
 URL = "https://www.хакатоны.рф/"
 
 
-def parser(url: str = URL, stop_year: int = 2020) -> list[EventInfo]:
+def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfo]:
     response = requests.get(url)
     response.raise_for_status()
 
@@ -25,7 +26,8 @@ def parser(url: str = URL, stop_year: int = 2020) -> list[EventInfo]:
         if item.get("data-record-type") == "396":
             year = item.text.strip()
             if year == str(stop_year):
-                events += extract_list(text)
+                events = extract_list(text)
+                yield from events
                 # write(events)
                 break
             print(year)
@@ -33,19 +35,14 @@ def parser(url: str = URL, stop_year: int = 2020) -> list[EventInfo]:
             for event in item.select("div.t776__textwrapper"):
                 for br in item.select("br"):
                     br.replace_with("\n")
-                add_part = (
-                    str(year)
-                    + " год\n"
-                    + event.text.strip()
-                    + "\n---\n"
-                )
+                add_part = str(year) + " год\n" + event.text.strip() + "\n---\n"
                 if len(text + add_part) > 6400:
-                    events += extract_list(text)
+                    events = extract_list(text)
                     # write(events)
                     text = add_part
+                    yield from events
                 else:
                     text += add_part
-    return events
 
 
 def write(data: list[EventInfo]):
