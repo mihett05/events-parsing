@@ -1,6 +1,8 @@
 from typing import List
 
-from main_service.domain.organizations.repositories import OrganizationRepository
+from main_service.domain.organizations.repositories import (
+    OrganizationRepository,
+)
 from main_service.domain.organizations.dtos import ReadOrganizationsDto
 
 from main_service.domain.organizations.entities import Organization

@@ -14,6 +14,7 @@ class UpdateOrganizationDto:
     roles: list[int]
     members: list[int]
 
+
 @dataclass
 class UpdateUserOrganizationRoleDto:
     id: int

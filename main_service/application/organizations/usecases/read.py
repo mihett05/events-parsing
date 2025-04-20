@@ -1,5 +1,7 @@
 from main_service.domain.organizations.entities import Organization
-from main_service.domain.organizations.repositories import OrganizationRepository
+from main_service.domain.organizations.repositories import (
+    OrganizationRepository,
+)
 
 
 class ReadOrganizationUsecase:
