@@ -26,7 +26,7 @@ class AuthenticateUseCase:
                 ),
             )
             if not is_password_valid:
-                raise InvalidCredentialsError()
+                raise InvalidCredentialsError("password")
             return user
         except UserNotFound:
-            raise InvalidCredentialsError()
+            raise InvalidCredentialsError("email")

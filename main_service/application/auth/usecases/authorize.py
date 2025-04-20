@@ -13,4 +13,4 @@ class AuthorizeUseCase:
         try:
             return await self.users_repository.read_by_email(dto.subject)
         except UserNotFound:
-            raise InvalidCredentialsError()
+            raise InvalidCredentialsError("email")
