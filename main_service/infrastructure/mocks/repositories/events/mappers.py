@@ -2,9 +2,9 @@ from adaptix import P
 from adaptix._internal.conversion.facade.provider import (
     allow_unlinked_optional,
 )
+
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
-
 from infrastructure.database.mappers import postgres_retort
 
 retort = postgres_retort.extend(recipe=[])

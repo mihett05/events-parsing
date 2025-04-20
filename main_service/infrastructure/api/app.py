@@ -5,7 +5,6 @@ from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -16,6 +15,11 @@ from infrastructure.api.background_tasks import (
     cancel_background_task,
     run_background_tasks,
 )
+
+from application.events.usecases import ParseEventsUseCase
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.mails.entities import Mail
+
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router

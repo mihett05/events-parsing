@@ -1,12 +1,15 @@
+from datetime import datetime, timezone
+
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
+
 import domain.mails.dtos as dtos
 from domain.mails import entities as entities
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 from domain.mails.exceptions import MailAlreadyExists, MailNotFound
 from domain.mails.repositories import MailsRepository
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import Id, PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
@@ -38,7 +41,8 @@ class MailsDatabaseRepository(MailsRepository):
         def get_select_all_query(self, dto: dtos.ReadAllMailsDto) -> Select:
             return (
                 select(self.model)
-                .filter_by(state=MailStateEnum.UNPROCESSED)
+                .where(self.model.state == MailStateEnum.UNPROCESSED)
+                .where(self.model.retry_after < datetime.now(timezone.utc))
                 .order_by(self.model.id.desc())
                 .offset(dto.page * dto.page_size)
                 .limit(dto.page_size)

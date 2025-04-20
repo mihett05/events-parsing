@@ -4,10 +4,13 @@ from typing import AsyncIterable
 from application.events.coordinator.gateway import CoordinatorGateway
 from application.events.usecases import DeduplicateEventUseCase
 from application.mails.gateway import EmailsGateway
+
 from dishka import Provider, Scope, provide
 from faststream.broker.message import StreamMessage
 from faststream.rabbit import RabbitBroker
 
+from application.events.coordinator.gateway import CoordinatorGateway
+from application.events.usecases import DeduplicateEventUseCase
 from infrastructure.config import Config
 from infrastructure.imap.gateway import ImapEmailsGateway
 from infrastructure.rabbit.events import (
