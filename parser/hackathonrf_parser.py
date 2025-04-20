@@ -8,24 +8,40 @@ from extraction import extract_list
 
 URL = "https://www.хакатоны.рф/"
 
-def parser(url: str = URL) -> list[EventInfo]:
+
+def parser(url: str = URL, stop_year: int = 2020) -> list[EventInfo]:
     response = requests.get(url)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
     events = []
 
-    items = soup.find_all('div', attrs={'data-record-type': lambda x: x in ['396', '776']})
+    items = soup.find_all(
+        "div", attrs={"data-record-type": lambda x: x in ["396", "776"]}
+    )
     year = "2025"
-    text = ""
+    text = "---\n"
     for item in items:
-        if item.get('data-record-type') == '396':
+        if item.get("data-record-type") == "396":
             year = item.text.strip()
+            if year == str(stop_year):
+                events += extract_list(text)
+                # write(events)
+                break
+            print(year)
         else:
             for event in item.select("div.t776__textwrapper"):
-                add_part = str(year) + " год\n" + event.text.strip() + "\n" + "-"*3 + "\n"
-                if len(text + add_part) > 6000:
-                    events += (extract_list(text))
+                for br in item.select("br"):
+                    br.replace_with("\n")
+                add_part = (
+                    str(year)
+                    + " год\n"
+                    + event.text.strip()
+                    + "\n---\n"
+                )
+                if len(text + add_part) > 6400:
+                    events += extract_list(text)
+                    # write(events)
                     text = add_part
                 else:
                     text += add_part
@@ -39,4 +55,4 @@ def write(data: list[EventInfo]):
 
 
 if __name__ == "__main__":
-    write(parser())
+    parser()

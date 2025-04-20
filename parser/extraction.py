@@ -1,8 +1,9 @@
 import json
 
+from openai import OpenAI
+
 from config import get_config
 from events import DatesInfo, EventInfo
-from openai import OpenAI
 
 config = get_config()
 
@@ -47,23 +48,26 @@ class OpenAiExtraction:
             ],
         )
         # print(completion)
-        r = completion.choices[0].message.content
+        try:
+            r = completion.choices[0].message.content
+        except TypeError:
+            print(completion)
+            return result
         try:
             response_dict = json.loads(
-            r.replace("```", "").replace("json", "").strip()
+                r.replace("```", "").replace("json", "").strip()
             )
         except:
             return result
         for item in response_dict:
             try:
-                result.append(EventInfo(
-                    **{**item, "dates": DatesInfo(**item["dates"])}
-                ))
+                result.append(
+                    EventInfo(**{**item, "dates": DatesInfo(**item["dates"])})
+                )
                 # print(result[-1])
             except:
                 continue
         return result
-
 
 
 def get_prompt():
@@ -81,6 +85,7 @@ api = OpenAiExtraction(
 
 def extract_features(text: str) -> EventInfo:
     return api.extract(text)
+
 
 def extract_list(text: str) -> list[EventInfo]:
     return api.extract_list(text)
