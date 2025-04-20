@@ -24,7 +24,7 @@ def parser(url: str = URL) -> list[EventInfo]:
         else:
             for event in item.select("div.t776__textwrapper"):
                 add_part = str(year) + " год\n" + event.text.strip() + "\n" + "-"*3 + "\n"
-                if len(text + add_part) > 5000:
+                if len(text + add_part) > 6000:
                     events += (extract_list(text))
                     text = add_part
                 else:

@@ -43,11 +43,10 @@ class OpenAiExtraction:
             extra_body={},
             model=self.model,
             messages=[
-                {"role": "user", "content": self.init_prompt},
-                {"role": "user", "content": text},
+                {"role": "user", "content": self.init_prompt + text},
             ],
         )
-        print(completion)
+        # print(completion)
         r = completion.choices[0].message.content
         try:
             response_dict = json.loads(
@@ -60,7 +59,7 @@ class OpenAiExtraction:
                 result.append(EventInfo(
                     **{**item, "dates": DatesInfo(**item["dates"])}
                 ))
-                print(result[-1])
+                # print(result[-1])
             except:
                 continue
         return result
