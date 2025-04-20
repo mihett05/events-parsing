@@ -1,5 +1,5 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import (
+from adaptix.conversion import (
     allow_unlinked_optional,
     link_function,
 )

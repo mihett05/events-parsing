@@ -1,13 +1,11 @@
 from datetime import datetime
 
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import link_function
-from adaptix.conversion import coercer
+from adaptix.conversion import coercer, link_function
 
 from application.events.dtos import DatesInfo, EventInfo
 from domain.events.dtos import CreateEventDto
 from infrastructure.api.retort import pydantic_retort
-from infrastructure.api.v1.events.models import EventModel
 from infrastructure.rabbit.events.models import (
     DatesInfoModel,
     EventInfoModel,
