@@ -1,18 +1,7 @@
-from datetime import datetime, timedelta
-
 import pytest_asyncio
 from dishka import AsyncContainer
 
 import application.events.usecases as usecases
-from application.events.dtos import UpdateEventDto
-from domain.events.dtos import (
-    CreateEventDto,
-    ReadAllEventsDto,
-    ReadOrganizationEventsDto,
-    ReadUserEventsDto,
-)
-from domain.events.entities import Event
-from domain.events.repositories import EventsRepository
 
 
 @pytest_asyncio.fixture
