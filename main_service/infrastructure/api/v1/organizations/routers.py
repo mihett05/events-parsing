@@ -26,7 +26,7 @@ async def create_organization(
     dto: CreateOrganizationDto,
     use_case: FromDishka[use_cases.CreateOrganizationUsecase],
 ):
-    return await use_case(mappers.map_create_dto_from_pydantic(dto))
+    return await use_case(mappers.map_create_dto_from_pydantic(dto, None))
 
 
 @router.get("/", response_model=list[models.OrganizationModel])

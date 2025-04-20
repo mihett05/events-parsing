@@ -15,7 +15,7 @@ class UpdateOrganizationUsecase:
         self.__transaction = tx
 
     async def __call__(
-        self, dto: UpdateOrganizationDto, actor: User
+        self, dto: UpdateOrganizationDto, actor: User | None
     ) -> Organization:
         async with self.__transaction:
             organization = await self.__repository.read(dto.organization_id)
