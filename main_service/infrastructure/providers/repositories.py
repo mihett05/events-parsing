@@ -1,8 +1,6 @@
 from dishka import Provider, Scope, provide
-
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
-
 from domain.users.repositories import UsersRepository
 
 from infrastructure.database.repositories.events import EventsDatabaseRepository

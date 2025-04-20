@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 import jwt
-
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.config import TokenConfig
 from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto

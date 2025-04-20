@@ -1,7 +1,6 @@
 from copy import copy
 
 import pytest
-
 from application.events.dtos import UpdateEventDto
 from application.events.usecases import UpdateEventUseCase
 from domain.events.entities import Event

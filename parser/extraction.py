@@ -1,15 +1,16 @@
 import json
 
-from openai import OpenAI
-
 from config import get_config
 from events import DatesInfo, EventInfo
+from openai import OpenAI
 
 config = get_config()
 
 
 class OpenAiExtraction:
-    def __init__(self, init_prompt: dict[str, str], url: str, model: str, key: str):
+    def __init__(
+        self, init_prompt: dict[str, str], url: str, model: str, key: str
+    ):
         self.client = OpenAI(
             base_url=url,
             api_key=key,
@@ -76,6 +77,7 @@ def get_prompt() -> dict[str, str]:
     with open("./init_prompt_for_list.txt", encoding="UTF-8") as f:
         result["list"] = f.read()
     return result
+
 
 api = OpenAiExtraction(
     get_prompt(),
