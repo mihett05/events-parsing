@@ -1,3 +1,4 @@
+import asyncio
 import email
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
@@ -16,8 +17,9 @@ class ImapEmailsGateway(EmailsGateway):
         await self.client.wait_hello_from_server()
         await self.client.login(username, password)
         await self.client.select("INBOX")
+        return self
 
-    async def __aexit__(self):
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.client.logout()
 
     async def receive_mails(self) -> list[ParsedMailInfoDto]:
@@ -31,11 +33,13 @@ class ImapEmailsGateway(EmailsGateway):
             raw_mail_collection = await self.__fetch_collection_by_batch(
                 batch_uids
             )
-            emails.extend(self.__parse_mails(raw_mail_collection))
+            async for raw_mail in self.__parse_mails(raw_mail_collection):
+                emails.append(raw_mail)
 
         return emails
 
     async def __fetch_collection_by_batch(self, batch_uuids) -> list[Response]:
+        batch_uuids = ",".join(uid.decode('ascii') for uid in batch_uuids)
         fetch_response = await self.client.uid(
             "FETCH", ",".join(batch_uuids), "(RFC822 FLAGS)"
         )
@@ -51,12 +55,12 @@ class ImapEmailsGateway(EmailsGateway):
         ]
 
         for j in range(0, len(raw_messages), 2):
-            uid = raw_messages[j].decode()
+            uid = batch_uuids[j // 2]
             try:
-                uid = uid.split()[1]
                 collection.append(raw_messages[j + 1])
                 await self.__mark_mail_as_seen(raw_messages[j + 1])
             except IndexError:
+                await self.__mark_mail_as_unseen(uid)
                 continue
 
     async def __fetch_collection_by_single(self, email_ids) -> list[Response]:
@@ -82,16 +86,14 @@ class ImapEmailsGateway(EmailsGateway):
         await self.client.uid("STORE", e_id, "-FLAGS", "\\Seen")
 
     async def __parse_mail(self, raw_msg) -> ParsedMailInfoDto:
+        raw_msg = raw_msg.lines[1]
         msg = email.message_from_bytes(raw_msg)
-
+        theme = self.__decode_header(msg.get("Subject", ""))
+        sender = self.__decode_header(msg.get("From", ""))
         try:
             return ParsedMailInfoDto(
-                theme=self.__parse_mail_header(
-                    decode_header(msg.get("Subject", ""))[0][0]
-                ),
-                sender=self.__parse_mail_header(
-                    decode_header(msg.get("From", ""))[0][0]
-                ),
+                theme=theme,
+                sender=sender,
                 raw_content=raw_msg,
                 received_date=parsedate_to_datetime(msg["date"]).date()
                 if "date" in msg
@@ -108,9 +110,38 @@ class ImapEmailsGateway(EmailsGateway):
                 continue
 
     @staticmethod
-    def __parse_mail_header(entity):
-        return (
-            entity.decode("utf-8", errors="replace")
-            if isinstance(entity, bytes)
-            else str(entity)
-        )
+    def __decode_payload(payload, charset=None):
+        encodings_to_try = [
+            charset,
+            'utf-8',
+        ]
+        encodings_to_try = list(dict.fromkeys([e for e in encodings_to_try if e]))
+        for encoding in encodings_to_try:
+            try:
+                return payload.decode(encoding, errors='replace')
+            except (UnicodeDecodeError, LookupError):
+                continue
+
+    @staticmethod
+    def __decode_header(header):
+        decoded_parts = []
+        for part, encoding in decode_header(header):
+            if isinstance(part, bytes):
+                decoded_parts.append(ImapEmailsGateway.__decode_payload(part, encoding))
+            else:
+                decoded_parts.append(str(part))
+        return "".join(decoded_parts)
+
+
+async def main():
+    gate = ImapEmailsGateway()
+    print(gate)
+    async with gate('imap.gmail.com', 'your@gmail.com', "your_password") as g:
+        data = await g.receive_mails()
+        for email in data:
+            print(f"From: {email.sender}")
+            print(f"Subject: {email.theme}")
+            print(f"Date: {email.received_date}")
+
+if __name__ == '__main__':
+    asyncio.run(main())
