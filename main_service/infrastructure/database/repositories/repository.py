@@ -8,7 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
@@ -24,8 +25,10 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     entity_mapper: Callable[[ModelType], Entity]
     model_mapper: Callable[[Entity], ModelType]
     create_model_mapper: Callable[[CreateModelType], ModelType]
-    not_found_exception: type[EntityNotFound] = EntityNotFound
-    already_exists_exception: type[EntityAlreadyExists] = EntityAlreadyExists
+    not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
+    already_exists_exception: type[EntityAlreadyExistsError] = (
+        EntityAlreadyExistsError
+    )
 
     def get_select_query(self, model_id: Id) -> Select:
         return self.add_where_id(select(self.model), model_id)
@@ -104,6 +107,16 @@ class PostgresRepository(metaclass=ABCMeta):
             self.config.get_select_all_query(dto)
         )
 
+    async def __create(self, model: ModelType) -> Entity:
+        try:
+            self.session.add(model)
+            if self._should_commit():
+                await self.session.commit()
+            await self.session.refresh(model)
+            return await self.read(self.config.extract_id_from_model(model))
+        except IntegrityError:
+            raise self.config.already_exists_exception()
+
     async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
         query = self.config.get_default_select_all_query(model_ids)
         return await self.get_entities_from_query(query)
@@ -125,19 +138,19 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def create(self, dto: CreateModelType) -> Entity:
         model = self.config.create_model_mapper(dto)
-        try:
-            self.session.add(model)
-            if self._should_commit():
-                await self.session.commit()
-            await self.session.refresh(model)
-            return await self.read(self.config.extract_id_from_model(model))
-        except IntegrityError:
-            raise self.config.already_exists_exception()
+
+    async def create_from_dto(self, dto: CreateModelType) -> Entity:
+        model = self.config.create_model_mapper(dto)
+        return await self.__create(model)
+
+    async def create_from_entity(self, entity: Entity) -> Entity:
+        model = self.config.model_mapper(entity)
+        return await self.__create(model)
 
     async def update(self, entity: Entity) -> Entity:
         try:
             await self.read(self.config.extract_id_from_entity(entity))
-        except EntityNotFound:
+        except EntityNotFoundError:
             raise self.config.not_found_exception()
 
         model = self.config.model_mapper(entity)

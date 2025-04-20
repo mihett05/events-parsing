@@ -4,6 +4,7 @@ from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
 from domain.mails.enums import MailStateEnum
 
+from ..dtos import EventInfo
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
 

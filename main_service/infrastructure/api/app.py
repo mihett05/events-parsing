@@ -11,13 +11,15 @@ from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
 
+from application.auth.exceptions import InvalidCredentialsError
+from application.events.usecases import ParseEventsUseCase
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+
 from infrastructure.api.background_tasks import (
     cancel_background_task,
     run_background_tasks,
 )
 
-from application.events.usecases import ParseEventsUseCase
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from domain.mails.entities import Mail
 
 from infrastructure.api.v1 import v1_router
@@ -57,21 +59,30 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         allow_headers=["*"],
     )
 
-    @app.exception_handler(EntityNotFound)
+    @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(
-        _: Request, exc: EntityNotFound
+        _: Request, exc: EntityNotFoundError
     ):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
         )
 
-    @app.exception_handler(EntityAlreadyExists)
+    @app.exception_handler(EntityAlreadyExistsError)
     async def entity_already_exists_exception_handler(
-        _: Request, exc: EntityAlreadyExists
+        _: Request, exc: EntityAlreadyExistsError
     ):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(exc)},
+        )
+
+    @app.exception_handler(InvalidCredentialsError)
+    async def invalid_credentials_exception_handler(
+        _: Request, exc: InvalidCredentialsError
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": str(exc)},
         )
 

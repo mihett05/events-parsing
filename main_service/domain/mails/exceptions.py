@@ -1,16 +1,16 @@
-from domain.exceptions import (
-    EntityAlreadyExists,
-    EntityNotFound,
-)
+
+from domain.events.entities import Event
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+
 from domain.mails.entities import Mail
 
 
-class MailNotFound(EntityNotFound):
+class MailNotFoundError(EntityNotFoundError):
     def __init__(self):
         super().__init__(Mail)
 
 
-class MailAlreadyExists(EntityAlreadyExists):
+class MailAlreadyExistsError(EntityAlreadyExistsError):
     def __init__(self):
         super().__init__(Mail)
 

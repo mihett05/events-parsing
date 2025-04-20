@@ -1,5 +1,5 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import (
+from adaptix.conversion import (
     allow_unlinked_optional,
 )
 
@@ -12,7 +12,7 @@ retort = postgres_retort.extend(recipe=[])
 
 @retort.impl_converter(
     recipe=[
-        allow_unlinked_optional(P[Mail].id),
+        allow_unlinked_optional(P[Mail].user_id),
         allow_unlinked_optional(P[Mail].event_id),
         allow_unlinked_optional(P[Mail].created_at),
         allow_unlinked_optional(P[Mail].retry_after),
