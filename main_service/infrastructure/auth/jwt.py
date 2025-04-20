@@ -4,7 +4,7 @@ import jwt
 
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.config import TokenConfig
-from application.auth.tokens.dtos import TokenInfo, TokenPairDto
+from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto
 from application.auth.tokens.gateways import TokensGateway
 
 
@@ -38,7 +38,7 @@ class JwtTokensGateway(TokensGateway):
 
     async def extract_token_info(
         self, token: str, check_expires: bool = True
-    ) -> TokenInfo:
+    ) -> TokenInfoDto:
         try:
             payload = jwt.decode(
                 token,
@@ -49,7 +49,7 @@ class JwtTokensGateway(TokensGateway):
         except jwt.ExpiredSignatureError:
             raise InvalidCredentialsError()
 
-        return TokenInfo(
+        return TokenInfoDto(
             subject=payload["sub"],
             expires_in=datetime.fromtimestamp(payload["exp"], tz=timezone.utc),
         )

@@ -6,14 +6,14 @@ from domain.users.dtos import CreateUserDto
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (
+    AuthenticateUserModelDto,
     CreateUserModelDto,
-    UserAuthenticate,
 )
 
 retort = pydantic_retort.extend(recipe=[])
 
 map_authenticate_dto_from_pydantic = retort.get_converter(
-    UserAuthenticate,
+    AuthenticateUserModelDto,
     AuthenticateUserDto,
     recipe=[
         link_function(

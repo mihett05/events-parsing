@@ -9,8 +9,8 @@ class TokenPairDto:
 
 
 @dataclass
-class TokenInfo:
-    subject: int
+class TokenInfoDto:
+    subject: str
     expires_in: datetime
 
 

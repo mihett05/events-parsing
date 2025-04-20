@@ -3,7 +3,8 @@ from domain.users.dtos import CreateUserDto
 from domain.users.entities import User
 
 from ...users.usecases import CreateUserUseCase
-from ..tokens.gateways import SecurityGateway, TokensGateway
+from ..tokens.gateways import SecurityGateway
+from .create_token_pair import CreateTokenPairUseCase
 
 
 class RegisterUseCase:
@@ -11,11 +12,11 @@ class RegisterUseCase:
         self,
         create_user_use_case: CreateUserUseCase,
         security_gateway: SecurityGateway,
-        token_gateway: TokensGateway,
+        create_token_pair_use_case: CreateTokenPairUseCase,
     ):
-        self.token_gateway = token_gateway
-        self.security_gateway = security_gateway
         self.create_user_use_case = create_user_use_case
+        self.create_token_pair_use_case = create_token_pair_use_case
+        self.security_gateway = security_gateway
 
     async def __call__(self, dto: CreateUserDto) -> tuple[User, TokenPairDto]:
         password_dto = self.security_gateway.create_hashed_password(
@@ -29,4 +30,4 @@ class RegisterUseCase:
         )
 
         user = await self.create_user_use_case(user)
-        return user, await self.token_gateway.create_token_pair(user.email)
+        return user, await self.create_token_pair_use_case(user)

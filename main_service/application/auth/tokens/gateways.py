@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from .dtos import PasswordDto, TokenInfo, TokenPairDto
+from .dtos import PasswordDto, TokenInfoDto, TokenPairDto
 
 
 class TokensGateway(metaclass=ABCMeta):
@@ -10,7 +10,7 @@ class TokensGateway(metaclass=ABCMeta):
     @abstractmethod
     async def extract_token_info(
         self, token: str, check_expires: bool = True
-    ) -> TokenInfo: ...
+    ) -> TokenInfoDto: ...
 
 
 class SecurityGateway(metaclass=ABCMeta):

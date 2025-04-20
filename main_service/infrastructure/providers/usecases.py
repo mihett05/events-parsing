@@ -42,4 +42,5 @@ class UseCasesProvider(Provider):
         auth_use_cases.LoginUseCase,
         auth_use_cases.AuthenticateUseCase,
         auth_use_cases.AuthorizeUseCase,
+        auth_use_cases.CreateTokenPairUseCase,
     )
