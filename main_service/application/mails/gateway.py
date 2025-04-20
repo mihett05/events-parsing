@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
-from domain.mails.entities import Mail
+from domain.mails.dtos import ParsedMailInfoDto
 
 
 class EmailsGateway(metaclass=ABCMeta):
 
     @abstractmethod
-    async def receive_mails(self) -> list[Mail]: ...
+    async def receive_mails(self) -> list[ParsedMailInfoDto]: ...

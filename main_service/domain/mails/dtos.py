@@ -24,7 +24,7 @@ class ReadAllMailsDto:
 
 
 @dataclass
-class ReadMailDto:
+class ParsedMailInfoDto:
     theme: str
     sender: str
 
