@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import pytest_asyncio
 from dishka import AsyncContainer
 
-import application.events.usecases as usecases
 from application.events.dtos import UpdateEventDto
 from domain.events.dtos import (
     CreateEventDto,
@@ -40,7 +39,7 @@ async def update_event_dto() -> UpdateEventDto:
 
 
 @pytest_asyncio.fixture
-async def read_all_event_dto() -> ReadAllEventsDto:
+async def read_all_events_dto() -> ReadAllEventsDto:
     return ReadAllEventsDto(
         page=0,
         page_size=50,
@@ -66,13 +65,13 @@ async def read_user_events_dto() -> ReadUserEventsDto:
 
 
 @pytest_asyncio.fixture
-async def event_repository(container: AsyncContainer) -> EventsRepository:
+async def events_repository(container: AsyncContainer) -> EventsRepository:
     yield await container.get(EventsRepository)
 
 
 @pytest_asyncio.fixture
 async def create_event(
     create_event_dto: CreateEventDto,
-    event_repository: EventsRepository,
+    events_repository: EventsRepository,
 ) -> Event:
-    return await event_repository.create(create_event_dto)
+    return await events_repository.create(create_event_dto)
