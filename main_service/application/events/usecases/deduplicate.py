@@ -1,11 +1,9 @@
+from application.mails.dtos import UpdateMailDto
+from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
 from domain.mails.enums import MailStateEnum
 
-from application.mails.dtos import UpdateMailDto
-from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
-
-from ..dtos import EventInfo
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
 
@@ -30,10 +28,12 @@ class DeduplicateEventUseCase:
             event: Event = await self.event_create_use_case(dto)
 
         if mail_id is not None:
-            await self.mail_update_use_case(
+            mail = await self.mail_update_use_case(
                 UpdateMailDto(
                     id=mail_id,
                     state=MailStateEnum.PROCESSED,
                     event_id=event.id,
                 )
             )
+            return event, mail
+        return event, None
