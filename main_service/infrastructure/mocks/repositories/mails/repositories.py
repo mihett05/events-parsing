@@ -31,6 +31,11 @@ class MailsMemoryRepository(MailsRepository):
         self.__next_id = 1
         self.__repository = MockRepository(self.Config())
 
+    async def create_many(
+        self, create_dtos: list[dtos.CreateMailDto]
+    ) -> list[entities.Mail]:
+        return [await self.create(dto) for dto in create_dtos]
+
     async def create(self, dto: CreateMailDto) -> Mail:
         mail = map_create_dto_to_entity(dto)
 

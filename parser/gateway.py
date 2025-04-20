@@ -3,8 +3,6 @@ import logging
 from dataclasses import asdict
 from typing import Iterable
 
-from config import get_config
-from events import DatesInfo, EventInfo
 from faststream import FastStream
 from faststream.rabbit import (
     ExchangeType,
@@ -12,6 +10,9 @@ from faststream.rabbit import (
     RabbitExchange,
     RabbitQueue,
 )
+
+from config import get_config
+from events import DatesInfo, EventInfo
 from hackathonrf_parser import parser as parse_data
 from pipeline import pipeline
 
@@ -41,24 +42,7 @@ subscribe_queue = RabbitQueue(
 
 
 async def start_parsing():
-    data: Iterable[EventInfo] = map(
-        lambda x: EventInfo(
-            mail_id=None,
-            title=x.title,
-            description=x.description,
-            dates=DatesInfo(
-                x.start_date.strftime("%d-%m-%Y"),
-                x.end_date.strftime("%d-%m-%Y"),
-                x.end_registration.strftime("%d-%m-%Y"),
-            ),
-            type=x.type,
-            format=x.format,
-            location=None,
-        ),
-        parse_data(),
-    )
-
-    for event in data:
+    for event in parse_data():
         await broker.publish(asdict(event), publish_queue, exchange=exchange)
 
 
