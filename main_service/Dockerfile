@@ -8,6 +8,8 @@ COPY pyproject.toml /app/
 
 RUN poetry install --no-root
 
+
 COPY . /app
+RUN poetry run pytest ./infrastructure/tests/
 
 CMD ["poetry", "run", "uvicorn", "infrastructure.server:app", "--host", "0.0.0.0", "--port", "8080"]

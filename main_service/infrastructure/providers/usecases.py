@@ -27,6 +27,7 @@ class UseCasesProvider(Provider):
         mails_use_cases.ReadMailUseCase,
         mails_use_cases.ReadUnprocessedMailUseCase,
         mails_use_cases.UpdateMailUseCase,
+        mails_use_cases.CreateMailsUseCase,
     )
 
     users = provide_all(

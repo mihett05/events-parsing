@@ -26,6 +26,9 @@ class Config(BaseSettings):
     rabbitmq_password: str
 
     secret_key: str
+    imap_server: str
+    imap_username: str
+    imap_password: str
 
     @computed_field
     @property

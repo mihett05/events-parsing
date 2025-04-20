@@ -1,5 +1,6 @@
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.events.dtos as dtos
 from domain.events.entities import Event

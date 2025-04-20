@@ -3,12 +3,18 @@ from typing import Annotated
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Depends
 
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from fastapi import APIRouter
+
+
 import application.events.usecases as use_cases
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
 from domain.events.dtos import ReadAllEventsDto
+
 from domain.users.entities import User
+
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
 

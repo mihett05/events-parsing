@@ -1,6 +1,6 @@
 from domain.events import dtos as dtos
 from domain.events import entities as entities
-from domain.events.dtos import CreateEventDto
+from domain.events.dtos import CreateEventDto, ReadAllEventsDto
 from domain.events.entities import Event
 from domain.events.exceptions import (
     EventAlreadyExistsErrorError,
@@ -25,6 +25,7 @@ class EventsMemoryRepository(EventsRepository):
             return entity.id
 
     def __init__(self):
+        self.__next_id = 1
         self.__repository = MockRepository(self.Config())
 
     async def find(self, dto: dtos.CreateEventDto) -> entities.Event | None:
@@ -49,17 +50,19 @@ class EventsMemoryRepository(EventsRepository):
         raise NotImplementedError
 
     async def create(self, create_dto: CreateEventDto) -> Event:
-        return await self.__repository.create(
-            map_create_dto_to_entity(create_dto)
-        )
+        event = map_create_dto_to_entity(create_dto)
+
+        event.id = self.__next_id
+        self.__next_id += 1
+
+        return await self.__repository.create(event)
 
     async def read(self, event_id: int) -> Event:
         return await self.__repository.read(event_id)
 
-    async def read_all(self, event_ids: list[int]) -> list[Event]:
-        return [
-            await self.__repository.read(event_id) for event_id in event_ids
-        ]
+    async def read_all(self, dto: ReadAllEventsDto) -> list[Event]:
+        data = await self.__repository.read_all()
+        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)

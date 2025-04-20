@@ -21,3 +21,12 @@ class CreateMailDto:
 class ReadAllMailsDto:
     page: int
     page_size: int
+
+
+@dataclass
+class ParsedMailInfoDto:
+    theme: str
+    sender: str
+
+    raw_content: bytes
+    received_date: date

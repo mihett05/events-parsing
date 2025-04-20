@@ -1,4 +1,3 @@
-import asyncio
 import contextlib
 
 from dishka import AsyncContainer
@@ -15,6 +14,14 @@ from faststream.rabbit import RabbitBroker
 from application.auth.exceptions import InvalidCredentialsError
 from application.events.usecases import ParseEventsUseCase
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+
+from infrastructure.api.background_tasks import (
+    cancel_background_task,
+    run_background_tasks,
+)
+
+from domain.mails.entities import Mail
+
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
@@ -27,18 +34,10 @@ async def create_rabbit_app(container: AsyncContainer) -> FastStream:
     return app
 
 
-async def parse_mails(container: AsyncContainer):
-    while True:
-        async with container() as request_container:
-            parse = await request_container.get(ParseEventsUseCase)
-            await parse()
-        await asyncio.sleep(60 * 30)
-
-
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
-        task = asyncio.create_task(parse_mails(container))
+        tasks = await run_background_tasks(container)
 
         rabbit_app = await create_rabbit_app(container)
         faststream_setup_dishka(container, rabbit_app, auto_inject=True)
@@ -47,11 +46,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         yield
 
         # cancel background task
-        try:
-            task.cancel()
-            await task
-        except asyncio.CancelledError:
-            pass
+        await cancel_background_task(tasks)
 
         await rabbit_app.broker.close()
 

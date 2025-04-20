@@ -29,10 +29,12 @@ class DeduplicateEventUseCase:
             event: Event = await self.event_create_use_case(dto)
 
         if mail_id is not None:
-            await self.mail_update_use_case(
+            mail = await self.mail_update_use_case(
                 UpdateMailDto(
                     id=mail_id,
                     state=MailStateEnum.PROCESSED,
                     event_id=event.id,
                 )
             )
+            return event, mail
+        return event, None
