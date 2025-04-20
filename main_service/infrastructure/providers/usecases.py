@@ -1,6 +1,7 @@
+from dishka import Provider, Scope, provide_all
+
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
-from dishka import Provider, Scope, provide_all
 
 
 class UseCasesProvider(Provider):
@@ -24,4 +25,5 @@ class UseCasesProvider(Provider):
         mails_use_cases.ReadMailUseCase,
         mails_use_cases.ReadUnprocessedMailUseCase,
         mails_use_cases.UpdateMailUseCase,
+        mails_use_cases.CreateMailsUseCase,
     )

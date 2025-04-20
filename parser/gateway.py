@@ -27,14 +27,14 @@ exchange = RabbitExchange(
     durable=True,
 )
 publish_queue = RabbitQueue(
-    name="consume",
+    name="process-events",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",
 )
 
 subscribe_queue = RabbitQueue(
-    name="publish",
+    name="process-mails",
     durable=True,
     auto_delete=True,
     routing_key="events.mails",
@@ -42,24 +42,7 @@ subscribe_queue = RabbitQueue(
 
 
 async def start_parsing():
-    data: Iterable[EventInfo] = map(
-        lambda x: EventInfo(
-            mail_id=None,
-            title=x.title,
-            description=x.description,
-            dates=DatesInfo(
-                x.start_date.strftime("%d-%m-%Y"),
-                x.end_date.strftime("%d-%m-%Y"),
-                x.end_registration.strftime("%d-%m-%Y"),
-            ),
-            type="Test",
-            format="Test",
-            location=None,
-        ),
-        parse_data(),
-    )
-
-    for event in data:
+    for event in parse_data():
         await broker.publish(asdict(event), publish_queue, exchange=exchange)
 
 

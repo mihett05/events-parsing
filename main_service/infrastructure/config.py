@@ -25,6 +25,10 @@ class Config(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
+    imap_server: str
+    imap_username: str
+    imap_password: str
+
     @computed_field
     @property
     def postgres_url(self) -> PostgresDsn:

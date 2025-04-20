@@ -19,7 +19,9 @@ adaptix = "^3.0.0b9"
 alembic-postgresql-enum = "^1.7.0"
 faststream = "^0.5.37"
 aio-pika = "^9.5.5"
-
+pytest-asyncio = "^0.26.0"
+pytest = "^8.3.5"
+aioimaplib = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core"]

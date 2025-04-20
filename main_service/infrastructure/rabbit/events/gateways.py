@@ -1,14 +1,15 @@
 import json
 from dataclasses import asdict
 
-from application.events.coordinator.gateway import CoordinatorGateway
-from domain.mails.entities import Mail
 from faststream.rabbit import (
     ExchangeType,
     RabbitBroker,
     RabbitExchange,
     RabbitQueue,
 )
+
+from application.events.coordinator.gateway import CoordinatorGateway
+from domain.mails.entities import Mail
 
 exchange = RabbitExchange(
     "main",
@@ -17,7 +18,7 @@ exchange = RabbitExchange(
     durable=True,
 )
 queue = RabbitQueue(
-    name="publish",
+    name="process-mails",
     durable=True,
     auto_delete=True,
     routing_key="events.mails",

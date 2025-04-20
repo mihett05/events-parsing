@@ -13,10 +13,7 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = React.forwardRef<HTMLDivElement, CalendarGridProps>(
-  (
-    { calendarDays, singleDayEventsByDate, spacerHeightsPerWeek, onShowMoreClick },
-    ref,
-  ) => {
+  ({ calendarDays, singleDayEventsByDate, spacerHeightsPerWeek, onShowMoreClick }, ref) => {
     return (
       <Grid
         container
