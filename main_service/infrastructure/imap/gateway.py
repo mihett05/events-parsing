@@ -1,10 +1,8 @@
-import asyncio
 import email
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
-from typing import Iterable
 
-from aioimaplib import aioimaplib, Response
+from aioimaplib import Response, aioimaplib
 
 from application.mails.gateway import EmailsGateway
 from domain.mails.dtos import ParsedMailInfoDto
@@ -12,10 +10,16 @@ from domain.mails.exceptions import FailedFetchMailError, FailedParseMailError
 
 
 class ImapEmailsGateway(EmailsGateway):
-    async def __aenter__(self, imap_server, username, password):
-        self.client = aioimaplib.IMAP4_SSL(host=imap_server)
+    def __init__(self, imap_server, imap_username, imap_password):
+        self.imap_server = imap_server
+        self.imap_username = imap_username
+        self.imap_password = imap_password
+
+    async def __aenter__(self):
+        self.client = aioimaplib.IMAP4_SSL(host=self.imap_server)
         await self.client.wait_hello_from_server()
-        await self.client.login(username, password)
+        res = await self.client.login(self.imap_username, self.imap_password)
+        print(res.lines)  # посмотри, что вернул сервер
         await self.client.select("INBOX")
         return self
 
@@ -33,13 +37,12 @@ class ImapEmailsGateway(EmailsGateway):
             raw_mail_collection = await self.__fetch_collection_by_batch(
                 batch_uids
             )
-            async for raw_mail in self.__parse_mails(raw_mail_collection):
-                emails.append(raw_mail)
+            emails.extend(await self.__parse_mails(raw_mail_collection))
 
         return emails
 
     async def __fetch_collection_by_batch(self, batch_uuids) -> list[Response]:
-        batch_uuids = ",".join(uid.decode('ascii') for uid in batch_uuids)
+        batch_uuids = ",".join(uid.decode("ascii") for uid in batch_uuids)
         fetch_response = await self.client.uid(
             "FETCH", ",".join(batch_uuids), "(RFC822 FLAGS)"
         )
@@ -85,40 +88,40 @@ class ImapEmailsGateway(EmailsGateway):
     async def __mark_mail_as_unseen(self, e_id):
         await self.client.uid("STORE", e_id, "-FLAGS", "\\Seen")
 
-    async def __parse_mail(self, raw_msg) -> ParsedMailInfoDto:
-        raw_msg = raw_msg.lines[1]
-        msg = email.message_from_bytes(raw_msg)
-        theme = self.__decode_header(msg.get("Subject", ""))
-        sender = self.__decode_header(msg.get("From", ""))
-        try:
-            return ParsedMailInfoDto(
-                theme=theme,
-                sender=sender,
-                raw_content=raw_msg,
-                received_date=parsedate_to_datetime(msg["date"]).date()
-                if "date" in msg
-                else None,
-            )
-        except IndexError:
-            raise FailedParseMailError()
+    async def __parse_mail(self, raw_message) -> ParsedMailInfoDto:
+        raw_message = raw_message.lines[1]
+        message = email.message_from_bytes(raw_message)
 
-    async def __parse_mails(self, raw_messages) -> Iterable[ParsedMailInfoDto]:
+        return ParsedMailInfoDto(
+            theme=self.__decode_header(message.get("Subject", "")),
+            sender=self.__decode_header(message.get("From", "")),
+            raw_content=raw_message,
+            received_date=parsedate_to_datetime(message["date"]).date()
+            if "date" in message
+            else None,
+        )
+
+    async def __parse_mails(self, raw_messages) -> list[ParsedMailInfoDto]:
+        collection = []
         for raw_msg in raw_messages:
             try:
-                yield await self.__parse_mail(raw_msg)
+                collection.append(await self.__parse_mail(raw_msg))
             except FailedParseMailError:
                 continue
+        return collection
 
     @staticmethod
     def __decode_payload(payload, charset=None):
         encodings_to_try = [
             charset,
-            'utf-8',
+            "utf-8",
         ]
-        encodings_to_try = list(dict.fromkeys([e for e in encodings_to_try if e]))
+        encodings_to_try = list(
+            dict.fromkeys([e for e in encodings_to_try if e])
+        )
         for encoding in encodings_to_try:
             try:
-                return payload.decode(encoding, errors='replace')
+                return payload.decode(encoding, errors="replace")
             except (UnicodeDecodeError, LookupError):
                 continue
 
@@ -127,21 +130,9 @@ class ImapEmailsGateway(EmailsGateway):
         decoded_parts = []
         for part, encoding in decode_header(header):
             if isinstance(part, bytes):
-                decoded_parts.append(ImapEmailsGateway.__decode_payload(part, encoding))
+                decoded_parts.append(
+                    ImapEmailsGateway.__decode_payload(part, encoding)
+                )
             else:
                 decoded_parts.append(str(part))
         return "".join(decoded_parts)
-
-
-async def main():
-    gate = ImapEmailsGateway()
-    print(gate)
-    async with gate('imap.gmail.com', 'your@gmail.com', "your_password") as g:
-        data = await g.receive_mails()
-        for email in data:
-            print(f"From: {email.sender}")
-            print(f"Subject: {email.theme}")
-            print(f"Date: {email.received_date}")
-
-if __name__ == '__main__':
-    asyncio.run(main())

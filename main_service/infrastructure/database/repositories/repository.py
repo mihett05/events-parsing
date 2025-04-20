@@ -2,13 +2,13 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
-from sqlalchemy import Delete, Insert, Select, Update, select
+from sqlalchemy import Delete, Select, Update, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
+from domain.exceptions import EntityAlreadyExists, EntityNotFound
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
@@ -30,6 +30,13 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     def get_select_query(self, model_id: Id) -> Select:
         return self.add_where_id(select(self.model), model_id)
 
+    def get_default_select_all_query(self, ids: list[Id]) -> Select:
+        return (
+            select(self.model)
+            .order_by(self.model.id)
+            .where(self.model.id.in_(ids))
+        )
+
     def get_select_all_query(self, dto: Any) -> Select:
         return select(self.model).order_by(self.model.id)
 
@@ -48,6 +55,9 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
 
     def extract_id_from_model(self, model: ModelType) -> Id:
         return model.id
+
+    def extract_id_from_models(self, models: list[ModelType]) -> list[Id]:
+        return [self.extract_id_from_model(model) for model in models]
 
     def add_options(self, statement: Executable) -> Executable:
         return statement.options(*self.get_options())
@@ -74,32 +84,10 @@ class PostgresRepository(metaclass=ABCMeta):
             for model in await self.get_models_from_query(query)
         ]
 
-    async def run_query_and_get_scalar_or_none(
-        self, query: Update | Insert | Delete
-    ) -> ModelType | None:
-        return (
-            await self.session.execute(
-                self.config.add_options(query.returning(self.config.model))
-            )
-        ).scalar_one_or_none()
-
     async def get_scalar_or_none(self, query: Select) -> ModelType | None:
         return (
             await self.session.execute(self.config.add_options(query))
         ).scalar_one_or_none()
-
-    async def create_models(
-        self, query: Insert, kwargs: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
-        return list(
-            (
-                await self.session.scalars(
-                    self.config.add_options(
-                        query.values(kwargs).returning(self.config.model)
-                    )
-                )
-            ).all()
-        )
 
     async def read(self, model_id: Id) -> Entity:
         if model := await self.session.get(
@@ -115,6 +103,25 @@ class PostgresRepository(metaclass=ABCMeta):
         return await self.get_entities_from_query(
             self.config.get_select_all_query(dto)
         )
+
+    async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
+        query = self.config.get_default_select_all_query(model_ids)
+        return await self.get_entities_from_query(query)
+
+    async def create_many(self, dtos: list[CreateModelType]) -> list[Entity]:
+        models = [self.config.create_model_mapper(dto) for dto in dtos]
+        try:
+            self.session.add_all(models)
+            if self._should_commit():
+                await self.session.commit()
+
+            for model in models:
+                await self.session.refresh(model)
+            return await self.read_by_ids(
+                self.config.extract_id_from_models(models)
+            )
+        except IntegrityError:
+            raise self.config.already_exists_exception()
 
     async def create(self, dto: CreateModelType) -> Entity:
         model = self.config.create_model_mapper(dto)

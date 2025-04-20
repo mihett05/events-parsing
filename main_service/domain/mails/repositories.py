@@ -21,5 +21,5 @@ class MailsRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def create_many(
-        self, dtos: list[dtos.CreateMailDto]
+        self, create_dtos: list[dtos.CreateMailDto]
     ) -> list[entities.Mail]: ...

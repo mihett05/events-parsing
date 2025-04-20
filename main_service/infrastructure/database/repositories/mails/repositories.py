@@ -1,4 +1,5 @@
 import domain.mails.dtos as dtos
+from domain.mails import entities as entities
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 from domain.mails.exceptions import MailAlreadyExists, MailNotFound
@@ -49,6 +50,11 @@ class MailsDatabaseRepository(MailsRepository):
 
     async def read_unprocessed(self, dto: dtos.ReadAllMailsDto) -> list[Mail]:
         return await self.__repository.read_all(dto)
+
+    async def create_many(
+        self, create_dtos: list[dtos.CreateMailDto]
+    ) -> list[entities.Mail]:
+        pass
 
     async def create(self, dto: dtos.CreateMailDto) -> Mail:
         return await self.__repository.create(dto)
