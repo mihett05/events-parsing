@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated
 
 import application.events.usecases as use_cases
@@ -20,10 +21,15 @@ async def read_all_events(
     use_case: FromDishka[use_cases.ReadAllEventUseCase],
     page: int = 0,
     page_size: int = 50,
+    start_date: datetime | None = None,
+    end_date: datetime | None = None,
 ):
     return map(
         mappers.map_to_pydantic,
-        await use_case(ReadAllEventsDto(page=page, page_size=page_size)),
+        await use_case(ReadAllEventsDto(page=page,
+                                        page_size=page_size,
+                                        start_date=start_date,
+                                        end_date=end_date)),
     )
 
 

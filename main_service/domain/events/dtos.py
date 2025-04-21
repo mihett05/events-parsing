@@ -32,3 +32,5 @@ class ReadOrganizationEventsDto:
 class ReadAllEventsDto:
     page: int
     page_size: int
+    start_date: datetime | None
+    end_date: datetime | None

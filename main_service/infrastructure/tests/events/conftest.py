@@ -42,6 +42,8 @@ async def read_all_events_dto() -> ReadAllEventsDto:
     return ReadAllEventsDto(
         page=0,
         page_size=50,
+        start_date=None,
+        end_date=None
     )
 
 
