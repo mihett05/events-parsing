@@ -1,11 +1,8 @@
-import { CalendarPage } from '@/pages/CalendarPage';
+import { router } from './router';
+import { RouterProvider } from 'react-router';
 
 function App() {
-  return (
-    <>
-      <CalendarPage />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
