@@ -1,4 +1,5 @@
 import json
+import re
 
 from openai import OpenAI
 
@@ -9,7 +10,9 @@ config = get_config()
 
 
 class OpenAiExtraction:
-    def __init__(self, init_prompt: dict[str, str], url: str, model: str, key: str):
+    def __init__(
+        self, init_prompt: dict[str, str], url: str, model: str, key: str
+    ):
         self.client = OpenAI(
             base_url=url,
             api_key=key,
@@ -60,10 +63,24 @@ class OpenAiExtraction:
             return result
         for item in response_dict:
             try:
-                result.append(
-                    EventInfo(**{**item, "dates": DatesInfo(**item["dates"])})
+                event = EventInfo(
+                    **{**item, "dates": DatesInfo(**item["dates"])}
                 )
-                # print(result[-1])
+                pattern = re.compile(r"^\d{2}-\d{2}-\d{4}$")
+                if (
+                    event.dates.start_date is not None
+                    and pattern.match(event.dates.start_date)
+                    and (
+                        event.dates.end_date is None
+                        or pattern.match(event.dates.end_date)
+                    )
+                    and (
+                        event.dates.end_registration is None
+                        or pattern.match(event.dates.end_registration)
+                    )
+                ):
+                    result.append(event)
+                    # print(result[-1])
             except:
                 continue
         return result
@@ -76,6 +93,7 @@ def get_prompt() -> dict[str, str]:
     with open("./init_prompt_for_list.txt", encoding="UTF-8") as f:
         result["list"] = f.read()
     return result
+
 
 api = OpenAiExtraction(
     get_prompt(),
