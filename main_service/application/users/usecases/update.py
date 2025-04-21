@@ -1,9 +1,8 @@
-from domain.users.entities import User
-from domain.users.repositories import UsersRepository
-
 from application.transactions import TransactionsGateway
 from application.users.dtos import UpdateUserDto
 from application.users.usecases import ReadUserUseCase
+from domain.users.entities import User
+from domain.users.repositories import UsersRepository
 
 
 class UpdateUserUseCase:
