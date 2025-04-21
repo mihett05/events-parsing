@@ -42,14 +42,14 @@ class ImapEmailsGateway(EmailsGateway):
         return emails
 
     async def __fetch_collection_by_batch(self, batch_uuids) -> list[Response]:
-        batch_uuids = ",".join(uid.decode("ascii") for uid in batch_uuids)
+        batch_uuids = map(lambda uid: uid.decode("ascii"), batch_uuids)
         return await self.__fetch_collection_by_single(batch_uuids)
 
     async def __fetch_collection_by_single(self, email_ids) -> list[Response]:
         collection = []
         for e_id in email_ids:
             try:
-                collection.append(await self.__fetch_mail(e_id.decode()))
+                collection.append(await self.__fetch_mail(e_id))
                 await self.__mark_mail_as_seen(e_id)
             except FailedFetchMailError:
                 await self.__mark_mail_as_unseen(e_id)
