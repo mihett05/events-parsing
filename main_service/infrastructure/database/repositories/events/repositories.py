@@ -5,7 +5,7 @@ from domain.events.exceptions import (
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-from sqlalchemy import Select, select, or_
+from sqlalchemy import Select, select, or_, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -30,19 +30,31 @@ class EventsDatabaseRepository(EventsRepository):
             query = (
                 select(self.model)
                 .order_by(self.model.id)
-                .offset(dto.page * dto.page_size)
-                .limit(dto.page_size)
             )
-            if dto.start_date and dto.end_date:
+            if dto.start_date is not None and dto.end_date is not None:
                 return self.__add_period_filter_to_query(query, dto)
+            elif dto.page is not None and dto.page_size is not None:
+                return self.__add_period_offset_to_query(query, dto)
             return query
 
         def __add_period_filter_to_query(self, query, dto: dtos.ReadAllEventsDto) -> Select:
             return (
                 query.where(or_(
-                    dto.start_date <= self.model.start_date <= dto.end_date,
-                    dto.start_date <= self.model.end_date <= dto.end_date,
-                ))
+                            and_(
+                                dto.start_date <= self.model.start_date,
+                                self.model.start_date <= dto.end_date
+                            ),
+                            and_(
+                                dto.start_date <= self.model.end_date,
+                                self.model.end_date <= dto.end_date
+                            ),
+                            ))
+            )
+
+        def __add_period_offset_to_query(self, query, dto: dtos.ReadAllEventsDto) -> Select:
+            return (
+                query.offset(dto.page * dto.page_size)
+                .limit(dto.page_size)
             )
 
     def __init__(self, session: AsyncSession):
