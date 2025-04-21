@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from domain.organizations.enums import RoleEnum
 
@@ -6,6 +7,7 @@ from domain.organizations.enums import RoleEnum
 @dataclass
 class CreateOrganizationDto:
     title: str
+    created_at: datetime
 
 
 @dataclass

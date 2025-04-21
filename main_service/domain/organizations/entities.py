@@ -7,10 +7,8 @@ from domain.organizations.enums import RoleEnum
 class Organization:
     id: int
     title: str
-
+    owner_id: int
     admins: list[int]
-    members: list[int]
-
 
 @dataclass
 class UserOrganizationRole:

@@ -7,11 +7,11 @@ class CreateOrganizationModelDto(CamelModel):
     title: str
     description: str
     id: int
-    id_admin: int
+    admins_id: list[int]
+    members_id: list[int]
     create_at: datetime
 
 
 class UpdateOrganizationModelDto(CamelModel):
     title: str
     description: str
-    # members: list[int]

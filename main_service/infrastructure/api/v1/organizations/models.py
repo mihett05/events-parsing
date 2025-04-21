@@ -8,5 +8,6 @@ class OrganizationModel(CamelModel):
     created_at: datetime
 
     id: int
-    id_admin: int
+    owner_id: int
+    admins: list[int]
     description: str | None
