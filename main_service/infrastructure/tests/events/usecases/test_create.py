@@ -8,7 +8,7 @@ async def test_create_success(
     create_event_usecase: CreateEventUseCase,
     create_event_dto: CreateEventDto,
 ):
-    event = await create_event_usecase(dto=create_event_dto)
+    event = await create_event_usecase(dto=create_event_dto, actor=None)
 
     attrs = (
         "title",

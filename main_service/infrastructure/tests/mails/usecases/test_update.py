@@ -4,7 +4,7 @@ import pytest
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases import UpdateMailUseCase
 from domain.mails.entities import Mail
-from domain.mails.exceptions import MailNotFound
+from domain.mails.exceptions import MailNotFoundError
 
 
 @pytest.mark.asyncio
@@ -26,5 +26,5 @@ async def test_update_not_found(
     update_mail_dto: UpdateMailDto,
 ):
     update_mail_dto.mail_id = 42
-    with pytest.raises(MailNotFound):
+    with pytest.raises(MailNotFoundError):
         _ = await update_mail_usecase(update_mail_dto)

@@ -3,8 +3,8 @@ from domain.events import entities as entities
 from domain.events.dtos import CreateEventDto, ReadAllEventsDto
 from domain.events.entities import Event
 from domain.events.exceptions import (
-    EventAlreadyExistsErrorError,
-    EventNotFoundErrorError,
+    EventAlreadyExistsError,
+    EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
 
@@ -17,8 +17,8 @@ class EventsMemoryRepository(EventsRepository):
         def __init__(self):
             super().__init__(
                 entity=Event,
-                not_found_exception=EventNotFoundErrorError,
-                already_exists_exception=EventAlreadyExistsErrorError,
+                not_found_exception=EventNotFoundError,
+                already_exists_exception=EventAlreadyExistsError,
             )
 
         def extract_id(self, entity: Event) -> Id:
