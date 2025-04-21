@@ -1,34 +1,44 @@
 import Box from '@mui/material/Box';
 import { MonthCalendar } from '@widgets/MonthCalendar';
-import { parseISO } from 'date-fns';
 import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
-import { Layout } from '@shared/ui/Layout';
+import { Layout } from '@/shared/ui/Layout';
 
-const initialCalendarDate = parseISO(new Date().toISOString());
+const initialCalendarDate = new Date();
 
 export const CalendarPage: React.FC = () => {
   const {
-    data: events,
-    // error,
+    data: apiEvents,
+    error,
     isLoading,
   } = useReadAllEventsV1EventsGetQuery({ page: 0, pageSize: 100000 });
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-      </Box>
+      <Layout>
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress />
+        </Box>
+      </Layout>
     );
   }
 
+  if (error) {
+    return (
+      <Layout>
+        <Typography color="error" align="center">
+          Failed to load events. Please try again later.
+        </Typography>
+      </Layout>
+    );
+  }
+
+  const formattedEvents = formatEvents((apiEvents as ApiEvent[]) ?? []);
+
   return (
     <Layout>
-      <MonthCalendar
-        initialDate={initialCalendarDate}
-        events={formatEvents(events as ApiEvent[])}
-      />
+      <MonthCalendar initialDate={initialCalendarDate} events={formattedEvents} />
     </Layout>
   );
 };
