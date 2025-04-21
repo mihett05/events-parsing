@@ -25,8 +25,9 @@ class DatabaseProvider(Provider):
     async def get_session(
         self, session_maker: async_sessionmaker[AsyncSession]
     ) -> AsyncIterable[AsyncSession]:
-        session = session_maker(expire_on_commit=False)
-        yield session
+        async with session_maker(expire_on_commit=False) as session:
+            yield session
+            await session.commit()
         await asyncio.shield(session.close())
 
     @provide(scope=Scope.REQUEST)
