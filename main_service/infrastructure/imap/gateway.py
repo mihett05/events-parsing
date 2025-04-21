@@ -3,6 +3,7 @@ from email.header import decode_header
 from email.utils import parsedate_to_datetime
 
 from aioimaplib import Response, aioimaplib
+
 from application.mails.gateway import EmailsGateway
 from domain.mails.dtos import ParsedMailInfoDto
 from domain.mails.exceptions import FailedFetchMailError, FailedParseMailError
@@ -29,37 +30,20 @@ class ImapEmailsGateway(EmailsGateway):
         response = await self.client.search("UNSEEN")
         emails = []
         email_ids = response.lines[0].split()
+        batch_size = 200
 
-        raw_mail_collection = await self.__fetch_collection_by_single(email_ids)
-        emails.extend(await self.__parse_mails(raw_mail_collection))
+        for i in range(0, len(email_ids), batch_size):
+            batch_uids = email_ids[i : i + batch_size]
+            raw_mail_collection = await self.__fetch_collection_by_batch(
+                batch_uids
+            )
+            emails.extend(await self.__parse_mails(raw_mail_collection))
 
         return emails
 
     async def __fetch_collection_by_batch(self, batch_uuids) -> list[Response]:
         batch_uuids = ",".join(uid.decode("ascii") for uid in batch_uuids)
-        fetch_response = await self.client.uid(
-            "FETCH", ",".join(batch_uuids), "(RFC822 FLAGS)"
-        )
-
-        if fetch_response.result != "OK":
-            return await self.__fetch_collection_by_single(batch_uuids)
-
-        collection = []
-        raw_messages = [
-            line
-            for line in fetch_response.lines
-            if b"UID" in line and b"RFC822" in line
-        ]
-
-        for j in range(0, len(raw_messages), 2):
-            uid = batch_uuids[j // 2]
-            try:
-                collection.append(raw_messages[j + 1])
-                await self.__mark_mail_as_seen(raw_messages[j + 1])
-            except IndexError:
-                await self.__mark_mail_as_unseen(uid)
-                continue
-        return collection
+        return await self.__fetch_collection_by_single(batch_uuids)
 
     async def __fetch_collection_by_single(self, email_ids) -> list[Response]:
         collection = []

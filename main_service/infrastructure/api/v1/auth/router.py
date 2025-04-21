@@ -1,5 +1,9 @@
 from typing import Annotated
 
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from fastapi import APIRouter, Depends
+from starlette.responses import JSONResponse
+
 from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto
 from application.auth.usecases import (
     AuthorizeUseCase,
@@ -7,11 +11,7 @@ from application.auth.usecases import (
     RegisterUseCase,
 )
 from application.auth.usecases.login import LoginUseCase
-from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
-from fastapi import APIRouter, Depends
-from starlette.responses import JSONResponse
-
 from infrastructure.api.v1.auth.deps import extract_refresh_token
 from infrastructure.api.v1.auth.dtos import (
     AuthenticateUserModelDto,
@@ -33,7 +33,7 @@ def __make_response(user: User, tokens_pair: TokenPairDto):
         content=UserWithTokenModel(
             user=map_to_pydantic(user),
             access_token=tokens_pair.access_token,
-        ).model_dump_json(by_alias=True),
+        ).model_dump(by_alias=True, mode="json"),
     )
     response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token)
     return response
