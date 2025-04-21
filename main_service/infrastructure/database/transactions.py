@@ -1,8 +1,7 @@
 from contextvars import ContextVar, Token
 
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncSessionTransaction
-
 from application.transactions import Transaction, TransactionsGateway
+from sqlalchemy.ext.asyncio import AsyncSession, AsyncSessionTransaction
 
 transaction_var: ContextVar[AsyncSessionTransaction | None] = ContextVar(
     "transaction_var", default=None
@@ -35,7 +34,7 @@ class TransactionsDatabaseGateway(TransactionsGateway):
 
     async def __aenter__(self) -> Transaction:
         if not self.__transaction:
-            self.__transaction = self.__session.begin()
+            self.__transaction = self.__session.begin_nested()
         await self.__transaction.__aenter__()
         self.__token = transaction_var.set(self.__transaction)
         return DatabaseTransaction(self.__transaction)
@@ -46,6 +45,11 @@ class TransactionsDatabaseGateway(TransactionsGateway):
         )
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.__transaction and self.__transaction.is_active:
+            if exc_type is None:
+                await self.__transaction.commit()
+            else:
+                await self.__transaction.rollback()
         if self.__token:
             transaction_var.reset(self.__token)
         if self.__transaction:

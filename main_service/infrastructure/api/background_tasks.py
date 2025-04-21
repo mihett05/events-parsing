@@ -1,10 +1,10 @@
 import asyncio
 
-from dishka import AsyncContainer
-
 from application.events.usecases import ParseEventsUseCase
 from application.mails.gateway import EmailsGateway
 from application.mails.usecases import CreateMailsUseCase
+from dishka import AsyncContainer
+
 from infrastructure.api.mappers import map_mail_info_to_create_dto
 
 
@@ -18,7 +18,6 @@ async def __parse_mails(container: AsyncContainer):
             dtos = map(
                 map_mail_info_to_create_dto, await gateway.receive_mails()
             )
-
             await create_many_use_case(list(dtos))
         await asyncio.sleep(60 * 30)
 

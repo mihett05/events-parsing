@@ -2,13 +2,12 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
-from sqlalchemy import Delete, Insert, Select, Update, select
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from sqlalchemy import Delete, Select, Update, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
-
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 
 from infrastructure.database.transactions import transaction_var
 
@@ -107,6 +106,10 @@ class PostgresRepository(metaclass=ABCMeta):
             self.config.get_select_all_query(dto)
         )
 
+    async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
+        query = self.config.get_default_select_all_query(model_ids)
+        return await self.get_entities_from_query(query)
+
     async def __create(self, model: ModelType) -> Entity:
         try:
             self.session.add(model)
@@ -116,10 +119,6 @@ class PostgresRepository(metaclass=ABCMeta):
             return await self.read(self.config.extract_id_from_model(model))
         except IntegrityError:
             raise self.config.already_exists_exception()
-
-    async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
-        query = self.config.get_default_select_all_query(model_ids)
-        return await self.get_entities_from_query(query)
 
     async def create_many(self, dtos: list[CreateModelType]) -> list[Entity]:
         models = [self.config.create_model_mapper(dto) for dto in dtos]
@@ -135,9 +134,6 @@ class PostgresRepository(metaclass=ABCMeta):
             )
         except IntegrityError:
             raise self.config.already_exists_exception()
-
-    async def create(self, dto: CreateModelType) -> Entity:
-        model = self.config.create_model_mapper(dto)
 
     async def create_from_dto(self, dto: CreateModelType) -> Entity:
         model = self.config.create_model_mapper(dto)

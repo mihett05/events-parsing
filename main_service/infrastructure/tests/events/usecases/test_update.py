@@ -1,11 +1,10 @@
 from copy import copy
 
 import pytest
-
 from application.events.dtos import UpdateEventDto
 from application.events.usecases import UpdateEventUseCase
 from domain.events.entities import Event
-from domain.events.exceptions import EventNotFound
+from domain.events.exceptions import EventNotFoundError
 
 
 @pytest.mark.asyncio
@@ -30,5 +29,5 @@ async def test_update_not_found(
     update_event_dto: UpdateEventDto,
 ):
     update_event_dto.event_id = 42
-    with pytest.raises(EventNotFound):
+    with pytest.raises(EventNotFoundError):
         _ = await update_event_usecase(update_event_dto, None)

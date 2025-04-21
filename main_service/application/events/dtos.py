@@ -36,7 +36,7 @@ class MakeRepeatableEventDto:
 
 @dataclass
 class DatesInfo:
-    start_date: datetime | None
+    start_date: datetime
     end_date: datetime | None
     end_registration: datetime | None
 

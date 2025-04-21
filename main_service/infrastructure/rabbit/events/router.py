@@ -1,3 +1,5 @@
+from application.events.dtos import EventInfo
+from application.events.usecases import DeduplicateEventUseCase
 from dishka import FromDishka
 from faststream.rabbit import (
     ExchangeType,
@@ -6,8 +8,6 @@ from faststream.rabbit import (
     RabbitRouter,
 )
 
-from application.events.dtos import EventInfo
-from application.events.usecases import DeduplicateEventUseCase
 from infrastructure.rabbit.events.mappers import (
     map_event_info_from_pydantic,
     map_event_info_to_create_dto,
@@ -24,7 +24,7 @@ exchange = RabbitExchange(
 )
 
 queue = RabbitQueue(
-    name="consume",
+    name="process-events",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",
