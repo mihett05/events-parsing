@@ -29,14 +29,9 @@ class ImapEmailsGateway(EmailsGateway):
         response = await self.client.search("UNSEEN")
         emails = []
         email_ids = response.lines[0].split()
-        batch_size = 200
 
-        for i in range(0, len(email_ids), batch_size):
-            batch_uids = email_ids[i : i + batch_size]
-            raw_mail_collection = await self.__fetch_collection_by_batch(
-                batch_uids
-            )
-            emails.extend(await self.__parse_mails(raw_mail_collection))
+        raw_mail_collection = await self.__fetch_collection_by_single(email_ids)
+        emails.extend(await self.__parse_mails(raw_mail_collection))
 
         return emails
 
@@ -53,7 +48,7 @@ class ImapEmailsGateway(EmailsGateway):
         raw_messages = [
             line
             for line in fetch_response.lines
-            if line.startswith(b"UID") and b"RFC822" in line
+            if b"UID" in line and b"RFC822" in line
         ]
 
         for j in range(0, len(raw_messages), 2):
@@ -64,18 +59,19 @@ class ImapEmailsGateway(EmailsGateway):
             except IndexError:
                 await self.__mark_mail_as_unseen(uid)
                 continue
+        return collection
 
     async def __fetch_collection_by_single(self, email_ids) -> list[Response]:
         collection = []
         for e_id in email_ids:
             try:
-                collection.append(await self.__fetch_mail(e_id))
+                collection.append(await self.__fetch_mail(e_id.decode()))
                 await self.__mark_mail_as_seen(e_id)
             except FailedFetchMailError:
                 await self.__mark_mail_as_unseen(e_id)
         return collection
 
-    async def __fetch_mail(self, e_id) -> Response:
+    async def __fetch_mail(self, e_id: str) -> Response:
         fetch_response = await self.client.fetch(e_id, "(RFC822)")
         if fetch_response.result != "OK":
             raise FailedFetchMailError
