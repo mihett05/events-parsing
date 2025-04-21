@@ -1,19 +1,24 @@
-import asyncio
 import contextlib
 
+from application.auth.exceptions import InvalidCredentialsError
 from application.events.usecases import ParseEventsUseCase
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
-from domain.exceptions import EntityAlreadyExists, EntityNotFound
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.mails.entities import Mail
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
 
+from infrastructure.api.background_tasks import (
+    cancel_background_task,
+    run_background_tasks,
+)
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
@@ -26,18 +31,10 @@ async def create_rabbit_app(container: AsyncContainer) -> FastStream:
     return app
 
 
-async def parse_mails(container: AsyncContainer):
-    while True:
-        async with container() as request_container:
-            parse = await request_container.get(ParseEventsUseCase)
-            await parse()
-        await asyncio.sleep(60 * 30)
-
-
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
-        task = asyncio.create_task(parse_mails(container))
+        tasks = await run_background_tasks(container)
 
         rabbit_app = await create_rabbit_app(container)
         faststream_setup_dishka(container, rabbit_app, auto_inject=True)
@@ -46,11 +43,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         yield
 
         # cancel background task
-        try:
-            task.cancel()
-            await task
-        except asyncio.CancelledError:
-            pass
+        await cancel_background_task(tasks)
 
         await rabbit_app.broker.close()
 
@@ -63,21 +56,30 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         allow_headers=["*"],
     )
 
-    @app.exception_handler(EntityNotFound)
+    @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(
-        _: Request, exc: EntityNotFound
+        _: Request, exc: EntityNotFoundError
     ):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
         )
 
-    @app.exception_handler(EntityAlreadyExists)
+    @app.exception_handler(EntityAlreadyExistsError)
     async def entity_already_exists_exception_handler(
-        _: Request, exc: EntityAlreadyExists
+        _: Request, exc: EntityAlreadyExistsError
     ):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(exc)},
+        )
+
+    @app.exception_handler(InvalidCredentialsError)
+    async def invalid_credentials_exception_handler(
+        _: Request, exc: InvalidCredentialsError
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": str(exc)},
         )
 

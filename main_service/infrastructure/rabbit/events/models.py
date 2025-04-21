@@ -2,7 +2,7 @@ from infrastructure.api.models import CamelModel
 
 
 class DatesInfoModel(CamelModel):
-    start_date: str | None
+    start_date: str
     end_date: str | None
     end_registration: str | None
 

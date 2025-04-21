@@ -1,0 +1,11 @@
+from domain.mails.dtos import CreateMailDto
+from domain.mails.entities import Mail
+from domain.mails.repositories import MailsRepository
+
+
+class CreateMailsUseCase:
+    def __init__(self, repository: MailsRepository):
+        self.__repository = repository
+
+    async def __call__(self, dtos: list[CreateMailDto]) -> list[Mail]:
+        return await self.__repository.create_many(dtos)

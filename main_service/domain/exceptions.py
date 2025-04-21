@@ -7,11 +7,11 @@ class EntityException(Exception):
     pass
 
 
-class EntityNotFound(EntityException):
+class EntityNotFoundError(EntityException):
     def __init__(self, entity: type[Entity] | None = None):
         super().__init__(f"{entity.__name__} not found")
 
 
-class EntityAlreadyExists(EntityException):
+class EntityAlreadyExistsError(EntityException):
     def __init__(self, entity: type[Entity] | None = None):
         super().__init__(f"{entity.__name__} already exists")
