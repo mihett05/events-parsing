@@ -4,7 +4,7 @@ import application.auth.usecases as auth_use_cases
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
 import application.users.usecases as users_use_cases
-
+import application.organizations.usecases as organizations_use_cases
 
 class UseCasesProvider(Provider):
     scope = Scope.REQUEST
@@ -20,6 +20,14 @@ class UseCasesProvider(Provider):
         event_use_cases.ReadAllEventUseCase,
         event_use_cases.ParseEventsUseCase,
         event_use_cases.UpdateEventUseCase,
+    )
+
+    organizations = provide_all(
+        organizations_use_cases.CreateOrganizationUseCase,
+        organizations_use_cases.ReadOrganizationUseCase,
+        organizations_use_cases.UpdateOrganizationUseCase,
+        organizations_use_cases.DeleteOrganizationUseCase,
+        organizations_use_cases.ReadAllOrganizationUseCase
     )
 
     mails = provide_all(

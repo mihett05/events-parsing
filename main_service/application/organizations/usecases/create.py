@@ -6,7 +6,7 @@ from main_service.domain.organizations.repositories import (
 from main_service.domain.users.entities import User
 
 
-class CreateOrganizationUsecase:
+class CreateOrganizationUseCase:
     def __init__(self, repository: OrganizationRepository):
         self.__repository = repository
 

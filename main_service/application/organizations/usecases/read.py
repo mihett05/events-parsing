@@ -4,7 +4,7 @@ from main_service.domain.organizations.repositories import (
 )
 
 
-class ReadOrganizationUsecase:
+class ReadOrganizationUseCase:
     def __init__(self, repository: OrganizationRepository):
         self.__repository = repository
 

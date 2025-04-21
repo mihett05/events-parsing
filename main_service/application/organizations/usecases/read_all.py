@@ -6,7 +6,7 @@ from main_service.domain.organizations.dtos import ReadOrganizationsDto
 from main_service.domain.organizations.entities import Organization
 
 
-class ReadAllOrganizationUsecase:
+class ReadAllOrganizationUseCase:
     def __init__(self, repository: OrganizationRepository):
         self.__repository = repository
 

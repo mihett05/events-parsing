@@ -7,7 +7,7 @@ from main_service.domain.organizations.repositories import (
 from main_service.domain.users.entities import User
 
 
-class UpdateOrganizationUsecase:
+class UpdateOrganizationUseCase:
     def __init__(
         self, repository: OrganizationRepository, tx: TransactionsGateway
     ):
