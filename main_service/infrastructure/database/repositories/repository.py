@@ -3,16 +3,14 @@ from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-<<<<<<< HEAD
 from sqlalchemy import Delete, Insert, Select, Update, select
-=======
 from sqlalchemy import Delete, Select, Update, select
->>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")

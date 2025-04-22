@@ -2,14 +2,11 @@ from adaptix import P
 from adaptix.conversion import (
     allow_unlinked_optional,
 )
+
 from domain.mails.dtos import CreateMailDto
 from domain.mails.entities import Mail
-<<<<<<< HEAD
 
 from infrastructure.database.mappers import postgres_retort
-=======
->>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
-
 from infrastructure.mocks.mappers import mock_retort
 
 retort = mock_retort.extend(recipe=[])

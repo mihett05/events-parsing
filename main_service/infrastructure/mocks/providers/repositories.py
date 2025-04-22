@@ -1,10 +1,8 @@
 from dishka import Provider, Scope, provide
+
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
-<<<<<<< HEAD
-=======
 from domain.users.repositories import UsersRepository
->>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
 
 from infrastructure.mocks.repositories.events import EventsMemoryRepository
 from infrastructure.mocks.repositories.mails import MailsMemoryRepository

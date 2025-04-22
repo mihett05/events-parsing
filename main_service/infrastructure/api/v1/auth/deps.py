@@ -1,11 +1,7 @@
 from typing import Annotated
 
-from application.auth.tokens.dtos import TokenInfoDto
-from application.auth.tokens.gateways import TokensGateway
-from application.auth.usecases import AuthorizeUseCase
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
-from domain.users.entities import User
 from fastapi import Cookie, Depends
 from fastapi.security import (
     APIKeyCookie,
@@ -13,6 +9,11 @@ from fastapi.security import (
     HTTPBearer,
     OAuth2PasswordBearer,
 )
+
+from application.auth.tokens.dtos import TokenInfoDto
+from application.auth.tokens.gateways import TokensGateway
+from application.auth.usecases import AuthorizeUseCase
+from domain.users.entities import User
 
 REFRESH_COOKIE = "refresh"
 cookie_scheme = APIKeyCookie(name=REFRESH_COOKIE)

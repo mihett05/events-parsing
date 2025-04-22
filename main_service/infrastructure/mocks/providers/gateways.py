@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import logging
 
 from application.events.coordinator.gateway import CoordinatorGateway
@@ -8,14 +7,15 @@ from faststream.broker.message import StreamMessage
 from faststream.rabbit import RabbitBroker
 
 from infrastructure.config import Config
-=======
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
 from dishka import Provider, Scope, provide
 
+from application.auth.tokens.gateways import SecurityGateway, TokensGateway
+from application.events.coordinator.gateway import CoordinatorGateway
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
->>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
+
 from infrastructure.mocks.gateways.events.gateway import (
     MemoryCoordinatorGateway,
 )
