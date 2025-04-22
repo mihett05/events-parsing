@@ -2,7 +2,7 @@ from dishka import Provider, Scope, provide
 
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
-from domain.organizations.repositories import OrganizationRepository
+from domain.organizations.repositories import OrganizationsRepository
 from domain.users.repositories import UsersRepository
 from infrastructure.database.repositories.events import EventsDatabaseRepository
 from infrastructure.database.repositories.mails import MailsDatabaseRepository
@@ -25,5 +25,5 @@ class RepositoriesProvider(Provider):
         source=UsersDatabaseRepository, provides=UsersRepository
     )
     organizations_repository = provide(
-        source=OrganizationsDatabaseRepository, provides=OrganizationRepository
+        source=OrganizationsDatabaseRepository, provides=OrganizationsRepository
     )
