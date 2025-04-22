@@ -1,7 +1,6 @@
-from domain.users.entities import User
-
 from application.auth.tokens.dtos import TokenPairDto
 from application.auth.tokens.gateways import TokensGateway
+from domain.users.entities import User
 
 
 class CreateTokenPairUseCase:

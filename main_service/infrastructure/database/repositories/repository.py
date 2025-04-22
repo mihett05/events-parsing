@@ -2,13 +2,13 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from sqlalchemy import Delete, Select, Update, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")

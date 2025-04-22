@@ -1,17 +1,23 @@
 from dataclasses import dataclass
-
-from domain.attachments.enums import (
-    AttachmentContentTypeEnum,
-    AttachmentStorageTypeEnum,
-)
+from pathlib import Path
+from uuid import UUID
 
 
 @dataclass
 class Attachment:
-    owner_id: int
+    """
+    Part of model stores at Database (meta-data)
+    Part of model stores at STORAGE (LOCAL/S3) (content)
+    """
 
-    path: str
-    type: AttachmentStorageTypeEnum
+    id: UUID
+    filename: str
+    content: bytes | None = None
 
-    content: bytes
-    content_type: AttachmentContentTypeEnum
+    @property
+    def path(self) -> str:
+        return f"{self.id}.{self.extension}"
+
+    @property
+    def extension(self) -> str:
+        return Path(self.filename).suffix.lower()

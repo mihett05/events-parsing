@@ -9,7 +9,7 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     env_file:
-      - main_service/dev/.env
+      - main_service/.dev.env
 
   rabbitmq:
     image: rabbitmq:3.12-management
@@ -19,7 +19,7 @@ services:
       - "5672:5672"  # Порт для AMQP
       - "15672:15672"  # Порт для веба
     env_file:
-      - main_service/dev/.env
+      - main_service/.dev.env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -43,7 +43,7 @@ services:
       context: main_service
       dockerfile: ./Dockerfile
     env_file:
-      - main_service/dev/.env
+      - main_service/.dev.env
     ports:
       - 8000:8080
 
@@ -61,7 +61,7 @@ services:
       context: parser
       dockerfile: ./Dockerfile
     env_file:
-      - main_service/dev/.env
+      - main_service/.dev.env
 
 volumes:
   postgres-data:

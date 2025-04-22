@@ -1,18 +1,20 @@
 import logging
 from typing import AsyncIterable
 
-from application.auth.tokens.gateways import SecurityGateway, TokensGateway
-from application.events.coordinator.gateway import CoordinatorGateway
-from application.events.usecases import DeduplicateEventUseCase
-from application.mails.gateway import EmailsGateway
 from dishka import Provider, Scope, provide
 from faststream.broker.message import StreamMessage
 from faststream.rabbit import RabbitBroker
 
+from application.attachments.gateways import FilesGateway
+from application.auth.tokens.gateways import SecurityGateway, TokensGateway
+from application.events.coordinator.gateway import CoordinatorGateway
+from application.events.usecases import DeduplicateEventUseCase
+from application.mails.gateway import EmailsGateway
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
 from infrastructure.imap.gateway import ImapEmailsGateway
+from infrastructure.media.attachments import StaticDirFilesGateway
 from infrastructure.rabbit.events import (
     RabbitMQCoordinatorGateway,
 )
@@ -33,6 +35,15 @@ class GatewaysProvider(Provider):
             imap_server=config.imap_server,
             imap_username=config.imap_username,
             imap_password=config.imap_password,
+        ) as gateway:
+            yield gateway
+
+    @provide(scope=Scope.REQUEST)
+    async def files_gateway(
+        self, config: Config
+    ) -> AsyncIterable[FilesGateway]:
+        async with StaticDirFilesGateway(
+            base_path=config.static_folder
         ) as gateway:
             yield gateway
 

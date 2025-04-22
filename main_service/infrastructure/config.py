@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -29,6 +30,8 @@ class Config(BaseSettings):
     imap_server: str
     imap_username: str
     imap_password: str
+
+    static_folder: Path = Path(__file__).parent.parent.resolve() / "static"
 
     @computed_field
     @property
