@@ -1,7 +1,5 @@
-
 from domain.events.entities import Event
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-
 from domain.mails.entities import Mail
 
 

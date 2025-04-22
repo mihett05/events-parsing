@@ -10,6 +10,7 @@ class Organization:
     owner_id: int
     admins: list[int]
 
+
 @dataclass
 class UserOrganizationRole:
     id: int

@@ -1,14 +1,19 @@
+from domain.organizations import dtos
+from domain.organizations.entities import Organization
+from domain.organizations.exceptions import (
+    OrganizationAlreadyExistsErrorError,
+    OrganizationNotFoundErrorError,
+)
+from domain.organizations.repositories import OrganizationRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from domain.organizations.entities import Organization
-from domain.organizations.exceptions import OrganizationNotFoundErrorError, OrganizationAlreadyExistsErrorError
-from domain.organizations.repositories import OrganizationRepository
-from domain.organizations import dtos
-from infrastructure.database.repositories.organizations.models import OrganizationDatabaseModel
+from infrastructure.database.repositories.organizations.models import (
+    OrganizationDatabaseModel,
+)
 
+from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
-from ..repository import PostgresRepositoryConfig, PostgresRepository
 
 
 class OrganizationsDatabaseRepository(OrganizationRepository):
@@ -23,20 +28,25 @@ class OrganizationsDatabaseRepository(OrganizationRepository):
                 not_found_exception=OrganizationNotFoundErrorError,
                 already_exists_exception=OrganizationAlreadyExistsErrorError,
             )
-        def get_select_all_query(self, dto: dtos.ReadOrganizationsDto) -> Select:
-                return (
-                    select(self.model)
-                    .order_by(self.model.id)
-                    .offset(dto.page * dto.page_size)
-                    .limit(dto.page_size)
-                )
+
+        def get_select_all_query(
+            self, dto: dtos.ReadOrganizationsDto
+        ) -> Select:
+            return (
+                select(self.model)
+                .order_by(self.model.id)
+                .offset(dto.page * dto.page_size)
+                .limit(dto.page_size)
+            )
 
     def __init__(self, session: AsyncSession):
         self.__session = session
         self.config = self.Config()
         self.__repository = PostgresRepository(session, self.config)
 
-    async def find(self, organization_info: dtos.CreateOrganizationDto) -> Organization | None:
+    async def find(
+        self, organization_info: dtos.CreateOrganizationDto
+    ) -> Organization | None:
         query = select(OrganizationDatabaseModel).where(
             OrganizationDatabaseModel.title.ilike(organization_info.title)
         )
@@ -48,7 +58,9 @@ class OrganizationsDatabaseRepository(OrganizationRepository):
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)
 
-    async def read_all(self, dto: dtos.ReadOrganizationsDto) -> list[Organization]:
+    async def read_all(
+        self, dto: dtos.ReadOrganizationsDto
+    ) -> list[Organization]:
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateOrganizationDto) -> Organization:

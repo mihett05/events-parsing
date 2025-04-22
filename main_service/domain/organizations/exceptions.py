@@ -1,5 +1,5 @@
-from domain.organizations.entities import Organization
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.organizations.entities import Organization
 
 
 class OrganizationNotFoundErrorError(EntityNotFoundError):

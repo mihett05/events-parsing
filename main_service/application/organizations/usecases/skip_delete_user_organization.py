@@ -1,5 +1,4 @@
 from main_service.application.transactions import TransactionsGateway
-
 from main_service.domain.organizations.entities import UserOrganizationRole
 from main_service.domain.organizations.repositories import (
     UserOrganizationRolesRepository,

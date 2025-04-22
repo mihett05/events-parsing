@@ -1,10 +1,11 @@
 from adaptix import P
 from adaptix.conversion import link_function
-from infrastructure.api.retort import pydantic_retort
 
+from infrastructure.api.retort import pydantic_retort
 from main_service.application.organizations.dtos import UpdateOrganizationDto
 from main_service.domain.organizations.dtos import CreateOrganizationDto
 from main_service.domain.organizations.entities import Organization
+
 from .dtos import (
     CreateOrganizationModelDto,
     UpdateOrganizationModelDto,

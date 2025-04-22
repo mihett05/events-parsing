@@ -2,9 +2,9 @@ from datetime import datetime
 
 from adaptix import P
 from adaptix.conversion import coercer, link_function
-
 from application.events.dtos import DatesInfo, EventInfo
 from domain.events.dtos import CreateEventDto
+
 from infrastructure.api.retort import pydantic_retort
 from infrastructure.rabbit.events.models import (
     DatesInfoModel,

@@ -1,16 +1,15 @@
-from fastapi import APIRouter
 import application.organizations.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from infrastructure.api.v1.organizations import models
-from infrastructure.api.v1.organizations import mappers
+from fastapi import APIRouter
 
+from infrastructure.api.v1.organizations import mappers, models
 from main_service.application.organizations.dtos import UpdateOrganizationDto
 from main_service.application.organizations.usecases.read_all import (
     ReadAllOrganizationUsecase,
 )
 from main_service.domain.organizations.dtos import (
-    ReadOrganizationsDto,
     CreateOrganizationDto,
+    ReadOrganizationsDto,
 )
 from main_service.infrastructure.api.models import ErrorModel
 

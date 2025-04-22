@@ -3,9 +3,9 @@ from adaptix.conversion import (
     allow_unlinked_optional,
     link_function,
 )
-
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
+
 from infrastructure.database.mappers import postgres_retort
 
 from .models import OrganizationDatabaseModel
@@ -39,5 +39,6 @@ def map_to_db(organization: Organization) -> OrganizationDatabaseModel: ...
         allow_unlinked_optional(P[OrganizationDatabaseModel].created_at),
     ]
 )
-
-def map_create_dto_to_model(dto: CreateOrganizationDto) -> OrganizationDatabaseModel: ...
+def map_create_dto_to_model(
+    dto: CreateOrganizationDto,
+) -> OrganizationDatabaseModel: ...
