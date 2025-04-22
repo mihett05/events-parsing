@@ -15,7 +15,7 @@ import { MultiDayEventOverlay } from './components/MultiDayEventOverlay';
 import { DayEventsPopoverContent } from './components/DayEventsPopoverContent';
 import { EventDetailsModal } from './components/EventDetailsModal';
 import { ModalProvider } from '../lib/context/ModalContext';
-
+import { ToggleEventsView } from '@features/events/toggle-view';
 interface MonthCalendarProps {
   events?: CalendarEvent[];
   initialDate?: Date;
@@ -53,6 +53,9 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initi
 
   return (
     <ModalProvider>
+      <Box display="flex" justifyContent="flex-end">
+        <ToggleEventsView />
+      </Box>
       <Paper
         elevation={0}
         sx={{
