@@ -24,7 +24,7 @@ exchange = RabbitExchange(
 )
 
 queue = RabbitQueue(
-    name="consume",
+    name="process-events",
     durable=True,
     auto_delete=True,
     routing_key="mails.parsed",

@@ -8,7 +8,10 @@ from domain.mails.exceptions import MailAlreadyExistsError, MailNotFoundError
 from domain.mails.repositories import MailsRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+<<<<<<< HEAD
 from sqlalchemy.orm.interfaces import LoaderOption
+=======
+>>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
@@ -48,7 +51,7 @@ class MailsDatabaseRepository(MailsRepository):
     async def create_many(
         self, create_dtos: list[dtos.CreateMailDto]
     ) -> list[entities.Mail]:
-        pass
+        return await self.__repository.create_many(create_dtos)
 
     async def create(self, dto: dtos.CreateMailDto) -> Mail:
         return await self.__repository.create_from_dto(dto)

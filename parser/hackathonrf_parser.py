@@ -52,4 +52,5 @@ def write(data: list[EventInfo]):
 
 
 if __name__ == "__main__":
-    parser()
+    for i in parser():
+        print(i)

@@ -1,4 +1,8 @@
 import json
+<<<<<<< HEAD
+=======
+import re
+>>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
 
 from config import get_config
 from events import DatesInfo, EventInfo
@@ -61,10 +65,24 @@ class OpenAiExtraction:
             return result
         for item in response_dict:
             try:
-                result.append(
-                    EventInfo(**{**item, "dates": DatesInfo(**item["dates"])})
+                event = EventInfo(
+                    **{**item, "dates": DatesInfo(**item["dates"])}
                 )
-                # print(result[-1])
+                pattern = re.compile(r"^\d{2}-\d{2}-\d{4}$")
+                if (
+                    event.dates.start_date is not None
+                    and pattern.match(event.dates.start_date)
+                    and (
+                        event.dates.end_date is None
+                        or pattern.match(event.dates.end_date)
+                    )
+                    and (
+                        event.dates.end_registration is None
+                        or pattern.match(event.dates.end_registration)
+                    )
+                ):
+                    result.append(event)
+                    # print(result[-1])
             except:
                 continue
         return result

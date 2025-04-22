@@ -18,7 +18,6 @@ async def __parse_mails(container: AsyncContainer):
             dtos = map(
                 map_mail_info_to_create_dto, await gateway.receive_mails()
             )
-
             await create_many_use_case(list(dtos))
         await asyncio.sleep(60 * 30)
 
