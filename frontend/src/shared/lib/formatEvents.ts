@@ -15,14 +15,7 @@ export interface ApiEvent {
 }
 
 export const formatEvents = (events: ApiEvent[]): CalendarEvent[] => {
-  const colors = [
-    '#FF6B6B', // Красный
-    '#4ECDC4', // Бирюзовый
-    '#45B7D1', // Голубой
-    '#96CEB4', // Мятный
-    '#FFEEAD', // Жёлтый
-    '#D4A5A5', // Пудровый
-  ];
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5'];
   return events.reduce((accum, value, index) => {
     const start = new Date(value.startDate);
     const end = new Date(value.endDate);

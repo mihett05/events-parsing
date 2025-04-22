@@ -1,55 +1,56 @@
-import React, { useMemo, useRef } from 'react';
-import { Box, Paper, Popover } from '@mui/material';
+import { useMemo, useState, useCallback } from 'react';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Popover from '@mui/material/Popover';
 import { CalendarEvent } from '@entities/Event';
-import {
-  getDayNames,
-  useGridDimensions,
-  useDayEventsPopover,
-  useCalendarNavigation,
-  useCalendarData,
-} from '../lib';
-import { CalendarHeader } from './components/CalendarHeader';
-import { DayNamesHeader } from './components/DayNamesHeader';
-import { CalendarGrid } from './components/CalendarGrid';
-import { MultiDayEventOverlay } from './components/MultiDayEventOverlay';
-import { DayEventsPopoverContent } from './components/DayEventsPopoverContent';
-import { EventDetailsModal } from './components/EventDetailsModal';
+import { getDayNames, useCalendarNavigation, generateCalendarDays } from '../lib';
+import { CalendarHeader } from './CalendarHeader';
+import { DayNamesHeader } from './DayNamesHeader';
+import { CalendarGrid } from './CalendarGrid';
+import { DayEventsPopoverContent } from './DayEventsPopoverContent';
+import { EventDetailsModal } from './EventDetailsModal';
 import { ModalProvider } from '../lib/context/ModalContext';
 import { ToggleEventsView } from '@features/events/toggle-view';
+import { isValid } from 'date-fns';
 interface MonthCalendarProps {
   events?: CalendarEvent[];
   initialDate?: Date;
 }
 
 export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initialDate }) => {
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-
   const { currentDate, handlePrevMonth, handleNextMonth, handleToday } = useCalendarNavigation({
     initialDate,
   });
 
-  const {
-    calendarDays,
-    singleDayEventsByDate,
-    multiDayEvents,
-    multiDayLayout,
-    spacerHeightsPerWeek,
-  } = useCalendarData({ currentDate, events });
+  const [dayPopoverAnchorEl, setDayPopoverAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedDateForPopover, setSelectedDateForPopover] = useState<null | Date>(null);
+
+  const safeCurrentDate = useMemo(
+    () => (isValid(currentDate) ? currentDate : new Date()),
+    [currentDate],
+  );
+
+  const calendarDays = useMemo(() => {
+    return generateCalendarDays(safeCurrentDate);
+  }, [safeCurrentDate]);
 
   const dayNames = useMemo(() => getDayNames(0), []);
 
-  const {
-    popoverId,
-    isPopoverOpen,
-    popoverAnchorEl,
-    popoverContentProps,
-    handleShowMoreClick,
-    handlePopoverClose,
-  } = useDayEventsPopover({ singleDayEventsByDate, multiDayEvents });
+  const handleDayClick = useCallback((event: React.MouseEvent<HTMLElement>, date: Date) => {
+    if (isValid(date)) {
+      setSelectedDateForPopover(date);
+      setDayPopoverAnchorEl(event.currentTarget);
+    } else {
+      console.warn('Attempted to open popover for invalid date:', date);
+    }
+  }, []);
 
-  const { cellWidth, rowHeight, headerHeight } = useGridDimensions(gridContainerRef, [
-    calendarDays,
-  ]);
+  const handleDayPopoverClose = useCallback(() => {
+    setDayPopoverAnchorEl(null);
+  }, []);
+
+  const isDayPopoverOpen = Boolean(dayPopoverAnchorEl);
+  const dayPopoverId = isDayPopoverOpen ? 'day-events-popover' : undefined;
 
   return (
     <ModalProvider>
@@ -59,22 +60,22 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initi
       <Paper
         elevation={0}
         sx={{
-          p: 1,
+          p: { xs: 0.5, sm: 1 },
           maxWidth: '100%',
           border: '1px solid #eee',
           display: 'flex',
           flexDirection: 'column',
+          overflow: 'hidden',
+          minHeight: '70vh',
         }}
       >
         <CalendarHeader
-          currentDate={currentDate}
+          currentDate={safeCurrentDate}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
           onToday={handleToday}
         />
-
         <Box
-          ref={gridContainerRef}
           sx={{
             position: 'relative',
             flexGrow: 1,
@@ -83,38 +84,33 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initi
             overflow: 'hidden',
           }}
         >
-          <DayNamesHeader dayNames={dayNames} height={`${headerHeight}px`} />
-          <CalendarGrid
-            ref={gridContainerRef}
-            calendarDays={calendarDays}
-            singleDayEventsByDate={singleDayEventsByDate}
-            spacerHeightsPerWeek={spacerHeightsPerWeek}
-            onShowMoreClick={handleShowMoreClick}
-          />
-          <MultiDayEventOverlay
-            multiDayLayout={multiDayLayout}
-            cellWidth={cellWidth}
-            rowHeight={rowHeight}
-            headerHeight={headerHeight}
-          />
+          <DayNamesHeader dayNames={dayNames} />
+
+          <CalendarGrid calendarDays={calendarDays} events={events} onDayClick={handleDayClick} />
         </Box>
+
         <Popover
-          id={popoverId}
-          open={isPopoverOpen}
-          anchorEl={popoverAnchorEl}
-          onClose={handlePopoverClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          slotProps={{ paper: { sx: {} } }}
+          id={dayPopoverId}
+          open={isDayPopoverOpen}
+          anchorEl={dayPopoverAnchorEl}
+          onClose={handleDayPopoverClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+          slotProps={{
+            paper: {
+              sx: {
+                boxShadow: '0px 4px 12px rgba(0,0,0,0.15)',
+                borderRadius: '8px',
+              },
+            },
+          }}
+          aria-modal="true"
         >
-          {popoverContentProps.date && (
-            <DayEventsPopoverContent
-              date={popoverContentProps.date}
-              singleEvents={popoverContentProps.singleEvents}
-              multiDayEvents={popoverContentProps.multiEvents}
-              onClose={handlePopoverClose}
-            />
-          )}
+          <DayEventsPopoverContent
+            date={selectedDateForPopover}
+            events={events}
+            onClose={handleDayPopoverClose}
+          />
         </Popover>
         <EventDetailsModal />
       </Paper>
