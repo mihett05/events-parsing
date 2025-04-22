@@ -1,14 +1,14 @@
 from main_service.application.transactions import TransactionsGateway
 from main_service.domain.organizations.entities import Organization
 from main_service.domain.organizations.repositories import (
-    OrganizationRepository,
+    OrganizationsRepository,
 )
 from main_service.domain.users.entities import User
 
 
 class DeleteOrganizationUseCase:
     def __init__(
-        self, repository: OrganizationRepository, tx: TransactionsGateway
+        self, repository: OrganizationsRepository, tx: TransactionsGateway
     ):
         self.__repository = repository
         self.__transaction = tx

@@ -1,8 +1,8 @@
 from domain.organizations import dtos
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import (
-    OrganizationAlreadyExistsErrorError,
-    OrganizationNotFoundErrorError,
+    OrganizationAlreadyExistsError,
+    OrganizationNotFoundError,
 )
 from domain.organizations.repositories import OrganizationRepository
 from sqlalchemy import Select, select
@@ -25,8 +25,8 @@ class OrganizationsDatabaseRepository(OrganizationRepository):
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
                 create_model_mapper=map_create_dto_to_model,
-                not_found_exception=OrganizationNotFoundErrorError,
-                already_exists_exception=OrganizationAlreadyExistsErrorError,
+                not_found_exception=OrganizationNotFoundError,
+                already_exists_exception=OrganizationAlreadyExistsError,
             )
 
         def get_select_all_query(

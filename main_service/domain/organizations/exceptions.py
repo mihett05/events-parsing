@@ -2,11 +2,11 @@ from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.organizations.entities import Organization
 
 
-class OrganizationNotFoundErrorError(EntityNotFoundError):
+class OrganizationNotFoundError(EntityNotFoundError):
     def __init__(self):
         super().__init__(Organization)
 
 
-class OrganizationAlreadyExistsErrorError(EntityAlreadyExistsError):
+class OrganizationAlreadyExistsError(EntityAlreadyExistsError):
     def __init__(self):
         super().__init__(Organization)

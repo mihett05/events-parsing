@@ -6,6 +6,7 @@ from domain.organizations.enums import RoleEnum
 
 @dataclass
 class CreateOrganizationDto:
+    id: int
     title: str
     created_at: datetime
 
