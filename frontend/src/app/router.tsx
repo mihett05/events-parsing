@@ -8,7 +8,7 @@ export const router = createBrowserRouter([
     element: <CalendarPage />,
   },
   {
-    path: '/events',
+    path: '/feed',
     element: <EventsFeedPage />,
   },
 ]);
