@@ -1,11 +1,10 @@
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 import domain.users.dtos as dtos
 from domain.users import entities as entities
 from domain.users.entities import User
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import UsersRepository
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_from_db, map_to_db

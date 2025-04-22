@@ -1,7 +1,7 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, link_function
-
 from domain.users.entities import User
+
 from infrastructure.database.mappers import postgres_retort
 
 from .models import UserDatabaseModel
