@@ -1,8 +1,7 @@
 from adaptix import P
 from adaptix.conversion import link_function
+from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
 
-from application.auth.dtos import AuthenticateUserDto
-from domain.users.dtos import CreateUserDto
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (
@@ -25,11 +24,11 @@ map_authenticate_dto_from_pydantic = retort.get_converter(
 
 map_create_dto_from_pydantic = retort.get_converter(
     CreateUserModelDto,
-    CreateUserDto,
+    RegisterUserDTO,
     recipe=[
         link_function(
             lambda user: user.email,
-            P[CreateUserDto].email,
+            P[RegisterUserDTO].email,
         ),
     ],
 )

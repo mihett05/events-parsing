@@ -1,6 +1,7 @@
-from application.auth.tokens.dtos import TokenPairDto
-from domain.users.dtos import CreateUserDto
+from ..dtos import RegisterUserDTO
 from domain.users.entities import User
+
+from application.auth.tokens.dtos import TokenPairDto
 
 from ...users.usecases import CreateUserUseCase
 from ..tokens.gateways import SecurityGateway
@@ -18,7 +19,7 @@ class RegisterUseCase:
         self.create_token_pair_use_case = create_token_pair_use_case
         self.security_gateway = security_gateway
 
-    async def __call__(self, dto: CreateUserDto) -> tuple[User, TokenPairDto]:
+    async def __call__(self, dto: RegisterUserDTO) -> tuple[User, TokenPairDto]:
         password_dto = self.security_gateway.create_hashed_password(
             dto.password
         )
