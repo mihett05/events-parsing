@@ -22,16 +22,11 @@ class DeleteAttachmentUseCase:
         self, attachment_id: UUID, actor: User | None
     ) -> Attachment:
         async with self.__transaction as transaction:
-            attachment_meta = await self.__repository.read(attachment_id)
-            attachment = await self.__gateway.delete(attachment_meta)
+            attachment = await self.__repository.read(attachment_id)
+            attachment = await self.__repository.delete(attachment)
 
-            # TODO: Подумать
-            #  Над тем, как совершать откаты в случае ошибок с gateway
             try:
-                await self.__repository.delete(attachment)
+                return await self.__gateway.delete(attachment)
             except Exception:
-                await self.__gateway.create(attachment)
                 await transaction.rollback()
                 raise
-
-            return attachment
