@@ -1,5 +1,6 @@
 import os.path
 from pathlib import Path
+from typing import BinaryIO
 
 from application.attachments.gateways import FilesGateway
 from domain.attachments.entities import Attachment
@@ -10,33 +11,40 @@ from domain.attachments.exceptions import (
 
 
 class StaticDirFilesGateway(FilesGateway):
-    def __init__(self, base_path: Path):
-        self.base_path = base_path
+    def __init__(self, base_path: Path, prefix: str = "attachments"):
+        self.base_path = base_path / prefix
+        if not self.base_path.exists():
+            os.makedirs(self.base_path)
 
-    async def __read(self, attachment: Attachment):
+    async def __get_link(self, attachment: Attachment):
         if not os.path.exists(self.base_path / attachment.path):
             raise AttachmentNotFoundError(path=attachment.filename)
 
-        with open(self.base_path / attachment.path, "rb") as file:
-            attachment.content = file.read()
+        return str(self.base_path / attachment.path)
 
-    async def __save(self, attachment: Attachment):
+    async def __save(self, attachment: Attachment, content: BinaryIO):
         if os.path.exists(self.base_path / attachment.path):
             raise AttachmentAlreadyExistsError()
 
-        with open(self.base_path / attachment.path, "rb") as file:
-            file.write(attachment.content)
+        attachment.file_link = self.base_path / attachment.path
+        with open(attachment.file_link, "wb") as file:
+            file.write(content.read())
+
+    async def read_link(self, attachment: Attachment) -> str:
+        return await self.__get_link(attachment)
 
     async def read(self, attachment: Attachment) -> Attachment:
-        await self.__read(attachment)
+        attachment.file_link = await self.__get_link(attachment)
         return attachment
 
-    async def create(self, attachment: Attachment) -> Attachment:
-        await self.__save(attachment)
+    async def create(
+        self, attachment: Attachment, content: BinaryIO
+    ) -> Attachment:
+        await self.__save(attachment, content)
         return attachment
 
     async def delete(self, attachment: Attachment) -> Attachment:
-        attachment = await self.__read(attachment)
-        os.remove(self.base_path / attachment.path)
+        attachment.file_link = await self.__get_link(attachment)
+        os.remove(attachment.file_link)
 
         return attachment

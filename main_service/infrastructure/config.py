@@ -31,7 +31,7 @@ class Config(BaseSettings):
     imap_username: str
     imap_password: str
 
-    static_folder: Path = Path(__file__).parent.parent.resolve() / "static"
+    static_folder: Path = Path("static/")
 
     @computed_field
     @property

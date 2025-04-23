@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from pathlib import Path
+from datetime import datetime
 from uuid import UUID
 
 
@@ -12,12 +12,13 @@ class Attachment:
 
     id: UUID
     filename: str
-    content: bytes | None = None
+    extension: str
+    file_link: str | None = None
+
+    mail_id: int | None = None
+    event_id: int | None = None
+    created_at: datetime | None = None
 
     @property
     def path(self) -> str:
-        return f"{self.id}.{self.extension}"
-
-    @property
-    def extension(self) -> str:
-        return Path(self.filename).suffix.lower()
+        return f"{self.id}{self.extension}"

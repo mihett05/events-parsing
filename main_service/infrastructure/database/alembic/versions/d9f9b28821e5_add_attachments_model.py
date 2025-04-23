@@ -1,8 +1,8 @@
 """Add Attachments model
 
-Revision ID: a2ce345af02e
+Revision ID: d9f9b28821e5
 Revises: 56125c271090
-Create Date: 2025-04-22 20:28:00.432121
+Create Date: 2025-04-23 16:32:33.618404
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "a2ce345af02e"
+revision: str = "d9f9b28821e5"
 down_revision: Union[str, None] = "56125c271090"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,7 +25,8 @@ def upgrade() -> None:
         "attachments",
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("filename", sa.String(), nullable=False),
-        sa.Column("owner_id", sa.Integer(), nullable=True),
+        sa.Column("extension", sa.String(), nullable=False),
+        sa.Column("mail_id", sa.Integer(), nullable=True),
         sa.Column("event_id", sa.Integer(), nullable=True),
         sa.Column(
             "created_at",
@@ -33,15 +34,17 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
+        sa.CheckConstraint(
+            "mail_id is not null or event_id is not null",
+            name=op.f("ck_attachments_attachment_links"),
+        ),
         sa.ForeignKeyConstraint(
             ["event_id"],
             ["events.id"],
             name=op.f("fk_attachments_event_id_events"),
         ),
         sa.ForeignKeyConstraint(
-            ["owner_id"],
-            ["users.id"],
-            name=op.f("fk_attachments_owner_id_users"),
+            ["mail_id"], ["mails.id"], name=op.f("fk_attachments_mail_id_mails")
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_attachments")),
     )

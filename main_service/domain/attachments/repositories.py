@@ -10,6 +10,11 @@ class AttachmentsRepository(metaclass=ABCMeta):
     async def create(self, dto: CreateAttachmentDto) -> Attachment: ...
 
     @abstractmethod
+    async def create_many(
+        self, create_dtos: list[CreateAttachmentDto]
+    ) -> list[Attachment]: ...
+
+    @abstractmethod
     async def read(self, attachment_id: UUID) -> Attachment: ...
 
     @abstractmethod

@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from application.attachments.gateways import FilesGateway
 from application.transactions import TransactionsGateway
 from domain.attachments.dtos import CreateAttachmentDto
@@ -15,15 +17,20 @@ class CreateAttachmentUseCase:
     ):
         self.gateway = gateway
         self.__transaction = tx
-        self.repository = repository
+        self.__repository = repository
 
     async def __call__(
-        self, dto: CreateAttachmentDto, actor: User | None
-    ) -> Attachment:
+        self, dtos: list[CreateAttachmentDto], actor: User | None
+    ) -> Iterable[Attachment]:
+        collection = []
         async with self.__transaction as transaction:
-            attachment = await self.repository.create(dto)
-            try:
-                return await self.gateway.create(attachment)
-            except Exception:
-                await transaction.rollback()
-                raise
+            attachments = await self.__repository.create_many(dtos)
+            for dto, attachment in zip(dtos, attachments):
+                try:
+                    collection.append(
+                        await self.gateway.create(attachment, dto.content)
+                    )
+                except Exception:
+                    await transaction.rollback()
+                    raise
+        return collection
