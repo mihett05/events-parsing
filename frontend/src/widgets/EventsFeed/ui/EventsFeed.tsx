@@ -2,7 +2,7 @@ import { EventArticle } from '@/entities/Event';
 import { Box, Divider, CircularProgress } from '@mui/material';
 import { useEventsFeed } from '../lib/hooks';
 import { useEffect, useRef } from 'react';
-import { ToggleEventsView } from '@features/events/toggle-view';
+
 export const EventsFeed = () => {
   const { events, isLoading, error, handleLoadMore } = useEventsFeed();
 
@@ -36,23 +36,18 @@ export const EventsFeed = () => {
   }, [handleLoadMore]);
 
   return (
-    <>
-      <Box display="flex" justifyContent="flex-end">
-        <ToggleEventsView />
-      </Box>
-      <Box display="flex" flexDirection="column" gap={5} onScroll={handleLoadMore}>
-        {events.map((event, index) => (
-          <>
-            <EventArticle
-              key={`event-${event.id}`}
-              event={event}
-              ref={index === sentinelIndex ? sentinelRef : null}
-            />
-            {index !== events.length - 1 && <Divider />}
-          </>
-        ))}
-        {isLoading && <CircularProgress />}
-      </Box>
-    </>
+    <Box display="flex" flexDirection="column" gap={5} onScroll={handleLoadMore}>
+      {events.map((event, index) => (
+        <>
+          <EventArticle
+            key={`event-${event.id}`}
+            event={event}
+            ref={index === sentinelIndex ? sentinelRef : null}
+          />
+          {index !== events.length - 1 && <Divider />}
+        </>
+      ))}
+      {isLoading && <CircularProgress />}
+    </Box>
   );
 };
