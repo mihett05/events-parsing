@@ -65,7 +65,8 @@ async def read_user_events_dto() -> ReadUserEventsDto:
 
 @pytest_asyncio.fixture
 async def events_repository(container: AsyncContainer) -> EventsRepository:
-    yield await container.get(EventsRepository)
+    async with container() as nested:
+        yield await nested.get(EventsRepository)
 
 
 @pytest_asyncio.fixture

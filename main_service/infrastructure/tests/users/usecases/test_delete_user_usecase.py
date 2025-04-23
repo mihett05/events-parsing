@@ -1,19 +1,25 @@
 import random
 
 import pytest
+
+from application.auth.dtos import RegisterUserDTO
+from application.auth.usecases import RegisterUseCase
 from application.users.usecases import DeleteUserUseCase, ReadUserUseCase
 from domain.users.entities import User
 from domain.users.exceptions import UserNotFoundError
 
 
 @pytest.mark.asyncio
-async def user_delete_success(
+async def delete_user_success(
     read_user_usecase: ReadUserUseCase,
     delete_user_usecase: DeleteUserUseCase,
-    create_user: User,
+    register_user_usecase: RegisterUseCase,
+    register_user_dto: RegisterUserDTO
 ):
-    user = await delete_user_usecase(create_user)
-    assert user == create_user
+    user = await register_user_usecase(dto=register_user_dto)
+    user = user[0]
+    deleted_user = await delete_user_usecase(user)
+    assert deleted_user == user
 
     with pytest.raises(UserNotFoundError):
         await read_user_usecase(user.id)
@@ -22,7 +28,8 @@ async def user_delete_success(
 @pytest.mark.asyncio
 async def test_delete_not_found(
     delete_user_usecase: DeleteUserUseCase,
-    user: User
+    create_user: User
 ):
+    await delete_user_usecase(create_user)
     with pytest.raises(UserNotFoundError):
-        await delete_user_usecase(user)
+        await delete_user_usecase(create_user)

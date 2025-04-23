@@ -1,5 +1,7 @@
 import pytest
 
+from application.auth.dtos import RegisterUserDTO
+from application.auth.usecases import RegisterUseCase
 from application.users.usecases import CreateUserUseCase
 from domain.users.entities import User
 
@@ -7,20 +9,16 @@ from domain.users.entities import User
 @pytest.mark.asyncio
 async def test_create_success(
     create_user_usecase: CreateUserUseCase,
-    create_user: User,
+    register_user_usecase: RegisterUseCase,
+    register_user_dto: RegisterUserDTO
 ):
-    user = create_user
-    created_user = await create_user_usecase(user)
+    user, _ = await register_user_usecase(dto=register_user_dto)
 
     attrs = (
-        'email',
-        'fullname',
-        'id',
-        'is_active',
-        'salt',
-        'hashed_password',
-        'telegram_id',
-        'created_at'
+        "fullname",
+        "email"
     )
     for attr in attrs:
-        assert getattr(user, attr) == getattr(created_user, attr)
+        assert getattr(user, attr) == getattr(register_user_dto, attr)
+
+    assert user.id == 1
