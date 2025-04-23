@@ -21,12 +21,8 @@ class DeleteAttachmentUseCase:
     async def __call__(
         self, attachment_id: UUID, actor: User | None
     ) -> Attachment:
-        async with self.__transaction as transaction:
+        async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
             attachment = await self.__repository.delete(attachment)
 
-            try:
-                return await self.__gateway.delete(attachment)
-            except Exception:
-                await transaction.rollback()
-                raise
+            return await self.__gateway.delete(attachment)

@@ -23,14 +23,10 @@ class CreateAttachmentUseCase:
         self, dtos: list[CreateAttachmentDto], actor: User | None
     ) -> Iterable[Attachment]:
         collection = []
-        async with self.__transaction as transaction:
+        async with self.__transaction:
             attachments = await self.__repository.create_many(dtos)
             for dto, attachment in zip(dtos, attachments):
-                try:
-                    collection.append(
-                        await self.gateway.create(attachment, dto.content)
-                    )
-                except Exception:
-                    await transaction.rollback()
-                    raise
+                collection.append(
+                    await self.gateway.create(attachment, dto.content)
+                )
         return collection
