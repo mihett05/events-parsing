@@ -10,7 +10,6 @@ import { CalendarGrid } from './CalendarGrid';
 import { DayEventsPopoverContent } from './DayEventsPopoverContent';
 import { EventDetailsModal } from './EventDetailsModal';
 import { ModalProvider } from '../lib/context/ModalContext';
-import { ToggleEventsView } from '@features/events/toggle-view';
 import { isValid } from 'date-fns';
 interface MonthCalendarProps {
   events?: CalendarEvent[];
@@ -54,15 +53,10 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initi
 
   return (
     <ModalProvider>
-      <Box display="flex" justifyContent="flex-end">
-        <ToggleEventsView />
-      </Box>
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 0.5, sm: 1 },
           maxWidth: '100%',
-          border: '1px solid #eee',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -104,7 +98,6 @@ export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initi
               },
             },
           }}
-          aria-modal="true"
         >
           <DayEventsPopoverContent
             date={selectedDateForPopover}
