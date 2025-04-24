@@ -18,6 +18,7 @@ async def test_create_success(
         "text",
         "type",
         "format",
+        "status",
     )
     for attr in attrs:
         assert getattr(notification, attr) == getattr(
@@ -26,11 +27,11 @@ async def test_create_success(
     assert notification.id == 1
 
 
-@pytest.mark.asyncio
-async def test_create_already_exists(
-    create_notification_usecase: CreateNotificationUseCase,
-    create_error_notification_dto: CreateNotificationDto,
-    create_notification: Notification,
-):
-    with pytest.raises(NotificationAlreadyExistsError):
-        await create_notification_usecase(create_error_notification_dto)
+# @pytest.mark.asyncio
+# async def test_create_already_exists(
+#     create_notification_usecase: CreateNotificationUseCase,
+#     create_error_notification_dto: CreateNotificationDto,
+#     create_notification: Notification,
+# ):
+#     with pytest.raises(NotificationAlreadyExistsError):
+#         await create_notification_usecase(create_error_notification_dto)

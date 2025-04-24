@@ -10,11 +10,11 @@ from infrastructure.mocks.mappers import mock_retort
 retort = mock_retort.extend(recipe=[])
 
 
-@retort.impl_converter(
+map_create_dto_to_entity = retort.get_converter(
+    CreateNotificationDto,
+    Notification,
     recipe=[
         allow_unlinked_optional(P[Notification].id),
         allow_unlinked_optional(P[Notification].created_at),
-        allow_unlinked_optional(P[Notification].recipient),
-    ]
+    ],
 )
-def map_create_dto_to_entity(dto: CreateNotificationDto) -> Notification: ...

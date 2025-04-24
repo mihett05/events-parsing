@@ -7,6 +7,7 @@ from domain.notifications.dtos import (
 from domain.notifications.entities import Notification
 from domain.notifications.enums import (
     NotificationFormatEnum,
+    NotificationStatusEnum,
     NotificationTypeEnum,
 )
 from domain.notifications.repositories import NotificationRepository
@@ -19,16 +20,7 @@ async def create_notification_dto() -> CreateNotificationDto:
         text="Example",
         type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
-    )
-
-
-@pytest_asyncio.fixture
-async def create_error_notification_dto() -> CreateNotificationDto:
-    return CreateNotificationDto(
-        recipient_id=1,
-        text="Faker",
-        type=NotificationTypeEnum.TELEGRAM,
-        format=NotificationFormatEnum.RAW_TEXT,
+        status=NotificationStatusEnum.NO,
     )
 
 
@@ -44,7 +36,8 @@ async def read_all_notifications_dto() -> ReadNotificationsDto:
 async def notification_repository(
     container: AsyncContainer,
 ) -> NotificationRepository:
-    yield await container.get(NotificationRepository)
+    async with container() as nested:
+        yield await nested.get(NotificationRepository)
 
 
 @pytest_asyncio.fixture

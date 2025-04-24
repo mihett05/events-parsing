@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
 from domain.notifications.enums import (
-    NotificationTypeEnum,
     NotificationFormatEnum,
+    NotificationStatusEnum,
+    NotificationTypeEnum,
 )
 
 
@@ -12,6 +13,7 @@ class CreateNotificationDto:
     text: str
     type: NotificationTypeEnum
     format: NotificationFormatEnum
+    status: NotificationStatusEnum
 
 
 @dataclass

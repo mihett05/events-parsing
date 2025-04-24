@@ -33,8 +33,6 @@ class NotificationMemoryRepository(NotificationRepository):
 
     async def create(self, dto: CreateNotificationDto) -> Notification:
         notification = map_create_dto_to_entity(dto)
-        if notification.text == "Faker":
-            self.__next_id -= 1
         notification.id = self.__next_id
         notification.created_at = datetime.now()
         self.__next_id += 1

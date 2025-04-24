@@ -1,5 +1,5 @@
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.notifications.entities import Notification
-from domain.exceptions import EntityNotFoundError, EntityAlreadyExistsError
 
 
 class NotificationNotFoundError(EntityNotFoundError):
