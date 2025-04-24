@@ -1,10 +1,12 @@
 from adaptix import P
+from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
 from adaptix.conversion import link_function
 
+from domain.users.entities import User
 from infrastructure.api.retort import pydantic_retort
-from main_service.application.organizations.dtos import UpdateOrganizationDto
-from main_service.domain.organizations.dtos import CreateOrganizationDto
-from main_service.domain.organizations.entities import Organization
+from application.organizations.dtos import UpdateOrganizationDto
+from domain.organizations.dtos import CreateOrganizationDto
+from domain.organizations.entities import Organization
 
 from .dtos import (
     CreateOrganizationModelDto,
@@ -14,9 +16,19 @@ from .models import OrganizationModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-map_create_dto_from_pydantic = retort.get_converter(
-    CreateOrganizationModelDto, CreateOrganizationDto
+@retort.impl_converter(
+    recipe=[
+        link_function(
+            lambda model, user: model.created_at,
+            P[CreateOrganizationDto].created_at,
+        ),
+        link_function(
+            lambda model, user: user.id,
+            P[CreateOrganizationDto].owner_id,
+        ),
+    ]
 )
+def map_create_dto_from_pydantic(model: CreateOrganizationModelDto, user: User) -> CreateOrganizationDto: ...
 
 
 @retort.impl_converter(
@@ -24,11 +36,7 @@ map_create_dto_from_pydantic = retort.get_converter(
         link_function(
             lambda organization: organization.id,
             P[OrganizationModel].id,
-        ),
-        link_function(
-            lambda organization: organization.created_at,
-            P[OrganizationModel].created_at,
-        ),
+        )
     ]
 )
 def map_to_pydantic(organization: Organization) -> OrganizationModel: ...
@@ -38,8 +46,8 @@ def map_to_pydantic(organization: Organization) -> OrganizationModel: ...
     recipe=[
         link_function(
             lambda dto, organization_id: organization_id,
-            P[UpdateOrganizationDto].organization_id,
-        )
+            P[UpdateOrganizationDto].id,
+        ),
     ]
 )
 def map_update_dto_from_pydantic(

@@ -10,7 +10,6 @@ python = "^3.11"
 uvicorn = "^0.34.0"
 fastapi = "^0.115.12"
 pydantic = {extras = ["email"], version = "^2.11.3"}
-pydantic-settings = "^2.8.1"
 asyncpg = "^0.30.0"
 sqlalchemy = "^2.0.40"
 alembic = "^1.15.2"
@@ -27,6 +26,7 @@ bcrypt = "^4.3.0"
 aioimaplib = "^2.0.1"
 pytz = "^2025.2"
 ruff = "^0.11.6"
+pydantic-settings = "^2.9.1"
 
 [build-system]
 requires = ["poetry-core"]

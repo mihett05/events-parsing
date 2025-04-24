@@ -4,7 +4,7 @@ from domain.organizations.exceptions import (
     OrganizationAlreadyExistsError,
     OrganizationNotFoundError,
 )
-from domain.organizations.repositories import OrganizationRepository
+from domain.organizations.repositories import OrganizationsRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,7 +16,7 @@ from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 
 
-class OrganizationsDatabaseRepository(OrganizationRepository):
+class OrganizationsDatabaseRepository(OrganizationsRepository):
     class Config(PostgresRepositoryConfig):
         def __init__(self):
             super().__init__(
@@ -43,17 +43,6 @@ class OrganizationsDatabaseRepository(OrganizationRepository):
         self.__session = session
         self.config = self.Config()
         self.__repository = PostgresRepository(session, self.config)
-
-    async def find(
-        self, organization_info: dtos.CreateOrganizationDto
-    ) -> Organization | None:
-        query = select(OrganizationDatabaseModel).where(
-            OrganizationDatabaseModel.title.ilike(organization_info.title)
-        )
-        model: (
-            OrganizationDatabaseModel | None
-        ) = await self.__repository.get_scalar_or_none(query)
-        return model and self.config.entity_mapper(model)
 
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)

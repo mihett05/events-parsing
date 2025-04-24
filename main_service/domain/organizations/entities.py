@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
+
 from domain.organizations.enums import RoleEnum
+from domain.users.entities import User
 
 
 @dataclass
@@ -9,8 +12,6 @@ class Organization:
     created_at: datetime
     title: str
     owner_id: int
-    admins: list[int]
-
 
 @dataclass
 class UserOrganizationRole:

@@ -1,6 +1,6 @@
-from main_service.domain.organizations.dtos import ReadOrganizationsDto
-from main_service.domain.organizations.entities import Organization
-from main_service.domain.organizations.repositories import (
+from domain.organizations.dtos import ReadOrganizationsDto
+from domain.organizations.entities import Organization
+from domain.organizations.repositories import (
     OrganizationsRepository,
 )
 

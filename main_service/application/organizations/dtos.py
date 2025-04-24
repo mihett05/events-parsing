@@ -3,16 +3,13 @@ from typing import List
 
 from domain.users.entities import User
 
-from main_service.domain.organizations.enums import RoleEnum
+from domain.organizations.enums import RoleEnum
 
 
 @dataclass
 class UpdateOrganizationDto:
-    organization_id: int
+    id: int
     title: str
-    roles: list[int]
-    members: list[int]
-
 
 @dataclass
 class UpdateUserOrganizationRoleDto:
