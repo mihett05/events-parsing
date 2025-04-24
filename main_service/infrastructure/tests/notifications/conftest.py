@@ -1,6 +1,5 @@
 import pytest_asyncio
 from dishka import AsyncContainer
-
 from domain.notifications.dtos import (
     CreateNotificationDto,
     ReadNotificationsDto,
@@ -19,6 +18,16 @@ async def create_notification_dto() -> CreateNotificationDto:
         recipient_id=1,
         text="Example",
         type=NotificationTypeEnum.EMAIL,
+        format=NotificationFormatEnum.RAW_TEXT,
+    )
+
+
+@pytest_asyncio.fixture
+async def create_error_notification_dto() -> CreateNotificationDto:
+    return CreateNotificationDto(
+        recipient_id=1,
+        text="Faker",
+        type=NotificationTypeEnum.TELEGRAM,
         format=NotificationFormatEnum.RAW_TEXT,
     )
 

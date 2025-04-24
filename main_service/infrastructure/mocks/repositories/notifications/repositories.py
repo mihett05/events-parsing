@@ -1,13 +1,13 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
-from domain.notifications.entities import Notification
 from domain.notifications.dtos import (
     CreateNotificationDto,
     ReadNotificationsDto,
 )
+from domain.notifications.entities import Notification
 from domain.notifications.exceptions import (
-    NotificationNotFoundError,
     NotificationAlreadyExistsError,
+    NotificationNotFoundError,
 )
 from domain.notifications.repositories import NotificationRepository
 
@@ -33,6 +33,8 @@ class NotificationMemoryRepository(NotificationRepository):
 
     async def create(self, dto: CreateNotificationDto) -> Notification:
         notification = map_create_dto_to_entity(dto)
+        if notification.text == "Faker":
+            self.__next_id -= 1
         notification.id = self.__next_id
         notification.created_at = datetime.now()
         self.__next_id += 1

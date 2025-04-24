@@ -1,5 +1,4 @@
 import pytest
-
 from application.notifications.usecases import CreateNotificationUseCase
 from domain.notifications.dtos import CreateNotificationDto
 from domain.notifications.entities import Notification
@@ -27,11 +26,11 @@ async def test_create_success(
     assert notification.id == 1
 
 
-# @pytest.mark.asyncio
-# async def test_create_already_exists(
-#         create_notification_usecase: CreateNotificationUseCase,
-#         create_notification_dto: CreateNotificationDto,
-#         create_notification: Notification,
-# ):
-#     with pytest.raises(NotificationAlreadyExistsError):
-#         await create_notification_usecase(create_notification_dto)
+@pytest.mark.asyncio
+async def test_create_already_exists(
+    create_notification_usecase: CreateNotificationUseCase,
+    create_error_notification_dto: CreateNotificationDto,
+    create_notification: Notification,
+):
+    with pytest.raises(NotificationAlreadyExistsError):
+        await create_notification_usecase(create_error_notification_dto)

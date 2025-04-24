@@ -1,5 +1,4 @@
 import pytest
-
 from application.notifications.usecases import ReadNotificationUseCase
 from domain.notifications.entities import Notification
 from domain.notifications.exceptions import NotificationNotFoundError

@@ -1,8 +1,7 @@
 import pytest
-
 from application.notifications.usecases import ReadAllNotificationsUseCase
-from domain.notifications.entities import Notification
 from domain.notifications.dtos import ReadNotificationsDto
+from domain.notifications.entities import Notification
 
 
 @pytest.mark.asyncio

@@ -2,7 +2,6 @@ from adaptix import P
 from adaptix.conversion import (
     allow_unlinked_optional,
 )
-
 from domain.notifications.dtos import CreateNotificationDto
 from domain.notifications.entities import Notification
 

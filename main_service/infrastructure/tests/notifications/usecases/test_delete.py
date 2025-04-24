@@ -1,5 +1,4 @@
 import pytest
-
 from application.notifications.usecases import (
     DeleteNotificationUseCase,
     ReadNotificationUseCase,
