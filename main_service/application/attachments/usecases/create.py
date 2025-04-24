@@ -1,5 +1,3 @@
-from typing import Iterable
-
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import (
@@ -41,7 +39,7 @@ class CreateAttachmentUseCase:
 
     async def __call__(
         self, dtos: list[CreateAttachmentDto], actor: User | None
-    ) -> tuple[Iterable[Attachment], list[str]]:
+    ) -> tuple[list[Attachment], list[str]]:
         failed = []
         succeed = []
         async with self.__transaction:

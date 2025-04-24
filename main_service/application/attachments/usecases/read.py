@@ -18,4 +18,5 @@ class ReadAttachmentUseCase:
         self, attachment_id: UUID, actor: User | None
     ) -> Attachment:
         attachment = await self.__repository.read(attachment_id)
-        return await self.__gateway.read(attachment)
+        await self.__gateway.add_link_to_attachment(attachment)
+        return attachment

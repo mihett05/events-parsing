@@ -3,7 +3,9 @@ from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
 from domain.users.repositories import UsersRepository
-
+from infrastructure.mocks.repositories.attachments import (
+    AttachmentsMemoryRepository,
+)
 from infrastructure.mocks.repositories.events import EventsMemoryRepository
 from infrastructure.mocks.repositories.mails import MailsMemoryRepository
 from infrastructure.mocks.repositories.users import (
@@ -18,6 +20,6 @@ class RepositoriesProvider(Provider):
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
     users = provide(source=UsersMemoryRepository, provides=UsersRepository)
     attachments = provide(
-        source=AttachmentsRepository,
+        source=AttachmentsMemoryRepository,
         provides=AttachmentsRepository,
     )

@@ -28,9 +28,8 @@ class MinioFilesGateway(FilesGateway):
         attachment.file_link = await self.__get_link(attachment)
         return attachment
 
-    async def read(self, attachment: Attachment) -> Attachment:
+    async def add_link_to_attachment(self, attachment: Attachment):
         attachment.file_link = await self.__get_link(attachment)
-        return attachment
 
     async def delete(self, attachment: Attachment):
         await self.minio.remove_object(
