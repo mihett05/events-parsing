@@ -24,10 +24,6 @@ class StaticDirFilesGateway(FilesGateway):
     async def create(
         self, attachment: Attachment, content: BinaryIO
     ) -> Attachment:
-        self.count += 1
-        if self.count == 3:
-            raise AttachmentAlreadyExistsError()
-
         if os.path.exists(self.base_path / attachment.path):
             raise AttachmentAlreadyExistsError()
 
@@ -38,9 +34,7 @@ class StaticDirFilesGateway(FilesGateway):
         return attachment
 
     async def delete(self, attachment: Attachment) -> Attachment:
-        attachment.file_link = await self.__get_link(attachment)
         os.remove(attachment.file_link)
-
         return attachment
 
     async def __get_link(self, attachment: Attachment):

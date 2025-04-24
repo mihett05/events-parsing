@@ -1,4 +1,16 @@
 services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    env_file:
+      - main_service/.dev.env
+    command: server /data --console-address ":9001"
+
   postgres:
     image: postgres:17.3
     container_name: postgres
@@ -32,6 +44,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - minio
     links:
       - "postgres:postgres"
       - "rabbitmq:rabbitmq"
@@ -66,3 +79,4 @@ services:
 volumes:
   postgres-data:
   rabbitmq_data:
+  minio_data:

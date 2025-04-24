@@ -31,6 +31,12 @@ class Config(BaseSettings):
     imap_username: str
     imap_password: str
 
+    minio_root_host: str
+    minio_root_port: str
+    minio_root_user: str
+    minio_root_password: str
+    minio_bucket_name: str = "attachments"
+
     static_folder: Path = Path("static/")
 
     @computed_field
@@ -48,6 +54,11 @@ class Config(BaseSettings):
             f"amqp://{self.rabbitmq_user}:{self.rabbitmq_password}@"
             f"{self.rabbitmq_host}:{self.rabbitmq_port}/"
         )
+
+    @computed_field
+    @property
+    def minio_url(self) -> str:
+        return f"{self.minio_root_host}:{self.minio_root_port}"
 
 
 @lru_cache

@@ -28,6 +28,7 @@ aioimaplib = "^2.0.1"
 pytz = "^2025.2"
 ruff = "^0.11.6"
 python-multipart = "^0.0.20"
+miniopy-async = "^1.22.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,8 +1,5 @@
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import (
@@ -10,6 +7,8 @@ from domain.attachments.exceptions import (
     AttachmentNotFoundError,
 )
 from domain.attachments.repositories import AttachmentsRepository
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db

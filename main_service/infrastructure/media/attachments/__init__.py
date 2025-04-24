@@ -1,3 +1,3 @@
-from .static_dir_files_gateway import StaticDirFilesGateway
+from .static_dir import StaticDirFilesGateway
 
 __all__ = ["StaticDirFilesGateway"]

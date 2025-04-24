@@ -3,7 +3,6 @@ from email.header import decode_header
 from email.utils import parsedate_to_datetime
 
 from aioimaplib import Response, aioimaplib
-
 from application.mails.gateway import EmailsGateway
 from domain.mails.dtos import ParsedMailInfoDto
 from domain.mails.exceptions import FailedFetchMailError, FailedParseMailError

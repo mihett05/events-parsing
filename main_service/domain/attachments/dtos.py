@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
-from parser.events import Event
 from typing import BinaryIO
 from uuid import UUID, uuid4
 
+from domain.events.entities import Event
 from domain.mails.entities import Mail
 
 

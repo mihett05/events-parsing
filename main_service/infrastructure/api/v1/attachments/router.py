@@ -1,14 +1,14 @@
 from typing import Annotated
 from uuid import UUID
 
+import application.attachments.usecases as use_cases
+from application.events.usecases import ReadEventUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from domain.users.entities import User
 from fastapi import APIRouter, Depends, UploadFile
 
-import application.attachments.usecases as use_cases
 import infrastructure.api.v1.attachments.mappers as mappers
 import infrastructure.api.v1.attachments.models as models
-from application.events.usecases import ReadEventUseCase
-from domain.users.entities import User
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
 
@@ -41,6 +41,8 @@ async def create_attachments(
     responses={404: {"model": ErrorModel}},
 )
 async def read_user(
-    attachment_id: UUID, use_case: FromDishka[use_cases.ReadAttachmentUseCase]
+    attachment_id: UUID,
+    use_case: FromDishka[use_cases.ReadAttachmentUseCase],
+    actor: Annotated[User, Depends(get_user)],
 ):
-    return mappers.map_to_pydantic(await use_case(attachment_id))
+    return mappers.map_to_pydantic(await use_case(attachment_id, actor))
