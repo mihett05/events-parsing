@@ -12,7 +12,6 @@ from domain.attachments.exceptions import (
 
 class StaticDirFilesGateway(FilesGateway):
     def __init__(self, base_path: Path, prefix: str = "attachments"):
-        self.count = 1
         self.base_path = base_path / prefix
         if not self.base_path.exists():
             os.makedirs(self.base_path)

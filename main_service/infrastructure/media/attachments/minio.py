@@ -10,7 +10,6 @@ from infrastructure.config import Config
 
 class MinioFilesGateway(FilesGateway):
     def __init__(self, minio: Minio, config: Config):
-        self.count = 0
         self.minio = minio
         self.config = config
 
