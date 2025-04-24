@@ -7,9 +7,6 @@ import application.organizations.usecases as organizations_use_cases
 import application.users.usecases as users_use_cases
 
 
-from dishka import Provider, Scope, provide_all
-
-
 class UseCasesProvider(Provider):
     scope = Scope.REQUEST
 

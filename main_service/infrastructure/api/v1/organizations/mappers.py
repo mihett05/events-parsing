@@ -2,11 +2,11 @@ from adaptix import P
 from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
 from adaptix.conversion import link_function
 
-from domain.users.entities import User
-from infrastructure.api.retort import pydantic_retort
 from application.organizations.dtos import UpdateOrganizationDto
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
+from domain.users.entities import User
+from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (
     CreateOrganizationModelDto,
@@ -15,6 +15,7 @@ from .dtos import (
 from .models import OrganizationModel
 
 retort = pydantic_retort.extend(recipe=[])
+
 
 @retort.impl_converter(
     recipe=[
@@ -28,7 +29,9 @@ retort = pydantic_retort.extend(recipe=[])
         ),
     ]
 )
-def map_create_dto_from_pydantic(model: CreateOrganizationModelDto, user: User) -> CreateOrganizationDto: ...
+def map_create_dto_from_pydantic(
+    model: CreateOrganizationModelDto, user: User
+) -> CreateOrganizationDto: ...
 
 
 @retort.impl_converter(

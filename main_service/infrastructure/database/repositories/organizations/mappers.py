@@ -1,14 +1,12 @@
 from adaptix import P
-from adaptix.conversion import (
-    allow_unlinked_optional,
-    link_function
-)
+from adaptix.conversion import allow_unlinked_optional, link_function
+
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
-
 from infrastructure.database.mappers import postgres_retort
 
 from .models import OrganizationDatabaseModel
+
 retort = postgres_retort.extend(recipe=[])
 
 
@@ -22,16 +20,18 @@ retort = postgres_retort.extend(recipe=[])
 )
 def map_from_db(organization: OrganizationDatabaseModel) -> Organization: ...
 
+
 map_to_db = retort.get_converter(
     Organization,
     OrganizationDatabaseModel,
 )
 
+
 @retort.impl_converter(
-    recipe= [
+    recipe=[
         allow_unlinked_optional(P[OrganizationDatabaseModel].id),
         allow_unlinked_optional(P[OrganizationDatabaseModel].created_at),
-        allow_unlinked_optional(P[OrganizationDatabaseModel].title)
+        allow_unlinked_optional(P[OrganizationDatabaseModel].title),
     ]
 )
 def map_create_dto_to_model(

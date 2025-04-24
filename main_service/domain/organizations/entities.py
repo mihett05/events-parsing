@@ -13,6 +13,7 @@ class Organization:
     title: str
     owner_id: int
 
+
 @dataclass
 class UserOrganizationRole:
     id: int

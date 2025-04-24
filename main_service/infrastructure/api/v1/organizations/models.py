@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from infrastructure.api.models import CamelModel
 
 

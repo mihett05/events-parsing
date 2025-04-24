@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.mails.dtos as dtos
 from domain.mails import entities as entities
@@ -9,11 +10,6 @@ from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum
 from domain.mails.exceptions import MailAlreadyExistsError, MailNotFoundError
 from domain.mails.repositories import MailsRepository
-
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.interfaces import LoaderOption
-
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
