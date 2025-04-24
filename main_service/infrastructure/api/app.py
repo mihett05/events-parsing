@@ -1,20 +1,20 @@
 import contextlib
+import os.path
 
+from application.auth.exceptions import InvalidCredentialsError
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
+from starlette.staticfiles import StaticFiles
 
-from application.auth.exceptions import InvalidCredentialsError
-from application.events.usecases import ParseEventsUseCase
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from domain.mails.entities import Mail
 from infrastructure.api.background_tasks import (
     cancel_background_task,
     run_background_tasks,
@@ -83,6 +83,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
             content={"message": str(exc)},
         )
 
+    if not os.path.exists("static"):
+        os.makedirs("static")
+
+    app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(v1_router, prefix="/v1")
     setup_dishka(container, app)
 

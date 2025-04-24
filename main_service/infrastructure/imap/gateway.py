@@ -3,7 +3,6 @@ from email.header import decode_header
 from email.utils import parsedate_to_datetime
 
 from aioimaplib import Response, aioimaplib
-
 from application.mails.gateway import EmailsGateway
 from domain.mails.dtos import ParsedMailInfoDto
 from domain.mails.exceptions import FailedFetchMailError, FailedParseMailError
@@ -18,8 +17,7 @@ class ImapEmailsGateway(EmailsGateway):
     async def __aenter__(self):
         self.client = aioimaplib.IMAP4_SSL(host=self.imap_server)
         await self.client.wait_hello_from_server()
-        res = await self.client.login(self.imap_username, self.imap_password)
-        print(res.lines)  # посмотри, что вернул сервер
+        await self.client.login(self.imap_username, self.imap_password)
         await self.client.select("INBOX")
         return self
 

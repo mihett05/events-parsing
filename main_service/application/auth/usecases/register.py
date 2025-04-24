@@ -1,6 +1,7 @@
-from application.auth.tokens.dtos import TokenPairDto
 from domain.users.dtos import CreateUserDto
 from domain.users.entities import User
+
+from application.auth.tokens.dtos import TokenPairDto
 
 from ...users.usecases import CreateUserUseCase
 from ..tokens.gateways import SecurityGateway

@@ -1,8 +1,8 @@
 from adaptix import P
 from adaptix.conversion import link_function
-
 from application.users.dtos import UpdateUserDto
 from domain.users.entities import User
+
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (
@@ -12,16 +12,16 @@ from .models import UserModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-
-@retort.impl_converter(
+map_to_pydantic = retort.get_converter(
+    User,
+    UserModel,
     recipe=[
         link_function(
             lambda user: user.id,
             P[UserModel].id,
         )
-    ]
+    ],
 )
-def map_to_pydantic(user: User) -> UserModel: ...
 
 
 @retort.impl_converter(
