@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain.attachments.dtos import CreateAttachmentDto
@@ -34,7 +35,12 @@ class AttachmentsDatabaseRepository(AttachmentsRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: CreateAttachmentDto) -> Attachment:
-        return await self.__repository.create_from_dto(dto)
+        model = self.__config.create_model_mapper(dto)
+        try:
+            self.__session.add(model)
+            return await self.read(self.__config.extract_id_from_model(model))
+        except IntegrityError:
+            raise self.__config.already_exists_exception()
 
     async def create_many(
         self, create_dtos: list[CreateAttachmentDto]

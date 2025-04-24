@@ -39,10 +39,8 @@ class GatewaysProvider(Provider):
             yield gateway
 
     @provide(scope=Scope.REQUEST)
-    async def files_gateway(
-        self, config: Config
-    ) -> AsyncIterable[FilesGateway]:
-        yield StaticDirFilesGateway(base_path=config.static_folder)
+    async def files_gateway(self, config: Config) -> FilesGateway:
+        return StaticDirFilesGateway(base_path=config.static_folder)
 
     @provide(scope=Scope.REQUEST)
     def create_use_case(

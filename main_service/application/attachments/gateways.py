@@ -6,9 +6,6 @@ from domain.attachments.entities import Attachment
 
 class FilesGateway(metaclass=ABCMeta):
     @abstractmethod
-    async def read_link(self, attachment: Attachment) -> str: ...
-
-    @abstractmethod
     async def read(self, attachment: Attachment) -> Attachment: ...
 
     @abstractmethod

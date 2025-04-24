@@ -28,7 +28,7 @@ async def create_attachments(
     actor: Annotated[User, Depends(get_user)],
 ):
     event = await read_event_use_case(event_id)
-    attachments = await create_attachments_use_case(
+    attachments, fails = await create_attachments_use_case(
         list(map(lambda file: mappers.map_file_to_dto(file, event), files)),
         actor,
     )

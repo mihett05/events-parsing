@@ -12,26 +12,10 @@ from domain.attachments.exceptions import (
 
 class StaticDirFilesGateway(FilesGateway):
     def __init__(self, base_path: Path, prefix: str = "attachments"):
+        self.count = 1
         self.base_path = base_path / prefix
         if not self.base_path.exists():
             os.makedirs(self.base_path)
-
-    async def __get_link(self, attachment: Attachment):
-        if not os.path.exists(self.base_path / attachment.path):
-            raise AttachmentNotFoundError(path=attachment.filename)
-
-        return str(self.base_path / attachment.path)
-
-    async def __save(self, attachment: Attachment, content: BinaryIO):
-        if os.path.exists(self.base_path / attachment.path):
-            raise AttachmentAlreadyExistsError()
-
-        attachment.file_link = self.base_path / attachment.path
-        with open(attachment.file_link, "wb") as file:
-            file.write(content.read())
-
-    async def read_link(self, attachment: Attachment) -> str:
-        return await self.__get_link(attachment)
 
     async def read(self, attachment: Attachment) -> Attachment:
         attachment.file_link = await self.__get_link(attachment)
@@ -40,7 +24,17 @@ class StaticDirFilesGateway(FilesGateway):
     async def create(
         self, attachment: Attachment, content: BinaryIO
     ) -> Attachment:
-        await self.__save(attachment, content)
+        self.count += 1
+        if self.count == 3:
+            raise AttachmentAlreadyExistsError()
+
+        if os.path.exists(self.base_path / attachment.path):
+            raise AttachmentAlreadyExistsError()
+
+        attachment.file_link = self.base_path / attachment.path
+        with open(attachment.file_link, "wb") as file:
+            file.write(content.read())
+
         return attachment
 
     async def delete(self, attachment: Attachment) -> Attachment:
@@ -48,3 +42,9 @@ class StaticDirFilesGateway(FilesGateway):
         os.remove(attachment.file_link)
 
         return attachment
+
+    async def __get_link(self, attachment: Attachment):
+        if not os.path.exists(self.base_path / attachment.path):
+            raise AttachmentNotFoundError(path=attachment.filename)
+
+        return str(self.base_path / attachment.path)
