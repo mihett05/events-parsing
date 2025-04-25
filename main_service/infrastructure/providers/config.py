@@ -1,6 +1,6 @@
+from application.auth.tokens.config import TokenConfig
 from dishka import Provider, Scope, provide
 
-from application.auth.tokens.config import TokenConfig
 from infrastructure.config import Config, get_config
 
 

@@ -1,7 +1,6 @@
 from random import choice
 
 import pytest
-
 from application.mails.usecases import ReadUnprocessedMailUseCase
 from domain.mails.dtos import CreateMailDto, ReadAllMailsDto
 from domain.mails.enums import MailStateEnum

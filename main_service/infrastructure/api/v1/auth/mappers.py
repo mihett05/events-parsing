@@ -2,6 +2,9 @@ from adaptix import P
 from adaptix.conversion import link_function
 
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
+from application.auth.dtos import AuthenticateUserDto
+from domain.users.dtos import CreateUserDto
+
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (

@@ -1,7 +1,6 @@
 from copy import copy
 
 import pytest
-
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases import UpdateMailUseCase
 from domain.mails.entities import Mail
