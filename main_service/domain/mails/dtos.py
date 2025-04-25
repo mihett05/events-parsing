@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 
-from domain.attachments.dtos import ParsedAttachmentInfoDto, CreateAttachmentDto
+from domain.attachments.dtos import CreateAttachmentDto, ParsedAttachmentInfoDto
 from domain.mails.enums import MailStateEnum
 
 

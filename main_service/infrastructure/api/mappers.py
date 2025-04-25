@@ -1,6 +1,5 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, coercer
-
 from domain.attachments.dtos import CreateAttachmentDto, ParsedAttachmentInfoDto
 from domain.mails.dtos import CreateMailDto, ParsedMailInfoDto
 

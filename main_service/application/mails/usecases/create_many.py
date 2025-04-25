@@ -1,9 +1,10 @@
-from application.attachments.usecases import CreateAttachmentUseCase
-from application.transactions import TransactionsGateway
 from domain.mails.dtos import CreateMailDto
 from domain.mails.entities import Mail
 from domain.mails.repositories import MailsRepository
 from domain.users.entities import User
+
+from application.attachments.usecases import CreateAttachmentUseCase
+from application.transactions import TransactionsGateway
 
 
 class CreateMailsUseCase:

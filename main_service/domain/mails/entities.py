@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
-from .enums import MailStateEnum
 from ..attachments.entities import Attachment
+from .enums import MailStateEnum
 
 
 @dataclass
