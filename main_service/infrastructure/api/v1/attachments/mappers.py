@@ -1,4 +1,4 @@
-from parser.events import Event
+from domain.events.entities import Event
 from pathlib import Path
 
 from adaptix import P

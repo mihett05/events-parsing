@@ -28,27 +28,28 @@ class EventsDatabaseRepository(EventsRepository):
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
             query = select(self.model).order_by(self.model.id)
-            if dto.start_date is not None and dto.end_date is not None:
-                return self.__add_period_filter_to_query(query, dto)
-            elif dto.page is not None and dto.page_size is not None:
-                return self.__add_period_offset_to_query(query, dto)
+            if dto.start_date is not None or dto.end_date is not None:
+                query = self.__add_period_filter_to_query(query, dto)
+            if dto.organization_id is not None:
+                query = self.__add_organization_filter_to_query(query, dto)
+            if dto.page is not None and dto.page_size is not None:
+                query = self.__add_period_offset_to_query(query, dto)
             return query
 
         def __add_period_filter_to_query(
             self, query, dto: dtos.ReadAllEventsDto
         ) -> Select:
-            return query.where(
-                or_(
-                    and_(
-                        dto.start_date <= self.model.start_date,
-                        self.model.start_date <= dto.end_date,
-                    ),
-                    and_(
-                        dto.start_date <= self.model.end_date,
-                        self.model.end_date <= dto.end_date,
-                    ),
-                )
-            )
+            conditions = []
+            if dto.start_date is not None:
+                conditions.append(dto.start_date <= self.model.end_date)
+            if dto.end_date is not None:
+                conditions.append(self.model.start_date <= dto.end_date)
+            return query.where(and_(*conditions))
+
+        def __add_organization_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsDto
+        ) -> Select:
+            return query.where(self.model.organization_id == dto.organization_id)
 
         def __add_period_offset_to_query(
             self, query, dto: dtos.ReadAllEventsDto

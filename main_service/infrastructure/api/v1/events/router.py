@@ -23,6 +23,7 @@ async def read_all_events(
     page_size: int | None = 50,
     start_date: date | None = None,
     end_date: date | None = None,
+    organization_id: int | None = None,
 ):
     return map(
         mappers.map_to_pydantic,
@@ -32,6 +33,7 @@ async def read_all_events(
                 page_size=page_size,
                 start_date=start_date,
                 end_date=end_date,
+                organization_id=organization_id,
             )
         ),
     )

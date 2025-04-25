@@ -39,5 +39,6 @@ map_create_dto_to_model = retort.get_converter(
         allow_unlinked_optional(P[EventDatabaseModel].id),
         allow_unlinked_optional(P[EventDatabaseModel].is_visible),
         allow_unlinked_optional(P[EventDatabaseModel].created_at),
+        allow_unlinked_optional(P[EventDatabaseModel].organization_id)
     ],
 )
