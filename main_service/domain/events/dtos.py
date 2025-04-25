@@ -9,6 +9,7 @@ class CreateEventDto:
     format: str
     location: str | None
     description: str | None
+    organization_id: int | None
     end_date: datetime
     start_date: datetime
     end_registration: datetime
@@ -30,7 +31,14 @@ class ReadOrganizationEventsDto:
 
 @dataclass
 class ReadAllEventsDto:
-    page: int | None
-    page_size: int | None
     start_date: date | None
     end_date: date | None
+
+
+@dataclass
+class ReadAllEventsFeedDto:
+    page: int
+    page_size: int
+    start_date: date | None
+    end_date: date | None
+    organization_id: int | None
