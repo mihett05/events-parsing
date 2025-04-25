@@ -1,6 +1,7 @@
 from copy import copy
 
 import pytest
+
 from application.users.dtos import UpdateUserDto
 from application.users.usecases import UpdateUserUseCase
 from domain.users.entities import User
@@ -19,6 +20,7 @@ async def test_update_success(
     assert user.fullname != create_user.fullname
 
     assert user.fullname == update_user_dto.fullname
+
 
 @pytest.mark.asyncio
 async def test_update_not_found(

@@ -1,4 +1,5 @@
 import pytest
+
 from application.users.usecases import ReadUserUseCase
 from domain.users.entities import User
 from domain.users.exceptions import UserNotFoundError

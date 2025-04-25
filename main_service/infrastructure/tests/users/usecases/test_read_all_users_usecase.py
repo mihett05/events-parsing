@@ -1,4 +1,5 @@
 import pytest
+
 from application.users.usecases import ReadAllUsersUseCase
 from domain.users.dtos import ReadAllUsersDto
 from domain.users.entities import User
@@ -26,6 +27,7 @@ async def test_read_all_empty(
 
     assert len(users) == 0
 
+
 @pytest.mark.asyncio
 async def test_read_all_many_user(
     read_all_users_usecase: ReadAllUsersUseCase,
@@ -35,7 +37,7 @@ async def test_read_all_many_user(
     users = await read_all_users_usecase(read_all_users_dto)
 
     assert len(users) <= read_all_users_dto.page_size
-    for i in range(min(len(users),read_all_users_dto.page_size)):
+    for i in range(min(len(users), read_all_users_dto.page_size)):
         assert users[i].fullname == create_users[i].fullname
         assert users[i].email == create_users[i].email
         assert users[i].id == create_users[i].id

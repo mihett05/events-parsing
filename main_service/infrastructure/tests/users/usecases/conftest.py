@@ -1,12 +1,13 @@
-import application.users.usecases as user_usecases
-import application.auth.usecases as auth_usecases
-
 import pytest_asyncio
 from dishka import AsyncContainer
 
+import application.auth.usecases as auth_usecases
+import application.users.usecases as user_usecases
+
+
 @pytest_asyncio.fixture
 async def register_user_usecase(
-    container: AsyncContainer
+    container: AsyncContainer,
 ) -> auth_usecases.RegisterUseCase:
     async with container() as nested:
         yield await nested.get(auth_usecases.RegisterUseCase)
@@ -14,7 +15,7 @@ async def register_user_usecase(
 
 @pytest_asyncio.fixture
 async def create_user_usecase(
-    container: AsyncContainer
+    container: AsyncContainer,
 ) -> user_usecases.CreateUserUseCase:
     async with container() as nested:
         yield await nested.get(user_usecases.CreateUserUseCase)
@@ -42,6 +43,7 @@ async def delete_user_usecase(
 ) -> user_usecases.DeleteUserUseCase:
     async with container() as nested:
         yield await nested.get(user_usecases.DeleteUserUseCase)
+
 
 @pytest_asyncio.fixture
 async def read_all_users_usecase(

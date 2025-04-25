@@ -14,7 +14,7 @@ async def delete_user_success(
     read_user_usecase: ReadUserUseCase,
     delete_user_usecase: DeleteUserUseCase,
     register_user_usecase: RegisterUseCase,
-    register_user_dto: RegisterUserDTO
+    register_user_dto: RegisterUserDTO,
 ):
     user = await register_user_usecase(dto=register_user_dto)
     user = user[0]
@@ -27,8 +27,7 @@ async def delete_user_success(
 
 @pytest.mark.asyncio
 async def test_delete_not_found(
-    delete_user_usecase: DeleteUserUseCase,
-    create_user: User
+    delete_user_usecase: DeleteUserUseCase, create_user: User
 ):
     await delete_user_usecase(create_user)
     with pytest.raises(UserNotFoundError):
