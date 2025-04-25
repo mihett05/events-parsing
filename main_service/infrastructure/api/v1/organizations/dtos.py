@@ -11,4 +11,3 @@ class CreateOrganizationModelDto(CamelModel):
 
 class UpdateOrganizationModelDto(CamelModel):
     title: str
-    owner_id: int

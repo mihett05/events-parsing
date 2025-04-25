@@ -1,8 +1,5 @@
 import json
-<<<<<<< HEAD
-=======
 import re
->>>>>>> 734238dad51cb720fbb31b35c5efe9ed046573b5
 
 from config import get_config
 from events import DatesInfo, EventInfo

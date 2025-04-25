@@ -7,6 +7,7 @@ from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.users.entities import User
 from infrastructure.api.retort import pydantic_retort
+from infrastructure.database.repositories.organizations import OrganizationDatabaseModel
 
 from .dtos import (
     CreateOrganizationModelDto,
@@ -33,8 +34,9 @@ def map_create_dto_from_pydantic(
     model: CreateOrganizationModelDto, user: User
 ) -> CreateOrganizationDto: ...
 
-
-@retort.impl_converter(
+map_to_pydantic = retort.get_converter(
+    Organization,
+    OrganizationModel,
     recipe=[
         link_function(
             lambda organization: organization.id,
@@ -42,8 +44,6 @@ def map_create_dto_from_pydantic(
         )
     ]
 )
-def map_to_pydantic(organization: Organization) -> OrganizationModel: ...
-
 
 @retort.impl_converter(
     recipe=[
