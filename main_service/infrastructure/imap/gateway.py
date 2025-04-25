@@ -1,6 +1,7 @@
 import email
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
+from typing import Iterable
 
 from aioimaplib import Response, aioimaplib
 from application.mails.gateway import EmailsGateway
@@ -39,15 +40,26 @@ class ImapEmailsGateway(EmailsGateway):
 
         return emails
 
-    async def __fetch_collection_by_batch(self, batch_uuids) -> list[Response]:
+    async def mark_mails_as_failed(self, mail_ids: list[str]):
+        for mail_id in mail_ids:
+            # TODO: Тут мб стоит добавить перемещение в спец папку
+            #  Этот метод вызывается в случае возникновения ошибок во время сохранения
+            #  В будущем лучше заменить на стейт-машину чтобы понимать состояние данных
+            await self.__mark_mail_as_unseen(mail_id)
+
+    async def __fetch_collection_by_batch(
+        self, batch_uuids
+    ) -> list[tuple[str, Response]]:
         batch_uuids = map(lambda uid: uid.decode("ascii"), batch_uuids)
         return await self.__fetch_collection_by_single(batch_uuids)
 
-    async def __fetch_collection_by_single(self, email_ids) -> list[Response]:
+    async def __fetch_collection_by_single(
+        self, email_ids: Iterable[str]
+    ) -> list[tuple[str, Response]]:
         collection = []
         for e_id in email_ids:
             try:
-                collection.append(await self.__fetch_mail(e_id))
+                collection.append((e_id, await self.__fetch_mail(e_id)))
                 await self.__mark_mail_as_seen(e_id)
             except FailedFetchMailError:
                 await self.__mark_mail_as_unseen(e_id)
@@ -65,11 +77,15 @@ class ImapEmailsGateway(EmailsGateway):
     async def __mark_mail_as_unseen(self, e_id):
         await self.client.uid("STORE", e_id, "-FLAGS", "\\Seen")
 
-    async def __parse_mail(self, raw_message) -> ParsedMailInfoDto:
+    async def __parse_mail(
+        self, email_uid: str, raw_message: Response
+    ) -> ParsedMailInfoDto:
+        # TODO: Добавить парс attachments (ParsedAttachmentInfoDto)
         raw_message = raw_message.lines[1]
         message = email.message_from_bytes(raw_message)
 
         return ParsedMailInfoDto(
+            imap_mail_uid=email_uid,
             theme=self.__decode_header(message.get("Subject", "")),
             sender=self.__decode_header(message.get("From", "")),
             raw_content=raw_message,
@@ -78,21 +94,21 @@ class ImapEmailsGateway(EmailsGateway):
             else None,
         )
 
-    async def __parse_mails(self, raw_messages) -> list[ParsedMailInfoDto]:
+    async def __parse_mails(
+        self, raw_messages: list[tuple[str, Response]]
+    ) -> list[ParsedMailInfoDto]:
         collection = []
-        for raw_msg in raw_messages:
+        for email_uid, raw_msg in raw_messages:
             try:
-                collection.append(await self.__parse_mail(raw_msg))
+                collection.append(await self.__parse_mail(email_uid, raw_msg))
             except FailedParseMailError:
+                await self.__mark_mail_as_unseen(email_uid)
                 continue
         return collection
 
     @staticmethod
     def __decode_payload(payload, charset=None):
-        encodings_to_try = [
-            charset,
-            "utf-8",
-        ]
+        encodings_to_try = [charset, "utf-8"]
         encodings_to_try = list(
             dict.fromkeys([e for e in encodings_to_try if e])
         )
