@@ -17,7 +17,7 @@ map_from_db = retort.get_converter(
             lambda organization: organization.id,
             P[Organization].id,
         )
-    ]
+    ],
 )
 
 map_to_db = retort.get_converter(
@@ -30,7 +30,8 @@ map_create_dto_to_model = retort.get_converter(
     OrganizationDatabaseModel,
     recipe=[
         allow_unlinked_optional(P[OrganizationDatabaseModel].id),
+        allow_unlinked_optional(P[OrganizationDatabaseModel].owner_id),
         allow_unlinked_optional(P[OrganizationDatabaseModel].created_at),
         allow_unlinked_optional(P[OrganizationDatabaseModel].title),
-    ]
+    ],
 )

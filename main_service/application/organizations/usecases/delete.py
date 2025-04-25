@@ -18,5 +18,4 @@ class DeleteOrganizationUseCase:
     ) -> Organization:
         async with self.__transaction:
             organization = await self.__repository.read(organization_id)
-            await self.__repository.delete(organization)
-        return organization
+            return await self.__repository.delete(organization)
