@@ -2,20 +2,15 @@ import pytest
 
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
-from application.auth.usecases import (
-    AuthorizeUseCase,
-    CreateTokenPairUseCase,
-    LoginUseCase,
-)
+import application.auth.usecases
 from domain.users.entities import User
 from infrastructure.tests.auth.conftest import token_gateway
 
 
-# всё ок
 @pytest.mark.asyncio
 async def test_create_token_pair_success(
     create_user1: User,
-    create_token_pair_usecase: CreateTokenPairUseCase,
+    create_token_pair_usecase: application.auth.usecases.CreateTokenPairUseCase,
     token_gateway: TokensGateway,
 ):
     get_token_pair = await create_token_pair_usecase(create_user1)

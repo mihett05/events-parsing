@@ -6,7 +6,6 @@ from application.auth.usecases import AuthorizeUseCase
 from domain.users.entities import User
 
 
-# всё ок
 @pytest.mark.asyncio
 async def test_authenticate_success(
     create_user1: User,
@@ -14,12 +13,11 @@ async def test_authenticate_success(
     authorize_usecase: AuthorizeUseCase,
 ):
     user = await authorize_usecase(user1_token_info_dto)
-    assert user.email == create_user1.email
-    assert user.fullname == create_user1.fullname
-    assert user.id == create_user1.id
+    attrs = ("fullname", "email", "id")
+    for attr in attrs:
+        assert getattr(user, attr) == getattr(create_user1, attr)
 
 
-# нет юзера
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(
     create_user2: User,

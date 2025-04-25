@@ -37,7 +37,9 @@ async def test_read_all_many_user(
     users = await read_all_users_usecase(read_all_users_dto)
 
     assert len(users) <= read_all_users_dto.page_size
+
+    attrs = ("fullname", "email", "id")
     for i in range(min(len(users), read_all_users_dto.page_size)):
-        assert users[i].fullname == create_users[i].fullname
-        assert users[i].email == create_users[i].email
-        assert users[i].id == create_users[i].id
+        for attr in attrs:
+            assert getattr(users[i], attr) == getattr(create_users[i], attr)
+

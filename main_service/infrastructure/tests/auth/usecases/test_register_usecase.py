@@ -4,7 +4,6 @@ from application.auth.dtos import RegisterUserDTO
 from application.auth.usecases import RegisterUseCase
 
 
-# всё ок
 @pytest.mark.asyncio
 async def test_register_success(
     register_usecase: RegisterUseCase, register_user1_dto: RegisterUserDTO

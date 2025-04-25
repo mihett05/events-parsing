@@ -12,26 +12,22 @@ from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
-async def register_user_dto() -> RegisterUserDTO:
-    return RegisterUserDTO(
+async def get_user_entity() -> User:
+    return User(
         email="test@test.com",
-        password="12345678",
         fullname="Ivanov Ivan Ivanovich",
     )
 
 
 @pytest_asyncio.fixture
-async def register_user_dtos() -> list[RegisterUserDTO]:
-    dto_list = list()
-    for i in range(8):
-        dto_list.append(
-            RegisterUserDTO(
-                email=f"test{i}@test.com",
-                password=f"{i}" * 8,
-                fullname=f"Iivan{i}",
-            )
+async def get_user_entities() -> list[User]:
+    return [
+        User(
+            email=f"test{i}@test.com",
+            fullname=f"Iivan{i}",
         )
-    return dto_list
+        for i in range(8)
+    ]
 
 
 @pytest_asyncio.fixture
@@ -55,22 +51,19 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
 
 @pytest_asyncio.fixture
 async def create_user(
-    register_user_dto: RegisterUserDTO,
-    register_user_usecase: RegisterUseCase,
+    get_user_entity: User,
     users_repository: UsersRepository,
 ) -> User:
-    user, _ = await register_user_usecase(register_user_dto)
+    user = await users_repository.create(get_user_entity)
     return user
 
 
 @pytest_asyncio.fixture
 async def create_users(
-    register_user_dtos: list[RegisterUserDTO],
-    register_user_usecase: RegisterUseCase,
+    get_user_entities: list[User],
     users_repository: UsersRepository,
 ) -> list[User]:
-    users = list()
-    for dto in register_user_dtos:
-        user, _ = await register_user_usecase(dto)
-        users.append(user)
-    return users
+    return [
+        await users_repository.create(user_entity)
+        for user_entity in get_user_entities
+    ]

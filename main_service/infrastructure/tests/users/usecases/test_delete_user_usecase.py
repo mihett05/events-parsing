@@ -16,8 +16,7 @@ async def delete_user_success(
     register_user_usecase: RegisterUseCase,
     register_user_dto: RegisterUserDTO,
 ):
-    user = await register_user_usecase(dto=register_user_dto)
-    user = user[0]
+    user, _ = await register_user_usecase(dto=register_user_dto)
     deleted_user = await delete_user_usecase(user)
     assert deleted_user == user
 

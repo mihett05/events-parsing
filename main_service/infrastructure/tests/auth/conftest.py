@@ -40,10 +40,7 @@ async def user1_token_info_dto() -> TokenInfoDto:
 
 @pytest_asyncio.fixture
 async def authenticate_user1_broken_password_dto() -> AuthenticateUserDto:
-    return AuthenticateUserDto(
-        email="test@test.com",
-        password="1_345_7_",
-    )
+    return AuthenticateUserDto(email="test@test.com", password="1_345_7_")
 
 
 @pytest_asyncio.fixture
