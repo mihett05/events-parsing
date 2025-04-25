@@ -1,4 +1,3 @@
-import io
 import os
 from typing import BinaryIO, Iterable
 
@@ -6,15 +5,10 @@ import pytest_asyncio
 from dishka import AsyncContainer
 
 from application.attachments.gateways import FilesGateway
-from application.users.dtos import UpdateUserDto
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
-from domain.users.dtos import (
-    ReadAllUsersDto,
-)
-from domain.users.entities import User
-from domain.users.repositories import UsersRepository
+from infrastructure.media.attachments import StaticDirFilesGateway
 
 
 @pytest_asyncio.fixture
@@ -29,7 +23,7 @@ async def create_attachment_content() -> Iterable[BinaryIO]:
 
 @pytest_asyncio.fixture
 async def create_attachment_dtos(
-    create_attachment_content: BinaryIO
+    create_attachment_content: BinaryIO,
 ) -> list[CreateAttachmentDto]:
     return [
         CreateAttachmentDto(
@@ -60,9 +54,8 @@ async def create_attachment(
     attachments_repository: AttachmentsRepository,
     create_attachment_dtos: list[CreateAttachmentDto],
     files_gateway: FilesGateway,
-    create_attachment_content: BinaryIO
+    create_attachment_content: BinaryIO,
 ) -> Attachment:
     attachment = await attachments_repository.create(create_attachment_dtos[0])
     await files_gateway.create(attachment, create_attachment_content)
     return attachment
-

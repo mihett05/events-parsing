@@ -1,7 +1,11 @@
 import pytest_asyncio
 from dishka import AsyncContainer
 
-from application.attachments.usecases import CreateAttachmentUseCase, ReadAttachmentUseCase, DeleteAttachmentUseCase
+from application.attachments.usecases import (
+    CreateAttachmentUseCase,
+    DeleteAttachmentUseCase,
+    ReadAttachmentUseCase,
+)
 from domain.attachments.dtos import CreateAttachmentDto
 
 
@@ -27,4 +31,3 @@ async def read_attachment_usecase(
 ) -> ReadAttachmentUseCase:
     async with container() as nested:
         yield await nested.get(ReadAttachmentUseCase)
-
