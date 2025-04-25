@@ -6,7 +6,7 @@ import fitz
 import io
 import cv2
 import numpy as np
-
+import requests
 
 def extract_text_from_image(image_path):
     try:
@@ -17,9 +17,10 @@ def extract_text_from_image(image_path):
         return None
 
 
-# круто работает если pdf приведенный
-def extract(pdf_path):
-    file = fitz.open(pdf_path)
+def extract(pdf_url):
+    response = requests.get(pdf_url)
+    pdf_data = io.BytesIO(response.content)
+    file = fitz.open(stream=pdf_data, filetype="pdf")
     full_text = []
     for pageNum, page in enumerate(file.pages(), start=1):
         text = page.get_text()
@@ -27,12 +28,15 @@ def extract(pdf_path):
     return "\n".join(full_text) if full_text else ""
 
 
-# сканы
-def pdf_to_text_with_ocr(pdf_path, output_dir="output"):
+def pdf_to_text_with_ocr(pdf_url, output_dir="output"):
     os.makedirs(output_dir, exist_ok=True)
-    base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+    base_name = os.path.splitext(os.path.basename(pdf_url))[0]
     output_txt_path = os.path.join(output_dir, f"{base_name}_ocr.txt")
-    pdf_document = fitz.open(pdf_path)
+
+    response = requests.get(pdf_url)
+    pdf_data = io.BytesIO(response.content)
+    pdf_document = fitz.open(stream=pdf_data, filetype="pdf")
+
     extracted_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
@@ -56,9 +60,11 @@ def pdf_to_text_with_ocr(pdf_path, output_dir="output"):
     return output_txt_path
 
 
-def extract_text_from_docx(docx_path):
+def extract_text_from_docx(docx_url):
     try:
-        doc = Document(docx_path)
+        response = requests.get(docx_url)
+        docx_file = io.BytesIO(response.content)
+        doc = Document(docx_file)
         return "\n".join([para.text for para in doc.paragraphs])
     except Exception as e:
       return None
@@ -93,7 +99,6 @@ def process_files(file_list, output_dir="output_texts"):
         os.makedirs(output_dir)
     for file_path in file_list:
         if not os.path.exists(file_path):
-            print(f"Файл не найден: {file_path}")
             continue
 
         text = process_file(file_path)
@@ -101,4 +106,3 @@ def process_files(file_list, output_dir="output_texts"):
         output_path = os.path.join(output_dir, filename)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(text)
-        print(f"Результат сохранён: {output_path}\n")
