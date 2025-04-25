@@ -42,4 +42,3 @@ async def test_read_all_many_user(
     for i in range(min(len(users), read_all_users_dto.page_size)):
         for attr in attrs:
             assert getattr(users[i], attr) == getattr(create_users[i], attr)
-

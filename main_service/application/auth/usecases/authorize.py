@@ -1,9 +1,8 @@
+from application.auth.exceptions import InvalidCredentialsError
+from application.auth.tokens.dtos import TokenInfoDto
 from domain.users.entities import User
 from domain.users.exceptions import UserNotFoundError
 from domain.users.repositories import UsersRepository
-
-from application.auth.exceptions import InvalidCredentialsError
-from application.auth.tokens.dtos import TokenInfoDto
 
 
 class AuthorizeUseCase:
