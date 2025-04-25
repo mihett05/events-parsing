@@ -33,7 +33,7 @@ class UsersMemoryRepository(UsersRepository):
 
     async def create(self, user: User) -> entities.User:
         user.id = self.__next_id
-        user.created_at = datetime.utcnow()
+        user.created_at = datetime.now()
 
         self.__next_id += 1
         return await self.__repository.create(user)
