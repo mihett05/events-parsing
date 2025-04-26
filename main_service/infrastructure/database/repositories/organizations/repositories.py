@@ -41,8 +41,8 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
 
     def __init__(self, session: AsyncSession):
         self.__session = session
-        self.config = self.Config()
-        self.__repository = PostgresRepository(session, self.config)
+        self.__config = self.Config()
+        self.__repository = PostgresRepository(session, self.__config)
 
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)

@@ -20,6 +20,4 @@ class UpdateOrganizationUseCase:
         async with self.__transaction:
             organization = await self.__repository.read(dto.id)
             organization.title = dto.title
-            await self.__repository.update(organization)
-
-        return organization
+            return await self.__repository.update(organization)

@@ -1,15 +1,26 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Table, func
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Table,
+    func,
+    Enum as SQLEnum,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.database.postgres import Base
+from infrastructure.database.repositories.organizations.enums import (
+    UserRoleEnum,
+)
 
 association_table = Table(
     "association_table",
     Base.metadata,
-    Column("left_id", ForeignKey("organizations.id")),
-    Column("right_id", ForeignKey("users.id")),
+    Column("organization_id", ForeignKey("organizations.id")),
+    Column("user_id", ForeignKey("users.id")),
+    Column(Column("role", SQLEnum(UserRoleEnum), nullable=False)),
 )
 
 

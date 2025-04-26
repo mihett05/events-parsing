@@ -24,14 +24,14 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
             )
 
     def __init__(self):
-        self.__id = 1
+        self.__next_id = 1
         self.__repository = MockRepository(self.Config())
 
     async def create(
         self, organization: entities.Organization
     ) -> entities.Organization:
-        organization.id = self.__id
-        self.__id += 1
+        organization.id = self.__next_id
+        self.__next_id += 1
         organization.created_at = datetime.datetime.utcnow()
         return await self.__repository.create(organization)
 

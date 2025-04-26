@@ -39,7 +39,7 @@ async def read_all_organizations(
     page_size: int = 50,
 ):
     return map(
-        lambda organization: mappers.map_to_pydantic(organization),
+        mappers.map_to_pydantic,
         await use_case(ReadOrganizationsDto(page=page, page_size=page_size)),
     )
 
