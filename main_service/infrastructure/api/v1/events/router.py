@@ -1,26 +1,43 @@
 from datetime import date
 from typing import Annotated
 
-import application.events.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.events.dtos import ReadAllEventsDto
-from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
+import application.events.usecases as use_cases
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
+from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
+from domain.users.entities import User
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
 
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 
 
-@router.get("/", response_model=list[models.EventModel])
+@router.get("/calendar", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadAllEventUseCase],
-    page: int | None = 0,
-    page_size: int | None = 50,
+    start_date: date | None = None,
+    end_date: date | None = None,
+):
+    return map(
+        mappers.map_to_pydantic,
+        await use_case(
+            ReadAllEventsDto(
+                start_date=start_date,
+                end_date=end_date,
+            )
+        ),
+    )
+
+
+@router.get("/feed", response_model=list[models.EventModel])
+async def read_all_events(
+    use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
+    page: int,
+    page_size: int,
     start_date: date | None = None,
     end_date: date | None = None,
     organization_id: int | None = None,
@@ -28,7 +45,7 @@ async def read_all_events(
     return map(
         mappers.map_to_pydantic,
         await use_case(
-            ReadAllEventsDto(
+            ReadAllEventsFeedDto(
                 page=page,
                 page_size=page_size,
                 start_date=start_date,

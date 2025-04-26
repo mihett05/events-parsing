@@ -1,15 +1,18 @@
 from domain.events import dtos as dtos
 from domain.events import entities as entities
-from domain.events.dtos import CreateEventDto, ReadAllEventsDto
+from domain.events.dtos import (
+    CreateEventDto,
+    ReadAllEventsDto,
+    ReadAllEventsFeedDto,
+)
 from domain.events.entities import Event
 from domain.events.exceptions import (
     EventAlreadyExistsError,
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-
-from ..crud import Id, MockRepository, MockRepositoryConfig
 from .mappers import map_create_dto_to_entity
+from ..crud import Id, MockRepository, MockRepositoryConfig
 
 
 class EventsMemoryRepository(EventsRepository):
@@ -61,6 +64,10 @@ class EventsMemoryRepository(EventsRepository):
         return await self.__repository.read(event_id)
 
     async def read_all(self, dto: ReadAllEventsDto) -> list[Event]:
+        data = await self.__repository.read_all()
+        return data
+
+    async def read_for_feed(self, dto: ReadAllEventsFeedDto) -> list[Event]:
         data = await self.__repository.read_all()
         return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 

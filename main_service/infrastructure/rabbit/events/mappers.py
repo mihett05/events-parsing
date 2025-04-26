@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from adaptix import P
-from adaptix.conversion import coercer, link_function
+from adaptix.conversion import coercer, link_function, allow_unlinked_optional
+
 from application.events.dtos import DatesInfo, EventInfo
 from domain.events.dtos import CreateEventDto
-
 from infrastructure.api.retort import pydantic_retort
 from infrastructure.rabbit.events.models import (
     DatesInfoModel,
@@ -43,6 +43,7 @@ map_event_info_from_pydantic = retort.get_converter(
             lambda event_info: event_info.dates.end_registration,
             P[CreateEventDto].end_registration,
         ),
+        allow_unlinked_optional(P[CreateEventDto].organization_id),
     ]
 )
 def map_event_info_to_create_dto(event_info: EventInfo) -> CreateEventDto: ...

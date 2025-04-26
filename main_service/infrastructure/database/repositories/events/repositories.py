@@ -1,3 +1,6 @@
+from sqlalchemy import Select, and_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 import domain.events.dtos as dtos
 from domain.events.entities import Event
 from domain.events.exceptions import (
@@ -5,12 +8,9 @@ from domain.events.exceptions import (
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-from sqlalchemy import Select, and_, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import EventDatabaseModel
+from ..repository import PostgresRepository, PostgresRepositoryConfig
 
 
 class EventsDatabaseRepository(EventsRepository):
@@ -28,17 +28,25 @@ class EventsDatabaseRepository(EventsRepository):
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
             query = select(self.model).order_by(self.model.id)
-            if dto.start_date is not None or dto.end_date is not None:
-                query = self.__add_period_filter_to_query(query, dto)
-            if dto.organization_id is not None:
-                query = self.__add_organization_filter_to_query(query, dto)
-            if dto.page is not None and dto.page_size is not None:
-                query = self.__add_period_offset_to_query(query, dto)
+            query = self.__try_add_period_filter_to_query(query, dto)
             return query
 
-        def __add_period_filter_to_query(
-            self, query, dto: dtos.ReadAllEventsDto
+        def get_select_all_feed_query(
+            self, dto: dtos.ReadAllEventsFeedDto
         ) -> Select:
+            query = select(self.model).order_by(self.model.id)
+
+            query = self.__try_add_period_filter_to_query(query, dto)
+            query = self.__try_add_organization_filter_to_query(query, dto)
+            query = self.__add_offset_to_query(query, dto)
+            return query
+
+        def __try_add_period_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadAllEventsDto
+        ) -> Select:
+            if dto.start_date is None and dto.end_date is None:
+                return query
+
             conditions = []
             if dto.start_date is not None:
                 conditions.append(dto.start_date <= self.model.end_date)
@@ -46,13 +54,17 @@ class EventsDatabaseRepository(EventsRepository):
                 conditions.append(self.model.start_date <= dto.end_date)
             return query.where(and_(*conditions))
 
-        def __add_organization_filter_to_query(
-            self, query, dto: dtos.ReadAllEventsDto
+        def __try_add_organization_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
         ) -> Select:
-            return query.where(self.model.organization_id == dto.organization_id)
+            if dto.organization_id is None:
+                return query
+            return query.where(
+                self.model.organization_id == dto.organization_id
+            )
 
-        def __add_period_offset_to_query(
-            self, query, dto: dtos.ReadAllEventsDto
+        def __add_offset_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
         ) -> Select:
             return query.offset(dto.page * dto.page_size).limit(dto.page_size)
 
@@ -77,7 +89,14 @@ class EventsDatabaseRepository(EventsRepository):
         return await self.__repository.read(event_id)
 
     async def read_all(self, dto: dtos.ReadAllEventsDto) -> list[Event]:
-        return await self.__repository.read_all(dto)
+        query = self.config.get_select_all_query(dto)
+        return await self.__repository.get_entities_from_query(query)
+
+    async def read_for_feed(
+        self, dto: dtos.ReadAllEventsFeedDto
+    ) -> list[Event]:
+        query = self.config.get_select_all_feed_query(dto)
+        return await self.__repository.get_entities_from_query(query)
 
     async def read_for_user(self, dto: dtos.ReadUserEventsDto) -> list[Event]:
         raise NotImplementedError("Method is unavailable for now")

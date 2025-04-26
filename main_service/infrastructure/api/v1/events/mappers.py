@@ -33,7 +33,7 @@ map_to_pydantic = retort.get_converter(
         link_function(
             lambda event: event.organization_id,
             P[EventModel].organization_id,
-        )
+        ),
     ],
 )
 

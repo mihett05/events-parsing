@@ -1,9 +1,10 @@
+from dishka import Provider, Scope, provide_all
+
 import application.attachments.usecases as attachments_use_cases
 import application.auth.usecases as auth_use_cases
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
 import application.users.usecases as users_use_cases
-from dishka import Provider, Scope, provide_all
 
 
 class UseCasesProvider(Provider):
@@ -15,6 +16,7 @@ class UseCasesProvider(Provider):
         event_use_cases.DeleteEventUseCase,
         event_use_cases.FindEventUseCase,
         event_use_cases.ReadEventUseCase,
+        event_use_cases.ReadForFeedEventsUseCase,
         event_use_cases.ReadOrganizationEventsUseCase,
         event_use_cases.ReadUserEventsUseCase,
         event_use_cases.ReadAllEventUseCase,

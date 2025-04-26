@@ -41,15 +41,19 @@ async def update_event_dto() -> UpdateEventDto:
 
 @pytest_asyncio.fixture
 async def read_all_events_dto() -> ReadAllEventsDto:
-    return ReadAllEventsDto(
-        start_date=None, end_date=None
-    )
+    return ReadAllEventsDto(start_date=None, end_date=None)
+
 
 @pytest_asyncio.fixture
 async def read_feed_events_dto() -> ReadAllEventsFeedDto:
     return ReadAllEventsFeedDto(
-        page=0, page_size=50, start_date=None, end_date=None, organization_id=None
+        page=0,
+        page_size=50,
+        start_date=None,
+        end_date=None,
+        organization_id=None,
     )
+
 
 @pytest_asyncio.fixture
 async def read_organization_events_dto() -> ReadOrganizationEventsDto:

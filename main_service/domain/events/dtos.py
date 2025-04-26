@@ -9,10 +9,10 @@ class CreateEventDto:
     format: str
     location: str | None
     description: str | None
-    organization_id: int | None
     end_date: datetime
     start_date: datetime
     end_registration: datetime
+    organization_id: int | None = None
 
 
 @dataclass

@@ -12,6 +12,7 @@ class CreateEventModelDto(CamelModel):
     end_date: datetime
     start_date: datetime
     end_registration: datetime
+    organization_id: int
 
 
 class UpdateEventModelDto(CamelModel):
