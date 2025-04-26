@@ -20,7 +20,7 @@ association_table = Table(
     Base.metadata,
     Column("organization_id", ForeignKey("organizations.id")),
     Column("user_id", ForeignKey("users.id")),
-    Column(Column("role", SQLEnum(UserRoleEnum), nullable=False)),
+    Column("role", SQLEnum(UserRoleEnum), nullable=False),
 )
 
 
