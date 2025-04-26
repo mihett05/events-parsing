@@ -1,8 +1,11 @@
+import asyncio
 import email
+import os
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
+from io import BytesIO
 from typing import Iterable
-
+from domain.attachments.dtos import ParsedAttachmentInfoDto
 from aioimaplib import Response, aioimaplib
 from application.mails.gateway import EmailsGateway
 from domain.mails.dtos import ParsedMailInfoDto
@@ -37,15 +40,43 @@ class ImapEmailsGateway(EmailsGateway):
                 batch_uids
             )
             emails.extend(await self.__parse_mails(raw_mail_collection))
-
         return emails
 
-    async def mark_mails_as_failed(self, mail_ids: list[str]):
-        for mail_id in mail_ids:
-            # TODO: Тут мб стоит добавить перемещение в спец папку
-            #  Этот метод вызывается в случае возникновения ошибок во время сохранения
-            #  В будущем лучше заменить на стейт-машину чтобы понимать состояние данных
-            await self.__mark_mail_as_unseen(mail_id)
+    async def mark_mails_as_failed(self, mail_ids: list[str]): ...
+
+    """async def move_mail(self, mail_id, target_folder) -> bool:
+        try:
+            await self.__ensure_folder_exists(target_folder)
+
+            # Копируем письмо
+            copy_response = await self.client.uid('COPY', mail_id, target_folder)
+            if copy_response.result != 'OK':
+                return False
+
+            # Помечаем исходное письмо как удалённое
+            store_response = await self.client.uid('STORE', mail_id, '+FLAGS', '\\Deleted')
+            if store_response.result != 'OK':
+                return False
+
+            return True
+        except Exception as e:
+            print(f"Error moving mail: {e}")
+            return False"""
+
+    """async def __ensure_folder_exists(self, folder_name: str):
+        try:
+            response = await self.client.list('INBOX', '*')
+            folders = [
+                line.decode('utf-8').split('"/"')[-1].strip('"')
+                for line in response.lines
+                if b'"/"' in line
+            ]
+            folders = [x.replace(' "', '') for x in folders]
+
+            if folder_name not in folders:
+                await self.client.create(folder_name)
+        except Exception as e:
+            print(f"Tunk Tunk Tunk says: {str(e)}")"""
 
     async def __fetch_collection_by_batch(
         self, batch_uuids
@@ -80,9 +111,16 @@ class ImapEmailsGateway(EmailsGateway):
     async def __parse_mail(
         self, email_uid: str, raw_message: Response
     ) -> ParsedMailInfoDto:
-        # TODO: Добавить парс attachments (ParsedAttachmentInfoDto)
         raw_message = raw_message.lines[1]
         message = email.message_from_bytes(raw_message)
+        attachments = []
+        if message.is_multipart():
+            for part in message.walk():
+                content_disposition = str(part.get("Content-Disposition", ""))
+                if "attachment" in content_disposition or part.get_filename():
+                    attachment = await self.__parse_attachment(part)
+                    if attachment:
+                        attachments.append(attachment)
 
         return ParsedMailInfoDto(
             imap_mail_uid=email_uid,
@@ -92,6 +130,30 @@ class ImapEmailsGateway(EmailsGateway):
             received_date=parsedate_to_datetime(message["date"]).date()
             if "date" in message
             else None,
+            attachments=attachments
+        )
+
+    async def __parse_attachment(self, part) -> ParsedAttachmentInfoDto | None:
+        filename = part.get_filename()
+        if not filename:
+            return None
+
+        filename = self.__decode_header(filename)
+
+        _, extension = os.path.splitext(filename)
+        extension = extension.lower().lstrip('.') if extension else ''
+
+        payload = part.get_payload(decode=True)
+        if not payload:
+            return None
+
+        content = BytesIO(payload)
+        content.seek(0)
+
+        return ParsedAttachmentInfoDto(
+            filename=filename,
+            extension=extension,
+            content=content
         )
 
     async def __parse_mails(
