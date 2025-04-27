@@ -9,10 +9,10 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_refresh_token_success(
-    get_test_client: AsyncClient,
-    get_authenticate_user1_model_dto: AuthenticateUserModelDto,
-    get_user1_model: UserModel,
-    create_user1,
+        get_test_client: AsyncClient,
+        get_authenticate_user1_model_dto: AuthenticateUserModelDto,
+        get_user1_model: UserModel,
+        create_user1,
 ):
     response = await get_test_client.post(
         "/v1/auth/login",
@@ -20,9 +20,9 @@ async def test_refresh_token_success(
             by_alias=True, mode="json"
         ),
     )
-    response2 = await get_test_client.post(
-        "/v1/auth/refresh", cookies={"refresh": response.cookies.get("refresh")}
-    )
+
+    get_test_client.cookies.set("refresh", response.cookies.get("refresh"))
+    response2 = await get_test_client.post("/v1/auth/refresh")
     assert response2.status_code == status.HTTP_200_OK
 
     response_model = UserWithTokenModel(**response2.json())
