@@ -1,5 +1,5 @@
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from starlette import status
 
 from infrastructure.api.v1.auth.dtos import AuthenticateUserModelDto
@@ -9,17 +9,16 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_register_success(
-        get_test_client: TestClient,
-        get_user_model: UserModel,
-        get_create_user_model_dto: AuthenticateUserModelDto,
+    get_test_client: AsyncClient,
+    get_user_model: UserModel,
+    get_create_user_model_dto: AuthenticateUserModelDto,
 ):
-    response = get_test_client.post(
+    response = await get_test_client.post(
         "/v1/auth/register",
         json=get_create_user_model_dto.model_dump(by_alias=True, mode="json"),
     )
 
-    assert response.status_code == 200
-
+    assert response.status_code == status.HTTP_200_OK
     response_model = UserWithTokenModel(**response.json())
     attrs = (
         "email",
@@ -28,10 +27,12 @@ async def test_register_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(get_user_model, attr) == getattr(response_model.user, attr)
+        assert getattr(get_user_model, attr) == getattr(
+            response_model.user, attr
+        )
 
-    response_delete_user = get_test_client.delete(
-        "/v1/users",
-        headers={'Authorization': f'Bearer {response_model.access_token}'},
+    response = await get_test_client.delete(
+        "/v1/users/",
+        headers={"Authorization": f"Bearer {response_model.access_token}"},
     )
-    assert response_delete_user.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_200_OK
