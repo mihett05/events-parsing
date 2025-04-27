@@ -36,8 +36,8 @@ async def read_all_events(
 @router.get("/feed", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
-    page: int,
-    page_size: int,
+    page: int = 0,
+    page_size: int = 50,
     start_date: date | None = None,
     end_date: date | None = None,
     organization_id: int | None = None,
