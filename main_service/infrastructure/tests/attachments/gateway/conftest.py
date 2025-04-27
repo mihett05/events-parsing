@@ -27,22 +27,6 @@ async def read_attachment_usecase(
         yield await nested.get(ReadAttachmentUseCase)
 
 
-@pytest_asyncio.fixture
-async def create_app():
-    app = FastAPI()
-    app.add_middleware(
-        CORSMiddleware,  # noqa
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    if not os.path.exists("static"):
-        os.makedirs("static")
-
-    app.mount("/static", StaticFiles(directory="static"), name="static")
-    yield app
-    shutil.rmtree("static")
 
 
 
