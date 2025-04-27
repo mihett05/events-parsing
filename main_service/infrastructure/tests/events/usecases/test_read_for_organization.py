@@ -1,4 +1,5 @@
 import pytest
+
 from application.events.usecases import ReadOrganizationEventsUseCase
 from domain.events.dtos import ReadOrganizationEventsDto
 

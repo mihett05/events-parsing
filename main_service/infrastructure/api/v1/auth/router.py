@@ -1,5 +1,9 @@
 from typing import Annotated
 
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from fastapi import APIRouter, Depends
+from starlette.responses import JSONResponse
+
 from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto
 from application.auth.usecases import (
     AuthorizeUseCase,
@@ -7,11 +11,7 @@ from application.auth.usecases import (
     RegisterUseCase,
 )
 from application.auth.usecases.login import LoginUseCase
-from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
-from fastapi import APIRouter, Depends
-from starlette.responses import JSONResponse
-
 from infrastructure.api.v1.auth.deps import extract_refresh_token
 from infrastructure.api.v1.auth.dtos import (
     AuthenticateUserModelDto,

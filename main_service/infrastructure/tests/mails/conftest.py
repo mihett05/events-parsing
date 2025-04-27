@@ -1,8 +1,9 @@
 from datetime import datetime
 
 import pytest_asyncio
-from application.mails.dtos import UpdateMailDto
 from dishka import AsyncContainer
+
+from application.mails.dtos import UpdateMailDto
 from domain.mails.dtos import CreateMailDto, ReadAllMailsDto
 from domain.mails.entities import Mail
 from domain.mails.enums import MailStateEnum

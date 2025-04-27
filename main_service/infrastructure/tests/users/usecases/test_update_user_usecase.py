@@ -1,6 +1,7 @@
 from copy import copy
 
 import pytest
+
 from application.users.dtos import UpdateUserDto
 from application.users.usecases import UpdateUserUseCase
 from domain.users.entities import User

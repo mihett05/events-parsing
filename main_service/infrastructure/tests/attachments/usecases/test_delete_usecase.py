@@ -1,4 +1,5 @@
 import pytest
+
 from application.attachments.usecases import (
     CreateAttachmentUseCase,
     DeleteAttachmentUseCase,
@@ -8,7 +9,6 @@ from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import AttachmentNotFoundError
 from domain.attachments.repositories import AttachmentsRepository
-
 from infrastructure.tests.attachments.conftest import attachments_repository
 from infrastructure.tests.attachments.usecases.conftest import (
     read_attachment_usecase,

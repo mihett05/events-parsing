@@ -1,12 +1,12 @@
-from parser.events import Event
 from pathlib import Path
 
 from adaptix import P
 from adaptix.conversion import link_function
-from domain.attachments.dtos import CreateAttachmentDto
-from domain.attachments.entities import Attachment
 from fastapi import UploadFile
 
+from domain.attachments.dtos import CreateAttachmentDto
+from domain.attachments.entities import Attachment
+from domain.events.entities import Event
 from infrastructure.api.retort import pydantic_retort
 
 from .models import AttachmentModel

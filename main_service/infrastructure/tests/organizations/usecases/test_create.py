@@ -1,4 +1,5 @@
 import pytest
+
 from application.organizations.usecases import CreateOrganizationUseCase
 from domain.organizations.dtos import CreateOrganizationDto
 

@@ -1,6 +1,7 @@
-import application.events.usecases as usecases
 import pytest_asyncio
 from dishka import AsyncContainer
+
+import application.events.usecases as usecases
 
 
 @pytest_asyncio.fixture
