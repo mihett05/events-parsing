@@ -1,15 +1,18 @@
 from domain.events import dtos as dtos
 from domain.events import entities as entities
-from domain.events.dtos import CreateEventDto, ReadAllEventsDto
+from domain.events.dtos import (
+    CreateEventDto,
+    ReadAllEventsDto,
+    ReadAllEventsFeedDto,
+)
 from domain.events.entities import Event
 from domain.events.exceptions import (
     EventAlreadyExistsError,
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-
-from ..crud import Id, MockRepository, MockRepositoryConfig
 from .mappers import map_create_dto_to_entity
+from ..crud import Id, MockRepository, MockRepositoryConfig
 
 
 class EventsMemoryRepository(EventsRepository):
@@ -62,7 +65,35 @@ class EventsMemoryRepository(EventsRepository):
 
     async def read_all(self, dto: ReadAllEventsDto) -> list[Event]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+        res = []
+        for event in data:
+            start = (
+                dto.start_date is None
+                or dto.start_date <= event.start_date
+                or dto.start_date <= event.end_date
+            )
+            end = dto.end_date is None or event.start_date <= dto.end_date
+            if start and end:
+                res.append(event)
+        return res
+
+    async def read_for_feed(self, dto: ReadAllEventsFeedDto) -> list[Event]:
+        data = await self.__repository.read_all()
+        res = []
+        for event in data:
+            start = (
+                dto.start_date is None
+                or dto.start_date <= event.start_date
+                or dto.start_date <= event.end_date
+            )
+            end = dto.end_date is None or event.start_date <= dto.end_date
+            organization = (
+                dto.organization_id is None
+                or event.organization_id == dto.organization_id
+            )
+            if start and end and organization:
+                res.append(event)
+        return res[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
     async def update(self, event: Event) -> Event:
         return await self.__repository.update(event)
