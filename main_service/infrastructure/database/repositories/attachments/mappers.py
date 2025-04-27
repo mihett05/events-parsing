@@ -1,8 +1,8 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, link_function
-
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
+
 from infrastructure.database.mappers import postgres_retort
 
 from .models import AttachmentDatabaseModel

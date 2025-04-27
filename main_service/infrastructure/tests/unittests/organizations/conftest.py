@@ -1,9 +1,8 @@
 from datetime import datetime
 
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.organizations.dtos import UpdateOrganizationDto
+from dishka import AsyncContainer
 from domain.organizations.dtos import (
     CreateOrganizationDto,
     ReadOrganizationsDto,
