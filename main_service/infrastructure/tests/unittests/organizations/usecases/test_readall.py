@@ -7,9 +7,9 @@ from domain.organizations.entities import Organization
 
 @pytest.mark.asyncio
 async def test_readall(
-        readall_organization_usecase: ReadAllOrganizationUseCase,
-        readall_organizations_dto: ReadOrganizationsDto,
-        create_organization: Organization,
+    readall_organization_usecase: ReadAllOrganizationUseCase,
+    readall_organizations_dto: ReadOrganizationsDto,
+    create_organization: Organization,
 ):
     organizations = await readall_organization_usecase(
         readall_organizations_dto
@@ -20,8 +20,8 @@ async def test_readall(
 
 @pytest.mark.asyncio
 async def test_read_all_empty(
-        readall_organization_usecase: ReadAllOrganizationUseCase,
-        readall_organizations_dto: ReadOrganizationsDto,
+    readall_organization_usecase: ReadAllOrganizationUseCase,
+    readall_organizations_dto: ReadOrganizationsDto,
 ):
     readall_organizations_dto.page = 100
     organizations = await readall_organization_usecase(
