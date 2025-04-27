@@ -7,7 +7,7 @@ import application.events.usecases as usecases
 @pytest_asyncio.fixture
 async def create_event_usecase(
     container: AsyncContainer,
-) -> usecases.ReadEventUseCase:
+) -> usecases.CreateEventUseCase:
     async with container() as nested:
         yield await nested.get(usecases.CreateEventUseCase)
 
@@ -15,7 +15,7 @@ async def create_event_usecase(
 @pytest_asyncio.fixture
 async def read_event_usecase(
     container: AsyncContainer,
-) -> usecases.CreateEventUseCase:
+) -> usecases.ReadEventUseCase:
     async with container() as nested:
         yield await nested.get(usecases.ReadEventUseCase)
 

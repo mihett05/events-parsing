@@ -1,10 +1,10 @@
 import mimetypes
 from typing import BinaryIO
 
-from application.attachments.gateways import FilesGateway
-from domain.attachments.entities import Attachment
 from miniopy_async import Minio
 
+from application.attachments.gateways import FilesGateway
+from domain.attachments.entities import Attachment
 from infrastructure.config import Config
 
 

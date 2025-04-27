@@ -4,7 +4,7 @@ import domain.organizations.dtos as dtos
 import domain.organizations.entities as entities
 
 
-class OrganizationRepository(metaclass=ABCMeta):
+class OrganizationsRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(
         self, dto: dtos.CreateOrganizationDto

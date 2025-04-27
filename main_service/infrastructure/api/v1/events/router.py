@@ -8,6 +8,7 @@ import application.events.usecases as use_cases
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
+
 from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
 from domain.users.entities import User
 from infrastructure.api.models import ErrorModel

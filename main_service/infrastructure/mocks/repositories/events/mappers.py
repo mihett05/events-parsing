@@ -2,9 +2,10 @@ from adaptix import P
 from adaptix.conversion import (
     allow_unlinked_optional,
 )
+
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
-
+from infrastructure.database.mappers import postgres_retort
 from infrastructure.mocks.mappers import mock_retort
 
 retort = mock_retort.extend(recipe=[])

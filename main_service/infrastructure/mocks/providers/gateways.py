@@ -1,8 +1,13 @@
+import logging
+
+from dishka import Provider, Scope, provide
+from faststream.broker.message import StreamMessage
+from faststream.rabbit import RabbitBroker
+
 from application.attachments.gateways import FilesGateway
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
-from dishka import Provider, Scope, provide
-
+from application.events.usecases import DeduplicateEventUseCase
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
