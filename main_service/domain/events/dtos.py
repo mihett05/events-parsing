@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 
 
 @dataclass
@@ -12,6 +12,7 @@ class CreateEventDto:
     end_date: datetime
     start_date: datetime
     end_registration: datetime
+    organization_id: int | None = None
 
 
 @dataclass
@@ -30,5 +31,14 @@ class ReadOrganizationEventsDto:
 
 @dataclass
 class ReadAllEventsDto:
+    start_date: date | None
+    end_date: date | None
+
+
+@dataclass
+class ReadAllEventsFeedDto:
     page: int
     page_size: int
+    start_date: date | None
+    end_date: date | None
+    organization_id: int | None

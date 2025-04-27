@@ -8,8 +8,8 @@ class EntityException(Exception):
 
 
 class EntityNotFoundError(EntityException):
-    def __init__(self, entity: type[Entity] | None = None):
-        super().__init__(f"{entity.__name__} not found")
+    def __init__(self, entity: type[Entity] | None = None, **kwargs):
+        super().__init__(f"{entity.__name__} not found ({kwargs})")
 
 
 class EntityAlreadyExistsError(EntityException):
