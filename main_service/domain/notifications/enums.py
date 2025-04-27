@@ -12,5 +12,5 @@ class NotificationFormatEnum(Enum):
 
 
 class NotificationStatusEnum(Enum):
-    SENT = ("SENT",)
+    SENT = "SENT"
     NO = "NO"
