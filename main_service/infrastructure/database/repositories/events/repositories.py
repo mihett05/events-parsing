@@ -49,7 +49,10 @@ class EventsDatabaseRepository(EventsRepository):
 
             conditions = []
             if dto.start_date is not None:
-                conditions.append(dto.start_date <= self.model.end_date)
+                if self.model.end_date is None:
+                    conditions.append(dto.start_date <= self.model.start_date)
+                else:
+                    conditions.append(dto.start_date <= self.model.end_date)
             if dto.end_date is not None:
                 conditions.append(self.model.start_date <= dto.end_date)
             return query.where(and_(*conditions))
