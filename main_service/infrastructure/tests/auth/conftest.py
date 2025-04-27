@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import RegisterUseCase
+from dishka import AsyncContainer
 from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 

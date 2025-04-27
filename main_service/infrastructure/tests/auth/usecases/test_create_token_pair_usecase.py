@@ -1,9 +1,9 @@
-import pytest
-
 import application.auth.usecases
+import pytest
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from domain.users.entities import User
+
 from infrastructure.tests.auth.conftest import token_gateway
 
 

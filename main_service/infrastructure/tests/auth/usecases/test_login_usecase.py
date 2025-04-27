@@ -1,5 +1,4 @@
 import pytest
-
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import LoginUseCase

@@ -6,6 +6,8 @@ from sqlalchemy import (
     ForeignKey,
     Table,
     func,
+)
+from sqlalchemy import (
     Enum as SQLEnum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
