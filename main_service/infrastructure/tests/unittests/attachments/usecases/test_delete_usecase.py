@@ -10,10 +10,10 @@ from domain.attachments.repositories import AttachmentsRepository
 
 @pytest.mark.asyncio
 async def test_delete_success(
-    delete_attachment_usecase: DeleteAttachmentUseCase,
-    create_attachment: Attachment,
-    attachments_repository: AttachmentsRepository,
-    read_attachment_usecase: ReadAttachmentUseCase,
+        delete_attachment_usecase: DeleteAttachmentUseCase,
+        create_attachment: Attachment,
+        attachments_repository: AttachmentsRepository,
+        read_attachment_usecase: ReadAttachmentUseCase,
 ):
     deleted_attachment = await delete_attachment_usecase(
         create_attachment.id, None
