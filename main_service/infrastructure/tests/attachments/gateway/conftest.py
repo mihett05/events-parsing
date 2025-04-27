@@ -25,13 +25,3 @@ async def read_attachment_usecase(
 ) -> ReadAttachmentUseCase:
     async with container() as nested:
         yield await nested.get(ReadAttachmentUseCase)
-
-
-
-
-
-@pytest_asyncio.fixture
-async def nigger(create_app: FastAPI):
-    from uvicorn import run
-
-    run(create_app, port=5000, host="0.0.0.0")
