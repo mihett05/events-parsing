@@ -1,6 +1,5 @@
-from domain.users.entities import User
-
 from application.auth.tokens.dtos import TokenPairDto
+from domain.users.entities import User
 
 from ...users.usecases import CreateUserUseCase
 from ..dtos import RegisterUserDTO

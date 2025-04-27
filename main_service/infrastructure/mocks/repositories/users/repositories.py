@@ -6,7 +6,7 @@ from domain.users.entities import User
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import UsersRepository
 
-from ..crud import Id, MockRepository, MockRepositoryConfig
+from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):

@@ -1,13 +1,8 @@
-import os
-import shutil
-
 import pytest_asyncio
+from dishka import AsyncContainer
+
 from application.attachments.gateways import FilesGateway
 from application.attachments.usecases import ReadAttachmentUseCase
-from dishka import AsyncContainer
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.staticfiles import StaticFiles
 
 
 @pytest_asyncio.fixture

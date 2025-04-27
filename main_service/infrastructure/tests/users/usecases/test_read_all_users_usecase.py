@@ -1,4 +1,5 @@
 import pytest
+
 from application.users.usecases import ReadAllUsersUseCase
 from domain.users.dtos import ReadAllUsersDto
 from domain.users.entities import User

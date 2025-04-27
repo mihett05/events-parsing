@@ -1,8 +1,8 @@
 from dishka import AsyncContainer, Provider, make_async_container
 
-from infrastructure.providers.config import ConfigProvider
 from infrastructure.providers.container import get_container_application
 
+from .config import ConfigProvider
 from .gateways import GatewaysProvider
 from .repositories import RepositoriesProvider
 from .transactions import TransactionsProvider

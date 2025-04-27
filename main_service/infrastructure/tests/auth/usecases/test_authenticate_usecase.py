@@ -1,4 +1,5 @@
 import pytest
+
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.usecases import AuthenticateUseCase

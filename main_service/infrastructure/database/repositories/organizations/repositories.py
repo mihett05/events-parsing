@@ -1,3 +1,6 @@
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from domain.organizations import dtos
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import (
@@ -5,9 +8,6 @@ from domain.organizations.exceptions import (
     OrganizationNotFoundError,
 )
 from domain.organizations.repositories import OrganizationsRepository
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from infrastructure.database.repositories.organizations.models import (
     OrganizationDatabaseModel,
 )

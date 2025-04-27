@@ -1,6 +1,5 @@
-from domain.mails.dtos import ReadAllMailsDto
-
 from application.mails.usecases import ReadUnprocessedMailUseCase
+from domain.mails.dtos import ReadAllMailsDto
 
 from ..coordinator.gateway import CoordinatorGateway
 

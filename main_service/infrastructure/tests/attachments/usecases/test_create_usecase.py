@@ -1,4 +1,5 @@
 import pytest
+
 from application.attachments.usecases import CreateAttachmentUseCase
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.exceptions import AttachmentAlreadyExistsError

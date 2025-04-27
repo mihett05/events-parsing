@@ -1,7 +1,8 @@
-import application.auth.usecases as auth_usecases
-import application.users.usecases as user_usecases
 import pytest_asyncio
 from dishka import AsyncContainer
+
+import application.auth.usecases as auth_usecases
+import application.users.usecases as user_usecases
 
 
 @pytest_asyncio.fixture

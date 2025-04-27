@@ -1,10 +1,11 @@
 import pytest_asyncio
+from dishka import AsyncContainer
+
 from application.attachments.usecases import (
     CreateAttachmentUseCase,
     DeleteAttachmentUseCase,
     ReadAttachmentUseCase,
 )
-from dishka import AsyncContainer
 from domain.attachments.dtos import CreateAttachmentDto
 
 

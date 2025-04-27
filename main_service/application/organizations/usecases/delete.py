@@ -1,10 +1,9 @@
+from application.transactions import TransactionsGateway
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import (
     OrganizationsRepository,
 )
 from domain.users.entities import User
-
-from application.transactions import TransactionsGateway
 
 
 class DeleteOrganizationUseCase:

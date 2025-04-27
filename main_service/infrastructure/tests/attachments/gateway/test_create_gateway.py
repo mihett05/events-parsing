@@ -1,10 +1,9 @@
 from typing import BinaryIO
 
 import pytest
+
 from application.attachments.gateways import FilesGateway
-from application.attachments.usecases import CreateAttachmentUseCase
 from domain.attachments.dtos import CreateAttachmentDto
-from domain.attachments.exceptions import AttachmentAlreadyExistsError
 from domain.attachments.repositories import AttachmentsRepository
 
 

@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
 import pytest_asyncio
-from application.events.dtos import UpdateEventDto
 from dishka import AsyncContainer
+
+from application.events.dtos import UpdateEventDto
 from domain.events.dtos import (
     CreateEventDto,
     ReadAllEventsDto,

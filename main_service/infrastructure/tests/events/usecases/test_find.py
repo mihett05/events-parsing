@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+
 from application.events.usecases import FindEventUseCase
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event

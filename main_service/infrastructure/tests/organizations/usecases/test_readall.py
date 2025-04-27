@@ -1,8 +1,8 @@
 import pytest
+
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.organizations.entities import Organization
-
 from infrastructure.tests.organizations.usecases.conftest import (
     readall_organization_usecase,
 )

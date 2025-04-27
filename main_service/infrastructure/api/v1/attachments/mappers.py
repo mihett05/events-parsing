@@ -2,11 +2,11 @@ from pathlib import Path
 
 from adaptix import P
 from adaptix.conversion import link_function
+from fastapi import UploadFile
+
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.events.entities import Event
-from fastapi import UploadFile
-
 from infrastructure.api.retort import pydantic_retort
 
 from .models import AttachmentModel

@@ -8,7 +8,6 @@ from domain.organizations.exceptions import (
     OrganizationNotFoundError,
 )
 from domain.organizations.repositories import OrganizationsRepository
-
 from infrastructure.mocks.repositories.crud import (
     MockRepository,
     MockRepositoryConfig,

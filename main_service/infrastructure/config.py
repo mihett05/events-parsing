@@ -64,3 +64,8 @@ class Config(BaseSettings):
 @lru_cache
 def get_config() -> Config:
     return Config()
+
+
+@lru_cache
+def get_mock_config() -> Config:
+    return Config(_env_file=".dev.env", _env_file_encoding="utf-8")

@@ -1,10 +1,7 @@
 import asyncio
 import logging
 from dataclasses import asdict
-from typing import Iterable
 
-from config import get_config
-from events import DatesInfo, EventInfo
 from faststream import FastStream
 from faststream.rabbit import (
     ExchangeType,
@@ -12,6 +9,9 @@ from faststream.rabbit import (
     RabbitExchange,
     RabbitQueue,
 )
+
+from config import get_config
+from events import EventInfo
 from hackathonrf_parser import parser as parse_data
 from pipeline import pipeline
 
