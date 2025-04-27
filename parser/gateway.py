@@ -1,10 +1,9 @@
 import asyncio
 import logging
 from dataclasses import asdict
-from typing import Iterable
 
 from config import get_config
-from events import DatesInfo, EventInfo
+from events import EventInfo
 from faststream import FastStream
 from faststream.rabbit import (
     ExchangeType,

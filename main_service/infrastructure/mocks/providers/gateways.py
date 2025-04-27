@@ -1,12 +1,7 @@
-import logging
-
 from application.attachments.gateways import FilesGateway
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
-from application.events.usecases import DeduplicateEventUseCase
 from dishka import Provider, Scope, provide
-from faststream.broker.message import StreamMessage
-from faststream.rabbit import RabbitBroker
 
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway

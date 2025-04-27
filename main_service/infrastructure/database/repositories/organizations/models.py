@@ -10,7 +10,7 @@ from sqlalchemy import (
 from sqlalchemy import (
     Enum as SQLEnum,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database.postgres import Base
 from infrastructure.database.repositories.organizations.enums import (

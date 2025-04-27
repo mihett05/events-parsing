@@ -5,7 +5,6 @@ from domain.mails.enums import MailStateEnum
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 
-from ..dtos import EventInfo
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
 

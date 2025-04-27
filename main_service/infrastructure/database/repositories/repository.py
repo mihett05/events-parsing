@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from sqlalchemy import Delete, Insert, Select, Update, insert, select
+from sqlalchemy import Delete, Select, Update, insert, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption

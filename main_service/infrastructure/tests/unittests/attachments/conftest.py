@@ -8,8 +8,6 @@ from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
 
-from infrastructure.media.attachments import StaticDirFilesGateway
-
 
 @pytest_asyncio.fixture
 async def create_attachment_content() -> Iterable[BinaryIO]:

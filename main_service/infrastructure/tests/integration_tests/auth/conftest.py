@@ -1,8 +1,6 @@
 from datetime import datetime
 
 import pytest_asyncio
-from application.auth.tokens.dtos import TokenPairDto
-from domain.users.entities import User
 from httpx import AsyncClient
 
 from infrastructure.api.v1.auth.dtos import (

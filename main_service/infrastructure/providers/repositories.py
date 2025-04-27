@@ -7,9 +7,6 @@ from domain.users.repositories import UsersRepository
 
 from infrastructure.database.repositories import (
     AttachmentsDatabaseRepository,
-    EventsDatabaseRepository,
-    MailsDatabaseRepository,
-    UsersDatabaseRepository,
 )
 from infrastructure.database.repositories.events import EventsDatabaseRepository
 from infrastructure.database.repositories.mails import MailsDatabaseRepository
