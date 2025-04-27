@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from starlette import status
 
 from infrastructure.api.v1.auth.dtos import AuthenticateUserModelDto
@@ -7,12 +8,13 @@ from infrastructure.api.v1.auth.dtos import AuthenticateUserModelDto
 
 @pytest.mark.asyncio
 async def test_login_success(
-    get_test_client: TestClient,
-    get_authenticate_user_model_dto: AuthenticateUserModelDto,
+    get_test_client: AsyncClient,
+    get_authenticate_user1_model_dto: AuthenticateUserModelDto,
+    create_user1
 ):
-    response = get_test_client.post(
+    response = await get_test_client.post(
         "/v1/auth/login",
-        json=get_authenticate_user_model_dto.model_dump(
+        json=get_authenticate_user1_model_dto.model_dump(
             by_alias=True, mode="json"
         ),
     )

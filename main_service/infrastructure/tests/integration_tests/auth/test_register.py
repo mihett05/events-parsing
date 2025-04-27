@@ -10,12 +10,12 @@ from infrastructure.api.v1.users.models import UserModel
 @pytest.mark.asyncio
 async def test_register_success(
     get_test_client: AsyncClient,
-    get_user_model: UserModel,
-    get_create_user_model_dto: AuthenticateUserModelDto,
+    get_user1_model: UserModel,
+    get_create_user1_model_dto: AuthenticateUserModelDto,
 ):
     response = await get_test_client.post(
         "/v1/auth/register",
-        json=get_create_user_model_dto.model_dump(by_alias=True, mode="json"),
+        json=get_create_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -27,7 +27,7 @@ async def test_register_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(get_user_model, attr) == getattr(
+        assert getattr(get_user1_model, attr) == getattr(
             response_model.user, attr
         )
 
