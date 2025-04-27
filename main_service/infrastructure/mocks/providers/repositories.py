@@ -1,4 +1,5 @@
 from dishka import Provider, Scope, provide
+
 from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository

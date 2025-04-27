@@ -1,10 +1,10 @@
 import asyncio
 
+from dishka import AsyncContainer
+
 from application.events.usecases import ParseEventsUseCase
 from application.mails.gateway import EmailsGateway
 from application.mails.usecases import CreateMailsUseCase
-from dishka import AsyncContainer
-
 from infrastructure.api.mappers import map_mail_info_to_create_dto
 
 

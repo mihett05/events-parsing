@@ -1,4 +1,5 @@
 import pytest
+
 from application.events.usecases import DeduplicateEventUseCase
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event

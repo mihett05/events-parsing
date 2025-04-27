@@ -4,13 +4,14 @@ from uuid import UUID
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import (
-    AttachmentNotFoundError,
     AttachmentAlreadyExistsError,
+    AttachmentNotFoundError,
 )
 from domain.attachments.repositories import AttachmentsRepository
 from domain.users import entities as entities
 from domain.users.entities import User
 from domain.users.exceptions import UserNotFoundError
+
 from ..crud import Id, MockRepository, MockRepositoryConfig
 
 
