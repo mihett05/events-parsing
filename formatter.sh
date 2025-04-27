@@ -1,2 +1,4 @@
-ruff --config ruff.toml check --select I --fix .
-ruff --config ruff.toml format --line-length 80 .
+#!/bin/bash
+
+echo $(ruff --config ruff.toml check --select I --fix .)
+echo $(ruff --config ruff.toml format --line-length 80 .)

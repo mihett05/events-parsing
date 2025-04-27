@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from adaptix import P
-from adaptix.conversion import allow_unlinked_optional, coercer, link_function
+from adaptix.conversion import coercer, link_function
 from application.events.dtos import DatesInfo, EventInfo
 from domain.events.dtos import CreateEventDto
 
