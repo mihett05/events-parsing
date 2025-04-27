@@ -1,7 +1,6 @@
 from typing import BinaryIO
 
 import pytest
-
 from application.attachments.gateways import FilesGateway
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.repositories import AttachmentsRepository

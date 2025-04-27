@@ -1,14 +1,14 @@
 from typing import Annotated
 
+import application.users.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from domain.users.dtos import ReadAllUsersDto
+from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
-import application.users.usecases as use_cases
 import infrastructure.api.v1.users.dtos as dtos
 import infrastructure.api.v1.users.mappers as mappers
 import infrastructure.api.v1.users.models as models
-from domain.users.dtos import ReadAllUsersDto
-from domain.users.entities import User
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
 

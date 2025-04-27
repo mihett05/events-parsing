@@ -1,7 +1,7 @@
 from .create import CreateNotificationUseCase
+from .delete import DeleteNotificationUseCase
 from .read import ReadNotificationUseCase
 from .read_all import ReadAllNotificationsUseCase
-from .delete import DeleteNotificationUseCase
 
 __all__ = [
     "CreateNotificationUseCase",

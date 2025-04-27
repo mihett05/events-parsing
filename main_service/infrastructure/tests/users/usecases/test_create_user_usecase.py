@@ -1,5 +1,4 @@
 import pytest
-
 from application.users.usecases import CreateUserUseCase
 from domain.users.entities import User
 

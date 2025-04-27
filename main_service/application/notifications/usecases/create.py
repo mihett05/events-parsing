@@ -1,6 +1,6 @@
+from domain.notifications.dtos import CreateNotificationDto
 from domain.notifications.entities import Notification
 from domain.notifications.repositories import NotificationRepository
-from domain.notifications.dtos import CreateNotificationDto
 
 
 class CreateNotificationUseCase:

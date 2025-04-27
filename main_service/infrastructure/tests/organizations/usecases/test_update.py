@@ -1,7 +1,6 @@
 from copy import copy
 
 import pytest
-
 from application.organizations.dtos import UpdateOrganizationDto
 from application.organizations.usecases import UpdateOrganizationUseCase
 from domain.organizations.entities import Organization

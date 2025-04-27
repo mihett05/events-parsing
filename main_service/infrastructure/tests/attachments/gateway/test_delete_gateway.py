@@ -1,5 +1,4 @@
 import pytest
-
 from application.attachments.gateways import FilesGateway
 from application.attachments.usecases import (
     ReadAttachmentUseCase,
