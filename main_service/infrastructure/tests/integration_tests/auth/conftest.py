@@ -1,10 +1,10 @@
 from datetime import datetime
 
 import pytest_asyncio
-from httpx import AsyncClient
-
 from application.auth.tokens.dtos import TokenPairDto
 from domain.users.entities import User
+from httpx import AsyncClient
+
 from infrastructure.api.v1.auth.dtos import (
     AuthenticateUserModelDto,
     CreateUserModelDto,
@@ -41,10 +41,10 @@ async def get_user1_model() -> UserModel:
         }
     )
 
+
 @pytest_asyncio.fixture
 async def create_user1(
-    get_test_client: AsyncClient,
-    get_create_user1_model_dto: CreateUserModelDto
+    get_test_client: AsyncClient, get_create_user1_model_dto: CreateUserModelDto
 ):
     response = await get_test_client.post(
         "/v1/auth/register",
@@ -54,5 +54,5 @@ async def create_user1(
     response_model = UserWithTokenModel(**response.json())
     await get_test_client.delete(
         "/v1/users/",
-        headers={"Authorization": f"Bearer {response_model.access_token}"}
+        headers={"Authorization": f"Bearer {response_model.access_token}"},
     )

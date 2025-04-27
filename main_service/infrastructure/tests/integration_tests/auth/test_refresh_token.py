@@ -12,7 +12,7 @@ async def test_refresh_token_success(
     get_test_client: AsyncClient,
     get_authenticate_user1_model_dto: AuthenticateUserModelDto,
     get_user1_model: UserModel,
-    create_user1
+    create_user1,
 ):
     response = await get_test_client.post(
         "/v1/auth/login",
@@ -21,8 +21,7 @@ async def test_refresh_token_success(
         ),
     )
     response2 = await get_test_client.post(
-        "/v1/auth/refresh",
-        cookies={"refresh": response.cookies.get('refresh')}
+        "/v1/auth/refresh", cookies={"refresh": response.cookies.get("refresh")}
     )
     assert response2.status_code == status.HTTP_200_OK
 

@@ -36,6 +36,6 @@ async def get_app(container: AsyncContainer, config: Config):
 async def get_test_client(get_app: FastAPI) -> AsyncClient:
     transport = ASGITransport(app=get_app)
     async with AsyncClient(
-            transport=transport, base_url="http://testserver"
+        transport=transport, base_url="http://testserver"
     ) as client:
         yield client

@@ -12,7 +12,7 @@ async def test_login_success(
     get_test_client: AsyncClient,
     get_authenticate_user1_model_dto: AuthenticateUserModelDto,
     get_user1_model: UserModel,
-    create_user1
+    create_user1,
 ):
     response = await get_test_client.post(
         "/v1/auth/login",
