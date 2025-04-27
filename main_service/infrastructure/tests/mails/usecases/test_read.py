@@ -1,7 +1,6 @@
 import random
 
 import pytest
-
 from application.mails.usecases import ReadMailUseCase
 from domain.mails.entities import Mail
 from domain.mails.exceptions import MailNotFoundError

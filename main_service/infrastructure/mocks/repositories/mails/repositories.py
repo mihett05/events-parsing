@@ -50,7 +50,7 @@ class MailsMemoryRepository(MailsRepository):
     async def read_unprocessed(
         self, dto: dtos.ReadAllMailsDto
     ) -> list[entities.Mail]:
-        data = await self.__repository.read_all()
+        data: list[entities.Mail] = await self.__repository.read_all()
         return [
             mail
             for mail in data

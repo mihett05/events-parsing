@@ -1,16 +1,16 @@
 import logging
 from typing import AsyncIterable
 
-from dishka import Provider, Scope, provide
-from faststream.broker.message import StreamMessage
-from faststream.rabbit import RabbitBroker
-from miniopy_async import Minio
-
 from application.attachments.gateways import FilesGateway
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
 from application.events.usecases import DeduplicateEventUseCase
 from application.mails.gateway import EmailsGateway
+from dishka import Provider, Scope, provide
+from faststream.broker.message import StreamMessage
+from faststream.rabbit import RabbitBroker
+from miniopy_async import Minio
+
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config

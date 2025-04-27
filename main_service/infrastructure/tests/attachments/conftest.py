@@ -2,9 +2,8 @@ import os
 from typing import BinaryIO, Iterable
 
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.attachments.gateways import FilesGateway
+from dishka import AsyncContainer
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository

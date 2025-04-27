@@ -1,8 +1,7 @@
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.attachments.gateways import FilesGateway
 from application.attachments.usecases import ReadAttachmentUseCase
+from dishka import AsyncContainer
 
 
 @pytest_asyncio.fixture

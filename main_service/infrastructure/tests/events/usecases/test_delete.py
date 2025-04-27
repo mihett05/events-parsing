@@ -1,7 +1,6 @@
 import random
 
 import pytest
-
 from application.events.usecases import DeleteEventUseCase, ReadEventUseCase
 from domain.events.entities import Event
 from domain.events.exceptions import EventNotFoundError

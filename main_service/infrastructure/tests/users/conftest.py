@@ -1,7 +1,6 @@
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.users.dtos import UpdateUserDto
+from dishka import AsyncContainer
 from domain.users.dtos import (
     ReadAllUsersDto,
 )

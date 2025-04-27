@@ -1,5 +1,4 @@
 import pytest
-
 from application.organizations.usecases import ReadOrganizationUseCase
 from domain.organizations.entities import Organization
 

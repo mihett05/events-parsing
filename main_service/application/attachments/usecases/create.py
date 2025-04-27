@@ -1,5 +1,3 @@
-from application.attachments.gateways import FilesGateway
-from application.transactions import TransactionsGateway
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import (
@@ -8,6 +6,9 @@ from domain.attachments.exceptions import (
 )
 from domain.attachments.repositories import AttachmentsRepository
 from domain.users.entities import User
+
+from application.attachments.gateways import FilesGateway
+from application.transactions import TransactionsGateway
 
 
 class CreateAttachmentUseCase:

@@ -1,5 +1,4 @@
 import pytest
-
 from application.attachments.usecases import (
     DeleteAttachmentUseCase,
     ReadAttachmentUseCase,

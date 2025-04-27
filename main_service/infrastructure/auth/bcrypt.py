@@ -1,10 +1,9 @@
 import base64
 import os
 
-from passlib.context import CryptContext
-
 from application.auth.tokens.dtos import PasswordDto
 from application.auth.tokens.gateways import SecurityGateway
+from passlib.context import CryptContext
 
 
 class BcryptSecurityGateway(SecurityGateway):
