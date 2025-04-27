@@ -18,8 +18,9 @@ map_create_dto_from_pydantic = retort.get_converter(
     CreateEventModelDto, CreateEventDto
 )
 
-
-@retort.impl_converter(
+map_to_pydantic = retort.get_converter(
+    Event,
+    EventModel,
     recipe=[
         link_function(
             lambda event: event.id,
@@ -29,9 +30,8 @@ map_create_dto_from_pydantic = retort.get_converter(
             lambda event: event.created_at,
             P[EventModel].created_at,
         ),
-    ]
+    ],
 )
-def map_to_pydantic(event: Event) -> EventModel: ...
 
 
 @retort.impl_converter(

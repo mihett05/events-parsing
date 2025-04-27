@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide
 
+from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
 from domain.organizations.repositories import OrganizationsRepository
@@ -10,6 +11,12 @@ from infrastructure.database.repositories.organizations import (
     OrganizationsDatabaseRepository,
 )
 from infrastructure.database.repositories.users import UsersDatabaseRepository
+from infrastructure.database.repositories import (
+    AttachmentsDatabaseRepository,
+    EventsDatabaseRepository,
+    MailsDatabaseRepository,
+    UsersDatabaseRepository,
+)
 
 
 class RepositoriesProvider(Provider):
@@ -23,6 +30,9 @@ class RepositoriesProvider(Provider):
     )
     users_repository = provide(
         source=UsersDatabaseRepository, provides=UsersRepository
+    )
+    files_repository = provide(
+        source=AttachmentsDatabaseRepository, provides=AttachmentsRepository
     )
     organizations_repository = provide(
         source=OrganizationsDatabaseRepository, provides=OrganizationsRepository

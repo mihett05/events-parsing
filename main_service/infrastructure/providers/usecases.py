@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide_all
 
+import application.attachments.usecases as attachments_use_cases
 import application.auth.usecases as auth_use_cases
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
@@ -53,4 +54,10 @@ class UseCasesProvider(Provider):
         auth_use_cases.AuthenticateUseCase,
         auth_use_cases.AuthorizeUseCase,
         auth_use_cases.CreateTokenPairUseCase,
+    )
+
+    attachments = provide_all(
+        attachments_use_cases.CreateAttachmentUseCase,
+        attachments_use_cases.ReadAttachmentUseCase,
+        attachments_use_cases.DeleteAttachmentUseCase,
     )

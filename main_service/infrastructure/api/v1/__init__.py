@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from .attachments import router as attachments_router
 from .auth import router as auth_router
 from .events import router as event_router
 from .organizations import router as organizations_router

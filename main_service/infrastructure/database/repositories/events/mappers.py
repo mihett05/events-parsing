@@ -17,8 +17,9 @@ map_from_db = retort.get_converter(
     Event,
 )
 
-
-@retort.impl_converter(
+map_to_db = retort.get_converter(
+    Event,
+    EventDatabaseModel,
     recipe=[
         link_function(
             lambda event: event.id,
@@ -28,16 +29,15 @@ map_from_db = retort.get_converter(
             lambda event: event.created_at,
             P[EventDatabaseModel].created_at,
         ),
-    ]
+    ],
 )
-def map_to_db(event: Event) -> EventDatabaseModel: ...
 
-
-@retort.impl_converter(
+map_create_dto_to_model = retort.get_converter(
+    CreateEventDto,
+    EventDatabaseModel,
     recipe=[
         allow_unlinked_optional(P[EventDatabaseModel].id),
         allow_unlinked_optional(P[EventDatabaseModel].is_visible),
         allow_unlinked_optional(P[EventDatabaseModel].created_at),
-    ]
+    ],
 )
-def map_create_dto_to_model(dto: CreateEventDto) -> EventDatabaseModel: ...
