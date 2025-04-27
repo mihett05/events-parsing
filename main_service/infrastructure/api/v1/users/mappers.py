@@ -1,8 +1,8 @@
 from adaptix import P
 from adaptix.conversion import link_function
-
 from application.users.dtos import UpdateUserDto
 from domain.users.entities import User
+
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (

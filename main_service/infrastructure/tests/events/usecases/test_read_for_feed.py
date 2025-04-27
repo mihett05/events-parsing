@@ -1,5 +1,4 @@
 import pytest
-
 from application.events.usecases import ReadForFeedEventsUseCase
 from domain.events.dtos import ReadAllEventsFeedDto
 from domain.events.entities import Event

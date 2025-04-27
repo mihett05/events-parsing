@@ -11,8 +11,9 @@ from domain.events.exceptions import (
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-from .mappers import map_create_dto_to_entity
+
 from ..crud import Id, MockRepository, MockRepositoryConfig
+from .mappers import map_create_dto_to_entity
 
 
 class EventsMemoryRepository(EventsRepository):

@@ -2,11 +2,11 @@ from copy import copy
 from venv import create
 
 import pytest
-
 from application.organizations.dtos import UpdateOrganizationDto
 from application.organizations.usecases import UpdateOrganizationUseCase
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import OrganizationNotFoundError
+
 from infrastructure.api.v1.organizations.router import update_organization
 
 

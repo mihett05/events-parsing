@@ -1,6 +1,7 @@
-from application.transactions import TransactionsGateway
 from domain.users.entities import User
 from domain.users.repositories import UsersRepository
+
+from application.transactions import TransactionsGateway
 
 from .read import ReadUserUseCase
 

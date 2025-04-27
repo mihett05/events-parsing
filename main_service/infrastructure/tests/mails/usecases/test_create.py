@@ -1,5 +1,4 @@
 import pytest
-
 from application.mails.usecases import CreateMailUseCase
 from domain.mails.dtos import CreateMailDto
 

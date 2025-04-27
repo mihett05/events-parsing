@@ -1,7 +1,7 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional
-
 from domain.mails.dtos import CreateMailDto, ParsedMailInfoDto
+
 from infrastructure.api.retort import pydantic_retort
 
 retort = pydantic_retort.extend(recipe=[])

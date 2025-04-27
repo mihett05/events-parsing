@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from domain.users.entities import User
+
 from infrastructure.api.models import CamelModel
 
 

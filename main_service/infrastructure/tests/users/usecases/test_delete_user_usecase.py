@@ -1,7 +1,6 @@
 import random
 
 import pytest
-
 from application.auth.dtos import RegisterUserDTO
 from application.auth.usecases import RegisterUseCase
 from application.users.usecases import DeleteUserUseCase, ReadUserUseCase
