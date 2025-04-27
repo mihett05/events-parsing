@@ -18,9 +18,6 @@ class UsersMemoryRepository(UsersRepository):
                 already_exists_exception=UserAlreadyExistsError,
             )
 
-        def extract_id(self, entity: User) -> Id:
-            return entity.id
-
     def __init__(self):
         self.__next_id = 1
         self.__repository = MockRepository(self.Config())

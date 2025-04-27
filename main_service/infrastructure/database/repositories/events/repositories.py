@@ -1,5 +1,6 @@
 from sqlalchemy import Select, and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.events.dtos as dtos
 from domain.events.entities import Event

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime
 from typing import List
 
 from domain.organizations.enums import RoleEnum
@@ -7,16 +6,13 @@ from domain.users.entities import User
 
 
 @dataclass
-class Organization:
+class UpdateOrganizationDto:
     id: int
-    created_at: datetime
     title: str
-    owner_id: int
 
 
 @dataclass
-class UserOrganizationRole:
+class UpdateUserOrganizationRoleDto:
     id: int
-    role: RoleEnum
     user_id: int
-    organization_id: int
+    role: RoleEnum

@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.interfaces import LoaderOption
 
 import domain.mails.dtos as dtos
 from domain.mails import entities as entities
