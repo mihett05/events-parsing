@@ -7,6 +7,7 @@ from application.events.dtos import UpdateEventDto
 from domain.events.dtos import (
     CreateEventDto,
     ReadAllEventsDto,
+    ReadAllEventsFeedDto,
     ReadOrganizationEventsDto,
     ReadUserEventsDto,
 )
@@ -23,6 +24,7 @@ async def create_event_dto() -> CreateEventDto:
         format="offline",
         location=None,
         description="Example Description",
+        organization_id=None,
         end_date=datetime.combine(date, datetime.min.time())
         + timedelta(days=1),
         start_date=datetime.combine(date, datetime.min.time()),
@@ -40,8 +42,17 @@ async def update_event_dto() -> UpdateEventDto:
 
 @pytest_asyncio.fixture
 async def read_all_events_dto() -> ReadAllEventsDto:
-    return ReadAllEventsDto(
-        page=0, page_size=50, start_date=None, end_date=None
+    return ReadAllEventsDto(start_date=None, end_date=None)
+
+
+@pytest_asyncio.fixture
+async def read_feed_events_dto() -> ReadAllEventsFeedDto:
+    return ReadAllEventsFeedDto(
+        page=0,
+        page_size=50,
+        start_date=None,
+        end_date=None,
+        organization_id=None,
     )
 
 
@@ -65,7 +76,8 @@ async def read_user_events_dto() -> ReadUserEventsDto:
 
 @pytest_asyncio.fixture
 async def events_repository(container: AsyncContainer) -> EventsRepository:
-    yield await container.get(EventsRepository)
+    async with container() as nested:
+        yield await nested.get(EventsRepository)
 
 
 @pytest_asyncio.fixture

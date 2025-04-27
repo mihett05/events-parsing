@@ -13,8 +13,9 @@ map_from_db = retort.get_converter(
     User,
 )
 
-
-@retort.impl_converter(
+map_to_db = retort.get_converter(
+    User,
+    UserDatabaseModel,
     recipe=[
         allow_unlinked_optional(P[User].salt),
         allow_unlinked_optional(P[User].created_at),
@@ -23,6 +24,5 @@ map_from_db = retort.get_converter(
             lambda user: user.id,
             P[UserDatabaseModel].id,
         ),
-    ]
+    ],
 )
-def map_to_db(user: User) -> UserDatabaseModel: ...

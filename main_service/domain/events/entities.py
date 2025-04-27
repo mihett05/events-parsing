@@ -1,23 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, time
-
-from domain.events.enums import WeekDayEnum
-
-
-@dataclass
-class EventSingle:
-    event_id: int
-    start_date: datetime
-    end_date: datetime
-
-
-@dataclass
-class EventRepeatable:
-    event_id: int
-    start_time: time
-    end_time: time
-    start_day: WeekDayEnum
-    end_day: WeekDayEnum
+from datetime import datetime
 
 
 @dataclass
@@ -29,6 +11,7 @@ class Event:
     start_date: datetime
 
     id: int | None = None
+    organization_id: int | None = None
     is_visible: bool = True
     description: str | None = None
 

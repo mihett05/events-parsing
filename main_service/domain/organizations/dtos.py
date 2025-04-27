@@ -1,11 +1,14 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from domain.organizations.enums import RoleEnum
 
 
 @dataclass
 class CreateOrganizationDto:
+    owner_id: int
     title: str
+    created_at: datetime
 
 
 @dataclass

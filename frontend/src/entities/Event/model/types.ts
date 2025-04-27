@@ -8,4 +8,5 @@ export interface CalendarEvent {
   type: string;
   format: string;
   color: string;
+  endRegistration?: Date;
 }
