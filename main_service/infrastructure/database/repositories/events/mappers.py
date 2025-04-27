@@ -3,11 +3,10 @@ from adaptix.conversion import (
     allow_unlinked_optional,
     link_function,
 )
+
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
-
 from infrastructure.database.mappers import postgres_retort
-
 from .models import EventDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])
@@ -39,6 +38,9 @@ map_create_dto_to_model = retort.get_converter(
         allow_unlinked_optional(P[EventDatabaseModel].id),
         allow_unlinked_optional(P[EventDatabaseModel].is_visible),
         allow_unlinked_optional(P[EventDatabaseModel].created_at),
-        allow_unlinked_optional(P[EventDatabaseModel].organization_id),
+        link_function(
+            lambda dto: dto.organization_id,
+            P[EventDatabaseModel].organization_id,
+        ),
     ],
 )

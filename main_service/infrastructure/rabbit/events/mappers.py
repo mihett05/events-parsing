@@ -28,8 +28,9 @@ map_event_info_from_pydantic = retort.get_converter(
     ],
 )
 
-
-@retort.impl_converter(
+map_event_info_to_create_dto = retort.get_converter(
+    EventInfo,
+    CreateEventDto,
     recipe=[
         link_function(
             lambda event_info: event_info.dates.end_date,
@@ -44,6 +45,5 @@ map_event_info_from_pydantic = retort.get_converter(
             P[CreateEventDto].end_registration,
         ),
         allow_unlinked_optional(P[CreateEventDto].organization_id),
-    ]
+    ],
 )
-def map_event_info_to_create_dto(event_info: EventInfo) -> CreateEventDto: ...
