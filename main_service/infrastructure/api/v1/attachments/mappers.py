@@ -1,4 +1,3 @@
-from parser.events import Event
 from pathlib import Path
 
 from adaptix import P
@@ -8,6 +7,7 @@ from domain.attachments.entities import Attachment
 from fastapi import UploadFile
 
 from infrastructure.api.retort import pydantic_retort
+from parser.events import Event
 
 from .models import AttachmentModel
 
