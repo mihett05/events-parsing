@@ -1,14 +1,19 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-import domain.notifications.enums as enums
+from domain.notifications.enums import (
+    NotificationFormatEnum,
+    NotificationStatusEnum,
+    NotificationTypeEnum,
+)
 
 
 @dataclass
 class Notification:
-    id: int
-    text: bytes
-    recipient: int
-    type: enums.NotificationTypeEnum
-    format: enums.NotificationFormatEnum
-    created_at: datetime
+    text: str
+    id: int | None = None
+    recipient_id: int = 0
+    type: NotificationTypeEnum = NotificationTypeEnum.EMAIL
+    format: NotificationFormatEnum = NotificationFormatEnum.RAW_TEXT
+    status: NotificationStatusEnum = NotificationStatusEnum.NO
+    created_at: datetime | None = None

@@ -1,8 +1,8 @@
-from dishka import Provider, Scope, provide
-
 from application.attachments.gateways import FilesGateway
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
+from dishka import Provider, Scope, provide
+
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config

@@ -1,11 +1,11 @@
-from dishka import Provider, Scope, provide_all
-
 import application.attachments.usecases as attachments_use_cases
 import application.auth.usecases as auth_use_cases
 import application.events.usecases as event_use_cases
 import application.mails.usecases as mails_use_cases
+import application.notifications.usecases as notification_use_cases
 import application.organizations.usecases as organizations_use_cases
 import application.users.usecases as users_use_cases
+from dishka import Provider, Scope, provide_all
 
 
 class UseCasesProvider(Provider):
@@ -55,6 +55,13 @@ class UseCasesProvider(Provider):
         auth_use_cases.AuthenticateUseCase,
         auth_use_cases.AuthorizeUseCase,
         auth_use_cases.CreateTokenPairUseCase,
+    )
+
+    notifications = provide_all(
+        notification_use_cases.CreateNotificationUseCase,
+        notification_use_cases.ReadNotificationUseCase,
+        notification_use_cases.ReadAllNotificationsUseCase,
+        notification_use_cases.DeleteNotificationUseCase,
     )
 
     attachments = provide_all(
