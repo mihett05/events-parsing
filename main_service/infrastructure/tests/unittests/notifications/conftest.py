@@ -10,7 +10,7 @@ from domain.notifications.enums import (
     NotificationStatusEnum,
     NotificationTypeEnum,
 )
-from domain.notifications.repositories import NotificationRepository
+from domain.notifications.repositories import NotificationsRepository
 
 
 @pytest_asyncio.fixture
@@ -35,14 +35,14 @@ async def read_all_notifications_dto() -> ReadNotificationsDto:
 @pytest_asyncio.fixture
 async def notification_repository(
     container: AsyncContainer,
-) -> NotificationRepository:
+) -> NotificationsRepository:
     async with container() as nested:
-        yield await nested.get(NotificationRepository)
+        yield await nested.get(NotificationsRepository)
 
 
 @pytest_asyncio.fixture
 async def create_notification(
     create_notification_dto: CreateNotificationDto,
-    notification_repository: NotificationRepository,
+    notification_repository: NotificationsRepository,
 ) -> Notification:
     return await notification_repository.create(create_notification_dto)
