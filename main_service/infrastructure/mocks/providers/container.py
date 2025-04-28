@@ -4,12 +4,11 @@ from dishka import (
     make_async_container,
 )
 
-from infrastructure.providers.config import ConfigProvider
 from infrastructure.providers.container import (
     get_container_application,
     get_container_infrastructure,
 )
-
+from .config import ConfigProvider
 from .gateways import GatewaysProvider
 from .repositories import RepositoriesProvider
 from .transactions import TransactionsProvider
