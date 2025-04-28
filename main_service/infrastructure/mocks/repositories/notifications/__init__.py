@@ -1,3 +1,3 @@
-from .repositories import NotificationMemoryRepository
+from .repositories import NotificationsMemoryRepository
 
-__all__ = ["NotificationMemoryRepository"]
+__all__ = ["NotificationsMemoryRepository"]

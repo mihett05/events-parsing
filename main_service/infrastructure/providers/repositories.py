@@ -2,6 +2,7 @@ from dishka import Provider, Scope, provide
 from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
+from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.repositories import UsersRepository
 
@@ -14,6 +15,9 @@ from infrastructure.database.repositories.organizations import (
     OrganizationsDatabaseRepository,
 )
 from infrastructure.database.repositories.users import UsersDatabaseRepository
+from infrastructure.mocks.repositories.notifications import (
+    NotificationsMemoryRepository,
+)
 
 
 class RepositoriesProvider(Provider):
@@ -33,4 +37,7 @@ class RepositoriesProvider(Provider):
     )
     users_repository = provide(
         source=UsersDatabaseRepository, provides=UsersRepository
+    )
+    notification_repository = provide(
+        source=NotificationsMemoryRepository, provides=NotificationsRepository
     )

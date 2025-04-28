@@ -4,7 +4,7 @@ import domain.notifications.dtos as dtos
 import domain.notifications.entities as entities
 
 
-class NotificationRepository(metaclass=ABCMeta):
+class NotificationsRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(
         self, dto: dtos.CreateNotificationDto

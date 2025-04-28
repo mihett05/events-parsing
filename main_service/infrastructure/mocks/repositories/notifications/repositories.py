@@ -9,13 +9,13 @@ from domain.notifications.exceptions import (
     NotificationAlreadyExistsError,
     NotificationNotFoundError,
 )
-from domain.notifications.repositories import NotificationRepository
+from domain.notifications.repositories import NotificationsRepository
 
 from ..crud import Id, MockRepository, MockRepositoryConfig
 from .mappers import map_create_dto_to_entity
 
 
-class NotificationMemoryRepository(NotificationRepository):
+class NotificationsMemoryRepository(NotificationsRepository):
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(

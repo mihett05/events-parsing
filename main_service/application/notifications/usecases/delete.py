@@ -1,5 +1,5 @@
 from domain.notifications.entities import Notification
-from domain.notifications.repositories import NotificationRepository
+from domain.notifications.repositories import NotificationsRepository
 from domain.users.entities import User
 
 from application.transactions import TransactionsGateway
@@ -10,7 +10,7 @@ from .read import ReadNotificationUseCase
 class DeleteNotificationUseCase:
     def __init__(
         self,
-        repository: NotificationRepository,
+        repository: NotificationsRepository,
         tx: TransactionsGateway,
         read_uc: ReadNotificationUseCase,
     ):
