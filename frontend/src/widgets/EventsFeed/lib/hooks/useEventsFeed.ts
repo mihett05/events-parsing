@@ -1,4 +1,4 @@
-import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
+import { useReadAllEventsV1EventsFeedGetQuery } from '@/shared/api/api';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import { incrementPage, eventsAdapter } from '@features/events/slice';
 
@@ -7,7 +7,7 @@ export const useEventsFeed = () => {
   const state = useAppSelector((state) => state.events);
   const events = eventsAdapter.getSelectors().selectAll(state.events);
 
-  useReadAllEventsV1EventsGetQuery({
+  useReadAllEventsV1EventsFeedGetQuery({
     page: state.page,
     pageSize: state.pageSize,
   });

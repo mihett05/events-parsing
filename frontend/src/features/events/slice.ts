@@ -35,14 +35,14 @@ const eventsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(api.endpoints.readAllEventsV1EventsGet.matchFulfilled, (state, { payload }) => {
+      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchFulfilled, (state, { payload }) => {
         state.isLoading = false;
         eventsAdapter.upsertMany(state.events, payload.map(mapEventToCalendarEvent));
       })
-      .addMatcher(api.endpoints.readAllEventsV1EventsGet.matchPending, (state) => {
+      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchPending, (state) => {
         state.isLoading = true;
       })
-      .addMatcher(api.endpoints.readAllEventsV1EventsGet.matchRejected, (state, { error }) => {
+      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchRejected, (state, { error }) => {
         state.isLoading = false;
         state.error = error.message ?? null;
       });
