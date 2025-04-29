@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 import application.organizations.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -35,8 +35,8 @@ async def create_organization(
 @router.get("/", response_model=list[models.OrganizationModel])
 async def read_all_organizations(
     use_case: FromDishka[use_cases.ReadAllOrganizationUseCase],
-    page: int = 0,
-    page_size: int = 50,
+    page: Optional[int],
+    page_size: Optional[int],
 ):
     return map(
         mappers.map_to_pydantic,

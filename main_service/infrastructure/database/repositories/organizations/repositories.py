@@ -1,3 +1,5 @@
+from dns.e164 import query
+
 from domain.organizations import dtos
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import (
@@ -32,6 +34,8 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
         def get_select_all_query(
             self, dto: dtos.ReadOrganizationsDto
         ) -> Select:
+            if dto.page is None or dto.page_size is None:
+                return select(self.model).order_by(self.model.id)
             return (
                 select(self.model)
                 .order_by(self.model.id)

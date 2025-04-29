@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 
 from domain.organizations.enums import RoleEnum
 
@@ -20,8 +21,8 @@ class CreateUserOrganizationRoleDto:
 
 @dataclass
 class ReadOrganizationsDto:
-    page: int
-    page_size: int
+    page: Optional[int]
+    page_size: Optional[int]
 
 
 @dataclass
