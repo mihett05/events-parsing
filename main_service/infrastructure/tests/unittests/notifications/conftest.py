@@ -20,7 +20,7 @@ async def create_notification_dto() -> CreateNotificationDto:
         text="Example",
         type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
-        status=NotificationStatusEnum.NO,
+        status=NotificationStatusEnum.UNSENT,
     )
 
 
