@@ -11,6 +11,7 @@ class Event:
     start_date: datetime
 
     id: int | None = None
+    organization_id: int | None = None
     is_visible: bool = True
     description: str | None = None
 

@@ -6,7 +6,7 @@ from domain.users.entities import User
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import UsersRepository
 
-from ..crud import Id, MockRepository, MockRepositoryConfig
+from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
@@ -17,9 +17,6 @@ class UsersMemoryRepository(UsersRepository):
                 not_found_exception=UserNotFoundError,
                 already_exists_exception=UserAlreadyExistsError,
             )
-
-        def extract_id(self, entity: User) -> Id:
-            return entity.id
 
     def __init__(self):
         self.__next_id = 1
@@ -33,7 +30,7 @@ class UsersMemoryRepository(UsersRepository):
 
     async def create(self, user: User) -> entities.User:
         user.id = self.__next_id
-        user.created_at = datetime.utcnow()
+        user.created_at = datetime.now()
 
         self.__next_id += 1
         return await self.__repository.create(user)

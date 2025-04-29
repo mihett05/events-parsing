@@ -23,11 +23,12 @@ export const generateCalendarDays = (currentMonthDate: Date): CalendarDayData[] 
   });
 
   return days.map((day): CalendarDayData => {
+    const isWeekend = isSunday(day) || isSaturday(day);
     return {
       date: day,
       isCurrentMonth: isSameMonth(day, currentMonthDate),
       isToday: isTodayDateFns(day),
-      isWeekend: isSunday(day) || isSaturday(day),
+      isWeekend: isWeekend,
     };
   });
 };
