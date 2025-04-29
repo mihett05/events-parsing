@@ -3,9 +3,12 @@ from datetime import date, datetime
 from domain.mails.enums import MailStateEnum
 from sqlalchemy import Date, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.database.postgres import Base
+from infrastructure.database.repositories.attachments import (
+    AttachmentDatabaseModel,
+)
 
 
 class MailDatabaseModel(Base):
@@ -27,4 +30,8 @@ class MailDatabaseModel(Base):
     raw_content: Mapped[bytes]
     state: Mapped[MailStateEnum] = mapped_column(
         ENUM(MailStateEnum, name="MailStateEnum")
+    )
+
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(
+        lazy="joined"
     )

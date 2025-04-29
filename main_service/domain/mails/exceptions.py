@@ -1,4 +1,8 @@
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.exceptions import (
+    EntityAlreadyExistsError,
+    EntityException,
+    EntityNotFoundError,
+)
 from domain.mails.entities import Mail
 
 
@@ -12,11 +16,16 @@ class MailAlreadyExistsError(EntityAlreadyExistsError):
         super().__init__(Mail)
 
 
-class FailedFetchMailError(Exception):
+class FailedFetchMailError(EntityException):
     def __init__(self):
         super().__init__("Failed to fetch mail from inbox")
 
 
-class FailedParseMailError(Exception):
+class FailedCreateMailError(EntityException):
+    def __init__(self):
+        super().__init__("Failed to create mail")
+
+
+class FailedParseMailError(EntityException):
     def __init__(self):
         super().__init__("Failed to parse mail from inbox")
