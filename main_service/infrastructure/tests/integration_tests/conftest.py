@@ -171,8 +171,8 @@ def event_model_factory() -> Callable[[...], EventModel]:
         return EventModel(
             id=id,
             title=title,
-            type_=type_,
-            format_=format_,
+            type=type_,
+            format=format_,
             created_at=created_at,
             is_visible=is_visible,
             location=location,

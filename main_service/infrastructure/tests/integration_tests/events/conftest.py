@@ -61,8 +61,8 @@ def create_event_model_dto_factory() -> Callable[
     ) -> CreateEventModelDto:
         return CreateEventModelDto(
             title=title,
-            type_=type_,
-            format_=format_,
+            type=type_,
+            format=format_,
             location=location,
             description=description,
             endDate=end_date,
