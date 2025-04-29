@@ -8,8 +8,8 @@ from infrastructure.api.v1.users.models import UserModel
 
 
 @pytest.mark.asyncio
-async def test_get_me(async_client: AsyncClient, user_with_token_model_factory):
-    user = user_with_token_model_factory()
+async def test_get_me(async_client: AsyncClient, user_with_token_model):
+    user = user_with_token_model()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get("/v1/users/me", headers=headers)
     assert response.status_code == 200
@@ -18,10 +18,8 @@ async def test_get_me(async_client: AsyncClient, user_with_token_model_factory):
 
 
 @pytest.mark.asyncio
-async def test_read_all_users(
-    async_client: AsyncClient, user_with_token_model_factory
-):
-    user = user_with_token_model_factory()
+async def test_read_all_users(async_client: AsyncClient, user_with_token_model):
+    user = user_with_token_model()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get("/v1/users/", headers=headers)
     assert response.status_code == 200
@@ -31,9 +29,9 @@ async def test_read_all_users(
 
 @pytest.mark.asyncio
 async def test_read_user_by_id(
-    async_client: AsyncClient, user_with_token_model_factory
+    async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model_factory()
+    user = user_with_token_model()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get(
         f"/v1/users/{user.user.id}", headers=headers
@@ -46,10 +44,10 @@ async def test_read_user_by_id(
 @pytest.mark.asyncio
 async def test_update_user(
     async_client: AsyncClient,
-    user_with_token_model_factory,
+    user_with_token_model,
     update_user_model_dto_factory,
 ):
-    user = user_with_token_model_factory()
+    user = user_with_token_model()
     dto = update_user_model_dto_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.put(

@@ -93,15 +93,9 @@ def authenticate_user_model_dto_factory() -> Callable[
 
 
 @pytest_asyncio.fixture
-async def user_with_token_model_factory(
-    user_model_factory, create_user_model_dto_factory, async_client
+async def user_with_token_model(
+    create_user_model_dto_factory, async_client
 ) -> UserWithTokenModel:
-    # def _factory(access_token: str = "fake-jwt-token",
-    #              user: Optional[UserModel] = None) -> UserWithTokenModel:
-    #     return UserWithTokenModel(accessToken=access_token,
-    #                               user=user or user_model_factory())
-    # return _factory
-
     response = await async_client.post(
         "/v1/auth/register",
         json=create_user_model_dto_factory().model_dump(

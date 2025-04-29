@@ -12,9 +12,9 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 
 @pytest.mark.asyncio
 async def test_create_organization(
-    async_client: AsyncClient, user_with_token_model_factory
+    async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model_factory()
+    user = user_with_token_model()
     dto = CreateOrganizationModelDto(title="Test Org", createdAt=datetime.now())
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.post(
@@ -29,9 +29,9 @@ async def test_create_organization(
 
 @pytest.mark.asyncio
 async def test_read_organization(
-    async_client: AsyncClient, user_with_token_model_factory
+    async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model_factory()
+    user = user_with_token_model()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get("/v1/organizations/1", headers=headers)
     if response.status_code == 200:
@@ -44,10 +44,10 @@ async def test_read_organization(
 @pytest.mark.asyncio
 async def test_update_organization(
     async_client: AsyncClient,
-    user_with_token_model_factory,
+    user_with_token_model,
     update_organization_model_dto_factory,
 ):
-    user = user_with_token_model_factory()
+    user = user_with_token_model()
     dto = update_organization_model_dto_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.put(
