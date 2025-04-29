@@ -18,7 +18,9 @@ async def test_get_me(async_client: AsyncClient, user_with_token_model_factory):
 
 
 @pytest.mark.asyncio
-async def test_read_all_users(async_client: AsyncClient, user_with_token_model_factory):
+async def test_read_all_users(
+    async_client: AsyncClient, user_with_token_model_factory
+):
     user = user_with_token_model_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get("/v1/users/", headers=headers)
@@ -28,21 +30,33 @@ async def test_read_all_users(async_client: AsyncClient, user_with_token_model_f
 
 
 @pytest.mark.asyncio
-async def test_read_user_by_id(async_client: AsyncClient, user_with_token_model_factory):
+async def test_read_user_by_id(
+    async_client: AsyncClient, user_with_token_model_factory
+):
     user = user_with_token_model_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
-    response = await async_client.get(f"/v1/users/{user.user.id}", headers=headers)
+    response = await async_client.get(
+        f"/v1/users/{user.user.id}", headers=headers
+    )
     assert response.status_code == 200
     result = UserModel(**response.json())
     assert result.id == user.user.id
 
 
 @pytest.mark.asyncio
-async def test_update_user(async_client: AsyncClient, user_with_token_model_factory, update_user_model_dto_factory):
+async def test_update_user(
+    async_client: AsyncClient,
+    user_with_token_model_factory,
+    update_user_model_dto_factory,
+):
     user = user_with_token_model_factory()
     dto = update_user_model_dto_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
-    response = await async_client.put(f"/v1/users/{user.user.id}", json=dto.model_dump(by_alias=True), headers=headers)
+    response = await async_client.put(
+        f"/v1/users/{user.user.id}",
+        json=dto.model_dump(by_alias=True),
+        headers=headers,
+    )
     assert response.status_code == 200
     result = UserModel(**response.json())
     assert result.fullname == dto.fullname

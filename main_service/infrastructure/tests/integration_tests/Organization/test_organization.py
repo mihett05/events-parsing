@@ -11,18 +11,26 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
 @pytest.mark.asyncio
-async def test_create_organization(async_client: AsyncClient, user_with_token_model_factory):
+async def test_create_organization(
+    async_client: AsyncClient, user_with_token_model_factory
+):
     user = user_with_token_model_factory()
     dto = CreateOrganizationModelDto(title="Test Org", createdAt=datetime.now())
     headers = {"Authorization": f"Bearer {user.accessToken}"}
-    response = await async_client.post("/v1/organizations/", json=dto.model_dump(by_alias=True), headers=headers)
+    response = await async_client.post(
+        "/v1/organizations/",
+        json=dto.model_dump(by_alias=True),
+        headers=headers,
+    )
     assert response.status_code == 200
     result = OrganizationModel(**response.json())
     assert result.title == dto.title
 
 
 @pytest.mark.asyncio
-async def test_read_organization(async_client: AsyncClient, user_with_token_model_factory):
+async def test_read_organization(
+    async_client: AsyncClient, user_with_token_model_factory
+):
     user = user_with_token_model_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
     response = await async_client.get("/v1/organizations/1", headers=headers)
@@ -35,15 +43,20 @@ async def test_read_organization(async_client: AsyncClient, user_with_token_mode
 
 @pytest.mark.asyncio
 async def test_update_organization(
-    async_client: AsyncClient, user_with_token_model_factory, update_organization_model_dto_factory
+    async_client: AsyncClient,
+    user_with_token_model_factory,
+    update_organization_model_dto_factory,
 ):
     user = user_with_token_model_factory()
     dto = update_organization_model_dto_factory()
     headers = {"Authorization": f"Bearer {user.accessToken}"}
-    response = await async_client.put("/v1/organizations/1", json=dto.model_dump(by_alias=True), headers=headers)
+    response = await async_client.put(
+        "/v1/organizations/1",
+        json=dto.model_dump(by_alias=True),
+        headers=headers,
+    )
     if response.status_code == 200:
         result = OrganizationModel(**response.json())
         assert result.title == dto.title
     else:
         assert response.status_code == 404
-

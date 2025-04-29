@@ -1,8 +1,6 @@
 from datetime import datetime
 
 import pytest_asyncio
-from application.auth.tokens.dtos import TokenPairDto
-from domain.users.entities import User
 from httpx import AsyncClient
 
 from infrastructure.api.v1.auth.dtos import (
@@ -27,14 +25,18 @@ async def get_create_user1_model_dto() -> CreateUserModelDto:
         isActive=True,
     )
 
+
 @pytest_asyncio.fixture
 async def get_create_user_model_dtos() -> list[CreateUserModelDto]:
-    return [CreateUserModelDto(
-        email=f"test{i}@test.com",
-        password=f"{i}2345678",
-        fullname=f"Ivan{i}",
-        isActive=True,
-    ) for i in range(8)]
+    return [
+        CreateUserModelDto(
+            email=f"test{i}@test.com",
+            password=f"{i}2345678",
+            fullname=f"Ivan{i}",
+            isActive=True,
+        )
+        for i in range(8)
+    ]
 
 
 @pytest_asyncio.fixture
@@ -71,14 +73,16 @@ async def create_user1(
 @pytest_asyncio.fixture
 async def create_users(
     async_client: AsyncClient,
-    get_create_user_model_dtos: list[CreateUserModelDto]
+    get_create_user_model_dtos: list[CreateUserModelDto],
 ):
-    responses =[]
+    responses = []
     for dto in get_create_user_model_dtos:
-        responses.append(await async_client.post(
-            "/v1/auth/register",
-            json=dto.model_dump(by_alias=True, mode="json"),
-        ))
+        responses.append(
+            await async_client.post(
+                "/v1/auth/register",
+                json=dto.model_dump(by_alias=True, mode="json"),
+            )
+        )
     yield None
     for response in responses:
         response_model = UserWithTokenModel(**response.json())

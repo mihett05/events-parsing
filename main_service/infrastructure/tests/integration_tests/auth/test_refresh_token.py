@@ -21,9 +21,7 @@ async def test_refresh_token_success(
         ),
     )
     async_client.cookies.set("refresh", response.cookies.get("refresh"))
-    response2 = await async_client.post(
-        "/v1/auth/refresh"
-    )
+    response2 = await async_client.post("/v1/auth/refresh")
 
     assert response2.status_code == status.HTTP_200_OK
 
