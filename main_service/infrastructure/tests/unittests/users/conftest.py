@@ -1,6 +1,4 @@
 import pytest_asyncio
-from application.auth.dtos import RegisterUserDTO
-from application.auth.usecases import RegisterUseCase
 from application.users.dtos import UpdateUserDto
 from dishka import AsyncContainer
 from domain.users.dtos import (
