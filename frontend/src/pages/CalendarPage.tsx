@@ -4,22 +4,24 @@ import { CircularProgress, Typography } from '@mui/material';
 import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
 import { Layout } from '@/shared/ui/Layout';
 import { useReadAllEventsV1EventsCalendarGetQuery } from '@/shared/api/api';
-import { addMonths, subMonths, parseISO } from 'date-fns';
+import { addMonths, subMonths } from 'date-fns';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
-import { setSelectedDate } from '@/features/events/calendarSlice';
+import { setSelectedDate } from '@/features/events/slice';
 
 export const CalendarPage: React.FC = () => {
-  const selectedDate = useAppSelector((state) => state.calendarEvents.selectedDate);
+  const selectedDate = useAppSelector((state) => state.events.selectedDate);
   const dispatch = useAppDispatch();
 
-  const parsedDate = parseISO(selectedDate);
-  const startDate = subMonths(parsedDate, 1).toISOString();
-  const endDate = addMonths(parsedDate, 1).toISOString();
+  const dateWithoutTime = selectedDate;
+  dateWithoutTime.setUTCHours(0, 0, 0, 0);
+
+  const startDate = subMonths(dateWithoutTime, 1).toISOString();
+  const endDate = addMonths(dateWithoutTime, 1).toISOString();
 
   const handleMonthChange = (newDate: Date) => {
     const utcDate = new Date(newDate);
     utcDate.setUTCHours(0, 0, 0, 0);
-    dispatch(setSelectedDate(utcDate.toISOString()));
+    dispatch(setSelectedDate(utcDate));
   };
 
   const {
@@ -27,6 +29,8 @@ export const CalendarPage: React.FC = () => {
     error,
     isLoading,
   } = useReadAllEventsV1EventsCalendarGetQuery({ startDate, endDate });
+
+  console.error(error);
 
   if (isLoading) {
     return (
@@ -53,7 +57,7 @@ export const CalendarPage: React.FC = () => {
   return (
     <Layout>
       <MonthCalendar
-        initialDate={parseISO(selectedDate)}
+        initialDate={selectedDate}
         events={formattedEvents}
         onMonthChange={handleMonthChange}
       />
