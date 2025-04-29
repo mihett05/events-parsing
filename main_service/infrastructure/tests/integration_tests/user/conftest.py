@@ -59,8 +59,9 @@ async def create_user1(
         "/v1/auth/register",
         json=get_create_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
-    yield None
     response_model = UserWithTokenModel(**response.json())
+    yield response_model
+
     await async_client.delete(
         "/v1/users/",
         headers={"Authorization": f"Bearer {response_model.access_token}"},
