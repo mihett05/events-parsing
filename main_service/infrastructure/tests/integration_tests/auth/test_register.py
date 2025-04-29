@@ -9,11 +9,11 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_register_success(
-    get_test_client: AsyncClient,
+    async_client: AsyncClient,
     get_user1_model: UserModel,
     get_create_user1_model_dto: AuthenticateUserModelDto,
 ):
-    response = await get_test_client.post(
+    response = await async_client.post(
         "/v1/auth/register",
         json=get_create_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
@@ -31,7 +31,7 @@ async def test_register_success(
             response_model.user, attr
         )
 
-    response = await get_test_client.delete(
+    response = await async_client.delete(
         "/v1/users/",
         headers={"Authorization": f"Bearer {response_model.access_token}"},
     )

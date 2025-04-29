@@ -33,7 +33,7 @@ async def get_app(container: AsyncContainer, config: Config):
 
 
 @pytest_asyncio.fixture(autouse=True)
-async def get_test_client(get_app: FastAPI) -> AsyncClient:
+async def async_client(get_app: FastAPI) -> AsyncClient:
     transport = ASGITransport(app=get_app)
     async with AsyncClient(
         transport=transport, base_url="http://testserver"

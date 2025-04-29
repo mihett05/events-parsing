@@ -9,12 +9,12 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_login_success(
-    get_test_client: AsyncClient,
+    async_client: AsyncClient,
     get_authenticate_user1_model_dto: AuthenticateUserModelDto,
     get_user1_model: UserModel,
     create_user1,
 ):
-    response = await get_test_client.post(
+    response = await async_client.post(
         "/v1/auth/login",
         json=get_authenticate_user1_model_dto.model_dump(
             by_alias=True, mode="json"
