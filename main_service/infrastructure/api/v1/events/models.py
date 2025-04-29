@@ -18,3 +18,4 @@ class EventModel(CamelModel):
     start_date: datetime
     end_date: datetime | None
     end_registration: datetime | None = None
+    organization_id: int | None = None

@@ -1,18 +1,22 @@
 from dataclasses import dataclass
 
-from domain.users.entities import User
+from domain.notifications.enums import (
+    NotificationFormatEnum,
+    NotificationStatusEnum,
+    NotificationTypeEnum,
+)
 
 
 @dataclass
 class CreateNotificationDto:
-    chat_id: int
+    recipient_id: int
     text: str
-    reply_to: int | None
-    owner: User
+    type: NotificationTypeEnum
+    format: NotificationFormatEnum
+    status: NotificationStatusEnum
 
 
 @dataclass
 class ReadNotificationsDto:
-    chat_id: int
     page: int
     page_size: int

@@ -8,6 +8,7 @@ from domain.events.entities import Event
 from fastapi import UploadFile
 
 from infrastructure.api.retort import pydantic_retort
+from parser.events import Event
 
 from .models import AttachmentModel
 

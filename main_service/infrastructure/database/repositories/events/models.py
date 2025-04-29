@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database.postgres import Base
@@ -30,3 +30,6 @@ class EventDatabaseModel(Base):
 
     description: Mapped[str | None] = mapped_column(nullable=True, default=None)
     is_visible: Mapped[bool] = mapped_column(default=True)
+    organization_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True, default=None
+    )

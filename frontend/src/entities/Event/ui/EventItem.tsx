@@ -8,25 +8,22 @@ interface EventItemProps {
   event: CalendarEvent;
 }
 
-const eventColorMapping: { [key: string]: string } = {
-  orange: '#ff9800',
-  red: '#f44336',
-  green: '#4caf50',
-  blue: '#2196f3',
-  lightgreen: '#69f0ae',
-};
-
 export const EventItem: React.FC<EventItemProps> = ({ event }) => {
-  const dotColor = eventColorMapping[event.color.toLowerCase()] || event.color;
-  const { setSelectedEvent } = useModalContext();
+  const modalContext = useModalContext();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    modalContext?.setSelectedEvent(event);
+  };
 
   return (
     <Stack
       direction="row"
       alignItems="center"
       spacing={0.5}
-      sx={{ width: '100%', overflow: 'hidden', mb: '2px' }}
-      onClick={() => setSelectedEvent(event)}
+      sx={{ width: '100%', overflow: 'hidden', mb: '2px', cursor: 'pointer' }}
+      onClick={handleClick}
+      title={event.title}
     >
       <Box
         component="span"
@@ -34,8 +31,9 @@ export const EventItem: React.FC<EventItemProps> = ({ event }) => {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          backgroundColor: dotColor,
+          backgroundColor: event.color,
           flexShrink: 0,
+          mr: 0.5,
         }}
       />
       <Typography
@@ -47,6 +45,7 @@ export const EventItem: React.FC<EventItemProps> = ({ event }) => {
           textOverflow: 'ellipsis',
           lineHeight: 1.2,
           fontSize: '0.7rem',
+          flexGrow: 1,
         }}
       >
         {event.title}

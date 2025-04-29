@@ -7,6 +7,13 @@ from domain.mails.entities import Mail
 
 
 @dataclass
+class ParsedAttachmentInfoDto:
+    filename: str
+    extension: str
+    content: BinaryIO
+
+
+@dataclass
 class CreateAttachmentDto:
     filename: str
     extension: str
