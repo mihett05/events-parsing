@@ -9,14 +9,13 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_refresh_token_success(
-    async_client: AsyncClient,
-    get_authenticate_user1_model_dto: AuthenticateUserModelDto,
-    get_user1_model: UserModel,
-    create_user1,
+        async_client: AsyncClient,
+        get_create_user1_model_dto: AuthenticateUserModelDto,
+        get_user1_model: UserModel,
 ):
     response = await async_client.post(
         "/v1/auth/login",
-        json=get_authenticate_user1_model_dto.model_dump(
+        json=get_create_user1_model_dto.model_dump(
             by_alias=True, mode="json"
         ),
     )

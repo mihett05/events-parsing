@@ -12,7 +12,7 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 
 @pytest.mark.asyncio
 async def test_create_organization(
-    async_client: AsyncClient, user_with_token_model
+        async_client: AsyncClient, user_with_token_model
 ):
     user = user_with_token_model
     dto = CreateOrganizationModelDto(title="Test Org", createdAt=datetime.now())
@@ -26,10 +26,16 @@ async def test_create_organization(
     result = OrganizationModel(**response.json())
     assert result.title == dto.title
 
+    response = await async_client.delete(
+        f"/v1/organizations/{result.id}",
+        headers=headers,
+    )
+    assert response.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_read_organization(
-    async_client: AsyncClient, user_with_token_model
+        async_client: AsyncClient, user_with_token_model
 ):
     user = user_with_token_model
     headers = {"Authorization": f"Bearer {user.access_token}"}
@@ -43,9 +49,9 @@ async def test_read_organization(
 
 @pytest.mark.asyncio
 async def test_update_organization(
-    async_client: AsyncClient,
-    user_with_token_model,
-    update_organization_model_dto_factory,
+        async_client: AsyncClient,
+        user_with_token_model,
+        update_organization_model_dto_factory,
 ):
     user = user_with_token_model
     dto = update_organization_model_dto_factory()

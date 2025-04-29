@@ -4,16 +4,10 @@ import pytest_asyncio
 from httpx import AsyncClient
 
 from infrastructure.api.v1.auth.dtos import (
-    AuthenticateUserModelDto,
     CreateUserModelDto,
 )
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.users.models import UserModel
-
-
-@pytest_asyncio.fixture
-async def get_authenticate_user1_model_dto() -> AuthenticateUserModelDto:
-    return AuthenticateUserModelDto(email="test@test.com", password="12345678")
 
 
 @pytest_asyncio.fixture
@@ -42,10 +36,10 @@ async def get_user1_model() -> UserModel:
 
 @pytest_asyncio.fixture
 async def create_user1(
-    async_client: AsyncClient, get_create_user1_model_dto: CreateUserModelDto
+        async_client: AsyncClient, get_create_user1_model_dto: CreateUserModelDto
 ):
     response = await async_client.post(
-        "/v1/auth/register",
+        "/v1/auth/login",
         json=get_create_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
     response_model = UserWithTokenModel(**response.json())

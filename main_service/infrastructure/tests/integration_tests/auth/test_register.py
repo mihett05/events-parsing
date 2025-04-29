@@ -9,17 +9,18 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_register_success(
-    async_client: AsyncClient,
-    get_user1_model: UserModel,
-    get_create_user1_model_dto: AuthenticateUserModelDto,
+        async_client: AsyncClient,
+        get_user1_model: UserModel,
+        get_create_user1_model_dto: AuthenticateUserModelDto,
 ):
     response = await async_client.post(
         "/v1/auth/register",
         json=get_create_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
-
+    
     assert response.status_code == status.HTTP_200_OK
     response_model = UserWithTokenModel(**response.json())
+
     attrs = (
         "email",
         "fullname",

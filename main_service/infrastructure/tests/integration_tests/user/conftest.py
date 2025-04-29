@@ -13,13 +13,13 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest_asyncio.fixture
 async def get_authenticate_user1_model_dto() -> AuthenticateUserModelDto:
-    return AuthenticateUserModelDto(email="test@test.com", password="12345678")
+    return AuthenticateUserModelDto(email="test@example.com", password="12345678")
 
 
 @pytest_asyncio.fixture
 async def get_create_user1_model_dto() -> CreateUserModelDto:
     return CreateUserModelDto(
-        email="test@test.com",
+        email="test@example.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
         isActive=True,
@@ -44,7 +44,7 @@ async def get_user1_model() -> UserModel:
     return UserModel(
         **{
             "id": 1321,
-            "email": "test@test.com",
+            "email": "test@example.com",
             "fullname": "Ivanov Ivan Ivanovich",
             "isActive": True,
             "telegramId": None,
@@ -55,7 +55,7 @@ async def get_user1_model() -> UserModel:
 
 @pytest_asyncio.fixture
 async def create_user1(
-    async_client: AsyncClient, get_create_user1_model_dto: CreateUserModelDto
+        async_client: AsyncClient, get_create_user1_model_dto: CreateUserModelDto
 ):
     response = await async_client.post(
         "/v1/auth/register",
@@ -72,8 +72,8 @@ async def create_user1(
 
 @pytest_asyncio.fixture
 async def create_users(
-    async_client: AsyncClient,
-    get_create_user_model_dtos: list[CreateUserModelDto],
+        async_client: AsyncClient,
+        get_create_user_model_dtos: list[CreateUserModelDto],
 ):
     responses = []
     for dto in get_create_user_model_dtos:
