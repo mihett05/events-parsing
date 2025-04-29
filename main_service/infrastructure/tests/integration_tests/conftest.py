@@ -80,14 +80,27 @@ def authenticate_user_model_dto_factory() -> AuthenticateUserModelDto:
     return _factory
 
 
-@pytest.fixture
-def user_with_token_model_factory(user_model_factory) -> UserWithTokenModel:
-    def _factory(access_token: str = "fake-jwt-token",
-                 user: Optional[UserModel] = None) -> UserWithTokenModel:
-        return UserWithTokenModel(accessToken=access_token,
-                                  user=user or user_model_factory())
+@pytest_asyncio.fixture
+async def user_with_token_model_factory(
+        user_model_factory,
+        create_user_model_dto_factory,
+        async_client) -> UserWithTokenModel:
+    # def _factory(access_token: str = "fake-jwt-token",
+    #              user: Optional[UserModel] = None) -> UserWithTokenModel:
+    #     return UserWithTokenModel(accessToken=access_token,
+    #                               user=user or user_model_factory())
+    # return _factory
 
-    return _factory
+    response = await async_client.post(
+        "/v1/auth/register",
+        json=create_user_model_dto_factory().model_dump(by_alias=True, mode="json"),
+    )
+    model = UserWithTokenModel(**response.json())
+    yield model
+    await async_client.delete(
+        "/v1/users/",
+        headers={"Authorization": f"Bearer {model.access_token}"},
+    )
 
 
 # users.py
@@ -173,8 +186,8 @@ def create_event_model_dto_factory() -> CreateEventModelDto:
     ) -> CreateEventModelDto:
         return CreateEventModelDto(
             title=title,
-            type_=type_,
-            format_=format_,
+            type=type_,
+            format=format_,
             location=location,
             description=description,
             endDate=end_date,
