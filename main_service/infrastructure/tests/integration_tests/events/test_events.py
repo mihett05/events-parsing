@@ -26,9 +26,7 @@ async def test_create_event(
     result = EventModel(**response.json())
     assert result.title == dto.title
     assert result.type == dto.type
-    assert (
-        result.organization_id == dto.organizationId
-    )
+    assert result.organization_id == dto.organizationId
 
 
 @pytest.mark.asyncio

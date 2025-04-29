@@ -33,7 +33,9 @@ def __make_response(user: User, tokens_pair: TokenPairDto):
         content=UserWithTokenModel(
             user=map_to_pydantic(user),
             access_token=tokens_pair.access_token,
-        ).model_dump(by_alias=True, mode="json"),
+        ).model_dump(
+            by_alias=True,
+        ),
     )
     response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token)
     return response
