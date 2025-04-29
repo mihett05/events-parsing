@@ -14,12 +14,12 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 async def test_create_organization(
     async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model()
+    user = user_with_token_model
     dto = CreateOrganizationModelDto(title="Test Org", createdAt=datetime.now())
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.post(
         "/v1/organizations/",
-        json=dto.model_dump(by_alias=True),
+        json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
     assert response.status_code == 200
@@ -31,8 +31,8 @@ async def test_create_organization(
 async def test_read_organization(
     async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    user = user_with_token_model
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.get("/v1/organizations/1", headers=headers)
     if response.status_code == 200:
         result = OrganizationModel(**response.json())
@@ -47,12 +47,12 @@ async def test_update_organization(
     user_with_token_model,
     update_organization_model_dto_factory,
 ):
-    user = user_with_token_model()
+    user = user_with_token_model
     dto = update_organization_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.put(
         "/v1/organizations/1",
-        json=dto.model_dump(by_alias=True),
+        json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
     if response.status_code == 200:

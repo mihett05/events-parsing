@@ -9,8 +9,8 @@ from infrastructure.api.v1.users.models import UserModel
 
 @pytest.mark.asyncio
 async def test_get_me(async_client: AsyncClient, user_with_token_model):
-    user = user_with_token_model()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    user = user_with_token_model
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.get("/v1/users/me", headers=headers)
     assert response.status_code == 200
     result = UserModel(**response.json())
@@ -19,8 +19,8 @@ async def test_get_me(async_client: AsyncClient, user_with_token_model):
 
 @pytest.mark.asyncio
 async def test_read_all_users(async_client: AsyncClient, user_with_token_model):
-    user = user_with_token_model()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    user = user_with_token_model
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.get("/v1/users/", headers=headers)
     assert response.status_code == 200
     result = [UserModel(**u) for u in response.json()]
@@ -31,8 +31,8 @@ async def test_read_all_users(async_client: AsyncClient, user_with_token_model):
 async def test_read_user_by_id(
     async_client: AsyncClient, user_with_token_model
 ):
-    user = user_with_token_model()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    user = user_with_token_model
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.get(
         f"/v1/users/{user.user.id}", headers=headers
     )
@@ -47,9 +47,9 @@ async def test_update_user(
     user_with_token_model,
     update_user_model_dto_factory,
 ):
-    user = user_with_token_model()
+    user = user_with_token_model
     dto = update_user_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user.accessToken}"}
+    headers = {"Authorization": f"Bearer {user.access_token}"}
     response = await async_client.put(
         f"/v1/users/{user.user.id}",
         json=dto.model_dump(by_alias=True),
@@ -58,4 +58,4 @@ async def test_update_user(
     assert response.status_code == 200
     result = UserModel(**response.json())
     assert result.fullname == dto.fullname
-    assert result.telegramId == dto.telegramId
+    assert result.telegram_id == dto.telegram_id

@@ -8,7 +8,7 @@ from infrastructure.api.v1.users.models import UserModel
 
 
 @pytest.fixture
-def user_model_factory() -> Callable[[...], UserModel]:
+def user_model_factory() -> Callable[[], UserModel]:
     def _factory(
         id: int = 1,
         email: str = "test@example.com",
@@ -30,7 +30,7 @@ def user_model_factory() -> Callable[[...], UserModel]:
 
 
 @pytest.fixture
-def update_user_model_dto_factory() -> Callable[[...], UpdateUserModelDto]:
+def update_user_model_dto_factory() -> Callable[[], UpdateUserModelDto]:
     def _factory(
         fullname: str = "Updated Name", telegram_id: int | None = 123456789
     ) -> UpdateUserModelDto:

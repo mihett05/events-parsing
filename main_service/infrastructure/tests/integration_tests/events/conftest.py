@@ -11,20 +11,20 @@ from infrastructure.api.v1.events.models import EventModel
 
 
 @pytest.fixture
-def event_model_factory() -> Callable[[...], EventModel]:
+def event_model_factory() -> Callable[[], EventModel]:
     def _factory(
-            id: int = 100,
-            title: str = "Test Event",
-            type_: str = "conference",
-            format_: str = "online",
-            created_at: datetime = datetime.now(),
-            is_visible: bool = True,
-            location: Optional[str] = None,
-            description: Optional[str] = "This is a test event",
-            start_date: datetime = datetime.now(),
-            end_date: Optional[datetime] = None,
-            end_registration: Optional[datetime] = None,
-            organization_id: Optional[int] = None,
+        id: int = 100,
+        title: str = "Test Event",
+        type_: str = "conference",
+        format_: str = "online",
+        created_at: datetime = datetime.now(),
+        is_visible: bool = True,
+        location: Optional[str] = None,
+        description: Optional[str] = "This is a test event",
+        start_date: datetime = datetime.now(),
+        end_date: Optional[datetime] = None,
+        end_registration: Optional[datetime] = None,
+        organization_id: Optional[int] = None,
     ) -> EventModel:
         return EventModel(
             id=id,
@@ -45,17 +45,17 @@ def event_model_factory() -> Callable[[...], EventModel]:
 
 
 @pytest.fixture
-def create_event_model_dto_factory() -> Callable[[...], CreateEventModelDto]:
+def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
     def _factory(
-            title: str = "New Event",
-            type_: str = "workshop",
-            format_: str = "offline",
-            location: Optional[str] = "Moscow",
-            description: Optional[str] = "Some workshop",
-            end_date: datetime = datetime(2025, 12, 31),
-            start_date: datetime = datetime(2025, 12, 1),
-            end_registration: datetime = datetime(2025, 11, 30),
-            organization_id: int | None = None,
+        title: str = "New Event",
+        type_: str = "workshop",
+        format_: str = "offline",
+        location: Optional[str] = "Moscow",
+        description: Optional[str] = "Some workshop",
+        end_date: datetime = datetime(2025, 12, 31),
+        start_date: datetime = datetime(2025, 12, 1),
+        end_registration: datetime = datetime(2025, 11, 30),
+        organization_id: int | None = None,
     ) -> CreateEventModelDto:
         return CreateEventModelDto(
             title=title,
@@ -73,9 +73,9 @@ def create_event_model_dto_factory() -> Callable[[...], CreateEventModelDto]:
 
 
 @pytest.fixture
-def update_event_model_dto_factory() -> Callable[[...], UpdateEventModelDto]:
+def update_event_model_dto_factory() -> Callable[[], UpdateEventModelDto]:
     def _factory(
-            title: str = "Updated Title", description: str = "Updated Description"
+        title: str = "Updated Title", description: str = "Updated Description"
     ) -> UpdateEventModelDto:
         return UpdateEventModelDto(title=title, description=description)
 

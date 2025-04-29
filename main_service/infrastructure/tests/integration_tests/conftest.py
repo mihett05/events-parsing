@@ -63,7 +63,7 @@ async def async_client(get_app: FastAPI) -> AsyncClient:
 
 
 @pytest.fixture
-def create_user_model_dto_factory() -> Callable[[...], CreateUserModelDto]:
+def create_user_model_dto_factory() -> Callable[[], CreateUserModelDto]:
     def _factory(
         email: str = "test@example.com",
         password: str = "password123",
@@ -81,9 +81,7 @@ def create_user_model_dto_factory() -> Callable[[...], CreateUserModelDto]:
 
 
 @pytest.fixture
-def authenticate_user_model_dto_factory() -> Callable[
-    [...], AuthenticateUserModelDto
-]:
+def authenticate_user_model_dto_factory() -> Callable[[], AuthenticateUserModelDto]:
     def _factory(
         email: str = "test@example.com", password: str = "password123"
     ) -> AuthenticateUserModelDto:
@@ -92,10 +90,11 @@ def authenticate_user_model_dto_factory() -> Callable[
     return _factory
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture()
 async def user_with_token_model(
     create_user_model_dto_factory, async_client
 ) -> UserWithTokenModel:
+
     response = await async_client.post(
         "/v1/auth/register",
         json=create_user_model_dto_factory().model_dump(
@@ -114,7 +113,7 @@ async def user_with_token_model(
 
 
 @pytest.fixture
-def user_model_factory() -> Callable[[...], UserModel]:
+def user_model_factory() -> Callable[[], UserModel]:
     def _factory(
         id: int = 1,
         email: str = "test@example.com",
@@ -136,7 +135,7 @@ def user_model_factory() -> Callable[[...], UserModel]:
 
 
 @pytest.fixture
-def update_user_model_dto_factory() -> Callable[[...], UpdateUserModelDto]:
+def update_user_model_dto_factory() -> Callable[[], UpdateUserModelDto]:
     def _factory(
         fullname: str = "Updated Name", telegram_id: int | None = 123456789
     ) -> UpdateUserModelDto:
@@ -147,7 +146,7 @@ def update_user_model_dto_factory() -> Callable[[...], UpdateUserModelDto]:
 
 # events.py
 @pytest.fixture
-def event_model_factory() -> Callable[[...], EventModel]:
+def event_model_factory() -> Callable[[], EventModel]:
     def _factory(
         id: int = 100,
         title: str = "Test Event",
@@ -181,7 +180,7 @@ def event_model_factory() -> Callable[[...], EventModel]:
 
 
 @pytest.fixture
-def create_event_model_dto_factory() -> Callable[[...], CreateEventModelDto]:
+def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
     def _factory(
         title: str = "New Event",
         type_: str = "workshop",
@@ -209,7 +208,7 @@ def create_event_model_dto_factory() -> Callable[[...], CreateEventModelDto]:
 
 
 @pytest.fixture
-def update_event_model_dto_factory() -> Callable[[...], UpdateEventModelDto]:
+def update_event_model_dto_factory() -> Callable[[], UpdateEventModelDto]:
     def _factory(
         title: str = "Updated Title", description: str = "Updated Description"
     ) -> UpdateEventModelDto:
@@ -220,7 +219,7 @@ def update_event_model_dto_factory() -> Callable[[...], UpdateEventModelDto]:
 
 # organizations.py
 @pytest.fixture
-def organization_model_factory() -> Callable[[...], OrganizationModel]:
+def organization_model_factory() -> Callable[[], OrganizationModel]:
     def _factory(
         id: int = 1,
         title: str = "Test Organization",
@@ -260,7 +259,7 @@ def update_organization_model_dto_factory() -> Callable[
 
 # attachments.py
 @pytest.fixture
-def attachment_model_factory() -> Callable[[...], AttachmentModel]:
+def attachment_model_factory() -> Callable[[], AttachmentModel]:
     def _factory(
         filename: str = "test_file.jpg",
         extension: str = ".jpg",

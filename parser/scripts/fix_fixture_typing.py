@@ -5,21 +5,10 @@ comment = "# -------------------------------------------------------------------
 
 
 def fix_typing(filename):
-    key_word = "_factory("
     with open(filename, "r") as f:
         data = f.read()
 
-    if key_word in data:
-        current = ""
-        for line in data.split("\n"):
-            if key_word in line and "->" in line:
-                pref = line.split(" -> ")
-                current += f"{pref[0]} -> Callable[[...], {pref[1][:-1]}]:\n"
-            else:
-                current += f"{line}\n"
-
-        return current
-    return data
+    return data.replace("Callable[[...]", "Callable[[]")
 
 
 def main():

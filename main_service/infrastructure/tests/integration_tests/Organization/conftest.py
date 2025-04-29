@@ -11,7 +11,7 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
 @pytest.fixture
-def organization_model_factory() -> Callable[[...], OrganizationModel]:
+def organization_model_factory() -> Callable[[], OrganizationModel]:
     def _factory(
         id: int = 1,
         title: str = "Test Organization",
@@ -39,7 +39,7 @@ def create_organization_model_dto_factory() -> Callable[
 
 @pytest.fixture
 def update_organization_model_dto_factory() -> Callable[
-    [...], UpdateOrganizationModelDto
+    [], UpdateOrganizationModelDto
 ]:
     def _factory(
         title: str = "Updated Organization Title",

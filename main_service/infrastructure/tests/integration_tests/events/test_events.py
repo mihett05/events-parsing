@@ -9,9 +9,9 @@ from infrastructure.api.v1.events.models import EventModel
 
 @pytest.mark.asyncio
 async def test_create_event(
-        async_client: AsyncClient,
-        user_with_token_model,
-        create_event_model_dto_factory,
+    async_client: AsyncClient,
+    user_with_token_model,
+    create_event_model_dto_factory,
 ):
     dto = create_event_model_dto_factory()
     headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
@@ -40,9 +40,9 @@ async def test_read_event(async_client: AsyncClient, user_with_token_model):
 
 @pytest.mark.asyncio
 async def test_update_event(
-        async_client: AsyncClient,
-        user_with_token_model,
-        update_event_model_dto_factory,
+    async_client: AsyncClient,
+    user_with_token_model,
+    update_event_model_dto_factory,
 ):
     dto = update_event_model_dto_factory()
     headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
