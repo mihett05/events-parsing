@@ -4,6 +4,7 @@ from typing import Annotated
 import application.events.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
@@ -41,6 +42,8 @@ async def read_all_events(
     start_date: date | None = None,
     end_date: date | None = None,
     organization_id: int | None = None,
+    type_: EventTypeEnum | None = None,
+    format_: EventFormatEnum | None = None,
 ):
     return map(
         mappers.map_to_pydantic,
@@ -51,6 +54,8 @@ async def read_all_events(
                 start_date=start_date,
                 end_date=end_date,
                 organization_id=organization_id,
+                type=type_,
+                format=format_,
             )
         ),
     )

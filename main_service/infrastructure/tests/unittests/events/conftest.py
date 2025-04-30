@@ -11,6 +11,7 @@ from domain.events.dtos import (
     ReadUserEventsDto,
 )
 from domain.events.entities import Event
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.events.repositories import EventsRepository
 
 
@@ -19,8 +20,8 @@ async def create_event_dto() -> CreateEventDto:
     date = datetime.now().date()
     return CreateEventDto(
         title="Example",
-        type="Hackathon",
-        format="offline",
+        type=EventTypeEnum.HACKATHON,
+        format=EventFormatEnum.OFFLINE,
         location=None,
         description="Example Description",
         organization_id=None,
@@ -52,6 +53,8 @@ async def read_feed_events_dto() -> ReadAllEventsFeedDto:
         start_date=None,
         end_date=None,
         organization_id=None,
+        type=None,
+        format=None,
     )
 
 

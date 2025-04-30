@@ -15,7 +15,6 @@ def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfo]:
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
-    events = []
 
     items = soup.find_all(
         "div", attrs={"data-record-type": lambda x: x in ["396", "776"]}
