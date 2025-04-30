@@ -21,8 +21,8 @@ class CreateUserOrganizationRoleDto:
 
 @dataclass
 class ReadOrganizationsDto:
-    page: Optional[int]
-    page_size: Optional[int]
+    page: int | None
+    page_size: int | None
 
 
 @dataclass

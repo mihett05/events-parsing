@@ -1,4 +1,5 @@
-from dns.e164 import query
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain.organizations import dtos
 from domain.organizations.entities import Organization
@@ -7,15 +8,11 @@ from domain.organizations.exceptions import (
     OrganizationNotFoundError,
 )
 from domain.organizations.repositories import OrganizationsRepository
-from sqlalchemy import Select, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from infrastructure.database.repositories.organizations.models import (
     OrganizationDatabaseModel,
 )
-
-from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
+from ..repository import PostgresRepository, PostgresRepositoryConfig
 
 
 class OrganizationsDatabaseRepository(OrganizationsRepository):
@@ -32,7 +29,7 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
             )
 
         def get_select_all_query(
-            self, dto: dtos.ReadOrganizationsDto
+                self, dto: dtos.ReadOrganizationsDto
         ) -> Select:
             if dto.page is None or dto.page_size is None:
                 return select(self.model).order_by(self.model.id)
@@ -52,7 +49,7 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
         return await self.__repository.read(organization_id)
 
     async def read_all(
-        self, dto: dtos.ReadOrganizationsDto
+            self, dto: dtos.ReadOrganizationsDto
     ) -> list[Organization]:
         return await self.__repository.read_all(dto)
 
