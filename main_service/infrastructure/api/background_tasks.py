@@ -18,7 +18,9 @@ async def __parse_mails(container: AsyncContainer):
             dtos = map(
                 map_mail_info_to_create_dto, await gateway.receive_mails()
             )
-            await create_many_use_case(list(dtos))
+            _, need_to_retry = await create_many_use_case(list(dtos), None)
+            await gateway.mark_mails_as_failed(need_to_retry)
+
         await asyncio.sleep(60 * 30)
 
 

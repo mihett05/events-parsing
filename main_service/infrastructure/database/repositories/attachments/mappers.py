@@ -14,6 +14,10 @@ map_from_db = retort.get_converter(
     Attachment,
     recipe=[
         allow_unlinked_optional(P[Attachment].file_link),
+        link_function(
+            lambda attachment: attachment.created_at,
+            P[Attachment].created_at,
+        ),
     ],
 )
 

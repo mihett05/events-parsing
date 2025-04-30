@@ -13,7 +13,6 @@ from .models import AttachmentModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-
 map_to_pydantic = retort.get_converter(
     Attachment,
     AttachmentModel,

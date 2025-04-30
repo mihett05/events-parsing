@@ -40,6 +40,13 @@ class CreateAttachmentUseCase:
     async def __call__(
         self, dtos: list[CreateAttachmentDto], actor: User | None
     ) -> tuple[list[Attachment], list[str]]:
+        # TODO: Переработать на функционал на создание либо всех, либо не одного
+        #  т.е. в случае хотя бы одной ошибки поднимаем ексепшн
+        #  сложность заключается в откате сохранения контента аттачментов
+        #  т.к. ошибка происходит если упал гетевей, а значит откатить в нем - проблема
+        #  Возможно решение - добавление состояния аттачменту и задача, которая удаляет failed
+        #  чтобы в FileStorage не было пустышек
+
         failed = []
         succeed = []
         async with self.__transaction:

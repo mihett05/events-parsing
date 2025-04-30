@@ -1,6 +1,7 @@
 from .attachments import AttachmentsDatabaseRepository
 from .events import EventsDatabaseRepository
 from .mails import MailsDatabaseRepository
+from .notifications import NotificationsDatabaseRepository
 from .users import UsersDatabaseRepository
 
 __all__ = [
@@ -8,4 +9,5 @@ __all__ = [
     "EventsDatabaseRepository",
     "MailsDatabaseRepository",
     "UsersDatabaseRepository",
+    "NotificationsDatabaseRepository",
 ]
