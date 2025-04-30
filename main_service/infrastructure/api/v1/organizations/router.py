@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 import application.organizations.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
