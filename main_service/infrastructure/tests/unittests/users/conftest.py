@@ -1,7 +1,6 @@
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.users.dtos import UpdateUserDto
+from dishka import AsyncContainer
 from domain.users.dtos import (
     ReadAllUsersDto,
 )
@@ -49,8 +48,8 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
 
 @pytest_asyncio.fixture
 async def create_user(
-        get_user_entity: User,
-        users_repository: UsersRepository,
+    get_user_entity: User,
+    users_repository: UsersRepository,
 ) -> User:
     user = await users_repository.create(get_user_entity)
     return user
@@ -58,8 +57,8 @@ async def create_user(
 
 @pytest_asyncio.fixture
 async def create_users(
-        get_user_entities: list[User],
-        users_repository: UsersRepository,
+    get_user_entities: list[User],
+    users_repository: UsersRepository,
 ) -> list[User]:
     return [
         await users_repository.create(user_entity)

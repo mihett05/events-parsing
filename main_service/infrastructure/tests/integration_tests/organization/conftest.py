@@ -18,17 +18,13 @@ def organization_model_factory() -> Callable[[], OrganizationModel]:
         created_at: datetime = datetime.now(),
         owner_id: int = 1,
     ) -> OrganizationModel:
-        return OrganizationModel(
-            id=id, title=title, created_at=created_at, ownerId=owner_id
-        )
+        return OrganizationModel(id=id, title=title, created_at=created_at, ownerId=owner_id)
 
     return _factory
 
 
 @pytest.fixture
-def create_organization_model_dto_factory() -> Callable[
-    [...], CreateOrganizationModelDto
-]:
+def create_organization_model_dto_factory() -> Callable[[...], CreateOrganizationModelDto]:
     def _factory(
         title: str = "New Organization", created_at: datetime = datetime.now()
     ) -> CreateOrganizationModelDto:
@@ -38,9 +34,7 @@ def create_organization_model_dto_factory() -> Callable[
 
 
 @pytest.fixture
-def update_organization_model_dto_factory() -> Callable[
-    [], UpdateOrganizationModelDto
-]:
+def update_organization_model_dto_factory() -> Callable[[], UpdateOrganizationModelDto]:
     def _factory(
         title: str = "Updated Organization Title",
     ) -> UpdateOrganizationModelDto:

@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import RegisterUseCase
+from dishka import AsyncContainer
 from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 
@@ -34,7 +33,7 @@ async def user1_token_info_dto() -> TokenInfoDto:
     return TokenInfoDto(
         subject="test@example.com",
         expires_in=datetime.combine(date, datetime.min.time())
-                   + timedelta(days=1),
+        + timedelta(days=1),
     )
 
 
@@ -71,9 +70,9 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
 
 @pytest_asyncio.fixture
 async def create_user1(
-        register_user1_dto: RegisterUserDTO,
-        register_usecase: RegisterUseCase,
-        users_repository: UsersRepository,
+    register_user1_dto: RegisterUserDTO,
+    register_usecase: RegisterUseCase,
+    users_repository: UsersRepository,
 ) -> User:
     user1, _ = await register_usecase(register_user1_dto)
     return user1
@@ -81,9 +80,9 @@ async def create_user1(
 
 @pytest_asyncio.fixture
 async def create_user2(
-        register_user2_dto: RegisterUserDTO,
-        register_usecase: RegisterUseCase,
-        users_repository: UsersRepository,
+    register_user2_dto: RegisterUserDTO,
+    register_usecase: RegisterUseCase,
+    users_repository: UsersRepository,
 ) -> User:
     user2, _ = await register_usecase(register_user2_dto)
     return user2
