@@ -3,7 +3,6 @@ from datetime import datetime
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
-    NotificationTypeEnum,
 )
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
@@ -22,9 +21,6 @@ class NotificationDatabaseModel(Base):
 
     text: Mapped[str]
 
-    type: Mapped[NotificationTypeEnum] = mapped_column(
-        ENUM(NotificationTypeEnum, name="NotificationTypeEnum")
-    )
     format: Mapped[NotificationFormatEnum] = mapped_column(
         ENUM(NotificationFormatEnum, name="NotificationFormatEnum")
     )

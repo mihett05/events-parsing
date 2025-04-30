@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
-    NotificationTypeEnum,
 )
 
 
@@ -11,7 +10,6 @@ from domain.notifications.enums import (
 class CreateNotificationDto:
     recipient_id: int
     text: str
-    type: NotificationTypeEnum
     format: NotificationFormatEnum
     status: NotificationStatusEnum
 

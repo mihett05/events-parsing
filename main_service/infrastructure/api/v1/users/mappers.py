@@ -1,16 +1,21 @@
 from adaptix import P
-from adaptix.conversion import link_function
+from adaptix.conversion import coercer, link_function
 from application.users.dtos import UpdateUserDto
-from domain.users.entities import User
+from domain.users.entities import User, UserSettings
 
 from infrastructure.api.retort import pydantic_retort
 
 from .dtos import (
     UpdateUserModelDto,
 )
-from .models import UserModel
+from .models import UserModel, UserSettingsModel
 
 retort = pydantic_retort.extend(recipe=[])
+
+map_user_settings_to_pydantic = retort.get_converter(
+    UserSettings,
+    UserSettingsModel,
+)
 
 map_to_pydantic = retort.get_converter(
     User,
@@ -19,7 +24,8 @@ map_to_pydantic = retort.get_converter(
         link_function(
             lambda user: user.id,
             P[UserModel].id,
-        )
+        ),
+        coercer(UserSettings, UserSettingsModel, map_user_settings_to_pydantic),
     ],
 )
 

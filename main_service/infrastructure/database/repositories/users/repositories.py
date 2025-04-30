@@ -5,10 +5,12 @@ from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import UsersRepository
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_from_db, map_to_db
-from .models import UserDatabaseModel
+from .models import UserDatabaseModel, UserSettingsDatabaseModel
 
 
 class UsersDatabaseRepository(UsersRepository):
@@ -35,6 +37,9 @@ class UsersDatabaseRepository(UsersRepository):
                 .limit(dto.page_size)
             )
 
+        def get_options(self) -> list[LoaderOption]:
+            return [selectinload(self.model.settings)]
+
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session
@@ -44,7 +49,9 @@ class UsersDatabaseRepository(UsersRepository):
         return await self.__repository.read_all(dto)
 
     async def create(self, user: User) -> User:
-        return await self.__repository.create_from_entity(user)
+        model: UserDatabaseModel = self.__config.model_mapper(user)
+        model.settings = UserSettingsDatabaseModel()
+        return await self.__repository.create(model)
 
     async def read(self, user_id: int) -> User:
         return await self.__repository.read(user_id)

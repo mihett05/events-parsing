@@ -3,7 +3,6 @@ from datetime import datetime
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
-    NotificationTypeEnum,
 )
 
 from infrastructure.api.models import CamelModel
@@ -16,6 +15,5 @@ class NotificationModel(CamelModel):
 
     text: str
 
-    type: NotificationTypeEnum
     format: NotificationFormatEnum
     status: NotificationStatusEnum

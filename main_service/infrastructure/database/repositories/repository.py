@@ -80,7 +80,7 @@ class PostgresRepository(metaclass=ABCMeta):
         except IntegrityError:
             raise self.config.already_exists_exception()
 
-    async def __create(self, model: ModelType) -> Entity:
+    async def create(self, model: ModelType) -> Entity:
         try:
             self.session.add(model)
             if self.__should_commit():
@@ -120,10 +120,10 @@ class PostgresRepository(metaclass=ABCMeta):
         )
 
     async def create_from_dto(self, dto: CreateModelType) -> Entity:
-        return await self.__create(self.config.create_model_mapper(dto))
+        return await self.create(self.config.create_model_mapper(dto))
 
     async def create_from_entity(self, entity: Entity) -> Entity:
-        return await self.__create(self.config.model_mapper(entity))
+        return await self.create(self.config.model_mapper(entity))
 
     async def create_many(self, dtos: list[CreateModelType]) -> list[Entity]:
         models = [self.config.create_model_mapper(dto) for dto in dtos]

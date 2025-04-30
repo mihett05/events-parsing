@@ -8,7 +8,6 @@ from domain.notifications.entities import Notification
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
-    NotificationTypeEnum,
 )
 from domain.notifications.repositories import NotificationsRepository
 
@@ -18,7 +17,6 @@ async def create_notification_dto() -> CreateNotificationDto:
     return CreateNotificationDto(
         recipient_id=1,
         text="Example",
-        type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
     )
