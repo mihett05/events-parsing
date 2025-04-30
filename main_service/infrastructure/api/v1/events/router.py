@@ -2,9 +2,11 @@ from datetime import date
 from typing import Annotated
 
 import application.events.usecases as use_cases
+from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
+from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
@@ -62,10 +64,15 @@ async def read_all_events(
 
 
 @router.get("/feed_filters")
-async def get_types_and_formats() -> dict[str, list]:
+async def get_types_and_formats(
+    use_case: FromDishka[ReadAllOrganizationUseCase],
+) -> dict[str, list]:
     result = dict()
     result["type"] = list(map(lambda x: x.value, EventTypeEnum))
     result["format"] = list(map(lambda x: x.value, EventFormatEnum))
+    result["organizations"] = await use_case(
+        ReadOrganizationsDto(page=None, page_size=None)
+    )
     return result
 
 
