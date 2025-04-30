@@ -15,6 +15,9 @@ import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
+from infrastructure.api.v1.organizations.mappers import (
+    map_to_pydantic as map_organization,
+)
 
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 
@@ -63,17 +66,20 @@ async def read_all_events(
     )
 
 
-@router.get("/feed_filters")
+@router.get("/feed_filters", response_model=models.FilterModel)
 async def get_types_and_formats(
     use_case: FromDishka[ReadAllOrganizationUseCase],
-) -> dict[str, list]:
-    result = dict()
-    result["type"] = list(map(lambda x: x.value, EventTypeEnum))
-    result["format"] = list(map(lambda x: x.value, EventFormatEnum))
-    result["organizations"] = await use_case(
-        ReadOrganizationsDto(page=None, page_size=None)
+):
+    return models.FilterModel(
+        type=list(map(lambda x: x.value, EventTypeEnum)),
+        format=list(map(lambda x: x.value, EventFormatEnum)),
+        organization=list(
+            map(
+                map_organization,
+                await use_case(ReadOrganizationsDto(page=None, page_size=None)),
+            )
+        ),
     )
-    return result
 
 
 @router.post(
