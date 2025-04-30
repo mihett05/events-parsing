@@ -38,6 +38,8 @@ class EventsDatabaseRepository(EventsRepository):
 
             query = self.__try_add_period_filter_to_query(query, dto)
             query = self.__try_add_organization_filter_to_query(query, dto)
+            query = self.__try_add_type_filter_to_query(query, dto)
+            query = self.__try_add_format_filter_to_query(query, dto)
             query = self.__add_offset_to_query(query, dto)
             return query
 
@@ -65,6 +67,20 @@ class EventsDatabaseRepository(EventsRepository):
             return query.where(
                 self.model.organization_id == dto.organization_id
             )
+
+        def __try_add_type_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
+            if dto.type is None:
+                return query
+            return query.where(self.model.type == dto.type)
+
+        def __try_add_format_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
+            if dto.format is None:
+                return query
+            return query.where(self.model.format == dto.format)
 
         def __add_offset_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto
