@@ -26,8 +26,8 @@ def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfo]:
             year = item.text.strip()
             if year == str(stop_year):
                 events = extract_list(text)
-                yield from events
                 # write(events)
+                yield from events
                 break
             print(year)
         else:
@@ -51,5 +51,5 @@ def write(data: list[EventInfo]):
 
 
 if __name__ == "__main__":
-    for i in parser():
+    for i in parser(stop_year=2023):
         print(i)

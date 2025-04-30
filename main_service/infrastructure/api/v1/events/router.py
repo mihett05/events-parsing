@@ -61,6 +61,14 @@ async def read_all_events(
     )
 
 
+@router.get("/feed_filters")
+async def get_types_and_formats() -> dict[str, list]:
+    result = dict()
+    result["type"] = list(map(lambda x: x.value, EventTypeEnum))
+    result["format"] = list(map(lambda x: x.value, EventFormatEnum))
+    return result
+
+
 @router.post(
     "/",
     response_model=models.EventModel,
