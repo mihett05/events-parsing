@@ -45,5 +45,11 @@ class NotificationsMemoryRepository(NotificationsRepository):
         data = await self.__repository.read_all()
         return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
+    async def change_notifications_statuses(
+        self, notifications: list[Notification]
+    ):
+        for notification in notifications:
+            await self.__repository.update(notification)
+
     async def delete(self, notification: Notification) -> Notification:
         return await self.__repository.delete(notification)

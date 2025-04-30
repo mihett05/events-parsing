@@ -48,6 +48,9 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[entities.User]:
         return await self.__repository.read_all(dto)
 
+    async def read_by_ids(self, user_ids: list[int]) -> list[entities.User]:
+        return await self.__repository.read_by_ids(user_ids)
+
     async def create(self, user: User) -> User:
         model: UserDatabaseModel = self.__config.model_mapper(user)
         model.settings = UserSettingsDatabaseModel()

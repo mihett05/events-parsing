@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from sqlalchemy import Delete, Select, Update, insert, select
+from sqlalchemy import Delete, Insert, Select, Update, insert, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
@@ -69,14 +69,12 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def __create_models(self, models: list[ModelType]) -> list[Entity]:
         try:
-            values = [self.__model_to_dict(model) for model in models]
             query = (
                 insert(self.config.model)
-                .values(values)
+                .values(list(map(self.__model_to_dict, models)))
                 .returning(self.config.model)
             )
-            result = await self.session.scalars(self.config.add_options(query))
-            return [self.config.entity_mapper(model) for model in result.all()]
+            return await self.get_entities_from_query(query)
         except IntegrityError:
             raise self.config.already_exists_exception()
 
@@ -95,7 +93,9 @@ class PostgresRepository(metaclass=ABCMeta):
             await self.session.execute(self.config.add_options(query))
         ).scalar_one_or_none()
 
-    async def get_entities_from_query(self, query: Select) -> list[Entity]:
+    async def get_entities_from_query(
+        self, query: Select | Update | Insert
+    ) -> list[Entity]:
         result = await self.session.scalars(self.config.add_options(query))
         return [self.config.entity_mapper(model) for model in result.all()]
 

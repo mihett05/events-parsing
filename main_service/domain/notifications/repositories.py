@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 import domain.notifications.dtos as dtos
 import domain.notifications.entities as entities
+import domain.notifications.enums as enums
 
 
 class NotificationsRepository(metaclass=ABCMeta):
@@ -17,6 +18,13 @@ class NotificationsRepository(metaclass=ABCMeta):
     async def read_all(
         self, dto: dtos.ReadNotificationsDto
     ) -> list[entities.Notification]: ...
+
+    @abstractmethod
+    async def change_notifications_statuses(
+        self,
+        notifications: list[entities.Notification],
+        status: enums.NotificationStatusEnum,
+    ): ...
 
     @abstractmethod
     async def delete(

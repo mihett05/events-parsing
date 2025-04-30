@@ -6,7 +6,7 @@ from domain.notifications.exceptions import (
     NotificationNotFoundError,
 )
 from domain.notifications.repositories import NotificationsRepository
-from sqlalchemy import Select, select
+from sqlalchemy import Select, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -50,6 +50,19 @@ class NotificationsDatabaseRepository(NotificationsRepository):
         self, dto: dtos.ReadNotificationsDto
     ) -> list[Notification]:
         return await self.__repository.read_all(dto)
+
+    async def change_notifications_statuses(
+        self, notifications: list[Notification], status: NotificationStatusEnum
+    ):
+        ids = list(map(self.__config.extract_id_from_entity, notifications))
+        query = (
+            update(NotificationDatabaseModel)
+            .where(NotificationDatabaseModel.id.in_(ids))
+            .values(status=status)
+            .execution_options(synchronize_session="fetch")
+            .returning(self.__config.model)
+        )
+        await self.__session.execute(query)
 
     async def create(self, dto: dtos.CreateNotificationDto) -> Notification:
         return await self.__repository.create_from_dto(dto)

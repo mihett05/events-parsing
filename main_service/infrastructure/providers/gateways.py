@@ -6,6 +6,7 @@ from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
 from application.events.usecases import DeduplicateEventUseCase
 from application.mails.gateway import EmailsGateway
+from application.notifications.factory import NotificationGatewayAbstractFactory
 from dishka import Provider, Scope, provide
 from faststream.broker.message import StreamMessage
 from faststream.rabbit import RabbitBroker
@@ -14,8 +15,15 @@ from miniopy_async import Minio
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
-from infrastructure.imap.gateway import ImapEmailsGateway
-from infrastructure.media.attachments.minio import MinioFilesGateway
+from infrastructure.gateways.attachments.minio import MinioFilesGateway
+from infrastructure.gateways.mails.gateway import ImapEmailsGateway
+from infrastructure.gateways.notifications.factory import (
+    NotificationGatewayFactory,
+)
+from infrastructure.gateways.notifications.gateways import (
+    NotificationEmailGateway,
+    NotificationTelegramGateway,
+)
 from infrastructure.rabbit.events import (
     RabbitMQCoordinatorGateway,
 )
@@ -62,3 +70,10 @@ class GatewaysProvider(Provider):
         source=BcryptSecurityGateway, provides=SecurityGateway
     )
     files_gateway = provide(source=MinioFilesGateway, provides=FilesGateway)
+
+    email_notification_gateway = provide(NotificationEmailGateway)
+    telegram_notification_gateway = provide(NotificationTelegramGateway)
+    notification_gateway_factory = provide(
+        source=NotificationGatewayFactory,
+        provides=NotificationGatewayAbstractFactory,
+    )

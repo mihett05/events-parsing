@@ -35,12 +35,15 @@ class UsersMemoryRepository(UsersRepository):
         self.__next_id += 1
         return await self.__repository.create(user)
 
-    async def read(self, event_id: int) -> User:
-        return await self.__repository.read(event_id)
+    async def read(self, user_id: int) -> User:
+        return await self.__repository.read(user_id)
 
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[User]:
         data = await self.__repository.read_all()
         return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+
+    async def read_by_ids(self, user_ids: list[int]) -> list[entities.User]:
+        return [await self.read(user_id) for user_id in user_ids]
 
     async def update(self, user: User) -> User:
         return await self.__repository.update(user)

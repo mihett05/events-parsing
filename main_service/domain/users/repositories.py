@@ -20,6 +20,12 @@ class UsersRepository(metaclass=ABCMeta):
     ) -> list[entities.User]: ...
 
     @abstractmethod
+    async def read_by_ids(
+        self,
+        user_ids: list[int],
+    ) -> list[entities.User]: ...
+
+    @abstractmethod
     async def update(self, user: entities.User) -> entities.User: ...
 
     @abstractmethod

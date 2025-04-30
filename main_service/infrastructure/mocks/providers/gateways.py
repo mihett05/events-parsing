@@ -6,7 +6,7 @@ from dishka import Provider, Scope, provide
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
-from infrastructure.media.attachments import StaticDirFilesGateway
+from infrastructure.gateways.attachments import StaticDirFilesGateway
 from infrastructure.mocks.gateways.events.gateway import (
     MemoryCoordinatorGateway,
 )
