@@ -32,14 +32,15 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
         def get_select_all_query(
             self, dto: dtos.ReadOrganizationsDto
         ) -> Select:
+            query = select(self.model).order_by(self.model.id)
+            return self.__try_add_pagination(query, dto)
+
+        def __try_add_pagination(
+            self, query: Select, dto: dtos.ReadOrganizationsDto
+        ) -> Select:
             if dto.page is None or dto.page_size is None:
-                return select(self.model).order_by(self.model.id)
-            return (
-                select(self.model)
-                .order_by(self.model.id)
-                .offset(dto.page * dto.page_size)
-                .limit(dto.page_size)
-            )
+                return query
+            return query.offset(dto.page * dto.page_size).limit(dto.page_size)
 
     def __init__(self, session: AsyncSession):
         self.__session = session

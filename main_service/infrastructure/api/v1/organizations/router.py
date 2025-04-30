@@ -35,8 +35,8 @@ async def create_organization(
 @router.get("/", response_model=list[models.OrganizationModel])
 async def read_all_organizations(
     use_case: FromDishka[use_cases.ReadAllOrganizationUseCase],
-    page: int | None,
-    page_size: int | None,
+    page: int | None = None,
+    page_size: int | None = None,
 ):
     return map(
         mappers.map_to_pydantic,
