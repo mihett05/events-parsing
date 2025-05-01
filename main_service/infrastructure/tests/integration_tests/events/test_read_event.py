@@ -16,6 +16,7 @@ async def test_read_event_success(
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == model.model_dump(by_alias=True, mode="json")
 
+
 @pytest.mark.asyncio
 async def test_read_event_not_found(
     generate_events: list[EventModel],

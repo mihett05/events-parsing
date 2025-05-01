@@ -31,11 +31,9 @@ async def test_login_success(
     for attr in attrs:
         assert getattr(user_with_token_model.user, attr) == getattr(response_model.user, attr)
 
+
 @pytest.mark.asyncio
-async def test_login_unauthorized(
-    async_client: AsyncClient,
-    authenticate_dto_factory
-):
+async def test_login_unauthorized(async_client: AsyncClient, authenticate_dto_factory):
     dto = authenticate_dto_factory()
     dto.email = "broken_email@test.com"
     response = await async_client.post(
@@ -44,15 +42,10 @@ async def test_login_unauthorized(
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+
 @pytest.mark.asyncio
-async def test_login_unprocessable_entity(
-    async_client: AsyncClient,
-    authenticate_dto_factory
-):
-    json_with_broken_mail = {
-        "email":"имэил",
-        "password":"пасворд"
-    }
+async def test_login_unprocessable_entity(async_client: AsyncClient, authenticate_dto_factory):
+    json_with_broken_mail = {"email": "имэил", "password": "пасворд"}
     response = await async_client.post(
         "/v1/auth/login",
         json=json_with_broken_mail,

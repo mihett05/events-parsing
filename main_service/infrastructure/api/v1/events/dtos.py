@@ -1,9 +1,8 @@
 from datetime import datetime
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from pydantic import model_validator
 from pydantic.v1 import root_validator
-
-from domain.events.enums import EventFormatEnum, EventTypeEnum
 
 from infrastructure.api.models import CamelModel
 
@@ -22,7 +21,9 @@ class CreateEventModelDto(CamelModel):
     @model_validator(mode="after")
     def check_dates_order(self):
         if self.start_date > self.end_date:
-            raise ValueError("start_date must be less than or equal to end_date")
+            raise ValueError(
+                "start_date must be less than or equal to end_date"
+            )
         return self
 
 
