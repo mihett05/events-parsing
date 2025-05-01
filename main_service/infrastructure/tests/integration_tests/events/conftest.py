@@ -1,13 +1,17 @@
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 from typing import Callable, Optional
 
 import pytest
+import pytest_asyncio
+
 
 from infrastructure.api.v1.events.dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
 )
 from infrastructure.api.v1.events.models import EventModel
+from infrastructure.tests.integration_tests.conftest import random_string_factory, async_client
 
 
 @pytest.fixture
@@ -80,3 +84,41 @@ def update_event_model_dto_factory() -> Callable[[], UpdateEventModelDto]:
         return UpdateEventModelDto(title=title, description=description)
 
     return _factory
+
+@pytest.fixture
+def create_event_model_dtos(
+    create_event_model_dto_factory: Callable[..., CreateEventModelDto],
+    random_string_factory
+) -> list[CreateEventModelDto]:
+    dtos = []
+    for i in range(100):
+        date = datetime(2020, 1, 1)
+        start_date = date + timedelta(days=random.randint(0, 2000))
+        dtos.append(create_event_model_dto_factory(
+            title=f"{random_string_factory(10)}",
+            organization_id=random.randint(0, 7),
+            start_date=start_date,
+            end_date=start_date + timedelta(days=random.randint(0, 7))
+        ))
+    return dtos
+
+
+
+@pytest_asyncio.fixture
+async def generate_events(
+    create_event_model_dtos: list[CreateEventModelDto],
+    async_client,
+    user_with_token_model
+) -> list[EventModel]:
+    event_models = []
+    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    for dto in create_event_model_dtos:
+        response = await async_client.post(
+            "/v1/events/",
+            json=dto.model_dump(by_alias=True, mode="json"),
+            headers=headers,
+        )
+        event_models.append(EventModel(**response.json()))
+    yield event_models
+    for model in event_models:
+        await async_client.delete(f"/v1/events/{model.id}", headers=headers)

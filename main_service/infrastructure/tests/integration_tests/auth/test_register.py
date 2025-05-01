@@ -17,7 +17,7 @@ async def test_register_success(
     dto = create_user_model_dto_factory(email=f"example{randint(0, 100)}@example.com")
     response = await async_client.post(
         "/v1/auth/register",
-        json=dto.model_dump(by_alias=True, mode="json"),
+        json=dto.model_dump(by_alias=True, mode="json")
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -29,20 +29,20 @@ async def test_register_success(
 
     response = await async_client.delete(
         "/v1/users/",
-        headers={"Authorization": f"Bearer {response_model.access_token}"},
+        headers={"Authorization": f"Bearer {response_model.access_token}"}
     )
     assert response.status_code == status.HTTP_200_OK
 
 @pytest.mark.asyncio
-async def test_register_unprocessable_entity(
+async def test_register_invalid_data(
     async_client: AsyncClient,
     create_user_model_dto_factory: Callable[..., CreateUserModelDto],
 ):
-    dto = create_user_model_dto_factory(email="example1@example.com")
-    dto.email = "имэил"
+    json = create_user_model_dto_factory().model_dump(by_alias=True, mode="json")
+    json["email"] = "имэил"
     response = await async_client.post(
         "/v1/auth/register",
-        json=dto.model_dump(by_alias=True, mode="json"),
+        json=json
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

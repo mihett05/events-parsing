@@ -1,4 +1,6 @@
+import random
 import shutil
+import string
 from typing import Callable, Iterable
 
 import pytest
@@ -107,3 +109,15 @@ async def user_with_token_model(
         "/v1/users/",
         headers={"Authorization": f"Bearer {model.access_token}"},
     )
+
+@pytest.fixture
+def random_string_factory() -> Callable[..., str]:
+    def random_string(lenght: int) -> str:
+        return ''.join(random.choices(string.ascii_letters + string.digits, k = lenght))
+    return random_string
+
+@pytest.fixture
+def random_email_factory(random_string_factory) -> Callable[..., str]:
+    def random_email() -> str:
+        return f"{random_string_factory(10)}@{random_string_factory(5)}.com"
+    return random_email
