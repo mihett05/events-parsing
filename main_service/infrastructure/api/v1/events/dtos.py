@@ -3,13 +3,15 @@ from datetime import datetime
 from pydantic import model_validator
 from pydantic.v1 import root_validator
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
+
 from infrastructure.api.models import CamelModel
 
 
 class CreateEventModelDto(CamelModel):
     title: str
-    type: str
-    format: str
+    type: EventTypeEnum
+    format: EventFormatEnum
     location: str | None
     description: str | None
     end_date: datetime

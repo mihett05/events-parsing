@@ -4,11 +4,11 @@ from dishka import AsyncContainer
 
 
 @pytest_asyncio.fixture
-async def create_mail_usecase(
+async def create_mails_usecase(
     container: AsyncContainer,
-) -> usecases.CreateMailUseCase:
+) -> usecases.CreateMailsUseCase:
     async with container() as nested:
-        yield await nested.get(usecases.CreateMailUseCase)
+        yield await nested.get(usecases.CreateMailsUseCase)
 
 
 @pytest_asyncio.fixture

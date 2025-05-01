@@ -20,8 +20,8 @@ class CreateUserOrganizationRoleDto:
 
 @dataclass
 class ReadOrganizationsDto:
-    page: int
-    page_size: int
+    page: int | None
+    page_size: int | None
 
 
 @dataclass

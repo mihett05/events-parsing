@@ -10,14 +10,12 @@ from infrastructure.database.repositories import (
     AttachmentsDatabaseRepository,
     EventsDatabaseRepository,
     MailsDatabaseRepository,
+    NotificationsDatabaseRepository,
 )
 from infrastructure.database.repositories.organizations import (
     OrganizationsDatabaseRepository,
 )
 from infrastructure.database.repositories.users import UsersDatabaseRepository
-from infrastructure.mocks.repositories.notifications import (
-    NotificationsMemoryRepository,
-)
 
 
 class RepositoriesProvider(Provider):
@@ -39,5 +37,5 @@ class RepositoriesProvider(Provider):
         source=UsersDatabaseRepository, provides=UsersRepository
     )
     notification_repository = provide(
-        source=NotificationsMemoryRepository, provides=NotificationsRepository
+        source=NotificationsDatabaseRepository, provides=NotificationsRepository
     )

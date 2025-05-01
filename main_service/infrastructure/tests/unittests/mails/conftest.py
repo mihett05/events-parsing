@@ -12,6 +12,7 @@ from domain.mails.repositories import MailsRepository
 @pytest_asyncio.fixture
 async def create_mail_dto() -> CreateMailDto:
     return CreateMailDto(
+        imap_mail_uid="example",
         theme="Example",
         sender="example@example.com",
         raw_content="Example Contend".encode("utf-8"),
