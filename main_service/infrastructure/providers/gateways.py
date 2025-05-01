@@ -1,6 +1,7 @@
 import logging
 from typing import AsyncIterable
 
+from aiogram import Bot
 from application.attachments.gateways import FilesGateway
 from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
@@ -44,6 +45,10 @@ class GatewaysProvider(Provider):
             secret_key=config.minio_root_password,
             secure=False,
         )
+
+    @provide
+    def telegram_bot(self, config: Config) -> Bot:
+        return Bot(token=config.telegram_bot_token)
 
     @provide(scope=Scope.REQUEST)
     async def emails_gateway(

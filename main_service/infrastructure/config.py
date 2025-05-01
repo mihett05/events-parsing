@@ -31,6 +31,8 @@ class Config(BaseSettings):
     imap_username: str
     imap_password: str
 
+    telegram_bot_token: str
+
     minio_root_host: str
     minio_root_port: str
     minio_root_user: str
