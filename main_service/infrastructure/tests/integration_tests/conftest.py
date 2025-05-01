@@ -69,7 +69,7 @@ def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
 
 
 @pytest.fixture
-def authenticate_dto_factory() -> Callable[[], AuthenticateUserModelDto]:
+def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     def _factory(
         email: str = "test@example.com",
         password: str = "12345678",

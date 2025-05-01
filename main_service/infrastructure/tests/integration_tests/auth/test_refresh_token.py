@@ -32,3 +32,5 @@ async def test_refresh_token_success(
     )
     for attr in attrs:
         assert getattr(user_with_token_model.user, attr) == getattr(response_model.user, attr)
+
+

@@ -31,5 +31,5 @@ class EventDatabaseModel(Base):
     description: Mapped[str | None] = mapped_column(nullable=True, default=None)
     is_visible: Mapped[bool] = mapped_column(default=True)
     organization_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"), nullable=True, default=None
+        ForeignKey("organizations.id"), nullable=True, default=None
     )
