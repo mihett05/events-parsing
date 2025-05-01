@@ -5,6 +5,7 @@ from typing import Callable, Optional
 import pytest
 import pytest_asyncio
 from domain.events.enums import EventFormatEnum, EventTypeEnum
+from httpx import AsyncClient
 
 from infrastructure.api.v1.events.dtos import (
     CreateEventModelDto,
@@ -85,19 +86,23 @@ def update_event_model_dto_factory() -> Callable[[], UpdateEventModelDto]:
     return _factory
 
 
-@pytest.fixture
-def create_event_model_dtos(
+@pytest_asyncio.fixture
+async def create_event_model_dtos(
+    async_client: AsyncClient,
     create_event_model_dto_factory: Callable[..., CreateEventModelDto],
     random_string_factory,
 ) -> list[CreateEventModelDto]:
     dtos = []
+    response = await async_client.get("/v1/organizations/")
+    orgs = response.json()
     for i in range(100):
         date = datetime(2020, 1, 1)
         start_date = date + timedelta(days=random.randint(0, 2000))
+        org = random.choice(orgs)
         dtos.append(
             create_event_model_dto_factory(
                 title=f"{random_string_factory(10)}",
-                organization_id=random.randint(120, 130),
+                organization_id=org["id"],
                 start_date=start_date,
                 end_date=start_date + timedelta(days=random.randint(0, 7)),
             )

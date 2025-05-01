@@ -1,5 +1,5 @@
 from domain.events.entities import Event
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError, InvalidEntityPeriodError
 
 
 class EventNotFoundError(EntityNotFoundError):
@@ -8,5 +8,10 @@ class EventNotFoundError(EntityNotFoundError):
 
 
 class EventAlreadyExistsError(EntityAlreadyExistsError):
+    def __init__(self):
+        super().__init__(Event)
+
+
+class InvalidEventPeriodError(InvalidEntityPeriodError):
     def __init__(self):
         super().__init__(Event)

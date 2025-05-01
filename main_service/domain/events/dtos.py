@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import date, datetime
+from types import NoneType
 
 from domain.events.enums import EventFormatEnum, EventTypeEnum
+from domain.events.exceptions import InvalidEventPeriodError
 
 
 @dataclass
@@ -46,3 +48,8 @@ class ReadAllEventsFeedDto:
     organization_id: int | None
     type: EventTypeEnum | None
     format: EventFormatEnum | None
+
+    def __post_init__(self):
+        if type(self.start_date) != NoneType and type(self.end_date) != NoneType:
+            if self.start_date > self.end_date:
+                raise InvalidEventPeriodError
