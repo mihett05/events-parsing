@@ -5,7 +5,7 @@ from typing import Callable, Optional
 import pytest
 import pytest_asyncio
 
-
+from domain.events.enums import EventTypeEnum, EventFormatEnum
 from infrastructure.api.v1.events.dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
@@ -52,8 +52,8 @@ def event_model_factory() -> Callable[[], EventModel]:
 def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
     def _factory(
         title: str = "New Event",
-        type_: str = "workshop",
-        format_: str = "offline",
+        type_: EventTypeEnum = EventTypeEnum.OTHER,
+        format_:  EventFormatEnum = EventFormatEnum.OTHER,
         location: Optional[str] = "Moscow",
         description: Optional[str] = "Some workshop",
         end_date: datetime = datetime(2025, 12, 31),
@@ -96,7 +96,7 @@ def create_event_model_dtos(
         start_date = date + timedelta(days=random.randint(0, 2000))
         dtos.append(create_event_model_dto_factory(
             title=f"{random_string_factory(10)}",
-            organization_id=random.randint(0, 7),
+            organization_id=random.randint(60, 70),
             start_date=start_date,
             end_date=start_date + timedelta(days=random.randint(0, 7))
         ))
