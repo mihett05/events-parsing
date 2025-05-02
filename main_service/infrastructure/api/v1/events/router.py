@@ -25,16 +25,12 @@ router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 @router.get("/calendar", response_model=list[models.EventModel])
 async def read_calendar_events(
         use_case: FromDishka[use_cases.ReadAllEventUseCase],
-        start_date: date | None = None,
-        end_date: date | None = None,
+        dto: dtos.ReadAllEventsCalendarModelDto = Depends(),
 ):
     return map(
         mappers.map_to_pydantic,
         await use_case(
-            ReadAllEventsDto(
-                start_date=start_date,
-                end_date=end_date,
-            )
+            mappers.map_read_all_dto_calendar_from_pydantic(dto)
         ),
     )
 

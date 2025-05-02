@@ -45,3 +45,7 @@ class ReadAllEventsFeedModelDto(PeriodValidatorModel):
     organization_id: int | None
     type: EventTypeEnum | None
     format: EventFormatEnum | None
+
+
+class ReadAllEventsCalendarModelDto(PeriodValidatorModel):
+    pass
