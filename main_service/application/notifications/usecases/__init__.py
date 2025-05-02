@@ -9,5 +9,5 @@ __all__ = [
     "ReadNotificationUseCase",
     "ReadAllNotificationsUseCase",
     "DeleteNotificationUseCase",
-    "UpdateManyNotificationUseCase"
+    "UpdateManyNotificationUseCase",
 ]
