@@ -6,9 +6,7 @@ from domain.attachments.entities import Attachment
 
 class FilesGateway(metaclass=ABCMeta):
     @abstractmethod
-    async def create(
-        self, attachment: Attachment, content: BinaryIO
-    ) -> Attachment: ...
+    async def create(self, attachment: Attachment, content: BinaryIO) -> Attachment: ...
 
     @abstractmethod
     async def add_link_to_attachment(self, attachment: Attachment): ...

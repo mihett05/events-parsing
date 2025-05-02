@@ -20,9 +20,7 @@ class RegisterUseCase:
         self.security_gateway = security_gateway
 
     async def __call__(self, dto: RegisterUserDTO) -> tuple[User, TokenPairDto]:
-        password_dto = self.security_gateway.create_hashed_password(
-            dto.password
-        )
+        password_dto = self.security_gateway.create_hashed_password(dto.password)
         user = User(
             email=dto.email,
             fullname=dto.fullname,

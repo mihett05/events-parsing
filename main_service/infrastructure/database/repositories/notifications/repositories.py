@@ -27,9 +27,7 @@ class NotificationsDatabaseRepository(NotificationsRepository):
                 already_exists_exception=NotificationAlreadyExistsError,
             )
 
-        def get_select_all_query(
-            self, dto: dtos.ReadNotificationsDto
-        ) -> Select:
+        def get_select_all_query(self, dto: dtos.ReadNotificationsDto) -> Select:
             return (
                 select(self.model)
                 .where(self.model.status == NotificationStatusEnum.UNSENT)
@@ -46,9 +44,7 @@ class NotificationsDatabaseRepository(NotificationsRepository):
     async def read(self, notification_id: int) -> Notification:
         return await self.__repository.read(notification_id)
 
-    async def read_all(
-        self, dto: dtos.ReadNotificationsDto
-    ) -> list[Notification]:
+    async def read_all(self, dto: dtos.ReadNotificationsDto) -> list[Notification]:
         return await self.__repository.read_all(dto)
 
     async def change_notifications_statuses(

@@ -3,7 +3,7 @@ from domain.notifications.enums import NotificationStatusEnum
 from domain.notifications.repositories import NotificationsRepository
 
 
-class UpdateManyNotificationUseCase:
+class UpdateNotificationsStatusUseCase:
     def __init__(self, repository: NotificationsRepository):
         self.__repository = repository
 

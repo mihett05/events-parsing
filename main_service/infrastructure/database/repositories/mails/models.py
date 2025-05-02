@@ -15,9 +15,7 @@ class MailDatabaseModel(Base):
     __tablename__ = "mails"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    event_id: Mapped[int] = mapped_column(
-        ForeignKey("events.id"), nullable=True
-    )
+    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), nullable=True)
 
     received_date: Mapped[date] = mapped_column(Date)
     created_at: Mapped[datetime] = mapped_column(
@@ -32,6 +30,4 @@ class MailDatabaseModel(Base):
         ENUM(MailStateEnum, name="MailStateEnum")
     )
 
-    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(
-        lazy="joined"
-    )
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")

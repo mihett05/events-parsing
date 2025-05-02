@@ -21,9 +21,7 @@ class EventPermissionProvider(PermissionProvider):
     def __init__(self, event: Event, actor: User | None):
         self.permissions = self.__get_perms(event, actor)
 
-    def __get_perms(
-        self, entity: Event, actor: User | None
-    ) -> set[PermissionsEnum]:
+    def __get_perms(self, entity: Event, actor: User | None) -> set[PermissionsEnum]:
         # P.S. for this moment it should be a plug
         # Because Event entyty does not complete
         return self.__admin_perms

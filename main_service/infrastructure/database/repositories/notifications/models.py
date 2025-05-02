@@ -15,9 +15,7 @@ class NotificationDatabaseModel(Base):
     __tablename__ = "notifications"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    recipient_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=False
-    )
+    recipient_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     text: Mapped[str]
 

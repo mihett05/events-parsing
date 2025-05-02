@@ -7,6 +7,4 @@ from ..transactions import TransactionsMockGateway
 class TransactionsProvider(Provider):
     scope = Scope.REQUEST
 
-    gateway = provide(
-        source=TransactionsMockGateway, provides=TransactionsGateway
-    )
+    gateway = provide(source=TransactionsMockGateway, provides=TransactionsGateway)

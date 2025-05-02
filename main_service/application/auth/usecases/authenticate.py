@@ -22,9 +22,7 @@ class AuthenticateUseCase:
             user = await self.users_repository.read_by_email(dto.email)
             is_password_valid = self.security_gateway.verify_passwords(
                 dto.password,
-                PasswordDto(
-                    hashed_password=user.hashed_password, salt=user.salt
-                ),
+                PasswordDto(hashed_password=user.hashed_password, salt=user.salt),
             )
             if not is_password_valid:
                 raise InvalidCredentialsError("password")

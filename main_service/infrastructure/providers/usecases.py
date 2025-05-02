@@ -61,7 +61,7 @@ class UseCasesProvider(Provider):
         notification_use_cases.CreateNotificationUseCase,
         notification_use_cases.ReadNotificationUseCase,
         notification_use_cases.ReadAllNotificationsUseCase,
-        notification_use_cases.UpdateManyNotificationUseCase,
+        notification_use_cases.UpdateNotificationsStatusUseCase,
         notification_use_cases.DeleteNotificationUseCase,
     )
 

@@ -29,9 +29,7 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
                 already_exists_exception=OrganizationAlreadyExistsError,
             )
 
-        def get_select_all_query(
-            self, dto: dtos.ReadOrganizationsDto
-        ) -> Select:
+        def get_select_all_query(self, dto: dtos.ReadOrganizationsDto) -> Select:
             query = select(self.model).order_by(self.model.id)
             return self.__try_add_pagination(query, dto)
 
@@ -50,9 +48,7 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)
 
-    async def read_all(
-        self, dto: dtos.ReadOrganizationsDto
-    ) -> list[Organization]:
+    async def read_all(self, dto: dtos.ReadOrganizationsDto) -> list[Organization]:
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateOrganizationDto) -> Organization:

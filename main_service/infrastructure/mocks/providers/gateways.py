@@ -23,6 +23,4 @@ class GatewaysProvider(Provider):
         source=MemoryCoordinatorGateway, provides=CoordinatorGateway
     )
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
-    security_gateway = provide(
-        source=BcryptSecurityGateway, provides=SecurityGateway
-    )
+    security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)

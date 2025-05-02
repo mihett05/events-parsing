@@ -14,9 +14,7 @@ from domain.organizations.repositories import OrganizationsRepository
 @pytest_asyncio.fixture
 async def create_organization_dto() -> CreateOrganizationDto:
     date = datetime.now().now()
-    return CreateOrganizationDto(
-        title="Test Organization", created_at=date, owner_id=1
-    )
+    return CreateOrganizationDto(title="Test Organization", created_at=date, owner_id=1)
 
 
 @pytest_asyncio.fixture

@@ -4,7 +4,5 @@ from domain.users.entities import User
 
 
 class NotificationEmailGateway(NotificationGateway):
-    async def send(
-        self, notification: Notification, recipient: User
-    ) -> Notification:
+    async def send(self, notification: Notification, recipient: User) -> Notification:
         raise NotImplementedError

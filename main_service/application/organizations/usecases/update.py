@@ -9,9 +9,7 @@ from application.transactions import TransactionsGateway
 
 
 class UpdateOrganizationUseCase:
-    def __init__(
-        self, repository: OrganizationsRepository, tx: TransactionsGateway
-    ):
+    def __init__(self, repository: OrganizationsRepository, tx: TransactionsGateway):
         self.__repository = repository
         self.__transaction = tx
 

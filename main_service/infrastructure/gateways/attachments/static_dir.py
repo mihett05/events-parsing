@@ -19,9 +19,7 @@ class StaticDirFilesGateway(FilesGateway):
     async def add_link_to_attachment(self, attachment: Attachment):
         attachment.file_link = await self.__get_link(attachment)
 
-    async def create(
-        self, attachment: Attachment, content: BinaryIO
-    ) -> Attachment:
+    async def create(self, attachment: Attachment, content: BinaryIO) -> Attachment:
         if os.path.exists(self.base_path / attachment.path):
             raise AttachmentAlreadyExistsError()
 

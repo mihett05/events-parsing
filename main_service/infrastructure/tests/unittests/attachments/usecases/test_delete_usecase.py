@@ -15,9 +15,7 @@ async def test_delete_success(
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
-    deleted_attachment = await delete_attachment_usecase(
-        create_attachment.id, None
-    )
+    deleted_attachment = await delete_attachment_usecase(create_attachment.id, None)
     assert deleted_attachment == create_attachment
 
     with pytest.raises(AttachmentNotFoundError):

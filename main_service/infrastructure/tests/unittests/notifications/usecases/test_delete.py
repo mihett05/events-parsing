@@ -13,9 +13,7 @@ async def test_delete_success(
     delete_notification_usecase: DeleteNotificationUseCase,
     read_notification_usecase: ReadNotificationUseCase,
 ):
-    notification = await delete_notification_usecase(
-        create_notification.id, None
-    )
+    notification = await delete_notification_usecase(create_notification.id, None)
     assert notification == create_notification
     with pytest.raises(NotificationNotFoundError):
         await read_notification_usecase(notification.id)

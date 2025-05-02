@@ -16,8 +16,6 @@ class LoginUseCase:
         self.authenticate_user_use_case = authenticate_user_use_case
         self.create_token_pair_use_case = create_token_pair_use_case
 
-    async def __call__(
-        self, dto: AuthenticateUserDto
-    ) -> tuple[User, TokenPairDto]:
+    async def __call__(self, dto: AuthenticateUserDto) -> tuple[User, TokenPairDto]:
         user = await self.authenticate_user_use_case(dto)
         return user, await self.create_token_pair_use_case(user)

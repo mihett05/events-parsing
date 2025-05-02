@@ -17,10 +17,10 @@ class NotificationGatewayFactory(NotificationGatewayAbstractFactory):
         telegram: NotificationTelegramGateway,
         email: NotificationEmailGateway,
     ):
-        self.strategy = {
+        self.__gateways = {
             UserNotificationSendToEnum.EMAIL: email,
             UserNotificationSendToEnum.TELEGRAM: telegram,
         }
 
     async def get(self, user: User) -> NotificationGateway:
-        return self.strategy[user.settings.type]
+        return self.__gateways[user.settings.type]

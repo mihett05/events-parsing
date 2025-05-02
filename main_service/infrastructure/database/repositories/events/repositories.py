@@ -31,9 +31,7 @@ class EventsDatabaseRepository(EventsRepository):
             query = self.__try_add_period_filter_to_query(query, dto)
             return query
 
-        def get_select_all_feed_query(
-            self, dto: dtos.ReadAllEventsFeedDto
-        ) -> Select:
+        def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
             query = select(self.model).order_by(self.model.id)
 
             query = self.__try_add_period_filter_to_query(query, dto)
@@ -62,9 +60,7 @@ class EventsDatabaseRepository(EventsRepository):
         ) -> Select:
             if dto.organization_id is None:
                 return query
-            return query.where(
-                self.model.organization_id == dto.organization_id
-            )
+            return query.where(self.model.organization_id == dto.organization_id)
 
         def __add_offset_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto
@@ -83,9 +79,9 @@ class EventsDatabaseRepository(EventsRepository):
             EventDatabaseModel.start_date == event_info.start_date,
             EventDatabaseModel.end_registration == event_info.end_registration,
         )
-        model: (
-            EventDatabaseModel | None
-        ) = await self.__repository.get_scalar_or_none(query)
+        model: EventDatabaseModel | None = await self.__repository.get_scalar_or_none(
+            query
+        )
         return model and self.config.entity_mapper(model)
 
     async def read(self, event_id: int) -> Event:
@@ -95,9 +91,7 @@ class EventsDatabaseRepository(EventsRepository):
         query = self.config.get_select_all_query(dto)
         return await self.__repository.get_entities_from_query(query)
 
-    async def read_for_feed(
-        self, dto: dtos.ReadAllEventsFeedDto
-    ) -> list[Event]:
+    async def read_for_feed(self, dto: dtos.ReadAllEventsFeedDto) -> list[Event]:
         query = self.config.get_select_all_feed_query(dto)
         return await self.__repository.get_entities_from_query(query)
 

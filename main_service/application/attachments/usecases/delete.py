@@ -19,9 +19,7 @@ class DeleteAttachmentUseCase:
         self.__transaction = tx
         self.__repository = repository
 
-    async def __call__(
-        self, attachment_id: UUID, actor: User | None
-    ) -> Attachment:
+    async def __call__(self, attachment_id: UUID, actor: User | None) -> Attachment:
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
             attachment = await self.__repository.delete(attachment)
