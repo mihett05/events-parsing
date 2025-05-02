@@ -4,12 +4,30 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 import aiosmtplib
+from aiosmtplib import SMTP
+
 from domain.attachments.dtos import ParsedAttachmentInfoDto
 from domain.notifications.entities import Notification
 from domain.users.entities import User
 
 
 class NotificationEmailGateway:
+    def __init__(self, smtp_server, smtp_host, imap_username, imap_password):
+        self.smtp_server = smtp_server
+        self.smtp_host = smtp_host
+        self.smtp_username = imap_username
+        self.smtp_password = imap_password
+
+    async def __aenter__(self):
+        self.smtp_client = SMTP(hostname=self.smtp_server, port=self.smtp_host)
+        await self.smtp_client.connect()
+        response = await self.smtp_client.login(self.smtp_username, self.smtp_password)
+        print(response)
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.smtp_client.quit()
+
     async def send(self, notification, recipient):
         try:
             msg = MIMEMultipart()
@@ -17,13 +35,7 @@ class NotificationEmailGateway:
             msg["To"] = recipient.email
             msg["Subject"] = "Уведомление"
             msg.attach(MIMEText(notification.text, "plain"))
-            await aiosmtplib.send(
-                msg,
-                hostname="smtp.mail.ru",
-                port=587,
-                username="events-parsing@mail.ru",
-                password="NYPjKvmsvPpynkLCcgWi",
-            )
+            await self.smtp_client.send_message(msg)
         except Exception as e:
             print(f"Ошибка отправки сообщения: {str(e)}")
 
@@ -49,25 +61,5 @@ class NotificationWithAttachmentsEmailGateway:
                 )
                 msg.attach(part)
                 attachment.content.seek(0)
-
-            await aiosmtplib.send(
-                msg,
-                hostname="smtp.mail.ru",
-                port=587,
-                username="events-parsing@mail.ru",
-                password="NYPjKvmsvPpynkLCcgWi",
-            )
         except Exception as e:
             print(f"Ошибка отправки сообщения: {str(e)}")
-
-
-async def main():
-    gateway = NotificationEmailGateway()
-    await gateway.send(
-        notification=Notification(text="Тестовое сообщение"),
-        recipient=User(email="events-parsing@mail.ru", fullname="Nick"),
-    )
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
