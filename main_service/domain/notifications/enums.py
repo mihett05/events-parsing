@@ -9,6 +9,7 @@ class NotificationTypeEnum(Enum):
 class NotificationFormatEnum(Enum):
     HTML = "HTML"
     RAW_TEXT = "RAW_TEXT"
+    MARKDOWN = "MARKDOWN"
 
 
 class NotificationStatusEnum(Enum):

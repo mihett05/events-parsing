@@ -43,9 +43,7 @@ class EventsMemoryRepository(EventsRepository):
                 return entity
         return None
 
-    async def read_for_user(
-        self, dto: dtos.ReadUserEventsDto
-    ) -> list[entities.Event]:
+    async def read_for_user(self, dto: dtos.ReadUserEventsDto) -> list[entities.Event]:
         raise NotImplementedError
 
     async def read_for_organization(

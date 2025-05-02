@@ -9,9 +9,7 @@ async def test_create_success(
     create_attachment_usecase: CreateAttachmentUseCase,
     create_attachment_dtos: list[CreateAttachmentDto],
 ):
-    succeed, failed = await create_attachment_usecase(
-        create_attachment_dtos, None
-    )
+    succeed, failed = await create_attachment_usecase(create_attachment_dtos, None)
     assert len(failed) == 0
     assert len(succeed) == len(create_attachment_dtos)
 

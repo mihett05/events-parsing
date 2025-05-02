@@ -23,9 +23,7 @@ class AttachmentDatabaseModel(Base):
         ForeignKey("mails.id"),
         nullable=True,
     )
-    event_id: Mapped[int | None] = mapped_column(
-        ForeignKey("events.id"), nullable=True
-    )
+    event_id: Mapped[int | None] = mapped_column(ForeignKey("events.id"), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

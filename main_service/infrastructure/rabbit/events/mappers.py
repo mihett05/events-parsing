@@ -16,9 +16,7 @@ retort = pydantic_retort.extend(recipe=[])
 map_event_info_dates_from_pydantic = retort.get_converter(
     DatesInfoModel,
     DatesInfo,
-    recipe=[
-        coercer(str, datetime, lambda dt: datetime.strptime(dt, "%d-%m-%Y"))
-    ],
+    recipe=[coercer(str, datetime, lambda dt: datetime.strptime(dt, "%d-%m-%Y"))],
 )
 map_event_info_from_pydantic = retort.get_converter(
     EventInfoModel,

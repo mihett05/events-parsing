@@ -16,9 +16,7 @@ async def test_login_success(
 ):
     response = await get_test_client.post(
         "/v1/auth/login",
-        json=get_authenticate_user1_model_dto.model_dump(
-            by_alias=True, mode="json"
-        ),
+        json=get_authenticate_user1_model_dto.model_dump(by_alias=True, mode="json"),
     )
     assert response.status_code == status.HTTP_200_OK
 
@@ -30,6 +28,4 @@ async def test_login_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(get_user1_model, attr) == getattr(
-            response_model.user, attr
-        )
+        assert getattr(get_user1_model, attr) == getattr(response_model.user, attr)

@@ -24,8 +24,7 @@ async def create_event_dto() -> CreateEventDto:
         location=None,
         description="Example Description",
         organization_id=None,
-        end_date=datetime.combine(date, datetime.min.time())
-        + timedelta(days=1),
+        end_date=datetime.combine(date, datetime.min.time()) + timedelta(days=1),
         start_date=datetime.combine(date, datetime.min.time()),
         end_registration=datetime.combine(date, datetime.min.time())
         - timedelta(days=1),

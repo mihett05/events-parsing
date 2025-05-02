@@ -32,8 +32,7 @@ async def user1_token_info_dto() -> TokenInfoDto:
     date = datetime.now().date()
     return TokenInfoDto(
         subject="test@test.com",
-        expires_in=datetime.combine(date, datetime.min.time())
-        + timedelta(days=1),
+        expires_in=datetime.combine(date, datetime.min.time()) + timedelta(days=1),
     )
 
 

@@ -16,9 +16,7 @@ class EventsRepository(metaclass=ABCMeta):
     async def read(self, event_id: int) -> entities.Event: ...
 
     @abstractmethod
-    async def read_all(
-        self, dto: dtos.ReadAllEventsDto
-    ) -> list[entities.Event]: ...
+    async def read_all(self, dto: dtos.ReadAllEventsDto) -> list[entities.Event]: ...
 
     @abstractmethod
     async def read_for_feed(

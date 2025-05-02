@@ -25,19 +25,13 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     model_mapper: Callable[[Entity], ModelType]
     create_model_mapper: Callable[[CreateModelType], ModelType]
     not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
-    already_exists_exception: type[EntityAlreadyExistsError] = (
-        EntityAlreadyExistsError
-    )
+    already_exists_exception: type[EntityAlreadyExistsError] = EntityAlreadyExistsError
 
     def get_select_query(self, model_id: Id) -> Select:
         return self._add_where_id(select(self.model), model_id)
 
     def get_default_select_all_query(self, ids: list[Id]) -> Select:
-        return (
-            select(self.model)
-            .where(self.model.id.in_(ids))
-            .order_by(self.model.id)
-        )
+        return select(self.model).where(self.model.id.in_(ids)).order_by(self.model.id)
 
     def get_select_all_query(self, _: Any) -> Select:
         return select(self.model).order_by(self.model.id)
@@ -110,9 +104,7 @@ class PostgresRepository(metaclass=ABCMeta):
         raise self.config.not_found_exception()
 
     async def read_all(self, dto: Any = None) -> list[Entity]:
-        return await self.get_entities_from_query(
-            self.config.get_select_all_query(dto)
-        )
+        return await self.get_entities_from_query(self.config.get_select_all_query(dto))
 
     async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
         return await self.get_entities_from_query(

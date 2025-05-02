@@ -13,9 +13,7 @@ class MinioFilesGateway(FilesGateway):
         self.minio = minio
         self.config = config
 
-    async def create(
-        self, attachment: Attachment, content: BinaryIO
-    ) -> Attachment:
+    async def create(self, attachment: Attachment, content: BinaryIO) -> Attachment:
         mime_type, _ = mimetypes.guess_type(attachment.path)
         await self.__create_bucket()
         await self.minio.put_object(
@@ -32,9 +30,7 @@ class MinioFilesGateway(FilesGateway):
         attachment.file_link = await self.__get_link(attachment)
 
     async def delete(self, attachment: Attachment):
-        await self.minio.remove_object(
-            self.config.minio_bucket_name, attachment.path
-        )
+        await self.minio.remove_object(self.config.minio_bucket_name, attachment.path)
         return attachment
 
     async def __create_bucket(self):

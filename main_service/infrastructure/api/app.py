@@ -57,9 +57,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     )
 
     @app.exception_handler(EntityNotFoundError)
-    async def entity_not_found_exception_handler(
-        _: Request, exc: EntityNotFoundError
-    ):
+    async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
