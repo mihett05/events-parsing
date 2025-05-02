@@ -4,7 +4,7 @@ from typing import Annotated
 import application.events.usecases as use_cases
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
+from domain.events.dtos import ReadAllEventsDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
@@ -23,7 +23,7 @@ router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 
 
 @router.get("/calendar", response_model=list[models.EventModel])
-async def read_all_events(
+async def read_calendar_events(
     use_case: FromDishka[use_cases.ReadAllEventUseCase],
     start_date: date | None = None,
     end_date: date | None = None,
@@ -40,7 +40,7 @@ async def read_all_events(
 
 
 @router.get("/feed", response_model=list[models.EventModel])
-async def read_all_events(
+async def read_feed_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
     page: int = 0,
     page_size: int = 50,
@@ -53,14 +53,16 @@ async def read_all_events(
     return map(
         mappers.map_to_pydantic,
         await use_case(
-            ReadAllEventsFeedDto(
-                page=page,
-                page_size=page_size,
-                start_date=start_date,
-                end_date=end_date,
-                organization_id=organization_id,
-                type=type_,
-                format=format_,
+            mappers.map_read_all_dto_from_pydantic(
+                dtos.ReadAllEventsFeedModelDto(
+                    page=page,
+                    page_size=page_size,
+                    start_date=start_date,
+                    end_date=end_date,
+                    organization_id=organization_id,
+                    type=type_,
+                    format=format_,
+                )
             )
         ),
     )

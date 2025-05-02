@@ -7,8 +7,11 @@ from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
-
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError, InvalidEntityPeriodError
+from domain.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    InvalidEntityPeriodError,
+)
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -86,7 +89,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(InvalidEntityPeriodError)
     async def invalid_invalid_event_period_handler(
-            _: Request, exc: InvalidEntityPeriodError
+        _: Request, exc: InvalidEntityPeriodError
     ):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

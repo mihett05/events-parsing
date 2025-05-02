@@ -1,13 +1,28 @@
 from datetime import datetime
 
 from domain.events.enums import EventFormatEnum, EventTypeEnum
-from pydantic import model_validator
-from pydantic.v1 import root_validator
+from pydantic import ValidationError, model_validator
 
 from infrastructure.api.models import CamelModel
 
 
-class CreateEventModelDto(CamelModel):
+class PeriodValidatorModel(CamelModel):
+    end_date: datetime | None = None
+    start_date: datetime | None = None
+
+    @model_validator(mode="after")
+    def check_dates_order(self):
+        if self.start_date is None or self.end_date is None:
+            return self
+
+        if self.start_date > self.end_date:
+            raise ValidationError(
+                "start_date must be less than or equal to end_date"
+            )
+        return self
+
+
+class CreateEventModelDto(PeriodValidatorModel):
     title: str
     type: EventTypeEnum
     format: EventFormatEnum
@@ -18,16 +33,15 @@ class CreateEventModelDto(CamelModel):
     end_registration: datetime
     organization_id: int | None
 
-    @model_validator(mode="after")
-    def check_dates_order(self):
-        if self.start_date > self.end_date:
-            raise ValueError(
-                "start_date must be less than or equal to end_date"
-            )
-        return self
-
 
 class UpdateEventModelDto(CamelModel):
     title: str
     description: str
-    # members: list[int]
+
+
+class ReadAllEventsFeedModelDto(PeriodValidatorModel):
+    page: int
+    page_size: int
+    organization_id: int | None
+    type: EventTypeEnum | None
+    format: EventFormatEnum | None

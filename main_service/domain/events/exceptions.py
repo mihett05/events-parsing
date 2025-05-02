@@ -1,5 +1,9 @@
 from domain.events.entities import Event
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError, InvalidEntityPeriodError
+from domain.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+    InvalidEntityPeriodError,
+)
 
 
 class EventNotFoundError(EntityNotFoundError):

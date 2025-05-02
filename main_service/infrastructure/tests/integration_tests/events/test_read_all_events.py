@@ -58,7 +58,6 @@ async def test_read_events_success_organization(
     generate_events: list[EventModel],
     async_client: AsyncClient,
     create_event_model_dto_factory,
-
 ):
     response = await async_client.get("/v1/organizations/")
     org = random.choice(response.json())
@@ -68,6 +67,7 @@ async def test_read_events_success_organization(
     models = response.json()
     for model in models:
         assert model["organizationId"] == org["id"]
+
 
 @pytest.mark.asyncio
 async def test_read_events_bad_request(
@@ -87,4 +87,3 @@ async def test_read_events_bad_request(
         },
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
