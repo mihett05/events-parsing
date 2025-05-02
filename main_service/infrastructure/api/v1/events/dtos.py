@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from domain.events.enums import EventFormatEnum, EventTypeEnum
 from pydantic import ValidationError, model_validator
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from infrastructure.api.models import CamelModel
 
 
@@ -40,8 +40,8 @@ class UpdateEventModelDto(CamelModel):
 
 
 class ReadAllEventsFeedModelDto(PeriodValidatorModel):
-    page: int
-    page_size: int
+    page: int = 0
+    page_size: int = 50
     organization_id: int | None
     type: EventTypeEnum | None
     format: EventFormatEnum | None
