@@ -3,7 +3,7 @@ from application.notifications.gateway import NotificationGateway
 from domain.users.entities import User
 from domain.users.enums import UserNotificationSendToEnum
 
-from infrastructure.gateways.notifications.gateways.email import (
+from infrastructure.gateways.notifications.gateways.mail import (
     NotificationEmailGateway,
 )
 from infrastructure.gateways.notifications.gateways.telegram import (
