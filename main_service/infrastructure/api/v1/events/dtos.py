@@ -10,8 +10,7 @@ class PeriodValidatorModel(CamelModel):
     end_date: datetime | None = None
     start_date: datetime | None = None
 
-    @model_validator(mode="after")
-    def check_dates_order(self):
+    def _check_dates_order(self):
         if self.start_date is None or self.end_date is None:
             return self
 
@@ -32,6 +31,10 @@ class CreateEventModelDto(PeriodValidatorModel):
     start_date: datetime
     end_registration: datetime
     organization_id: int | None
+    
+    @model_validator(mode="after")
+    def _check_dates_order(self):
+        super()._check_dates_order()
 
 
 class UpdateEventModelDto(CamelModel):
@@ -46,6 +49,12 @@ class ReadAllEventsFeedModelDto(PeriodValidatorModel):
     type: EventTypeEnum | None
     format: EventFormatEnum | None
 
+    @model_validator(mode="after")
+    def _check_dates_order(self):
+        super()._check_dates_order()
+
 
 class ReadAllEventsCalendarModelDto(PeriodValidatorModel):
-    pass
+    @model_validator(mode="after")
+    def _check_dates_order(self):
+        super()._check_dates_order()
