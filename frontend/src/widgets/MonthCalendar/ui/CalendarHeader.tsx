@@ -1,29 +1,47 @@
 import React from 'react';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
+import { CalendarView } from '@/features/events/slice';
 
 interface CalendarHeaderProps {
   currentDate: Date;
-  onPrevMonth: () => void;
-  onNextMonth: () => void;
+  currentView: CalendarView;
+  onPrev: () => void;
+  onNext: () => void;
   onToday: () => void;
+  onViewChange: (newView: CalendarView) => void;
 }
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   currentDate,
-  onPrevMonth,
-  onNextMonth,
+  currentView,
+  onPrev,
+  onNext,
   onToday,
+  onViewChange,
 }) => {
-  const formattedDate = format(currentDate, 'MMMM yyyy');
+  const { t } = useTranslation();
+
+  const formattedDate = isValid(currentDate)
+    ? format(currentDate, 'LLLL yyyy', { locale: ru })
+    : t('calendar.loading');
+
+  const handleViewChange = (event: SelectChangeEvent<CalendarView>) => {
+    const newView = event.target.value as CalendarView;
+    onViewChange(newView);
+  };
 
   return (
     <Stack
@@ -32,41 +50,53 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       alignItems="center"
       mb={1}
       px={{ xs: 1, sm: 2 }}
-      py={0.5}
+      py={1}
       sx={{ borderBottom: '1px solid #eee', flexShrink: 0 }}
     >
-      <Box display="flex" alignItems="center">
+      <Stack direction="row" spacing={0.5} alignItems="center">
         <Button
           variant="outlined"
           size="small"
           onClick={onToday}
-          sx={{ textTransform: 'none', mr: 1 }}
-          aria-label="Go to Today"
+          sx={{ textTransform: 'none', mr: 0.5 }}
         >
-          Today
+          {t('calendar.today')}
         </Button>
-        <IconButton
-          size="small"
-          onClick={onPrevMonth}
-          aria-label="Previous month"
-          title="Previous month"
-        >
+        <IconButton size="small" onClick={onPrev} title={t('calendar.previousMonth')}>
           <ChevronLeftIcon />
         </IconButton>
-        <IconButton
-          size="small"
-          onClick={onNextMonth}
-          aria-label="Next month"
-          title="Next month"
-          sx={{ mr: 1 }}
-        >
+        <IconButton size="small" onClick={onNext} title={t('calendar.nextMonth')}>
           <ChevronRightIcon />
         </IconButton>
-      </Box>
-
-      <Typography variant="h6" component="h2" sx={{ fontWeight: 500, textAlign: 'center' }}>
+      </Stack>
+      <Typography
+        variant="h6"
+        component="h2"
+        sx={{
+          fontWeight: 500,
+          textAlign: 'center',
+          fontSize: { xs: '1.1rem', sm: '1.25rem' },
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          mx: 1,
+        }}
+      >
         {formattedDate}
       </Typography>
+      <FormControl size="small" variant="outlined" sx={{ minWidth: 100, ml: 1 }}>
+        <Select
+          labelId="calendar-view-select-label"
+          id="calendar-view-select"
+          value={currentView}
+          onChange={handleViewChange}
+          sx={{ fontSize: '0.875rem' }}
+        >
+          <MenuItem value="day">{t('calendar.view.day')}</MenuItem>
+          <MenuItem value="month">{t('calendar.view.month')}</MenuItem>
+          <MenuItem value="year">{t('calendar.view.year')}</MenuItem>
+        </Select>
+      </FormControl>
     </Stack>
   );
 };

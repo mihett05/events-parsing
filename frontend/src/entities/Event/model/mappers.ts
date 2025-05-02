@@ -1,19 +1,18 @@
 import { EventModel } from '@shared/api/api';
 import { CalendarEvent } from './types';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, parseISO, isValid } from 'date-fns';
 
-export const mapEventToCalendarEvent = (event: EventModel): CalendarEvent => {
-  const colors = [
-    '#FF6B6B', // Красный
-    '#4ECDC4', // Бирюзовый
-    '#45B7D1', // Голубой
-    '#96CEB4', // Мятный
-    '#FFEEAD', // Жёлтый
-    '#D4A5A5', // Пудровый
-  ];
+const EVENT_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#8D6FD1', '#D4A5A5'];
 
-  const start = new Date(event.startDate);
-  const end = event.endDate ? new Date(event.endDate) : undefined;
+export const mapEventToCalendarEvent = (event: EventModel): CalendarEvent | null => {
+  const start = parseISO(event.startDate);
+  const end = event.endDate ? parseISO(event.endDate) : undefined;
+  const endRegistration = event.endRegistration ? parseISO(event.endRegistration) : undefined;
+
+  if (!isValid(start) || (end && !isValid(end)) || (endRegistration && !isValid(endRegistration))) {
+    console.error('Invalid date format received from API, skipping event:', event);
+    return null;
+  }
 
   const newEvent: CalendarEvent = {
     id: event.id,
@@ -24,7 +23,8 @@ export const mapEventToCalendarEvent = (event: EventModel): CalendarEvent => {
     description: event.description || '',
     type: event.type,
     format: event.format,
-    color: colors[event.id % colors.length],
+    color: EVENT_COLORS[event.id % EVENT_COLORS.length],
+    endRegistration: endRegistration,
   };
 
   return newEvent;
