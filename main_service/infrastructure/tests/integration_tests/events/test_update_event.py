@@ -67,6 +67,7 @@ async def test_update_event_not_found(
 
     await async_client.delete(f"/v1/events/{result.id}", headers=headers)
 
+    dto = update_event_model_dto_factory()
     response = await async_client.put(
         f"/v1/events/{result.id}",
         json=dto.model_dump(by_alias=True, mode="json"),

@@ -21,7 +21,6 @@ async def test_read_event_success(
 async def test_read_event_not_found(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    create_event_model_dto_factory,
 ):
     model = generate_events[-1]
     response = await async_client.get(f"/v1/events/{model.id + 1}")

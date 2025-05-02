@@ -23,6 +23,11 @@ async def test_delete_event_success(
     response = await async_client.delete(f"/v1/events/{result.id}", headers=headers)
     assert response.status_code == HTTP_200_OK
 
+    result = EventModel(**response.json())
+    response = await async_client.get(f"/v1/events/{result.id}", headers=headers)
+    assert response.status_code == HTTP_404_NOT_FOUND
+    assert result.title == dto.title
+
 
 @pytest.mark.asyncio
 async def test_delete_event_not_found(

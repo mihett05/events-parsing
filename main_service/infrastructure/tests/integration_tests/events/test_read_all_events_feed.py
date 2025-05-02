@@ -13,7 +13,6 @@ from infrastructure.api.v1.events.models import EventModel
 async def test_read_events_success_paging(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    create_event_model_dto_factory,
 ):
     page = 9
     page_size = 11
@@ -28,7 +27,6 @@ async def test_read_events_success_paging(
 async def test_read_events_success_dating(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    create_event_model_dto_factory,
 ):
     start_date = datetime(2025, 3, 2).replace(tzinfo=pytz.utc)
     end_date = datetime(2025, 12, 2).replace(tzinfo=pytz.utc)
@@ -58,7 +56,6 @@ async def test_read_events_success_dating(
 async def test_read_events_success_organization(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    create_event_model_dto_factory,
 ):
     response = await async_client.get("/v1/organizations/")
     org = random.choice(response.json())
@@ -74,7 +71,6 @@ async def test_read_events_success_organization(
 async def test_read_events_bad_request(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    create_event_model_dto_factory,
 ):
     start_date = datetime(2025, 3, 2).replace(tzinfo=pytz.utc)
     end_date = datetime(2025, 12, 2).replace(tzinfo=pytz.utc)
