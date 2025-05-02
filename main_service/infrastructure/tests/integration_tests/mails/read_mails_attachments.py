@@ -5,18 +5,18 @@ from domain.users.entities import User
 
 from infrastructure.gateways.mails.gateway import ImapEmailsGateway
 from infrastructure.gateways.notifications.gateways.mail import (
-    NotificationWithAttachmentsEmailGateway,
+    NotificationEmailGateway,
 )
 
 
 @pytest.mark.asyncio
-async def test_create_success(
+async def test_parse_mails_attachments(
     imap_gateway: ImapEmailsGateway,
     parsed_mails: list[ParsedMailInfoDto],
-    mail_gateway: NotificationWithAttachmentsEmailGateway,
+    mail_gateway: NotificationEmailGateway,
 ):
     for mail in parsed_mails:
-        await mail_gateway.send_with_attachments(
+        await mail_gateway.send(
             notification=Notification(text="Тестовое сообщение"),
             recipient=User(email="events-parsing@mail.ru", fullname="Nick"),
             attachments=mail.attachments,
