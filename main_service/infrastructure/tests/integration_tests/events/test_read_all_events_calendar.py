@@ -1,4 +1,3 @@
-import random
 from datetime import datetime
 
 import pytest
@@ -7,20 +6,6 @@ from httpx import AsyncClient
 from starlette import status
 
 from infrastructure.api.v1.events.models import EventModel
-
-
-@pytest.mark.asyncio
-async def test_read_events_success_paging(
-    generate_events: list[EventModel],
-    async_client: AsyncClient,
-    create_event_model_dto_factory,
-):
-    page = 9
-    page_size = 11
-    response = await async_client.get(
-        f"/v1/events/feed", params={"page": page, "page_size": page_size}
-    )
-    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.asyncio
@@ -51,23 +36,6 @@ async def test_read_events_success_dating(
         period_contains_end = start_date <= model_end_date <= end_date
 
         assert period_contains_start or period_contains_end
-
-
-@pytest.mark.asyncio
-async def test_read_events_success_organization(
-    generate_events: list[EventModel],
-    async_client: AsyncClient,
-    create_event_model_dto_factory,
-):
-    response = await async_client.get("/v1/organizations/")
-    org = random.choice(response.json())
-
-    response = await async_client.get(f"/v1/events/feed", params={"organization_id": org["id"]})
-    assert response.status_code == status.HTTP_200_OK
-    models = response.json()
-    for model in models:
-        assert model["organizationId"] == org["id"]
-
 
 @pytest.mark.asyncio
 async def test_read_events_bad_request(

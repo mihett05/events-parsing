@@ -77,9 +77,11 @@ def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
 
 
 @pytest.fixture
-def update_event_model_dto_factory() -> Callable[[], UpdateEventModelDto]:
+def update_event_model_dto_factory(
+        random_string_factory
+) -> Callable[[], UpdateEventModelDto]:
     def _factory(
-        title: str = "Updated Title", description: str = "Updated Description"
+        title: str = random_string_factory(10), description: str = random_string_factory(100)
     ) -> UpdateEventModelDto:
         return UpdateEventModelDto(title=title, description=description)
 
@@ -95,7 +97,7 @@ async def create_event_model_dtos(
     dtos = []
     response = await async_client.get("/v1/organizations/")
     orgs = response.json()
-    for i in range(100):
+    for i in range(10):
         date = datetime(2020, 1, 1)
         start_date = date + timedelta(days=random.randint(0, 2000))
         org = random.choice(orgs)

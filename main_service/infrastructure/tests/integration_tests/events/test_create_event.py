@@ -53,7 +53,7 @@ async def test_create_event_unprocessed_entity(
 
 
 @pytest.mark.asyncio
-async def test_create_event_forbidden(
+async def test_create_event_unauthorized(
     async_client: AsyncClient,
     create_event_model_dto_factory,
 ):

@@ -1,27 +1,22 @@
 from datetime import datetime
 
-from pydantic import ValidationError, model_validator
+from pydantic import ValidationError, model_validator, BaseModel
 
 from domain.events.enums import EventFormatEnum, EventTypeEnum
+from domain.events.exceptions import InvalidEventPeriodError
 from infrastructure.api.models import CamelModel
 
 
-class PeriodValidatorModel(CamelModel):
-    end_date: datetime | None = None
-    start_date: datetime | None = None
-
-    def _check_dates_order(self):
-        if self.start_date is None or self.end_date is None:
-            return self
-
-        if self.start_date > self.end_date:
-            raise ValidationError(
-                "start_date must be less than or equal to end_date"
-            )
+def _check_dates_order(self):
+    if self.start_date is None or self.end_date is None:
         return self
 
+    if self.start_date > self.end_date:
+        raise InvalidEventPeriodError()
+    return self
 
-class CreateEventModelDto(PeriodValidatorModel):
+
+class CreateEventModelDto(CamelModel):
     title: str
     type: EventTypeEnum
     format: EventFormatEnum
@@ -31,10 +26,10 @@ class CreateEventModelDto(PeriodValidatorModel):
     start_date: datetime
     end_registration: datetime
     organization_id: int | None
-    
+
     @model_validator(mode="after")
-    def _check_dates_order(self):
-        super()._check_dates_order()
+    def _check_dates_period(self):
+        return _check_dates_order(self)
 
 
 class UpdateEventModelDto(CamelModel):
@@ -42,19 +37,24 @@ class UpdateEventModelDto(CamelModel):
     description: str
 
 
-class ReadAllEventsFeedModelDto(PeriodValidatorModel):
+class ReadAllEventsFeedModelDto(BaseModel):
     page: int = 0
     page_size: int = 50
-    organization_id: int | None
-    type: EventTypeEnum | None
-    format: EventFormatEnum | None
+    organization_id: int | None = None
+    type: EventTypeEnum | None = None
+    format: EventFormatEnum | None = None
+    end_date: datetime | None = None
+    start_date: datetime | None = None
 
     @model_validator(mode="after")
-    def _check_dates_order(self):
-        super()._check_dates_order()
+    def _check_dates_period(self):
+        return _check_dates_order(self)
 
 
-class ReadAllEventsCalendarModelDto(PeriodValidatorModel):
+class ReadAllEventsCalendarModelDto(BaseModel):
+    end_date: datetime | None = None
+    start_date: datetime | None = None
+
     @model_validator(mode="after")
-    def _check_dates_order(self):
-        super()._check_dates_order()
+    def _check_dates_period(self):
+        return _check_dates_order(self)
