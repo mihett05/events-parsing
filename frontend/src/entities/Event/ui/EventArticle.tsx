@@ -1,69 +1,135 @@
-import { Box, Chip, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Chip, Typography, Paper, Grid, Stack, Divider } from '@mui/material';
 import { CalendarEvent } from '../model/types';
+import { format, isValid, isSameDay, Locale } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import EventIcon from '@mui/icons-material/Event';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 type EventArticleProps = {
   event: CalendarEvent;
-  ref?: React.RefObject<HTMLDivElement> | null;
 };
 
-export const EventArticle: React.FC<EventArticleProps> = ({ event, ref }) => {
-  return (
-    <Box ref={ref}>
-      <Typography variant="h5">{event.title}</Typography>
-      <Box display="flex" gap={1}>
-        <Chip label={event.type} />
-        <Chip label={event.format} />
-      </Box>
-      <Typography variant="body1">
-        {event.startDate.toLocaleDateString()} {event.endDate ? '-' : ''}{' '}
-        {event.endDate?.toLocaleDateString()}
-      </Typography>
-      <Typography variant="body1">
-        {event.endRegistration && `Регистрация до ${event.endRegistration.toLocaleDateString()}`}
-      </Typography>
-      <Typography variant="body1">{event.description}</Typography>
-      <Box
+const InfoRow: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode }> = ({
+  icon,
+  label,
+  value,
+}) => (
+  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+    {React.cloneElement(icon as React.ReactElement, {
+      sx: { fontSize: '1.1rem', color: 'text.secondary' },
+    })}
+    <Typography variant="body2" component="span" sx={{ color: 'text.secondary', minWidth: 60 }}>
+      {label}:
+    </Typography>
+    <Typography variant="body2" component="span" sx={{ fontWeight: 500 }}>
+      {value}
+    </Typography>
+  </Stack>
+);
+
+export const EventArticle = React.forwardRef<HTMLDivElement, EventArticleProps>(
+  ({ event }, ref) => {
+    const { t } = useTranslation();
+
+    const formatDateSafe = (
+      date: Date | undefined,
+      formatString: string = 'PPP',
+      options: { locale?: Locale } = { locale: ru },
+    ): string => {
+      return date && isValid(date) ? format(date, formatString, options) : 'N/A';
+    };
+
+    const formattedStartDate = formatDateSafe(event.startDate);
+    const formattedStartTime = formatDateSafe(event.startDate, 'p');
+    const formattedEndDate = formatDateSafe(event.endDate);
+    const formattedEndTime = formatDateSafe(event.endDate, 'p');
+    const formattedEndRegistration = formatDateSafe(event.endRegistration);
+
+    const isSingleDayEvent = !event.endDate || isSameDay(event.startDate, event.endDate);
+
+    return (
+      <Paper
+        ref={ref}
+        elevation={1}
+        variant="outlined"
         sx={{
-          width: '100%',
-          height: '100px',
-          background: generateTitleGradient(event.title),
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          p: { xs: 2, sm: 3 },
+          borderRadius: 2,
+          position: 'relative',
+          overflow: 'hidden',
+          borderLeft: `5px solid ${event.color}`,
         }}
       >
-        <Typography variant="h4" color="white">
-          {event.title}
-        </Typography>
-      </Box>
-    </Box>
-  );
-};
-
-/**
- * Генерация градиентного фона исходя из названия события
- * Насыщенность и освещение выбираются контрастно белому
- * @param title - Название события
- * @returns CSS (linear-gradient) градиентный фон
- */
-function generateTitleGradient(title: string) {
-  const hash = stringToHash(title);
-
-  const hue1 = Math.abs(hash % 360);
-  const saturation = 70 + Math.abs(hash % 30);
-  const lightness = 40 + Math.abs(hash % 20);
-
-  const hue2 = (hue1 + 120) % 360;
-
-  return `linear-gradient(135deg, 
-        hsl(${hue1}, ${saturation}%, ${lightness}%), 
-        hsl(${hue2}, ${saturation}%, ${lightness}%))`;
-}
-
-function stringToHash(str: string) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return hash;
-}
+        <Stack spacing={2}>
+          <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom sx={{ mb: 0 }}>
+            {event.title}
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+            <Chip
+              icon={<EventIcon fontSize="small" />}
+              label={event.type}
+              size="small"
+              variant="outlined"
+              sx={{ borderColor: event.color, color: event.color }}
+            />
+            <Chip label={event.format} size="small" variant="outlined" />
+          </Stack>
+          <Divider />
+          <Grid container spacing={1.5}>
+            <Grid size={{ xs: 12, sm: isSingleDayEvent ? 12 : 6 }}>
+              <InfoRow
+                icon={<CalendarTodayIcon />}
+                label={t('event.start')}
+                value={`${formattedStartDate}, ${formattedStartTime}`}
+              />
+            </Grid>
+            {!isSingleDayEvent && event.endDate && (
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InfoRow
+                  icon={<AccessTimeIcon />}
+                  label={t('event.end')}
+                  value={`${formattedEndDate}, ${formattedEndTime}`}
+                />
+              </Grid>
+            )}
+            {event.endRegistration && isValid(event.endRegistration) && (
+              <Grid size={{ xs: 12 }}>
+                <InfoRow
+                  icon={<EditCalendarIcon />}
+                  label={t('event.registrationUntil', { date: '' }).replace(':', '').trim()}
+                  value={formattedEndRegistration}
+                />
+              </Grid>
+            )}
+          </Grid>
+          {event.description && String(event.description).trim() && (
+            <>
+              <Divider />
+              <Box>
+                <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  {t('event.description')}:
+                </Typography>
+                <Typography
+                  variant="body2"
+                  component="div"
+                  sx={{
+                    whiteSpace: 'pre-wrap',
+                    lineHeight: 1.6,
+                    color: 'text.secondary',
+                    pl: 1,
+                  }}
+                >
+                  {event.description}
+                </Typography>
+              </Box>
+            </>
+          )}
+        </Stack>
+      </Paper>
+    );
+  },
+);

@@ -1,17 +1,19 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CalendarEvent, mapEventToCalendarEvent } from '@entities/Event';
-import { createEntityAdapter } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createEntityAdapter } from '@reduxjs/toolkit';
+import { CalendarEvent } from '@entities/Event';
 import { api } from '@shared/api/api';
+import { mapEventToCalendarEvent } from '@entities/Event/model/mappers';
+import { RootState } from '@/shared/store/store';
 
 export const eventsAdapter = createEntityAdapter<CalendarEvent>();
 
+export type CalendarView = 'day' | 'month' | 'year';
+
 type FilterState = {
-  start: Date | null;
-  end: Date | null;
+  start: string | null;
+  end: string | null;
   type: string | null;
   format: string | null;
 };
-
 type FilterVariants = {
   types: string[];
   formats: string[];
@@ -20,10 +22,12 @@ type FilterVariants = {
 interface EventsState {
   events: ReturnType<typeof eventsAdapter.getInitialState>;
   isLoading: boolean;
+  isFetchingMore: boolean;
   error: string | null;
   page: number;
   pageSize: number;
-  selectedDate: Date;
+  selectedDate: string;
+  calendarView: CalendarView;
   filters: FilterState;
   filterVariants: FilterVariants;
 }
@@ -33,8 +37,10 @@ const initialState: EventsState = {
   page: 0,
   pageSize: 20,
   isLoading: false,
+  isFetchingMore: false,
   error: null,
-  selectedDate: new Date(),
+  selectedDate: new Date().toISOString(),
+  calendarView: 'month',
   filters: {
     start: null,
     end: null,
@@ -47,40 +53,98 @@ const initialState: EventsState = {
   },
 };
 
+const updateFilterVariants = (state: EventsState) => {
+  const events = eventsAdapter.getSelectors().selectAll(state.events);
+  const formats = new Set<string>();
+  const types = new Set<string>();
+
+  events.forEach((event) => {
+    if (event.format) formats.add(event.format);
+    if (event.type) types.add(event.type);
+  });
+
+  const newFormats = Array.from(formats);
+  const newTypes = Array.from(types);
+
+  if (
+    JSON.stringify(state.filterVariants.formats) !== JSON.stringify(newFormats) ||
+    JSON.stringify(state.filterVariants.types) !== JSON.stringify(newTypes)
+  ) {
+    state.filterVariants = { formats: newFormats, types: newTypes };
+  }
+};
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    upsertEvents: (state, action: PayloadAction<CalendarEvent[]>) => {
-      eventsAdapter.upsertMany(state.events, action.payload);
-    },
     incrementPage: (state) => {
-      if (state.isLoading) return;
-      state.page++;
+      if (!state.isLoading && !state.isFetchingMore) {
+        state.page++;
+      }
     },
-    setSelectedDate: (state, action: PayloadAction<Date>) => {
-      state.selectedDate = action.payload;
+    setSelectedDate: (state, action: PayloadAction<string>) => {
+      if (state.selectedDate !== action.payload) {
+        state.selectedDate = action.payload;
+        state.error = null;
+      }
     },
-    setFilters: (state, filter: PayloadAction<FilterState>) => {
-      state.filters = filter.payload;
+    setCalendarView: (state, action: PayloadAction<CalendarView>) => {
+      if (state.calendarView !== action.payload) {
+        state.calendarView = action.payload;
+        state.error = null;
+        // eventsAdapter.removeAll(state.events);
+      }
+    },
+    setFilters: (state, action: PayloadAction<Partial<FilterState>>) => {
+      const newFilters = { ...state.filters, ...action.payload };
+      if (JSON.stringify(state.filters) !== JSON.stringify(newFilters)) {
+        state.filters = newFilters;
+        state.page = 0;
+        state.events = eventsAdapter.getInitialState();
+        state.error = null;
+      }
+    },
+    resetFilters: (state) => {
+      if (JSON.stringify(state.filters) !== JSON.stringify(initialState.filters)) {
+        state.filters = initialState.filters;
+        state.page = 0;
+        state.events = eventsAdapter.getInitialState();
+        state.error = null;
+      }
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchPending, (state, { meta }) => {
+        if (meta.arg.originalArgs?.page === 0) {
+          state.isLoading = true;
+        } else {
+          state.isFetchingMore = true;
+        }
+        state.error = null;
+      })
       .addMatcher(
         api.endpoints.readAllEventsV1EventsFeedGet.matchFulfilled,
-        (state, { payload }) => {
+        (state, { payload, meta }) => {
           state.isLoading = false;
-          eventsAdapter.upsertMany(state.events, payload.map(mapEventToCalendarEvent));
+          state.isFetchingMore = false;
+          const newEvents = payload.map(mapEventToCalendarEvent).filter(Boolean) as CalendarEvent[];
+          if (meta.arg.originalArgs?.page === 0) {
+            eventsAdapter.setAll(state.events, newEvents);
+          } else {
+            eventsAdapter.addMany(state.events, newEvents);
+          }
           updateFilterVariants(state);
         },
       )
-      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchPending, (state) => {
-        state.isLoading = true;
-      })
-      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchRejected, (state, { error }) => {
+      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchRejected, (state) => {
         state.isLoading = false;
-        state.error = error.message ?? null;
+        state.isFetchingMore = false;
+        state.error = 'feed.errorLoading';
       })
       .addMatcher(api.endpoints.readAllEventsV1EventsCalendarGet.matchPending, (state) => {
         state.isLoading = true;
@@ -90,7 +154,10 @@ const eventsSlice = createSlice({
         api.endpoints.readAllEventsV1EventsCalendarGet.matchFulfilled,
         (state, { payload }) => {
           state.isLoading = false;
-          eventsAdapter.setAll(state.events, payload.map(mapEventToCalendarEvent));
+          const mappedEvents = payload
+            .map(mapEventToCalendarEvent)
+            .filter(Boolean) as CalendarEvent[];
+          eventsAdapter.upsertMany(state.events, mappedEvents);
           updateFilterVariants(state);
         },
       )
@@ -98,27 +165,30 @@ const eventsSlice = createSlice({
         api.endpoints.readAllEventsV1EventsCalendarGet.matchRejected,
         (state, { error }) => {
           state.isLoading = false;
-          state.error = error.message ?? 'Ошибка загрузки календаря';
+          state.error = error.message ?? 'calendar.errorLoading';
         },
       );
   },
 });
 
-const updateFilterVariants = (state: EventsState) => {
-  const events = eventsAdapter.getSelectors().selectAll(state.events);
-  const formats = new Set();
-  const types = new Set();
-
-  events.forEach((event) => {
-    formats.add(event.format);
-    types.add(event.type);
-  });
-
-  state.filterVariants = {
-    formats: Array.from(formats.values()) as string[],
-    types: Array.from(types.values()) as string[],
-  };
-};
-
-export const { upsertEvents, incrementPage, setSelectedDate } = eventsSlice.actions;
+export const {
+  incrementPage,
+  setSelectedDate,
+  setCalendarView,
+  setFilters,
+  resetFilters,
+  clearError,
+} = eventsSlice.actions;
 export default eventsSlice.reducer;
+
+export const getEventsState = (state: RootState) => state.events;
+export const eventsSelectors = eventsAdapter.getSelectors<RootState>(
+  (state) => state.events.events,
+);
+export const selectEventsLoading = (state: RootState) => state.events.isLoading;
+export const selectEventsFetchingMore = (state: RootState) => state.events.isFetchingMore;
+export const selectEventsError = (state: RootState) => state.events.error;
+export const selectEventsCurrentPage = (state: RootState) => state.events.page;
+export const selectSelectedDate = (state: RootState) => state.events.selectedDate;
+export const selectFilterVariants = (state: RootState) => state.events.filterVariants;
+export const selectCalendarView = (state: RootState) => state.events.calendarView;

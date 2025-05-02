@@ -1,14 +1,14 @@
+import React, { useEffect, useRef } from 'react';
 import { EventArticle } from '@/entities/Event';
 import { Box, Divider, CircularProgress } from '@mui/material';
 import { useEventsFeed } from '../lib/hooks';
-import { useEffect, useRef } from 'react';
+import LoadingIndicator from '@/shared/ui/LoadingIndicator';
+import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 
 export const EventsFeed = () => {
-  const { events, isLoading, error, handleLoadMore } = useEventsFeed();
+  const { events, isLoading, isFetchingMore, error, handleLoadMore } = useEventsFeed();
 
   const observer = useRef<IntersectionObserver | null>(null);
-
-  const sentinelIndex = events.length - 5;
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,19 +35,37 @@ export const EventsFeed = () => {
     };
   }, [handleLoadMore]);
 
+  if (isLoading && events.length === 0) {
+    return <LoadingIndicator />;
+  }
+
+  if (error && events.length === 0) {
+    return <ErrorMessage {...error} />;
+  }
+
   return (
-    <Box display="flex" flexDirection="column" gap={5} onScroll={handleLoadMore}>
+    <Box display="flex" flexDirection="column" gap={5}>
+      {error && events.length > 0 && (
+        <Box sx={{ my: 2 }}>
+          <ErrorMessage {...error} />
+        </Box>
+      )}
+
       {events.map((event, index) => (
-        <>
-          <EventArticle
-            key={`event-${event.id}`}
-            event={event}
-            ref={index === sentinelIndex ? sentinelRef : null}
-          />
-          {index !== events.length - 1 && <Divider />}
-        </>
+        <React.Fragment key={event.id}>
+          {' '}
+          <EventArticle event={event} />
+          {index < events.length - 1 && <Divider sx={{ my: 3 }} />}
+        </React.Fragment>
       ))}
-      {isLoading && <CircularProgress />}
+
+      <Box ref={sentinelRef} sx={{ height: '20px', mt: 2 }} />
+
+      {isFetchingMore && (
+        <Box display="flex" justifyContent="center" my={4}>
+          <CircularProgress size={30} />
+        </Box>
+      )}
     </Box>
   );
 };

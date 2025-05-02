@@ -1,4 +1,5 @@
 import { NavLink as RouterNavLink } from 'react-router';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -6,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import { AppPaths } from '@/shared/routes';
+import { useTranslation } from 'react-i18next';
 
 interface UserSectionProps {
   isLoggedIn: boolean;
@@ -24,11 +26,13 @@ const UserSection: React.FC<UserSectionProps> = ({
   onProfileClick,
   onLogout,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       {isLoggedIn ? (
         <>
-          <IconButton size="large" edge="end" onClick={onMenuOpen} color="inherit">
+          <IconButton size="large" onClick={onMenuOpen} color="inherit" edge="end">
             <AccountCircle />
           </IconButton>
           <Menu
@@ -40,8 +44,8 @@ const UserSection: React.FC<UserSectionProps> = ({
             open={Boolean(anchorEl)}
             onClose={onMenuClose}
           >
-            <MenuItem onClick={onProfileClick}>Profile</MenuItem>
-            <MenuItem onClick={onLogout}>Logout</MenuItem>
+            <MenuItem onClick={onProfileClick}>{t('navigation.profile')}</MenuItem>
+            <MenuItem onClick={onLogout}>{t('navigation.logout')}</MenuItem>
           </Menu>
         </>
       ) : (
@@ -58,18 +62,19 @@ const UserSection: React.FC<UserSectionProps> = ({
               },
             }}
           >
-            Log In
+            {t('navigation.login')}
           </Button>
-          <IconButton
-            component={RouterNavLink}
-            to={AppPaths.login()}
-            sx={{
-              display: { xs: 'flex', sm: 'none' },
-              ml: 1,
-            }}
-          >
-            <LoginIcon />
-          </IconButton>
+          <Box sx={{ display: { xs: 'flex', sm: 'none' } }}>
+            {' '}
+            <IconButton
+              component={RouterNavLink}
+              to={AppPaths.login()}
+              color="inherit"
+              sx={{ ml: 1 }}
+            >
+              <LoginIcon />
+            </IconButton>
+          </Box>
         </>
       )}
     </>
