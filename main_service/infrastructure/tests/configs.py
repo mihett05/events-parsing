@@ -4,7 +4,6 @@ from typing import AsyncIterator
 from testcontainers.core.container import DockerContainer
 from testcontainers.minio import MinioContainer
 from testcontainers.postgres import PostgresContainer
-from testcontainers.rabbitmq import RabbitMqContainer
 
 from infrastructure import config
 from infrastructure.mocks.providers.container import (
@@ -28,37 +27,30 @@ async def get_containers_config() -> AsyncIterator[config.Config]:
     tests_config = config.get_tests_config()
     with (
         PostgresContainer(
-            "postgres:17.3",
-            port=tests_config.postgres_port,
+            "postgres:17.4-alpine",
             username=tests_config.postgres_user,
             password=tests_config.postgres_password,
             dbname=tests_config.postgres_db,
-        ).with_exposed_ports(tests_config.postgres_port) as postgres,
+        ) as postgres,
         MinioContainer(
             "minio/minio:latest",
-            port=tests_config.minio_root_port,
             access_key=tests_config.minio_root_user,
             secret_key=tests_config.minio_root_password,
-        ).with_exposed_ports(tests_config.minio_root_port) as minio,
-        RabbitMqContainer(
-            "rabbitmq:3.12",
-            port=tests_config.rabbitmq_port,
-            username=tests_config.rabbitmq_user,
-            password=tests_config.rabbitmq_password,
-        ).with_exposed_ports(tests_config.rabbitmq_port) as rabbit,
-        DockerContainer("greenmail/standalone:2.1.3")
-        .with_exposed_ports(3025, 3143)
-        .with_env(
-            "GREENMAIL_OPTS",
-            f"Dgreenmail.users={tests_config.imap_username}:{tests_config.imap_password}",
+        ) as minio,
+        DockerContainer("greenmail/standalone:2.1.3").with_exposed_ports(
+            3025, 3143
         ) as mail,
     ):
         tests_config.postgres_host = postgres.get_container_host_ip()
-        tests_config.minio_root_host = minio.get_container_host_ip()
-        tests_config.rabbitmq_host = rabbit.get_container_host_ip()
-        tests_config.imap_server = f"{mail.get_container_host_ip()}:3143"
-        # TODO: update smtp config
+        tests_config.postgres_port = postgres.get_exposed_port(5432)
 
+        tests_config.minio_root_host = minio.get_container_host_ip()
+        tests_config.minio_root_port = minio.get_exposed_port(9000)
+
+        tests_config.imap_server = (
+            f"{mail.get_container_host_ip()}:{mail.get_exposed_port(3143)}"
+        )
+        # TODO: update smtp config
         yield tests_config
 
 
