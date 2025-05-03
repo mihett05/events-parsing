@@ -65,6 +65,8 @@ class OpenAiExtraction:
                 event = EventInfo(
                     **{**item, "dates": DatesInfo(**item["dates"])}
                 )
+                if event.location == "null":
+                    event.location = None
                 pattern = re.compile(r"^\d{2}-\d{2}-\d{4}$")
                 if (
                     event.dates.start_date is not None
