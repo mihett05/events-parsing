@@ -5,7 +5,7 @@ from domain.events.exceptions import (
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-from sqlalchemy import Select, and_, select
+from sqlalchemy import Select, and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -27,14 +27,14 @@ class EventsDatabaseRepository(EventsRepository):
             )
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
-            query = select(self.model).order_by(self.model.id)
+            query = select(self.model).order_by(self.model.start_date)
             query = self.__try_add_period_filter_to_query(query, dto)
             return query
 
         def get_select_all_feed_query(
             self, dto: dtos.ReadAllEventsFeedDto
         ) -> Select:
-            query = select(self.model).order_by(self.model.id)
+            query = select(self.model).order_by(desc(self.model.start_date))
 
             query = self.__try_add_period_filter_to_query(query, dto)
             query = self.__try_add_organization_filter_to_query(query, dto)
