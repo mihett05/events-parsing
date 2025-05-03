@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domain.organizations.enums import RoleEnum
-
 
 @dataclass
 class Organization:
@@ -10,11 +8,3 @@ class Organization:
     created_at: datetime
     title: str
     owner_id: int
-
-
-@dataclass
-class UserOrganizationRole:
-    id: int
-    role: RoleEnum
-    user_id: int
-    organization_id: int

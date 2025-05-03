@@ -1,26 +1,20 @@
 from datetime import date
 from typing import Annotated
 
-from starlette import status
-
 import application.events.usecases as use_cases
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-
-from application.auth.enums import PermissionsEnum
-from application.auth.permissions import PermissionBuilder
 from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
 import infrastructure.api.v1.events.models as models
 from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
-from infrastructure.providers.permissions import PermissionProvider
 from infrastructure.api.v1.organizations.mappers import (
     map_to_pydantic as map_organization,
 )
@@ -31,17 +25,9 @@ router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 @router.get("/calendar", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadAllEventUseCase],
-    permission_provider: FromDishka[PermissionProvider],
     start_date: date | None = None,
     end_date: date | None = None,
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_READ_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to view calendar"
-        )
     return map(
         mappers.map_to_pydantic,
         await use_case(
@@ -56,7 +42,6 @@ async def read_all_events(
 @router.get("/feed", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
-    permission_provider: FromDishka[PermissionProvider],
     page: int = 0,
     page_size: int = 50,
     start_date: date | None = None,
@@ -65,13 +50,6 @@ async def read_all_events(
     type_: EventTypeEnum | None = None,
     format_: EventFormatEnum | None = None,
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_READ_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to view feed"
-        )
     return map(
         mappers.map_to_pydantic,
         await use_case(
@@ -89,7 +67,7 @@ async def read_all_events(
 
 
 @router.get("/feed_filters", response_model=models.FilterModel)
-async def get_types_and_formats(
+async def get_filter_values(
     use_case: FromDishka[ReadAllOrganizationUseCase],
 ):
     return models.FilterModel(
@@ -112,16 +90,8 @@ async def get_types_and_formats(
 async def create_event(
     dto: dtos.CreateEventModelDto,
     use_case: FromDishka[use_cases.CreateEventUseCase],
-    permission_provider: FromDishka[PermissionProvider],
     actor: Annotated[User, Depends(get_user)],
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_UPDATE_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to edit events"
-        )
     return mappers.map_to_pydantic(
         await use_case(mappers.map_create_dto_from_pydantic(dto), actor)
     )
@@ -135,15 +105,7 @@ async def create_event(
 async def read_event(
     event_id: int,
     use_case: FromDishka[use_cases.ReadEventUseCase],
-    permission_provider: FromDishka[PermissionProvider],
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_READ_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to view event"
-        )
     return mappers.map_to_pydantic(await use_case(event_id))
 
 
@@ -156,16 +118,8 @@ async def update_event(
     event_id: int,
     dto: dtos.UpdateEventModelDto,
     use_case: FromDishka[use_cases.UpdateEventUseCase],
-    permission_provider: FromDishka[PermissionProvider],
     actor: Annotated[User, Depends(get_user)],
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_UPDATE_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to update event"
-        )
     return mappers.map_to_pydantic(
         await use_case(
             mappers.map_update_dto_from_pydantic(dto, event_id), actor
@@ -181,14 +135,6 @@ async def update_event(
 async def delete_event(
     event_id: int,
     use_case: FromDishka[use_cases.DeleteEventUseCase],
-    permission_provider: FromDishka[PermissionProvider],
     actor: Annotated[User, Depends(get_user)],
 ):
-    try:
-        PermissionBuilder().providers(permission_provider).add(PermissionsEnum.CAN_DELETE_EVENT).apply()
-    except PermissionError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions to delete event"
-        )
     return mappers.map_to_pydantic(await use_case(event_id, actor))
