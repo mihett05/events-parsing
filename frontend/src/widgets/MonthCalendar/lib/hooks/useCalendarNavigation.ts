@@ -2,12 +2,12 @@ import { useState, useCallback, useEffect } from 'react';
 import { addMonths, subMonths, isValid, isEqual } from 'date-fns';
 
 interface UseCalendarNavigationProps {
-  initialDate?: Date;
+  selectedDate?: Date;
   onMonthChange?: (newDate: Date) => void;
 }
 
 export const useCalendarNavigation = ({
-  initialDate = new Date(),
+  selectedDate = new Date(),
   onMonthChange,
 }: UseCalendarNavigationProps) => {
   const normalizeDate = useCallback((date: Date | undefined): Date => {
@@ -16,14 +16,14 @@ export const useCalendarNavigation = ({
     return utcDate;
   }, []);
 
-  const [currentDate, setCurrentDate] = useState<Date>(() => normalizeDate(initialDate));
+  const [currentDate, setCurrentDate] = useState<Date>(() => normalizeDate(selectedDate));
 
   useEffect(() => {
-    const normalizedPropDate = normalizeDate(initialDate);
+    const normalizedPropDate = normalizeDate(selectedDate);
     if (!isEqual(normalizedPropDate, currentDate)) {
       setCurrentDate(normalizedPropDate);
     }
-  }, [initialDate, normalizeDate, currentDate]);
+  }, [selectedDate, normalizeDate, currentDate]);
 
   const handlePrevMonth = useCallback(() => {
     const newDate = subMonths(currentDate, 1);

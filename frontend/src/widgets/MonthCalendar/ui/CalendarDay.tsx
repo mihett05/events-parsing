@@ -3,11 +3,13 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { format, isToday as isTodayDateFns, isValid } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import { CalendarDayData } from '@shared/lib/types';
 import { CalendarEvent, EventItem } from '@entities/Event';
 import { isEventOnDate } from '@widgets/MonthCalendar/lib/eventUtils';
 import { DATE_NUMBER_AREA_HEIGHT } from '@widgets/MonthCalendar/lib/constants';
-import { SxProps } from '@mui/material';
+import { SxProps, Theme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const MAX_VISIBLE_EVENTS_IN_CELL = 2;
 const FIXED_CELL_HEIGHT_NUMERIC = 120;
@@ -21,77 +23,85 @@ interface CalendarDayProps {
 
 export const CalendarDay: React.FC<CalendarDayProps> = React.memo(
   ({ dayData, events, onDayClick }) => {
-    if (!dayData || !dayData.date || !isValid(dayData.date)) {
+    const { t } = useTranslation();
+    if (!dayData?.date || !isValid(dayData.date)) {
       console.error('CalendarDay received invalid dayData:', dayData);
       return (
         <Box
-          sx={{
+          sx={(theme: Theme) => ({
             height: FIXED_CELL_HEIGHT,
-            border: '1px dashed red',
+            borderRight: `1px solid ${theme.palette.divider}`,
+            borderBottom: `1px solid ${theme.palette.divider}`,
             p: 1,
             fontSize: '0.8rem',
-            color: 'red',
+            color: 'error.main',
             overflow: 'hidden',
-          }}
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.palette.mode === 'light' ? '#fff3f3' : '#5c2a2a',
+          })}
         >
-          Invalid Date Data
+          {t('calendar.invalidDate')}
         </Box>
       );
     }
-
     const { date, isCurrentMonth, isWeekend } = dayData;
     const isToday = isTodayDateFns(date);
     const dayNumber = format(date, 'd');
+    const formattedFullDate = format(date, 'PPP', { locale: ru });
 
     const eventsForThisDay = useMemo(() => {
-      const validEvents = events.filter(
-        (event) => event && event.startDate && isValid(event.startDate),
-      );
-      return validEvents
-        .filter((event) => isEventOnDate(event, date))
+      return events
+        .filter((event) => event && isEventOnDate(event, date))
         .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
     }, [events, date]);
 
     const visibleEvents = eventsForThisDay.slice(0, MAX_VISIBLE_EVENTS_IN_CELL);
     const hiddenCount = Math.max(0, eventsForThisDay.length - MAX_VISIBLE_EVENTS_IN_CELL);
+    const hasEvents = eventsForThisDay.length > 0;
 
-    const getDayStyles = (): SxProps => ({
+    const getDayStyles = (): SxProps<Theme> => ({
       display: 'flex',
       flexDirection: 'column',
       height: FIXED_CELL_HEIGHT,
       borderRight: '1px solid #eee',
       borderBottom: '1px solid #eee',
       cursor: 'pointer',
-      transition: 'background-color 0.2s ease',
-      backgroundColor: isCurrentMonth ? '#fff' : '#fafafa',
+      transition: 'background-color 0.15s ease',
+      backgroundColor: isCurrentMonth ? 'background.paper' : '#fafafa',
       position: 'relative',
       overflow: 'hidden',
-      color: isCurrentMonth ? 'inherit' : '#9e9e9e',
+      color: isCurrentMonth ? 'text.primary' : 'text.disabled',
       '&:hover': {
-        backgroundColor: isCurrentMonth ? '#f5f5f5' : '#f0f0f0',
+        backgroundColor: isCurrentMonth ? 'action.hover' : '#f0f0f0',
+        zIndex: 1,
+      },
+      '&:nth-of-type(7n)': {
+        borderRight: 'none',
       },
     });
-
-    const getNumberStyles = (): SxProps => {
-      const styles: React.CSSProperties = {
-        width: '24px',
-        height: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '50%',
-        fontSize: '0.8rem',
-        fontWeight: isToday ? 'bold' : 'normal',
-        color: !isCurrentMonth ? '#bdbdbd' : isWeekend && isCurrentMonth ? '#d32f2f' : 'inherit',
-        marginLeft: 'auto',
-        flexShrink: 0,
-      };
-      if (isToday) {
-        styles.backgroundColor = '#1976d2';
-        styles.color = '#fff';
-      }
-      return styles;
-    };
+    const getNumberStyles = (): SxProps<Theme> => ({
+      width: '24px',
+      height: '24px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50%',
+      fontSize: '0.75rem',
+      lineHeight: 1,
+      fontWeight: isToday ? 'bold' : 'normal',
+      color: isToday
+        ? 'primary.contrastText'
+        : !isCurrentMonth
+          ? 'text.disabled'
+          : isWeekend
+            ? 'error.main'
+            : 'text.primary',
+      backgroundColor: isToday ? 'primary.main' : 'transparent',
+      marginLeft: 'auto',
+      flexShrink: 0,
+    });
 
     const handleCellClick = (e: React.MouseEvent<HTMLElement>) => {
       onDayClick(e, date);
@@ -101,7 +111,14 @@ export const CalendarDay: React.FC<CalendarDayProps> = React.memo(
       <Box
         sx={getDayStyles()}
         onClick={handleCellClick}
-        title={`Click to see events for ${format(date, 'MMM d')}`}
+        title={
+          hasEvents ? t('calendar.popoverTitle', { date: formattedFullDate }) : formattedFullDate
+        }
+        role={hasEvents ? 'button' : 'gridcell'}
+        aria-label={
+          hasEvents ? t('calendar.popoverTitle', { date: formattedFullDate }) : formattedFullDate
+        }
+        tabIndex={hasEvents ? 0 : -1}
       >
         <Box
           sx={{
@@ -113,11 +130,10 @@ export const CalendarDay: React.FC<CalendarDayProps> = React.memo(
             flexShrink: 0,
           }}
         >
-          <Typography variant="body2" component="div" sx={getNumberStyles()}>
+          <Typography variant="body2" component="span" sx={getNumberStyles()}>
             {dayNumber}
           </Typography>
         </Box>
-
         <Stack
           spacing={0.2}
           sx={{
@@ -132,7 +148,6 @@ export const CalendarDay: React.FC<CalendarDayProps> = React.memo(
           {visibleEvents.map((event) => (
             <EventItem key={event.id} event={event} />
           ))}
-
           {hiddenCount > 0 && (
             <Typography
               variant="caption"
@@ -141,12 +156,12 @@ export const CalendarDay: React.FC<CalendarDayProps> = React.memo(
                 color: 'text.secondary',
                 mt: 'auto',
                 pt: '2px',
-                alignSelf: 'flex-start',
-                pl: '2px',
+                pl: '4px',
                 pointerEvents: 'none',
+                userSelect: 'none',
               }}
             >
-              +{hiddenCount} more
+              {t('calendar.moreEvents', { count: hiddenCount })}
             </Typography>
           )}
         </Stack>

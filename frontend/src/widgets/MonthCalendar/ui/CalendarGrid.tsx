@@ -1,8 +1,8 @@
-import React from 'react';
-import Grid from '@mui/material/Grid';
 import { CalendarDayData } from '@shared/lib/types';
 import { CalendarEvent } from '@entities/Event';
 import { CalendarDay } from './CalendarDay';
+import { isValid } from 'date-fns';
+import { Grid } from '@mui/system';
 
 interface CalendarGridProps {
   calendarDays: CalendarDayData[];
@@ -21,15 +21,16 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ calendarDays, events
         flexGrow: 1,
         position: 'relative',
       }}
+      role="grid"
     >
       {calendarDays.map((dayData, index) => {
         const key =
-          dayData.date instanceof Date && !isNaN(dayData.date.valueOf())
+          dayData?.date && isValid(dayData.date)
             ? dayData.date.toISOString()
-            : `day-${index}`;
+            : `invalid-day-${index}`;
 
         return (
-          <Grid size={1} key={key}>
+          <Grid key={key} size={1}>
             <CalendarDay dayData={dayData} events={events} onDayClick={onDayClick} />
           </Grid>
         );

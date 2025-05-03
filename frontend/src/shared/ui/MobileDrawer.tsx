@@ -11,6 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Feed, Login, Logout, AccountBox } from '@mui/icons-material';
 import { AppPaths } from '@/shared/routes';
+import { useTranslation } from 'react-i18next';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -20,19 +21,24 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose, onLogout }) => {
+  const { t } = useTranslation();
+
   const handleLogoutClick = () => {
     onClose();
     onLogout();
   };
 
-  const handleNavigationClick = () => {
-    onClose();
+  const activeStyle = {
+    backgroundColor: 'action.selected',
+    '& .MuiTypography-root, & .MuiSvgIcon-root': {
+      fontWeight: 'bold',
+    },
   };
 
   const drawerContent = (
     <Box sx={{ width: 250 }} role="presentation">
       <Typography variant="h6" sx={{ my: 2, textAlign: 'center' }}>
-        IKNT
+        {t('appName')}
       </Typography>
       <Divider />
       <List>
@@ -40,64 +46,42 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose
           <ListItemButton
             component={RouterNavLink}
             to={AppPaths.calendar()}
-            onClick={handleNavigationClick}
-            sx={{
-              '&.active': {
-                backgroundColor: 'action.selected',
-                '& .MuiTypography-root, & .MuiSvgIcon-root': {
-                  fontWeight: 'bold',
-                },
-              },
-            }}
+            onClick={onClose}
+            sx={{ '&.active': activeStyle }}
           >
             <ListItemIcon>
               <CalendarMonthIcon />
             </ListItemIcon>
-            <ListItemText primary="Calendar" />
+            <ListItemText primary={t('navigation.calendar')} />
           </ListItemButton>
         </ListItem>
-
         <ListItem disablePadding>
           <ListItemButton
             component={RouterNavLink}
             to={AppPaths.eventsFeed()}
-            onClick={handleNavigationClick}
-            sx={{
-              '&.active': {
-                '& .MuiTypography-root, & .MuiSvgIcon-root': {
-                  fontWeight: 'bold',
-                },
-              },
-            }}
+            onClick={onClose}
+            sx={{ '&.active': activeStyle }}
           >
             <ListItemIcon>
               <Feed />
             </ListItemIcon>
-            <ListItemText primary="Events Feed" />
+            <ListItemText primary={t('navigation.eventsFeed')} />
           </ListItemButton>
         </ListItem>
-
         <Divider sx={{ my: 1 }} />
-
         {isLoggedIn ? (
           <>
             <ListItem disablePadding>
               <ListItemButton
                 component={RouterNavLink}
                 to={AppPaths.profile()}
-                onClick={handleNavigationClick}
-                sx={{
-                  '&.active': {
-                    '& .MuiTypography-root, & .MuiSvgIcon-root': {
-                      fontWeight: 'bold',
-                    },
-                  },
-                }}
+                onClick={onClose}
+                sx={{ '&.active': activeStyle }}
               >
                 <ListItemIcon>
                   <AccountBox />
                 </ListItemIcon>
-                <ListItemText primary="Profile" />
+                <ListItemText primary={t('navigation.profile')} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
@@ -105,7 +89,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose
                 <ListItemIcon>
                   <Logout />
                 </ListItemIcon>
-                <ListItemText primary="Logout" />
+                <ListItemText primary={t('navigation.logout')} />
               </ListItemButton>
             </ListItem>
           </>
@@ -115,19 +99,13 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose
               <ListItemButton
                 component={RouterNavLink}
                 to={AppPaths.login()}
-                onClick={handleNavigationClick}
-                sx={{
-                  '&.active': {
-                    '& .MuiTypography-root, & .MuiSvgIcon-root': {
-                      fontWeight: 'bold',
-                    },
-                  },
-                }}
+                onClick={onClose}
+                sx={{ '&.active': activeStyle }}
               >
                 <ListItemIcon>
                   <Login />
                 </ListItemIcon>
-                <ListItemText primary="Log In / Register" />
+                <ListItemText primary={t('navigation.loginRegister')} />
               </ListItemButton>
             </ListItem>
           </>
