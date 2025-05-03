@@ -1,14 +1,15 @@
 import { createBrowserRouter } from 'react-router';
 import { CalendarPage } from '@pages/CalendarPage';
 import { EventsFeedPage } from '@pages/EventsFeedPage';
+import { AppPaths } from '@/shared/routes';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: AppPaths.calendar(),
     element: <CalendarPage />,
   },
   {
-    path: '/feed',
+    path: AppPaths.eventsFeed(),
     element: <EventsFeedPage />,
   },
 ]);

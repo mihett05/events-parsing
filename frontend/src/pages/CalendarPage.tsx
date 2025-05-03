@@ -1,44 +1,33 @@
-import Box from '@mui/material/Box';
-import { MonthCalendar } from '@widgets/MonthCalendar';
-import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
-import { CircularProgress, Typography } from '@mui/material';
-import { ApiEvent, formatEvents } from '@/shared/lib/formatEvents';
 import { Layout } from '@/shared/ui/Layout';
-
-const initialCalendarDate = new Date();
+import { MonthCalendar } from '@widgets/MonthCalendar';
+import { DayCalendar } from '@/widgets/DayCalendar';
+import { YearCalendar } from '@/widgets/YearCalendar';
+import { useAppSelector } from '@/shared/store/hooks';
+import { selectCalendarView } from '@/features/events/slice';
+import { ModalProvider } from '@/widgets/MonthCalendar/lib/context/ModalContext';
+import { EventDetailsModal } from '@/widgets/MonthCalendar/ui/EventDetailsModal';
 
 export const CalendarPage: React.FC = () => {
-  const {
-    data: apiEvents,
-    error,
-    isLoading,
-  } = useReadAllEventsV1EventsGetQuery({ page: 0, pageSize: 100000 });
+  const currentView = useAppSelector(selectCalendarView);
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-          <CircularProgress />
-        </Box>
-      </Layout>
-    );
-  }
-
-  if (error) {
-    return (
-      <Layout>
-        <Typography color="error" align="center">
-          Failed to load events. Please try again later.
-        </Typography>
-      </Layout>
-    );
-  }
-
-  const formattedEvents = formatEvents((apiEvents as ApiEvent[]) ?? []);
+  const renderCalendarView = () => {
+    switch (currentView) {
+      case 'day':
+        return <DayCalendar />;
+      case 'year':
+        return <YearCalendar />;
+      case 'month':
+      default:
+        return <MonthCalendar />;
+    }
+  };
 
   return (
     <Layout>
-      <MonthCalendar initialDate={initialCalendarDate} events={formattedEvents} />
+      <ModalProvider>
+        {renderCalendarView()}
+        <EventDetailsModal />
+      </ModalProvider>
     </Layout>
   );
 };

@@ -1,25 +1,49 @@
-import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
+import { useCallback } from 'react';
+import { useReadAllEventsV1EventsFeedGetQuery } from '@/shared/api/api';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
-import { incrementPage, eventsAdapter } from '@features/events/slice';
+import {
+  incrementPage,
+  eventsSelectors,
+  selectEventsError,
+  selectEventsCurrentPage,
+  selectEventsLoading,
+  selectEventsFetchingMore,
+} from '@features/events/slice';
+import { RootState } from '@/shared/store/store';
 
 export const useEventsFeed = () => {
   const dispatch = useAppDispatch();
-  const state = useAppSelector((state) => state.events);
-  const events = eventsAdapter.getSelectors().selectAll(state.events);
 
-  useReadAllEventsV1EventsGetQuery({
-    page: state.page,
-    pageSize: state.pageSize,
-  });
+  const page = useAppSelector(selectEventsCurrentPage);
+  const pageSize = useAppSelector((state: RootState) => state.events.pageSize);
+  const events = useAppSelector(eventsSelectors.selectAll);
+  const errorKey = useAppSelector(selectEventsError);
+  const isLoading = useAppSelector(selectEventsLoading);
+  const isFetchingMore = useAppSelector(selectEventsFetchingMore);
 
-  const handleLoadMore = () => {
-    dispatch(incrementPage());
+  const queryArgs = {
+    page,
+    pageSize,
   };
+
+  const { isFetching, error: queryError } = useReadAllEventsV1EventsFeedGetQuery(queryArgs);
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoading && !isFetchingMore && !isFetching) {
+      dispatch(incrementPage());
+    }
+  }, [dispatch, isLoading, isFetchingMore, isFetching]);
+
+  const errorMessage = errorKey
+    ? { messageKey: errorKey, messageOptions: { message: queryError ? String(queryError) : '' } }
+    : null;
 
   return {
     events,
-    isLoading: state.isLoading,
-    error: state.error,
+    isLoading: isLoading || (isFetching && page === 0),
+    isFetchingMore: isFetchingMore || (isFetching && page > 0),
+    error: errorMessage,
     handleLoadMore,
+    currentPage: page,
   };
 };
