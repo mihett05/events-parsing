@@ -1,3 +1,5 @@
+from domain.events.enums import EventFormatEnum, EventTypeEnum
+
 from infrastructure.api.models import CamelModel
 
 
@@ -12,6 +14,7 @@ class EventInfoModel(CamelModel):
     title: str
     description: str | None
     dates: DatesInfoModel
-    type: str
-    format: str
+    type: EventTypeEnum
+    format: EventFormatEnum
     location: str | None
+    organization_name: str | None

@@ -92,7 +92,9 @@ class EventsMemoryRepository(EventsRepository):
                 dto.organization_id is None
                 or event.organization_id == dto.organization_id
             )
-            if start and end and organization:
+            type_ = dto.type is None or event.type == dto.type
+            format_ = dto.format is None or event.format == dto.format
+            if start and end and organization and type_ and format_:
                 res.append(event)
         return res[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 

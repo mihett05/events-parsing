@@ -1,6 +1,11 @@
 from datetime import datetime
 
+from domain.events.enums import (
+    EventFormatEnum,
+    EventTypeEnum,
+)
 from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database.postgres import Base
@@ -23,9 +28,13 @@ class EventDatabaseModel(Base):
         DateTime(timezone=True), default=None
     )
 
-    type: Mapped[str]
+    type: Mapped[EventTypeEnum] = mapped_column(
+        ENUM(EventTypeEnum, name="EventTypeEnum")
+    )
     title: Mapped[str]
-    format: Mapped[str]
+    format: Mapped[EventFormatEnum] = mapped_column(
+        ENUM(EventFormatEnum, name="EventFormatEnum")
+    )
     location: Mapped[str | None]
 
     description: Mapped[str | None] = mapped_column(nullable=True, default=None)
