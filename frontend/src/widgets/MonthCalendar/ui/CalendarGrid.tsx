@@ -2,7 +2,7 @@ import { CalendarDayData } from '@shared/lib/types';
 import { CalendarEvent } from '@entities/Event';
 import { CalendarDay } from './CalendarDay';
 import { isValid } from 'date-fns';
-import { Grid } from '@mui/system';
+import { Grid } from '@mui/material';
 
 interface CalendarGridProps {
   calendarDays: CalendarDayData[];
