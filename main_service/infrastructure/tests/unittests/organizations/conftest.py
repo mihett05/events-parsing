@@ -23,7 +23,8 @@ async def create_organization_dto() -> CreateOrganizationDto:
 async def organizations_repository(
     container: AsyncContainer,
 ) -> OrganizationsRepository:
-    yield await container.get(OrganizationsRepository)
+    async with container() as request_container:
+        yield await request_container.get(OrganizationsRepository)
 
 
 @pytest_asyncio.fixture

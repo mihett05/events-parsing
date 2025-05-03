@@ -22,7 +22,7 @@ class Config(BaseSettings):
     postgres_db: str
 
     rabbitmq_host: str
-    rabbitmq_port: str
+    rabbitmq_port: int
     rabbitmq_user: str
     rabbitmq_password: str
 
@@ -32,7 +32,7 @@ class Config(BaseSettings):
     imap_password: str
 
     minio_root_host: str
-    minio_root_port: str
+    minio_root_port: int
     minio_root_user: str
     minio_root_password: str
     minio_bucket_name: str = "attachments"
@@ -69,3 +69,8 @@ def get_config() -> Config:
 @lru_cache
 def get_mock_config() -> Config:
     return Config(_env_file=".dev.env", _env_file_encoding="utf-8")
+
+
+@lru_cache
+def get_tests_config() -> Config:
+    return Config(_env_file=".tests.env", _env_file_encoding="utf-8")

@@ -38,7 +38,8 @@ async def read_all_mails_dto() -> ReadAllMailsDto:
 
 @pytest_asyncio.fixture
 async def mails_repository(container: AsyncContainer) -> MailsRepository:
-    yield await container.get(MailsRepository)
+    async with container() as request_container:
+        yield await request_container.get(MailsRepository)
 
 
 @pytest_asyncio.fixture

@@ -23,7 +23,7 @@ from infrastructure.mocks.repositories.users import (
 
 
 class RepositoriesProvider(Provider):
-    scope = Scope.APP
+    scope = Scope.REQUEST
 
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
