@@ -38,7 +38,8 @@ class Config(BaseSettings):
     minio_root_user: str
     minio_root_password: str
     minio_bucket_name: str = "attachments"
-
+    smtp_server: str
+    smtp_host: int
     static_folder: Path = Path("static/")
 
     @computed_field

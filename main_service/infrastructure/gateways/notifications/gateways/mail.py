@@ -1,17 +1,15 @@
-import asyncio
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-import aiosmtplib
 from aiosmtplib import SMTP
 
+from application.notifications.gateway import NotificationGateway
 from domain.attachments.dtos import ParsedAttachmentInfoDto
 from domain.notifications.entities import Notification
 from domain.users.entities import User
 
 
-class NotificationEmailGateway:
+class NotificationEmailGateway(NotificationGateway):
     def __init__(self, smtp_server, smtp_host, imap_username, imap_password):
         self.smtp_server = smtp_server
         self.smtp_host = smtp_host
@@ -45,7 +43,7 @@ class NotificationEmailGateway:
     def __add_attachments(self, msg, attachments):
         for attachment in attachments:
             file_content = attachment.content.read()
-            part = MIMEApplication(file_content, Name=attachment.filename)
+            part = MIMEApplication(file_content, Name=attachment.filename + attachment.extension)
             part["Content-Disposition"] = (
                 f'attachment; filename="{attachment.filename}"'
             )

@@ -50,12 +50,22 @@ class GatewaysProvider(Provider):
     def telegram_bot(self, config: Config) -> Bot:
         return Bot(token=config.telegram_bot_token)
 
-    @provide(scope=Scope.REQUEST)
+    @provide
     async def emails_gateway(self, config: Config) -> AsyncIterable[EmailsGateway]:
         async with ImapEmailsGateway(
             imap_server=config.imap_server,
             imap_username=config.imap_username,
             imap_password=config.imap_password,
+        ) as gateway:
+            yield gateway
+
+    @provide
+    async def notification_email_gateway(self, config: Config) -> AsyncIterable[NotificationEmailGateway]:
+        async with NotificationEmailGateway(
+                smtp_server=config.smtp_server,
+                smtp_host=config.smtp_host,
+                imap_username=config.imap_username,
+                imap_password=config.imap_password,
         ) as gateway:
             yield gateway
 
@@ -70,7 +80,6 @@ class GatewaysProvider(Provider):
     security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
     files_gateway = provide(source=MinioFilesGateway, provides=FilesGateway)
 
-    email_notification_gateway = provide(NotificationEmailGateway)
     telegram_notification_gateway = provide(NotificationTelegramGateway)
     notification_gateway_factory = provide(
         source=NotificationGatewayFactory,
