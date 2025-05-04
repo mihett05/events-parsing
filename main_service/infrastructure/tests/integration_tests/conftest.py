@@ -40,8 +40,11 @@ async def setup_db_tables(
         await conn.run_sync(Base.metadata.create_all)
 
 
-@pytest_asyncio.fixture(scope="function", autouse=True)
+@pytest_asyncio.fixture(scope="session", autouse=True)
 async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
+    # TODO: Тут либо делать каждый раз создание данных и скоуп у фикстуры - 'function'
+    #  либо, оставить как есть но смысла нет, лучше переделать под 1
+    yield
     engine = await container.get(AsyncEngine)
     async with engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
@@ -69,7 +72,7 @@ async def async_client(get_app: FastAPI) -> AsyncClient:
 # -------------------------------------------------------
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
     def _factory(
             email: str = "test@example.com",
@@ -87,7 +90,7 @@ def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
     return _factory
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     def _factory(
             email: str = "test@example.com",
@@ -98,7 +101,7 @@ def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     return _factory
 
 
-@pytest_asyncio.fixture(autouse=True)
+@pytest_asyncio.fixture(scope='function', autouse=True)
 async def create_user(create_user_model_dto_factory, async_client) -> UserWithTokenModel:
     response = await async_client.post(
         "/v1/auth/register",
@@ -112,7 +115,7 @@ async def create_user(create_user_model_dto_factory, async_client) -> UserWithTo
     )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope='function')
 async def user_with_token_model(
         create_user, authenticate_dto_factory, async_client
 ) -> UserWithTokenModel:
@@ -128,7 +131,7 @@ async def user_with_token_model(
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def random_string_factory() -> Callable[..., str]:
     def random_string(lenght: int) -> str:
         return "".join(random.choices(string.ascii_letters + string.digits, k=lenght))
@@ -136,7 +139,7 @@ def random_string_factory() -> Callable[..., str]:
     return random_string
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def random_email_factory(random_string_factory) -> Callable[..., str]:
     def random_email() -> str:
         return f"{random_string_factory(10)}@{random_string_factory(5)}.com"
