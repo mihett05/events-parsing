@@ -36,9 +36,12 @@ def user_model_factory() -> Callable[[], UserModel]:
 
 
 @pytest.fixture
-def update_user_model_dto_factory(random_string_factory, random_number_factory) -> Callable[[], UpdateUserModelDto]:
+def update_user_model_dto_factory(
+    random_string_factory, random_number_factory
+) -> Callable[[], UpdateUserModelDto]:
     def _factory(
-        fullname: str = random_string_factory(10), telegram_id: int | None = random_number_factory(5)
+        fullname: str = random_string_factory(10),
+        telegram_id: int | None = random_number_factory(5),
     ) -> UpdateUserModelDto:
         return UpdateUserModelDto(fullname=fullname, telegramId=telegram_id)
 
@@ -66,9 +69,7 @@ async def create_users(
     models = []
     for dto in get_create_user_model_dtos:
         response = await async_client.post(
-            "/v1/auth/register",
-            json=dto.model_dump(by_alias=True, mode="json")
+            "/v1/auth/register", json=dto.model_dump(by_alias=True, mode="json")
         )
         models.append(UserWithTokenModel(**response.json()))
     yield models
-

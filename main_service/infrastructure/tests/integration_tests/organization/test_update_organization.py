@@ -1,8 +1,13 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.models import OrganizationModel
@@ -19,7 +24,6 @@ async def test_update_organization_success(
     dto = update_organization_model_dto_factory()
     user_with_token = await user_with_token_model()
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
-
 
     response = await async_client.put(
         f"/v1/organizations/{organization_model.id}",
@@ -43,7 +47,6 @@ async def test_update_organization_unauthorized(
     dto = update_organization_model_dto_factory()
     organization_model = generate_organizations[0]
     headers = {"Authorization": f"Bearer Bismillahov Bismillah Bismillahovich"}
-
 
     response = await async_client.put(
         f"/v1/organizations/{organization_model.id}",
@@ -94,7 +97,6 @@ async def test_update_event_unprocessable_entity(
     user_with_token = await user_with_token_model()
     dto.title = None
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
-
 
     response = await async_client.put(
         f"/v1/organizations/{organization_model.id}",

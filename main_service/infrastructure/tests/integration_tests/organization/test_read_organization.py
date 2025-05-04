@@ -1,14 +1,18 @@
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_404_NOT_FOUND,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
 @pytest.mark.asyncio
 async def test_read_organization_success(
-        generate_organizations: list[OrganizationModel],
-        async_client: AsyncClient,
+    generate_organizations: list[OrganizationModel],
+    async_client: AsyncClient,
 ):
     for model in generate_organizations:
         response = await async_client.get(f"/v1/organizations/{model.id}")

@@ -1,8 +1,12 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_401_UNAUTHORIZED
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+)
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.models import EventModel
@@ -62,4 +66,3 @@ async def test_delete_event_unauthorized(
 
     response = await async_client.delete("/v1/events/69", headers=headers)
     assert response.status_code == HTTP_401_UNAUTHORIZED
-

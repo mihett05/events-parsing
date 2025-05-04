@@ -1,17 +1,24 @@
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.users.models import UserModel
-from infrastructure.tests.integration_tests.conftest import user_with_token_model
+from infrastructure.tests.integration_tests.conftest import (
+    user_with_token_model,
+)
 
 
 @pytest.mark.asyncio
 async def test_update_user_success(
     create_users: list[UserWithTokenModel],
     async_client: AsyncClient,
-    update_user_model_dto_factory
+    update_user_model_dto_factory,
 ):
     user_with_token = create_users[0]
     dto = update_user_model_dto_factory()
@@ -32,10 +39,7 @@ async def test_update_user_success(
 
 
 @pytest.mark.asyncio
-async def test_update_user_unauthorized(
-    async_client: AsyncClient,
-    update_user_model_dto_factory
-):
+async def test_update_user_unauthorized(async_client: AsyncClient, update_user_model_dto_factory):
     dto = update_user_model_dto_factory()
     headers = {"Authorization": f"Bearer Bismillahov Bismillah Bismillahovich"}
 
@@ -58,7 +62,8 @@ async def test_update_phantom_user_unauthorized(
     dto_create = create_user_model_dto_factory()
     headers = {"Authorization": f"Bearer {master_user_with_token.access_token}"}
     response = await async_client.post(
-        "/v1/auth/register", json=dto_create.model_dump(by_alias=True, mode="json")
+        "/v1/auth/register",
+        json=dto_create.model_dump(by_alias=True, mode="json"),
     )
 
     await async_client.delete(f"/v1/users/", headers=headers)
@@ -82,7 +87,6 @@ async def test_update_user_unprocessable_entity(
     dto = update_user_model_dto_factory()
     dto.fullname = None
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
-
 
     response = await async_client.put(
         f"/v1/users/me",

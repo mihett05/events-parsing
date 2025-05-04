@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from typing import Callable, Optional, Coroutine, Any
+from typing import Any, Callable, Coroutine, Optional
 
 import pytest
 import pytest_asyncio
@@ -13,6 +13,8 @@ from infrastructure.api.v1.events.dtos import (
     UpdateEventModelDto,
 )
 from infrastructure.api.v1.events.models import EventModel
+from infrastructure.api.v1.organizations.dtos import CreateOrganizationModelDto
+from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
 @pytest.fixture
@@ -79,10 +81,11 @@ def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
 
 @pytest.fixture
 def update_event_model_dto_factory(
-        random_string_factory
+    random_string_factory,
 ) -> Callable[[], UpdateEventModelDto]:
     def _factory(
-        title: str = random_string_factory(10), description: str = random_string_factory(100)
+        title: str = random_string_factory(10),
+        description: str = random_string_factory(100),
     ) -> UpdateEventModelDto:
         return UpdateEventModelDto(title=title, description=description)
 
@@ -130,4 +133,3 @@ async def generate_events(
         )
         event_models.append(EventModel(**response.json()))
     yield event_models
-

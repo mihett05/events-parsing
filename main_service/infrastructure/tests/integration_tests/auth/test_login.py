@@ -1,4 +1,4 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
@@ -17,7 +17,9 @@ async def test_login_success(
     user_with_token = await user_with_token_model()
     dto = authenticate_dto_factory(email=f"{user_with_token.user.email}")
 
-    print(dto, )
+    print(
+        dto,
+    )
     print()
     print(user_with_token)
     response = await async_client.post(

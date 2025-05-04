@@ -1,8 +1,12 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_401_UNAUTHORIZED
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+)
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.dtos import CreateOrganizationModelDto
@@ -11,9 +15,9 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 
 @pytest.mark.asyncio
 async def test_delete_organization_success(
-        async_client: AsyncClient,
-        user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
-        create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto]
+    async_client: AsyncClient,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
+    create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto],
 ):
     user_with_token = await user_with_token_model()
     dto = create_organization_model_dto_factory()
@@ -40,9 +44,9 @@ async def test_delete_organization_success(
 
 @pytest.mark.asyncio
 async def test_delete_organization_not_found(
-        async_client: AsyncClient,
-        user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
-        create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto]
+    async_client: AsyncClient,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
+    create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto],
 ):
     user_with_token = await user_with_token_model()
     dto = create_organization_model_dto_factory()
@@ -67,8 +71,8 @@ async def test_delete_organization_not_found(
 
 @pytest.mark.asyncio
 async def test_delete_organization_unauthorized(
-        async_client: AsyncClient,
-        create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto]
+    async_client: AsyncClient,
+    create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto],
 ):
     headers = {"Authorization": "Bearer Bismillahov Bismillah Bismillahovich"}
 
