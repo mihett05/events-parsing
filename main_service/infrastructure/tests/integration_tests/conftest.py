@@ -73,17 +73,17 @@ async def async_client(get_app: FastAPI) -> AsyncClient:
 
 
 @pytest.fixture(scope='function')
-def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
+def create_user_model_dto_factory(random_string_factory, random_email_factory) -> Callable[..., CreateUserModelDto]:
     def _factory(
-            email: str = "test@example.com",
-            password: str = "12345678",
-            fullname: str = "Test User",
-            is_active: bool = True,
+        email: str | None = None,
+        password: str = "12345678",
+        fullname: str | None = None,
+        is_active: bool = True,
     ) -> CreateUserModelDto:
         return CreateUserModelDto(
-            email=email,
+            email=email or f"{random_email_factory()}",
             password=password,
-            fullname=fullname,
+            fullname=fullname or f"{random_string_factory(10)}",
             isActive=is_active,
         )
 
@@ -145,3 +145,10 @@ def random_email_factory(random_string_factory) -> Callable[..., str]:
         return f"{random_string_factory(10)}@{random_string_factory(5)}.com"
 
     return random_email
+
+@pytest.fixture
+def random_number_factory() -> Callable[..., int]:
+    def random_number(lenght: int) -> int:
+        return int("".join(random.choices(string.digits, k=lenght)))
+
+    return random_number
