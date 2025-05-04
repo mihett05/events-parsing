@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, Typography, Grid, Tooltip } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
 import {
   startOfMonth,
   endOfMonth,
@@ -37,6 +37,8 @@ const getDayStyle = (
   theme: Theme,
 ): SystemStyleObject<Theme> => {
   const isCurrentDateToday = isToday(day);
+  const dayOfWeek = getDay(day);
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
   const hasEvent = isCurrentMonth && daysWithEventsSet.has(format(day, 'yyyy-MM-dd'));
 
   let backgroundColor = 'transparent';
@@ -49,37 +51,34 @@ const getDayStyle = (
     fontWeight = 'bold';
   } else if (hasEvent) {
     backgroundColor = theme.palette.action.selected;
-    fontWeight = 'bold';
-  } else if (isCurrentMonth && (getDay(day) === 0 || getDay(day) === 6)) {
+  } else if (isCurrentMonth && isWeekend) {
     textColor = theme.palette.error.main;
-  }
-
-  if (!isCurrentMonth) {
+  } else if (!isCurrentMonth) {
     textColor = theme.palette.text.disabled;
-    backgroundColor = 'transparent';
-    fontWeight = 'normal';
   }
 
   return {
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '50%',
-    fontSize: '0.65rem',
-    cursor: 'pointer',
+    fontSize: '0.75rem',
     fontWeight: fontWeight,
     color: textColor,
     backgroundColor: backgroundColor,
     transition: 'background-color 0.2s ease-out, color 0.2s ease-out',
     position: 'relative',
-    '&:hover': {
-      bgcolor:
-        isCurrentDateToday && isCurrentMonth
-          ? theme.palette.primary.dark
-          : theme.palette.action.hover,
-    },
+    ...(isCurrentMonth && {
+      cursor: 'pointer',
+      '&:hover': {
+        bgcolor: isCurrentDateToday ? theme.palette.primary.dark : theme.palette.action.hover,
+      },
+    }),
+    ...(!isCurrentMonth && {
+      cursor: 'default',
+    }),
   };
 };
 
@@ -87,20 +86,27 @@ export const MiniMonth: React.FC<MiniMonthProps> = React.memo(({ monthDate, even
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const monthIndex = getMonth(monthDate);
-  const monthName = t(
-    `calendar.monthNames.${monthIndex}`,
-    format(monthDate, 'LLLL', { locale: ru }),
-  );
+  const monthIndex = useMemo(() => getMonth(monthDate), [monthDate]);
+
+  const monthName = useMemo(() => {
+    if (!isValid(monthDate)) return '';
+    const name = format(monthDate, 'LLLL', { locale: ru });
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }, [monthDate]);
 
   const daysInMonthGrid = useMemo(() => {
+    if (!isValid(monthDate)) return [];
     const monthStart = startOfMonth(monthDate);
-    const startDate = startOfWeek(monthStart, { weekStartsOn: WEEK_STARTS_ON });
+    const startDate = startOfWeek(monthStart, {
+      weekStartsOn: WEEK_STARTS_ON,
+      locale: ru,
+    });
     const endDate = addDays(startDate, 41);
     return eachDayOfInterval({ start: startDate, end: endDate });
   }, [monthDate]);
 
   const daysWithEventsSet = useMemo(() => {
+    if (!isValid(monthDate)) return new Set<string>();
     const monthStart = startOfMonth(monthDate);
     const monthEnd = endOfMonth(monthDate);
     const daysSet = new Set<string>();
@@ -110,11 +116,12 @@ export const MiniMonth: React.FC<MiniMonthProps> = React.memo(({ monthDate, even
       const eventEnd = event.endDate && isValid(event.endDate) ? event.endDate : eventStart;
       return eventStart <= monthEnd && eventEnd >= monthStart;
     });
-    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
-    daysInMonth.forEach((dayOfMonth) => {
+    const daysInCurrentMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    daysInCurrentMonth.forEach((dayOfMonth) => {
+      const dayFormatted = format(dayOfMonth, 'yyyy-MM-dd');
       for (const event of relevantEvents) {
         if (isEventOnDate(event, dayOfMonth)) {
-          daysSet.add(format(dayOfMonth, 'yyyy-MM-dd'));
+          daysSet.add(dayFormatted);
           break;
         }
       }
@@ -123,60 +130,73 @@ export const MiniMonth: React.FC<MiniMonthProps> = React.memo(({ monthDate, even
   }, [events, monthDate]);
 
   const handleMonthClick = () => {
+    if (!isValid(monthDate)) return;
     dispatch(setSelectedDate(startOfMonth(monthDate).toISOString()));
     dispatch(setCalendarView('month'));
   };
 
-  const handleDayClick = (day: Date, e: React.MouseEvent) => {
+  const handleDayClick = (day: Date, isCurrentMonth: boolean, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!isValid(day) || !isCurrentMonth) return;
     dispatch(setSelectedDate(day.toISOString()));
     dispatch(setCalendarView('day'));
   };
 
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ p: 1, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography
         variant="subtitle2"
         align="center"
         gutterBottom
-        sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
         onClick={handleMonthClick}
-        title={t('calendar.view.month') + ' ' + monthName.toLowerCase()}
+        title={t('calendar.view.month') + ' ' + format(monthDate, 'LLLL yyyy', { locale: ru })}
+        sx={{
+          fontWeight: 500,
+          cursor: 'pointer',
+          '&:hover': { color: 'primary.main' },
+          mb: 1,
+        }}
       >
         {monthName}
       </Typography>
-      <Grid container columns={7} spacing={0.5} sx={{ minHeight: 150 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          gap: { xs: 0.2, sm: 0.5 },
+          alignItems: 'center',
+          justifyItems: 'center',
+        }}
+      >
         {daysInMonthGrid.map((day) => {
+          if (!isValid(day)) {
+            return <Box key={Math.random()} sx={{ minHeight: 32, width: '100%' }} />;
+          }
           const isCurrentMonth = getMonth(day) === monthIndex && getYear(day) === year;
           const formattedDayNumber = format(day, 'd');
           const dateStringKey = format(day, 'yyyy-MM-dd');
-          const hasEvent = isCurrentMonth && daysWithEventsSet.has(dateStringKey);
+
           return (
-            <Grid
+            <Tooltip
               key={dateStringKey}
-              sx={{ display: 'flex', justifyContent: 'center', width: `${100 / 7}%` }}
+              title={isCurrentMonth ? format(day, 'PPP', { locale: ru }) : ''}
+              arrow
+              placement="top"
+              disableHoverListener={!isCurrentMonth}
+              enterDelay={500}
+              enterNextDelay={500}
             >
-              <Tooltip
-                title={
-                  hasEvent ? format(day, 'PPP', { locale: ru }) : t('yearView.noEventsIndicator')
-                }
-                arrow
-                placement="top"
-                disableHoverListener={!isCurrentMonth}
+              <Box
+                sx={(theme: Theme) => getDayStyle(day, isCurrentMonth, daysWithEventsSet, theme)}
+                onClick={(e: React.MouseEvent) => handleDayClick(day, isCurrentMonth, e)}
               >
-                <Box
-                  sx={(theme: Theme): SystemStyleObject<Theme> =>
-                    getDayStyle(day, isCurrentMonth, daysWithEventsSet, theme)
-                  }
-                  onClick={(e: React.MouseEvent) => handleDayClick(day, e)}
-                >
-                  {isCurrentMonth ? formattedDayNumber : ''}
-                </Box>
-              </Tooltip>
-            </Grid>
+                {formattedDayNumber}
+              </Box>
+            </Tooltip>
           );
         })}
-      </Grid>
+      </Box>
     </Box>
   );
 });

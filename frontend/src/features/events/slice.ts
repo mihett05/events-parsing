@@ -93,7 +93,7 @@ const eventsSlice = createSlice({
       if (state.calendarView !== action.payload) {
         state.calendarView = action.payload;
         state.error = null;
-        // eventsAdapter.removeAll(state.events);
+        eventsAdapter.removeAll(state.events);
       }
     },
     setFilters: (state, action: PayloadAction<Partial<FilterState>>) => {

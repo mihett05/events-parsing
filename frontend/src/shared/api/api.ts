@@ -73,8 +73,16 @@ const injectedRtkApi = api.injectEndpoints({
           start_date: queryArg.startDate,
           end_date: queryArg.endDate,
           organization_id: queryArg.organizationId,
+          type_: queryArg['type'],
+          format_: queryArg.format,
         },
       }),
+    }),
+    getTypesAndFormatsV1EventsFeedFiltersGet: build.query<
+      GetTypesAndFormatsV1EventsFeedFiltersGetApiResponse,
+      GetTypesAndFormatsV1EventsFeedFiltersGetApiArg
+    >({
+      query: () => ({ url: `/v1/events/feed_filters` }),
     }),
     createEventV1EventsPost: build.mutation<
       CreateEventV1EventsPostApiResponse,
@@ -192,6 +200,18 @@ const injectedRtkApi = api.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    readAllNotificationsV1NotificationsGet: build.query<
+      ReadAllNotificationsV1NotificationsGetApiResponse,
+      ReadAllNotificationsV1NotificationsGetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/v1/notifications/`,
+        params: {
+          page: queryArg.page,
+          page_size: queryArg.pageSize,
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -236,7 +256,12 @@ export type ReadAllEventsV1EventsFeedGetApiArg = {
   startDate?: string | null;
   endDate?: string | null;
   organizationId?: number | null;
+  type?: EventTypeEnum | null;
+  format?: EventFormatEnum | null;
 };
+export type GetTypesAndFormatsV1EventsFeedFiltersGetApiResponse =
+  /** status 200 Successful Response */ FilterModel;
+export type GetTypesAndFormatsV1EventsFeedFiltersGetApiArg = void;
 export type CreateEventV1EventsPostApiResponse = /** status 200 Successful Response */ EventModel;
 export type CreateEventV1EventsPostApiArg = {
   createEventModelDto: CreateEventModelDto;
@@ -283,8 +308,8 @@ export type CreateOrganizationV1OrganizationsPostApiArg = {
 export type ReadAllOrganizationsV1OrganizationsGetApiResponse =
   /** status 200 Successful Response */ OrganizationModel[];
 export type ReadAllOrganizationsV1OrganizationsGetApiArg = {
-  page?: number;
-  pageSize?: number;
+  page?: number | null;
+  pageSize?: number | null;
 };
 export type ReadOrganizationV1OrganizationsOrganizationIdGetApiResponse =
   /** status 200 Successful Response */ OrganizationModel;
@@ -301,6 +326,12 @@ export type DeleteOrganizationV1OrganizationsOrganizationIdDeleteApiResponse =
   /** status 200 Successful Response */ OrganizationModel;
 export type DeleteOrganizationV1OrganizationsOrganizationIdDeleteApiArg = {
   organizationId: number;
+};
+export type ReadAllNotificationsV1NotificationsGetApiResponse =
+  /** status 200 Successful Response */ NotificationModel[];
+export type ReadAllNotificationsV1NotificationsGetApiArg = {
+  page?: number;
+  pageSize?: number;
 };
 export type AttachmentModel = {
   id: string;
@@ -347,11 +378,21 @@ export type CreateUserModelDto = {
   fullname?: string;
   isActive?: boolean;
 };
+export type EventTypeEnum =
+  | '\u0425\u0430\u043A\u0430\u0442\u043E\u043D'
+  | '\u041A\u043E\u043D\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u044F'
+  | '\u041A\u043E\u043D\u0442\u0435\u0441\u0442'
+  | '\u0414\u0440\u0443\u0433\u043E\u0435';
+export type EventFormatEnum =
+  | '\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u043E\u043D\u043D\u043E'
+  | '\u041E\u0447\u043D\u043E'
+  | '\u0421\u043C\u0435\u0448\u0430\u043D\u043D\u043E\u0435'
+  | '\u0414\u0440\u0443\u0433\u043E\u0435';
 export type EventModel = {
   id: number;
   title: string;
-  type: string;
-  format: string;
+  type: EventTypeEnum;
+  format: EventFormatEnum;
   createdAt: string;
   isVisible: boolean;
   location: string | null;
@@ -361,10 +402,21 @@ export type EventModel = {
   endRegistration?: string | null;
   organizationId?: number | null;
 };
+export type OrganizationModel = {
+  title: string;
+  createdAt: string;
+  id: number;
+  ownerId: number;
+};
+export type FilterModel = {
+  type: EventTypeEnum[];
+  format: EventFormatEnum[];
+  organization: OrganizationModel[];
+};
 export type CreateEventModelDto = {
   title: string;
-  type: string;
-  format: string;
+  type: EventTypeEnum;
+  format: EventFormatEnum;
   location: string | null;
   description: string | null;
   endDate: string;
@@ -380,18 +432,24 @@ export type UpdateUserModelDto = {
   fullname: string;
   telegramId?: number | null;
 };
-export type OrganizationModel = {
-  title: string;
-  createdAt: string;
-  id: number;
-  ownerId: number;
-};
 export type CreateOrganizationModelDto = {
   title: string;
   createdAt: string;
 };
 export type UpdateOrganizationModelDto = {
   title: string;
+};
+export type NotificationTypeEnum = 'EMAIL' | 'TELEGRAM';
+export type NotificationFormatEnum = 'HTML' | 'RAW_TEXT';
+export type NotificationStatusEnum = 'SENT' | 'UNSENT';
+export type NotificationModel = {
+  id: number;
+  createdAt: string;
+  recipientId: number;
+  text: string;
+  type: NotificationTypeEnum;
+  format: NotificationFormatEnum;
+  status: NotificationStatusEnum;
 };
 export const {
   useCreateAttachmentsV1AttachmentsEventIdPostMutation,
@@ -401,6 +459,7 @@ export const {
   useRefreshTokenV1AuthRefreshPostMutation,
   useReadAllEventsV1EventsCalendarGetQuery,
   useReadAllEventsV1EventsFeedGetQuery,
+  useGetTypesAndFormatsV1EventsFeedFiltersGetQuery,
   useCreateEventV1EventsPostMutation,
   useReadEventV1EventsEventIdGetQuery,
   useUpdateEventV1EventsEventIdPutMutation,
@@ -415,4 +474,5 @@ export const {
   useReadOrganizationV1OrganizationsOrganizationIdGetQuery,
   useUpdateOrganizationV1OrganizationsOrganizationIdPutMutation,
   useDeleteOrganizationV1OrganizationsOrganizationIdDeleteMutation,
+  useReadAllNotificationsV1NotificationsGetQuery,
 } = injectedRtkApi;
