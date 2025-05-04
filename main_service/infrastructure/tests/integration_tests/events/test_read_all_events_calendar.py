@@ -37,6 +37,7 @@ async def test_read_events_success_dating(
 
         assert period_contains_start or period_contains_end
 
+
 @pytest.mark.asyncio
 async def test_read_events_bad_request(
     generate_events: list[EventModel],

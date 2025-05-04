@@ -19,7 +19,7 @@ def pytest_addoption(parser):
 @pytest_asyncio.fixture(scope="session")
 async def container(pytestconfig: pytest.Config):
     async with get_container(
-            bool(pytestconfig.getoption("--integration", default=False))
+        bool(pytestconfig.getoption("--integration", default=False))
     ) as container:
         try:
             yield container
@@ -29,7 +29,7 @@ async def container(pytestconfig: pytest.Config):
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def setup_db_tables(
-        pytestconfig: pytest.Config, container: AsyncContainer
+    pytestconfig: pytest.Config, container: AsyncContainer
 ):
     if not pytestconfig.getoption("--integration", default=False):
         return

@@ -1,8 +1,13 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
-from starlette.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.models import EventModel
@@ -20,7 +25,6 @@ async def test_update_event_success(
     user_with_token = await user_with_token_model()
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
-
     response = await async_client.put(
         f"/v1/events/{event_model.id}",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -34,6 +38,7 @@ async def test_update_event_success(
     assert event_model.title == dto.title
     assert event_model.description == dto.description
 
+
 @pytest.mark.asyncio
 async def test_update_event_unauthorized(
     generate_events: list[EventModel],
@@ -44,7 +49,6 @@ async def test_update_event_unauthorized(
     dto = update_event_model_dto_factory()
     headers = {"Authorization": f"Bearer Bismillahov Bismillah Bismillahovich"}
 
-
     response = await async_client.put(
         "/v1/events/228",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -52,13 +56,14 @@ async def test_update_event_unauthorized(
     )
     assert response.status_code == HTTP_401_UNAUTHORIZED
 
+
 @pytest.mark.asyncio
 async def test_update_event_not_found(
     generate_events: list[EventModel],
     async_client: AsyncClient,
     user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_event_model_dto_factory,
-    create_event_model_dto_factory
+    create_event_model_dto_factory,
 ):
     dto = create_event_model_dto_factory()
     user_with_token = await user_with_token_model()
@@ -93,7 +98,6 @@ async def test_update_event_unprocessable_entity(
     dto.title = None
     user_with_token = await user_with_token_model()
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
-
 
     response = await async_client.put(
         f"/v1/events/{event_model.id}",

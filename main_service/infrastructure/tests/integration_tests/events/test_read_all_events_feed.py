@@ -22,7 +22,6 @@ async def test_read_events_success_paging(
     assert response.status_code == status.HTTP_200_OK
 
 
-
 @pytest.mark.asyncio
 async def test_read_events_success_dating(
     generate_events: list[EventModel],

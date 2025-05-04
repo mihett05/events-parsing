@@ -1,18 +1,20 @@
 from datetime import datetime
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 import pytest_asyncio
+from domain.organizations.entities import Organization
 from httpx import AsyncClient
 
-from domain.organizations.entities import Organization
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.dtos import (
     CreateOrganizationModelDto,
     UpdateOrganizationModelDto,
 )
 from infrastructure.api.v1.organizations.models import OrganizationModel
-from infrastructure.tests.integration_tests.conftest import random_string_factory
+from infrastructure.tests.integration_tests.conftest import (
+    random_string_factory,
+)
 
 
 @pytest.fixture
@@ -29,9 +31,12 @@ def organization_model_factory() -> Callable[[], OrganizationModel]:
 
 
 @pytest.fixture
-def create_organization_model_dto_factory(random_string_factory) -> Callable[..., CreateOrganizationModelDto]:
+def create_organization_model_dto_factory(
+    random_string_factory,
+) -> Callable[..., CreateOrganizationModelDto]:
     def _factory(
-         title: str = random_string_factory(10), created_at: datetime = datetime.now()
+        title: str = random_string_factory(10),
+        created_at: datetime = datetime.now(),
     ) -> CreateOrganizationModelDto:
         return CreateOrganizationModelDto(title=title, createdAt=created_at)
 
@@ -39,13 +44,16 @@ def create_organization_model_dto_factory(random_string_factory) -> Callable[...
 
 
 @pytest.fixture
-def update_organization_model_dto_factory(random_string_factory) -> Callable[[], UpdateOrganizationModelDto]:
+def update_organization_model_dto_factory(
+    random_string_factory,
+) -> Callable[[], UpdateOrganizationModelDto]:
     def _factory(
         title: str = random_string_factory(10),
     ) -> UpdateOrganizationModelDto:
         return UpdateOrganizationModelDto(title=title)
 
     return _factory
+
 
 @pytest_asyncio.fixture
 async def create_organization_model_dtos(

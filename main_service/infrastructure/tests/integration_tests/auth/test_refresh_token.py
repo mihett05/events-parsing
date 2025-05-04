@@ -1,4 +1,4 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient
@@ -24,7 +24,6 @@ async def test_refresh_token_success(
 
     print(response.json())
     assert response2.status_code == status.HTTP_200_OK
-
 
     response_model = UserWithTokenModel(**response2.json())
     attrs = (

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 from httpx import AsyncClient

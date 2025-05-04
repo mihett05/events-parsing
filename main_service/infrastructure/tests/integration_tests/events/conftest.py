@@ -1,11 +1,15 @@
 import random
 from datetime import datetime, timedelta
-from typing import Callable, Optional, Coroutine, Any
+from pathlib import Path
+from typing import Any, Callable, Coroutine, Optional
 
 import pytest
 import pytest_asyncio
+from dishka import AsyncContainer
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from httpx import AsyncClient
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.dtos import (
@@ -79,10 +83,11 @@ def create_event_model_dto_factory() -> Callable[[], CreateEventModelDto]:
 
 @pytest.fixture
 def update_event_model_dto_factory(
-        random_string_factory
+    random_string_factory,
 ) -> Callable[[], UpdateEventModelDto]:
     def _factory(
-        title: str = random_string_factory(10), description: str = random_string_factory(100)
+        title: str = random_string_factory(10),
+        description: str = random_string_factory(100),
     ) -> UpdateEventModelDto:
         return UpdateEventModelDto(title=title, description=description)
 
@@ -131,3 +136,18 @@ async def generate_events(
         event_models.append(EventModel(**response.json()))
     yield event_models
 
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_organizations(container: AsyncContainer):
+    base_path = Path(__file__).parent.parent.parent.parent.parent.parent.resolve()
+    with open(base_path / "scripts/sql/insert_user.sql", encoding="utf8") as insert_organizations:
+        insert_user_statement = insert_organizations.read()
+    with open(
+        base_path / "scripts/sql/insert_organizations.sql", encoding="utf8"
+    ) as insert_organizations:
+        insert_organizations_statement = insert_organizations.read()
+
+    engine = await container.get(AsyncEngine)
+    async with engine.begin() as conn:
+        user_id = (await conn.execute(text(insert_user_statement))).scalar()
+        await conn.execute(text(insert_organizations_statement.format(user_id=user_id)))
