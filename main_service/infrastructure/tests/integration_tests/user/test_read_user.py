@@ -1,8 +1,9 @@
+from typing import Any, Callable, Coroutine
+
 import pytest
 from httpx import AsyncClient
 from starlette.status import (
     HTTP_200_OK,
-    HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
 )
 
@@ -11,8 +12,11 @@ from infrastructure.api.v1.users.models import UserModel
 
 
 @pytest.mark.asyncio
-async def test_read_user_by_id(async_client: AsyncClient, create_user):
-    user_with_token = create_user
+async def test_read_user_by_id(
+    async_client: AsyncClient,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
+):
+    user_with_token = await user_with_token_model()
     response = await async_client.get(f"/v1/users/{user_with_token.user.id}")
     assert response.status_code == HTTP_200_OK
     result = UserModel(**response.json())

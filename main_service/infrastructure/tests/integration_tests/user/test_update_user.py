@@ -3,15 +3,11 @@ from httpx import AsyncClient
 from starlette.status import (
     HTTP_200_OK,
     HTTP_401_UNAUTHORIZED,
-    HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.users.models import UserModel
-from infrastructure.tests.integration_tests.conftest import (
-    user_with_token_model,
-)
 
 
 @pytest.mark.asyncio
@@ -25,7 +21,7 @@ async def test_update_user_success(
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
     response = await async_client.put(
-        f"/v1/users/me",
+        "/v1/users/me",
         json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
@@ -41,10 +37,10 @@ async def test_update_user_success(
 @pytest.mark.asyncio
 async def test_update_user_unauthorized(async_client: AsyncClient, update_user_model_dto_factory):
     dto = update_user_model_dto_factory()
-    headers = {"Authorization": f"Bearer Bismillahov Bismillah Bismillahovich"}
+    headers = {"Authorization": "Bearer Bismillahov Bismillah Bismillahovich"}
 
     response = await async_client.put(
-        f"/v1/users/me",
+        "/v1/users/me",
         json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
@@ -66,11 +62,11 @@ async def test_update_phantom_user_unauthorized(
         json=dto_create.model_dump(by_alias=True, mode="json"),
     )
 
-    await async_client.delete(f"/v1/users/", headers=headers)
+    await async_client.delete("/v1/users/", headers=headers)
 
     dto_update = update_user_model_dto_factory()
     response2 = await async_client.put(
-        f"/v1/users/me",
+        "/v1/users/me",
         json=dto_update.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
@@ -89,7 +85,7 @@ async def test_update_user_unprocessable_entity(
     headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
     response = await async_client.put(
-        f"/v1/users/me",
+        "/v1/users/me",
         json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )

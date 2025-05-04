@@ -2,7 +2,7 @@ from datetime import datetime
 
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.events.exceptions import InvalidEventPeriodError
-from pydantic import BaseModel, ValidationError, model_validator
+from pydantic import BaseModel, model_validator
 
 from infrastructure.api.models import CamelModel
 

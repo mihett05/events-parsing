@@ -3,8 +3,6 @@ from typing import Any, Callable, Coroutine
 
 import pytest
 import pytest_asyncio
-from domain.organizations.entities import Organization
-from httpx import AsyncClient
 
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.dtos import (
@@ -12,9 +10,6 @@ from infrastructure.api.v1.organizations.dtos import (
     UpdateOrganizationModelDto,
 )
 from infrastructure.api.v1.organizations.models import OrganizationModel
-from infrastructure.tests.integration_tests.conftest import (
-    random_string_factory,
-)
 
 
 @pytest.fixture

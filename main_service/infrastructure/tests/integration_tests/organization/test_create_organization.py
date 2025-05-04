@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any, Callable, Coroutine
 
 import pytest
@@ -63,7 +62,7 @@ async def test_create_organization_unauthorized(
 ):
     dto = create_organization_model_dto_factory()
     dto.title = None
-    headers = {"Authorization": f"Bearer Bismillahov Bismillah Bismillahovich"}
+    headers = {"Authorization": "Bearer Bismillahov Bismillah Bismillahovich"}
     response = await async_client.post(
         "/v1/organizations/",
         json=dto.model_dump(by_alias=True, mode="json"),
