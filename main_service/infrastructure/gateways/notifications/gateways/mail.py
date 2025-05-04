@@ -1,8 +1,8 @@
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from aiosmtplib import SMTP
 
+from aiosmtplib import SMTP
 from application.notifications.gateway import NotificationGateway
 from domain.attachments.dtos import ParsedAttachmentInfoDto
 from domain.notifications.entities import Notification
@@ -25,12 +25,15 @@ class NotificationEmailGateway(NotificationGateway):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.smtp_client.quit()
 
-    async def send(self, notification: Notification,
-                   recipient: User,
-                   attachments: list[ParsedAttachmentInfoDto] = None):
+    async def send(
+        self,
+        notification: Notification,
+        recipient: User,
+        attachments: list[ParsedAttachmentInfoDto] = None,
+    ):
         try:
             msg = MIMEMultipart()
-            msg["From"] = "events-parsing@mail.ru"
+            msg["From"] = self.smtp_username
             msg["To"] = recipient.email
             msg["Subject"] = "Уведомление"
             msg.attach(MIMEText(notification.text, "plain"))
@@ -43,7 +46,7 @@ class NotificationEmailGateway(NotificationGateway):
     def __add_attachments(self, msg, attachments):
         for attachment in attachments:
             file_content = attachment.content.read()
-            part = MIMEApplication(file_content, Name=attachment.filename + attachment.extension)
+            part = MIMEApplication(file_content, Name=attachment.file_path)
             part["Content-Disposition"] = (
                 f'attachment; filename="{attachment.filename}"'
             )

@@ -4,11 +4,12 @@ from io import BytesIO
 from typing import BinaryIO
 
 import pytest_asyncio
-from dishka import AsyncContainer
-
 from application.mails.gateway import EmailsGateway
+from dishka import AsyncContainer
 from domain.attachments.dtos import CreateAttachmentDto, ParsedAttachmentInfoDto
 from domain.mails.dtos import ParsedMailInfoDto
+
+from infrastructure.config import Config
 from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
 
 
@@ -24,6 +25,13 @@ async def imap_email_gateway(
     container: AsyncContainer,
 ) -> EmailsGateway:
     return await container.get(EmailsGateway)
+
+
+@pytest_asyncio.fixture
+async def get_config(
+    container: AsyncContainer,
+) -> Config:
+    return await container.get(Config)
 
 
 @pytest_asyncio.fixture
@@ -53,13 +61,13 @@ async def create_attachment_dtos(
 
 @pytest_asyncio.fixture
 async def create_mails(
-        create_attachment_content: BinaryIO
+    create_attachment_content: BinaryIO, get_config: Config
 ) -> list[ParsedMailInfoDto]:
     return [
         ParsedMailInfoDto(
             imap_mail_uid=f"{i}",
             theme=f"Уведомление",
-            sender="events-parsing@mail.ru",
+            sender=get_config.imap_username,
             raw_content=f"hello{i}".encode("utf-8"),
             attachments=[
                 ParsedAttachmentInfoDto(
@@ -68,7 +76,7 @@ async def create_mails(
                     content=create_attachment_content,
                 )
             ],
-            received_date=datetime.date.today()
+            received_date=datetime.date.today(),
         )
         for i in range(2)
     ]

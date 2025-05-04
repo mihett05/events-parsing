@@ -60,12 +60,14 @@ class GatewaysProvider(Provider):
             yield gateway
 
     @provide
-    async def notification_email_gateway(self, config: Config) -> AsyncIterable[NotificationEmailGateway]:
+    async def notification_email_gateway(
+        self, config: Config
+    ) -> AsyncIterable[NotificationEmailGateway]:
         async with NotificationEmailGateway(
-                smtp_server=config.smtp_server,
-                smtp_host=config.smtp_host,
-                imap_username=config.imap_username,
-                imap_password=config.imap_password,
+            smtp_server=config.smtp_server,
+            smtp_host=config.smtp_host,
+            imap_username=config.imap_username,
+            imap_password=config.imap_password,
         ) as gateway:
             yield gateway
 

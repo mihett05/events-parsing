@@ -5,6 +5,7 @@ from email.parser import BytesParser
 from email.policy import default
 from email.utils import parsedate_to_datetime
 from io import BytesIO
+from pathlib import Path
 from typing import Iterable
 
 from aioimaplib import Response, aioimaplib
@@ -114,15 +115,28 @@ class ImapEmailsGateway(EmailsGateway):
         self, email_uid: str, raw_message: Response
     ) -> ParsedMailInfoDto:
         raw_message = raw_message.lines[1]
+        message = email.message_from_bytes(raw_message)
+        return ParsedMailInfoDto(
+            imap_mail_uid=email_uid,
+            theme=self.__decode_header(message.get("Subject", "")),
+            sender=self.__decode_header(message.get("From", "")),
+            raw_content=await self.__get_message_body(raw_message),
+            received_date=parsedate_to_datetime(message["date"]).date()
+            if "date" in message
+            else None,
+            attachments=await self.__get_message_attachments(message),
+        )
+
+    async def __get_message_body(self, raw_message):
         msg = BytesParser(policy=default).parsebytes(raw_message)
         if msg.is_multipart():
             for part in msg.walk():
                 content_type = part.get_content_type()
                 if content_type == "text/plain":
-                    body = part.get_payload(decode=False).encode()
-        else:
-            body = msg.get_payload(decode=False).encode()
-        message = email.message_from_bytes(raw_message)
+                    return part.get_payload(decode=False).encode()
+        return msg.get_payload(decode=False).encode()
+
+    async def __get_message_attachments(self, message):
         attachments = []
         if message.is_multipart():
             for part in message.walk():
@@ -131,17 +145,7 @@ class ImapEmailsGateway(EmailsGateway):
                     attachment = await self.__parse_attachment(part)
                     if attachment:
                         attachments.append(attachment)
-
-        return ParsedMailInfoDto(
-            imap_mail_uid=email_uid,
-            theme=self.__decode_header(message.get("Subject", "")),
-            sender=self.__decode_header(message.get("From", "")),
-            raw_content=body,
-            received_date=parsedate_to_datetime(message["date"]).date()
-            if "date" in message
-            else None,
-            attachments=attachments,
-        )
+        return attachments
 
     async def __parse_attachment(self, part) -> ParsedAttachmentInfoDto | None:
         filename = part.get_filename()
@@ -149,8 +153,8 @@ class ImapEmailsGateway(EmailsGateway):
             return None
 
         filename = self.__decode_header(filename)
-        filename, extension = os.path.splitext(filename)
-        extension = "." + extension.lower().lstrip(".") if extension else ""
+        extension = Path(filename).suffix.lower()
+        filename = Path(filename).stem
 
         payload = part.get_payload(decode=True)
         if not payload:
