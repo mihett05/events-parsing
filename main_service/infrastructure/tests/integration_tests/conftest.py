@@ -8,6 +8,8 @@ import pytest_asyncio
 from dishka import AsyncContainer
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from infrastructure.api.app import create_app
 from infrastructure.api.v1.auth.dtos import (
@@ -16,6 +18,36 @@ from infrastructure.api.v1.auth.dtos import (
 )
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.config import Config
+from infrastructure.database.postgres import Base
+from infrastructure.tests.configs import get_container
+
+
+@pytest_asyncio.fixture(scope="session")
+async def container(pytestconfig: pytest.Config):
+    async with get_container(True) as container:
+        try:
+            yield container
+        finally:
+            await container.close()
+
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def setup_db_tables(
+        pytestconfig: pytest.Config, container: AsyncContainer
+):
+    engine = await container.get(AsyncEngine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
+    engine = await container.get(AsyncEngine)
+    async with engine.begin() as conn:
+        for table in reversed(Base.metadata.sorted_tables):
+            await conn.execute(
+                text(f"TRUNCATE TABLE {table.name} RESTART IDENTITY CASCADE")
+            )
 
 
 @pytest_asyncio.fixture(scope="session")
