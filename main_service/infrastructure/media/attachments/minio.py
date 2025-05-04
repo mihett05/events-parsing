@@ -49,8 +49,7 @@ class MinioFilesGateway(FilesGateway):
 
     @staticmethod
     def __get_binary_io_length(file: BinaryIO) -> int:
-        current_pos = file.tell()
         file.seek(0, 2)
         length = file.tell()
-        file.seek(current_pos)
+        file.seek(0)
         return length

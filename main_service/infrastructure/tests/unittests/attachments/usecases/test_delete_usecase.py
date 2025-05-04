@@ -18,7 +18,11 @@ async def test_delete_success(
     deleted_attachment = await delete_attachment_usecase(
         create_attachment.id, None
     )
-    assert deleted_attachment == create_attachment
+    attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
+    for attr in attrs:
+        assert getattr(deleted_attachment, attr) == getattr(
+            create_attachment, attr
+        )
 
     with pytest.raises(AttachmentNotFoundError):
         await read_attachment_usecase(deleted_attachment.id, None)

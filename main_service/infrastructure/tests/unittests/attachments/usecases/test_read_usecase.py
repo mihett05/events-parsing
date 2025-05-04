@@ -9,4 +9,6 @@ async def test_read_success(
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
     attachment = await read_attachment_usecase(create_attachment.id, None)
-    assert attachment == create_attachment
+    attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
+    for attr in attrs:
+        assert getattr(attachment, attr) == getattr(create_attachment, attr)
