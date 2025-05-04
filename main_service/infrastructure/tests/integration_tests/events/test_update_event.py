@@ -1,7 +1,10 @@
+from typing import Callable, Coroutine, Any
+
 import pytest
 from httpx import AsyncClient
 from starlette.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
 
+from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.models import EventModel
 
 
@@ -9,12 +12,13 @@ from infrastructure.api.v1.events.models import EventModel
 async def test_update_event_success(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_event_model_dto_factory,
 ):
     event_model = generate_events[0]
     dto = update_event_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
 
     response = await async_client.put(
@@ -34,7 +38,7 @@ async def test_update_event_success(
 async def test_update_event_unauthorized(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_event_model_dto_factory,
 ):
     dto = update_event_model_dto_factory()
@@ -52,12 +56,13 @@ async def test_update_event_unauthorized(
 async def test_update_event_not_found(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_event_model_dto_factory,
     create_event_model_dto_factory
 ):
     dto = create_event_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/events/",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -80,13 +85,14 @@ async def test_update_event_not_found(
 async def test_update_event_unprocessable_entity(
     generate_events: list[EventModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_event_model_dto_factory,
 ):
     event_model = generate_events[0]
     dto = update_event_model_dto_factory()
     dto.title = None
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
 
     response = await async_client.put(

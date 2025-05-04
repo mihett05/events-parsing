@@ -1,12 +1,13 @@
 import random
 from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Callable, Optional, Coroutine, Any
 
 import pytest
 import pytest_asyncio
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from httpx import AsyncClient
 
+from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
@@ -116,10 +117,11 @@ async def create_event_model_dtos(
 async def generate_events(
     create_event_model_dtos: list[CreateEventModelDto],
     async_client,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
 ) -> list[EventModel]:
     event_models = []
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     for dto in create_event_model_dtos:
         response = await async_client.post(
             "/v1/events/",
@@ -128,5 +130,4 @@ async def generate_events(
         )
         event_models.append(EventModel(**response.json()))
     yield event_models
-    for model in event_models:
-        await async_client.delete(f"/v1/events/{model.id}", headers=headers)
+

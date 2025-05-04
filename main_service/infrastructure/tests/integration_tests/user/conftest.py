@@ -71,8 +71,4 @@ async def create_users(
         )
         models.append(UserWithTokenModel(**response.json()))
     yield models
-    for model in models:
-        await async_client.delete(
-            "/v1/users/",
-            headers={"Authorization": f"Bearer {model.access_token}"},
-        )
+

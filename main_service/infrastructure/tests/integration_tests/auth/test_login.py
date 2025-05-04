@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
@@ -12,9 +12,14 @@ from infrastructure.api.v1.auth.models import UserWithTokenModel
 async def test_login_success(
     async_client: AsyncClient,
     authenticate_dto_factory,
-    user_with_token_model: UserWithTokenModel,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
 ):
-    dto = authenticate_dto_factory()
+    user_with_token = await user_with_token_model()
+    dto = authenticate_dto_factory(email=f"{user_with_token.user.email}")
+
+    print(dto, )
+    print()
+    print(user_with_token)
     response = await async_client.post(
         "/v1/auth/login",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -29,7 +34,7 @@ async def test_login_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(user_with_token_model.user, attr) == getattr(response_model.user, attr)
+        assert getattr(user_with_token.user, attr) == getattr(response_model.user, attr)
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,10 @@
+from typing import Callable, Coroutine, Any
+
 import pytest
 from httpx import AsyncClient
 from starlette.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
 
+from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
@@ -9,12 +12,13 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 async def test_update_organization_success(
     generate_organizations: list[OrganizationModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_organization_model_dto_factory,
 ):
     organization_model = generate_organizations[0]
     dto = update_organization_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
 
     response = await async_client.put(
@@ -53,12 +57,13 @@ async def test_update_organization_unauthorized(
 async def test_update_organization_not_found(
     generate_organizations: list[OrganizationModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_organization_model_dto_factory,
     create_organization_model_dto_factory,
 ):
     dto = create_organization_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/organizations/",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -81,13 +86,14 @@ async def test_update_organization_not_found(
 async def test_update_event_unprocessable_entity(
     generate_organizations: list[OrganizationModel],
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     update_organization_model_dto_factory,
 ):
     organization_model = generate_organizations[0]
     dto = update_organization_model_dto_factory()
+    user_with_token = await user_with_token_model()
     dto.title = None
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
 
 
     response = await async_client.put(

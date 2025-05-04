@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
@@ -12,12 +12,12 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 @pytest.mark.asyncio
 async def test_delete_organization_success(
         async_client: AsyncClient,
-        user_with_token_model: UserWithTokenModel,
+        user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
         create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto]
 ):
-    user = user_with_token_model
+    user_with_token = await user_with_token_model()
     dto = create_organization_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user.access_token}"}
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/organizations/",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -41,12 +41,12 @@ async def test_delete_organization_success(
 @pytest.mark.asyncio
 async def test_delete_organization_not_found(
         async_client: AsyncClient,
-        user_with_token_model: UserWithTokenModel,
+        user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
         create_organization_model_dto_factory: Callable[..., CreateOrganizationModelDto]
 ):
-    user = user_with_token_model
+    user_with_token = await user_with_token_model()
     dto = create_organization_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user.access_token}"}
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/organizations/",
         json=dto.model_dump(by_alias=True, mode="json"),

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Callable, Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
@@ -11,17 +12,19 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.events.models import EventModel
 
 
 @pytest.mark.asyncio
 async def test_create_event_success(
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     create_event_model_dto_factory,
 ):
     dto = create_event_model_dto_factory()
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/events/",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -38,12 +41,13 @@ async def test_create_event_success(
 @pytest.mark.asyncio
 async def test_create_event_unprocessed_entity(
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     create_event_model_dto_factory,
 ):
     dto = create_event_model_dto_factory()
+    user_with_token = await user_with_token_model()
     dto.title = None
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/events/",
         json=dto.model_dump(by_alias=True, mode="json"),
@@ -70,17 +74,18 @@ async def test_create_event_unauthorized(
 @pytest.mark.asyncio
 async def test_create_event_period_invalid(
     async_client: AsyncClient,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
     create_event_model_dto_factory,
 ):
     dto = create_event_model_dto_factory()
+    user_with_token = await user_with_token_model()
     model_json = dto.model_dump(by_alias=True, mode="json")
     model_json["startDate"], model_json["endDate"] = (
         model_json["endDate"],
         model_json["startDate"],
     )
 
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     response = await async_client.post(
         "/v1/events/",
         json=model_json,

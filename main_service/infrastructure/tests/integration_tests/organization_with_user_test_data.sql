@@ -1,5 +1,7 @@
-INSERT INTO users (id, email, fullname, is_active, salt, hashed_password)
-VALUES (1, 'master@user.com', 'MasterUser', true, 'qwerty', 'password');
+INSERT INTO users (email, fullname, is_active, salt, hashed_password)
+VALUES ('master@user.com', 'MasterUser', true, 'qwerty', 'password')
+RETURNING id;
+
 
 
 -- Вставка 100 организаций для owner_id = 1

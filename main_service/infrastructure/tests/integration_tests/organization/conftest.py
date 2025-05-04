@@ -1,11 +1,12 @@
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Coroutine, Any
 
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 
 from domain.organizations.entities import Organization
+from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.organizations.dtos import (
     CreateOrganizationModelDto,
     UpdateOrganizationModelDto,
@@ -65,10 +66,11 @@ async def create_organization_model_dtos(
 async def generate_organizations(
     create_organization_model_dtos: list[CreateOrganizationModelDto],
     async_client,
-    user_with_token_model,
+    user_with_token_model: Callable[..., Coroutine[Any, Any, UserWithTokenModel]],
 ):
     organization_models = []
-    headers = {"Authorization": f"Bearer {user_with_token_model.access_token}"}
+    user_with_token = await user_with_token_model()
+    headers = {"Authorization": f"Bearer {user_with_token.access_token}"}
     for dto in create_organization_model_dtos:
         response = await async_client.post(
             "/v1/organizations/",
@@ -78,5 +80,3 @@ async def generate_organizations(
         json = response.json()
         organization_models.append(OrganizationModel(**json))
     yield organization_models
-    for model in organization_models:
-        await async_client.delete(f"/v1/organizations/{model.id}", headers=headers)

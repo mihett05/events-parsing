@@ -1,7 +1,7 @@
 import random
 import shutil
 import string
-from typing import Callable
+from typing import Callable, Coroutine, Any
 
 import pytest
 import pytest_asyncio
@@ -40,11 +40,8 @@ async def setup_db_tables(
         await conn.run_sync(Base.metadata.create_all)
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
-    # TODO: Тут либо делать каждый раз создание данных и скоуп у фикстуры - 'function'
-    #  либо, оставить как есть но смысла нет, лучше переделать под 1
-    yield
     engine = await container.get(AsyncEngine)
     async with engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
@@ -52,6 +49,15 @@ async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
                 text(f"TRUNCATE TABLE {table.name} RESTART IDENTITY CASCADE")
             )
 
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_organizations(pytestconfig: pytest.Config, container: AsyncContainer):
+    engine = await container.get(AsyncEngine)
+    async with engine.begin() as conn:
+        for table in reversed(Base.metadata.sorted_tables):
+            await conn.execute(
+                text(f"TRUNCATE TABLE {table.name} RESTART IDENTITY CASCADE")
+
+            )
 
 @pytest_asyncio.fixture(scope="session")
 async def get_app(container: AsyncContainer):
@@ -101,34 +107,18 @@ def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     return _factory
 
 
+
+
 @pytest_asyncio.fixture(scope='function', autouse=True)
-async def create_user(create_user_model_dto_factory, async_client) -> UserWithTokenModel:
-    response = await async_client.post(
-        "/v1/auth/register",
-        json=create_user_model_dto_factory().model_dump(by_alias=True, mode="json"),
-    )
-    model = UserWithTokenModel(**response.json())
-    yield model
-    await async_client.delete(
-        "/v1/users/",
-        headers={"Authorization": f"Bearer {model.access_token}"},
-    )
-
-
-@pytest_asyncio.fixture(scope='function')
-async def user_with_token_model(
-        create_user, authenticate_dto_factory, async_client
-) -> UserWithTokenModel:
-    response = await async_client.post(
-        "/v1/auth/login",
-        json=authenticate_dto_factory().model_dump(by_alias=True, mode="json"),
-    )
-    model = UserWithTokenModel(**response.json())
-    yield model
-    await async_client.delete(
-        "/v1/users/",
-        headers={"Authorization": f"Bearer {model.access_token}"},
-    )
+async def user_with_token_model(create_user_model_dto_factory, async_client) -> Callable[
+    [], Coroutine[Any, Any, UserWithTokenModel]]:
+    async def _factory():
+        response = await async_client.post(
+            "/v1/auth/register",
+         json=create_user_model_dto_factory().model_dump(by_alias=True, mode="json"),
+        )
+        return UserWithTokenModel(**response.json())
+    return _factory
 
 
 @pytest.fixture(scope='function')
