@@ -2,12 +2,14 @@ import random
 import shutil
 import string
 from typing import Callable, Iterable
+import psycopg2
 
 import pytest
 import pytest_asyncio
 from dishka import AsyncContainer
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
+from starlette.status import HTTP_200_OK
 
 from infrastructure.api.app import create_app
 from infrastructure.api.v1.auth.dtos import (
@@ -53,17 +55,17 @@ async def async_client(get_app: FastAPI) -> AsyncClient:
 
 
 @pytest.fixture
-def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
+def create_user_model_dto_factory(random_string_factory, random_email_factory) -> Callable[..., CreateUserModelDto]:
     def _factory(
-        email: str = "test@example.com",
+        email: str | None = None,
         password: str = "12345678",
-        fullname: str = "Test User",
+        fullname: str | None = None,
         is_active: bool = True,
     ) -> CreateUserModelDto:
         return CreateUserModelDto(
-            email=email,
+            email=email or f"{random_email_factory()}",
             password=password,
-            fullname=fullname,
+            fullname=fullname or f"{random_string_factory(10)}",
             isActive=is_active,
         )
 
@@ -100,7 +102,7 @@ async def user_with_token_model(
     create_user, authenticate_dto_factory, async_client
 ) -> UserWithTokenModel:
     response = await async_client.post(
-        "/v1/auth/login",
+        "/v1/auth/register",
         json=authenticate_dto_factory().model_dump(by_alias=True, mode="json"),
     )
     model = UserWithTokenModel(**response.json())
@@ -123,5 +125,11 @@ def random_string_factory() -> Callable[..., str]:
 def random_email_factory(random_string_factory) -> Callable[..., str]:
     def random_email() -> str:
         return f"{random_string_factory(10)}@{random_string_factory(5)}.com"
-
     return random_email
+
+@pytest.fixture
+def random_number_factory() -> Callable[..., int]:
+    def random_number(lenght: int) -> int:
+        return int("".join(random.choices(string.digits, k=lenght)))
+
+    return random_number
