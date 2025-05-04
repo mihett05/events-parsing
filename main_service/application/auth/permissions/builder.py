@@ -1,3 +1,5 @@
+from domain.exceptions import EntityAccessDenied
+
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions.provider import PermissionProvider
 
@@ -18,4 +20,4 @@ class PermissionBuilder:
 
     def apply(self):
         if not self.necessary <= self.permissions:
-            raise PermissionError("Permission denied")
+            raise EntityAccessDenied()

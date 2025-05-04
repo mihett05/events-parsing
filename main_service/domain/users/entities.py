@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from domain.users.enums import RoleEnum
+
 
 @dataclass
 class User:
@@ -15,3 +17,10 @@ class User:
 
     telegram_id: int | None = None
     created_at: datetime = None
+
+
+@dataclass
+class UserOrganizationRole:
+    organization_id: int
+    user_id: int
+    role: RoleEnum
