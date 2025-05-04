@@ -47,6 +47,8 @@ class JwtTokensGateway(TokensGateway):
             )
         except jwt.ExpiredSignatureError:
             raise InvalidCredentialsError()
+        except jwt.DecodeError:
+            raise InvalidCredentialsError()
 
         return TokenInfoDto(
             subject=payload["sub"],

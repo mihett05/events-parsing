@@ -11,7 +11,7 @@ from domain.users.repositories import UsersRepository
 @pytest_asyncio.fixture
 async def get_user_entity() -> User:
     return User(
-        email="test@test.com",
+        email="test@example.com",
         fullname="Ivanov Ivan Ivanovich",
     )
 

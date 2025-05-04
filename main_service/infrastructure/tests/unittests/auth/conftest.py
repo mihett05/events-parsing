@@ -13,7 +13,7 @@ from domain.users.repositories import UsersRepository
 @pytest_asyncio.fixture
 async def register_user1_dto() -> RegisterUserDTO:
     return RegisterUserDTO(
-        email="test@test.com",
+        email="test@example.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
     )
@@ -22,7 +22,7 @@ async def register_user1_dto() -> RegisterUserDTO:
 @pytest_asyncio.fixture
 async def authenticate_user1_dto() -> AuthenticateUserDto:
     return AuthenticateUserDto(
-        email="test@test.com",
+        email="test@example.com",
         password="12345678",
     )
 
@@ -31,7 +31,7 @@ async def authenticate_user1_dto() -> AuthenticateUserDto:
 async def user1_token_info_dto() -> TokenInfoDto:
     date = datetime.now().date()
     return TokenInfoDto(
-        subject="test@test.com",
+        subject="test@example.com",
         expires_in=datetime.combine(date, datetime.min.time())
         + timedelta(days=1),
     )
@@ -39,7 +39,7 @@ async def user1_token_info_dto() -> TokenInfoDto:
 
 @pytest_asyncio.fixture
 async def authenticate_user1_broken_password_dto() -> AuthenticateUserDto:
-    return AuthenticateUserDto(email="test@test.com", password="1_345_7_")
+    return AuthenticateUserDto(email="test@example.com", password="12345678")
 
 
 @pytest_asyncio.fixture
