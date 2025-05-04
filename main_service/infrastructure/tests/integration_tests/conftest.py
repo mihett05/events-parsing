@@ -1,7 +1,7 @@
 import random
 import shutil
 import string
-from typing import Callable, Iterable
+from typing import Callable
 
 import pytest
 import pytest_asyncio
@@ -15,32 +15,17 @@ from infrastructure.api.v1.auth.dtos import (
     CreateUserModelDto,
 )
 from infrastructure.api.v1.auth.models import UserWithTokenModel
-from infrastructure.config import Config, get_config
-from infrastructure.mocks.providers.container import (
-    create_integration_test_container,
-)
+from infrastructure.config import Config
 
 
-@pytest_asyncio.fixture
-async def container() -> Iterable[AsyncContainer]:
-    container = create_integration_test_container()
-    yield container
-    await container.close()
-
-
-@pytest_asyncio.fixture
-async def config() -> Config:
-    return get_config()
-
-
-@pytest_asyncio.fixture
-async def get_app(container: AsyncContainer, config: Config):
-    app = create_app(container, config)
+@pytest_asyncio.fixture(scope="session")
+async def get_app(container: AsyncContainer):
+    app = create_app(container, await container.get(Config))
     yield app
     shutil.rmtree("static")
 
 
-@pytest_asyncio.fixture(autouse=True)
+@pytest_asyncio.fixture(scope="session", autouse=True)
 async def async_client(get_app: FastAPI) -> AsyncClient:
     transport = ASGITransport(app=get_app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -55,10 +40,10 @@ async def async_client(get_app: FastAPI) -> AsyncClient:
 @pytest.fixture
 def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
     def _factory(
-        email: str = "test@example.com",
-        password: str = "12345678",
-        fullname: str = "Test User",
-        is_active: bool = True,
+            email: str = "test@example.com",
+            password: str = "12345678",
+            fullname: str = "Test User",
+            is_active: bool = True,
     ) -> CreateUserModelDto:
         return CreateUserModelDto(
             email=email,
@@ -73,8 +58,8 @@ def create_user_model_dto_factory() -> Callable[..., CreateUserModelDto]:
 @pytest.fixture
 def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     def _factory(
-        email: str = "test@example.com",
-        password: str = "12345678",
+            email: str = "test@example.com",
+            password: str = "12345678",
     ) -> AuthenticateUserModelDto:
         return AuthenticateUserModelDto(email=email, password=password)
 
@@ -97,7 +82,7 @@ async def create_user(create_user_model_dto_factory, async_client) -> UserWithTo
 
 @pytest_asyncio.fixture
 async def user_with_token_model(
-    create_user, authenticate_dto_factory, async_client
+        create_user, authenticate_dto_factory, async_client
 ) -> UserWithTokenModel:
     response = await async_client.post(
         "/v1/auth/login",
