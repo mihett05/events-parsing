@@ -35,8 +35,8 @@ class UsersMemoryRepository(UsersRepository):
         self.__next_id += 1
         return await self.__repository.create(user)
 
-    async def read(self, event_id: int) -> User:
-        return await self.__repository.read(event_id)
+    async def read(self, user_id: int) -> User:
+        return await self.__repository.read(user_id)
 
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[User]:
         data = await self.__repository.read_all()

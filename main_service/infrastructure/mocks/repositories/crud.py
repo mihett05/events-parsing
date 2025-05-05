@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, Type, TypeVar
 
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 
@@ -20,12 +20,26 @@ class MockRepositoryConfig(metaclass=ABCMeta):
         return entity.id
 
 
+def _storage_factory():
+    storage = dict()
+
+    def _factory(config_type: Type):
+        if storage.get(config_type) is None:
+            storage[config_type] = dict()
+        return storage[config_type]
+
+    return _factory
+
+
+get_storage = _storage_factory()
+
+
 class MockRepository(Generic[Entity, Id]):
     storage: dict[Id, Entity]
     __config: MockRepositoryConfig
 
     def __init__(self, config: MockRepositoryConfig):
-        self.storage = {}
+        self.storage = get_storage(type(config.entity))
         self.__config = config
 
     async def create(self, entity: Entity) -> Entity:

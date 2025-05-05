@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest_asyncio
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
@@ -78,6 +78,7 @@ async def create_user1(
     async def _factory() -> User:
         user1, _ = await register_usecase(register_user1_dto)
         return user1
+
     return _factory
 
 
