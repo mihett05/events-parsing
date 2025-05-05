@@ -50,3 +50,6 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
 
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
+
+    async def clear(self):
+        await self.__repository.clear()

@@ -1,3 +1,4 @@
+import pytest
 import pytest_asyncio
 from dishka import AsyncContainer
 from domain.notifications.dtos import (
@@ -11,6 +12,7 @@ from domain.notifications.enums import (
     NotificationTypeEnum,
 )
 from domain.notifications.repositories import NotificationsRepository
+from domain.organizations.repositories import OrganizationsRepository
 
 
 @pytest_asyncio.fixture
@@ -46,3 +48,13 @@ async def create_notification(
     notification_repository: NotificationsRepository,
 ) -> Notification:
     return await notification_repository.create(create_notification_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    notification_repository: OrganizationsRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await notification_repository.clear()  # noqa

@@ -1,3 +1,4 @@
+import pytest
 import pytest_asyncio
 from application.users.dtos import UpdateUserDto
 from dishka import AsyncContainer
@@ -64,3 +65,13 @@ async def create_users(
         await users_repository.create(user_entity)
         for user_entity in get_user_entities
     ]
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    yield
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa

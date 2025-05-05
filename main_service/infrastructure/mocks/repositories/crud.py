@@ -23,10 +23,10 @@ class MockRepositoryConfig(metaclass=ABCMeta):
 def _storage_factory():
     storage = dict()
 
-    def _factory(config_type: Type):
-        if storage.get(config_type) is None:
-            storage[config_type] = dict()
-        return storage[config_type]
+    def _factory(entity_type: Type):
+        if storage.get(entity_type) is None:
+            storage[entity_type] = dict()
+        return storage[entity_type]
 
     return _factory
 
@@ -70,3 +70,6 @@ class MockRepository(Generic[Entity, Id]):
             raise self.__config.not_found_exception()
         self.storage.pop(entity_id)
         return entity
+
+    async def clear(self):
+        self.storage.clear()

@@ -47,3 +47,6 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+    async def clear(self):
+        await self.__repository.clear()

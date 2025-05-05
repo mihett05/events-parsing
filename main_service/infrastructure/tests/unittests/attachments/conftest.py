@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from typing import BinaryIO, Iterable
 
+import pytest
 import pytest_asyncio
 from application.attachments.gateways import FilesGateway
 from dishka import AsyncContainer
@@ -88,3 +89,15 @@ async def create_attachment(
     attachment = await attachments_repository.create(create_attachment_dtos[0])
     await files_gateway.create(attachment, create_attachment_content)
     return attachment
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    attachments_repository: AttachmentsRepository,
+    mails_repository: MailsRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await attachments_repository.clear()  # noqa
+    await mails_repository.clear()  # noqa

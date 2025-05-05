@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Callable, Coroutine
 
+import pytest
 import pytest_asyncio
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
 from application.auth.tokens.dtos import TokenInfoDto
@@ -90,3 +91,12 @@ async def create_user2(
 ) -> User:
     user2, _ = await register_usecase(register_user2_dto)
     return user2
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa

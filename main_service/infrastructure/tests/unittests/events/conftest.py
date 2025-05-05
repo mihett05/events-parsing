@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import pytest
 import pytest_asyncio
 from application.events.dtos import UpdateEventDto
 from dishka import AsyncContainer
@@ -88,3 +89,12 @@ async def create_event(
     events_repository: EventsRepository,
 ) -> Event:
     return await events_repository.create(create_event_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, events_repository: EventsRepository
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await events_repository.clear()  # noqa

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 import pytest_asyncio
 from application.organizations.dtos import UpdateOrganizationDto
 from dishka import AsyncContainer
@@ -43,3 +44,13 @@ async def create_organization(
     organizations_repository: OrganizationsRepository,
 ) -> Organization:
     return await organizations_repository.create(create_organization_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    organizations_repository: OrganizationsRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await organizations_repository.clear()  # noqa

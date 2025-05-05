@@ -63,3 +63,6 @@ class MailsMemoryRepository(MailsRepository):
 
     async def delete(self, mail: Mail) -> Mail:
         return await self.__repository.delete(mail)
+
+    async def clear(self):
+        await self.__repository.clear()

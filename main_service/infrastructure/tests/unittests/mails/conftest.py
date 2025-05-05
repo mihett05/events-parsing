@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 import pytest_asyncio
 from application.mails.dtos import UpdateMailDto
 from dishka import AsyncContainer
@@ -48,3 +49,12 @@ async def create_mail(
     mails_repository: MailsRepository,
 ) -> Mail:
     return await mails_repository.create(create_mail_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, mails_repository: MailsRepository
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await mails_repository.clear()  # noqa
