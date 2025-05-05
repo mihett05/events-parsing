@@ -8,7 +8,7 @@ import domain.organizations.entities as entities
 class OrganizationsRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(
-            self, dto: dtos.CreateOrganizationDto
+        self, dto: dtos.CreateOrganizationDto
     ) -> entities.Organization: ...
 
     @abstractmethod
@@ -16,17 +16,17 @@ class OrganizationsRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def read_all(
-            self, dto: dtos.ReadOrganizationsDto
+        self, dto: dtos.ReadOrganizationsDto
     ) -> list[entities.Organization]: ...
 
     @abstractmethod
     async def update(
-            self, organization: entities.Organization
+        self, organization: entities.Organization
     ) -> entities.Organization: ...
 
     @abstractmethod
     async def delete(
-            self, organization: entities.Organization
+        self, organization: entities.Organization
     ) -> entities.Organization: ...
 
 
@@ -35,16 +35,16 @@ class OrganizationTokensRepository(metaclass=ABCMeta):
     async def create(self, creator_id: int) -> entities.OrganizationToken: ...
 
     @abstractmethod
-    async def read(self, id_: UUID) -> entities.OrganizationToken: ...
+    async def read(self, token_id: UUID) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def update(
-            self, token: entities.OrganizationToken
+        self, token: entities.OrganizationToken
     ) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def delete(
-            self, token: entities.OrganizationToken
+        self, token: entities.OrganizationToken
     ) -> entities.OrganizationToken: ...
 
     @abstractmethod

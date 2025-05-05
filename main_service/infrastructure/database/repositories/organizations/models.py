@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -19,3 +20,16 @@ class OrganizationDatabaseModel(Base):
     )
 
     title: Mapped[str]
+
+
+class OrganizationTokenDatabaseModel(Base):
+    __tablename__ = "organization_tokens"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    created_by: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), nullable=False
+    )
+    used_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), default=None, nullable=True
+    )
+    is_used: Mapped[bool] = mapped_column(default=False)

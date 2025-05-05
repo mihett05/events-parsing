@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from domain.organizations.exceptions import OrganizationTokenNotFoundError
 from domain.organizations.repositories import OrganizationTokensRepository
 from domain.users.entities import User
 
@@ -20,7 +21,10 @@ class ValidateOrganizationTokenUseCase:
         self.__transaction = transaction
         self.__read_use_case = read_use_case
 
-    async def __call__(self, token_id: UUID, actor: User):
+    async def __call__(self, token_id: UUID, actor: User) -> bool:
         async with self.__transaction:
-            token = await self.__read_use_case(token_id)
-            return await self.__repository.validate(token)
+            try:
+                token = await self.__read_use_case(token_id)
+                return await self.__repository.validate(token)
+            except OrganizationTokenNotFoundError:
+                return False

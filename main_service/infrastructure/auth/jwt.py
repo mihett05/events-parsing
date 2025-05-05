@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
 import jwt
-
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.config import TokenConfig
 from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto
@@ -13,7 +12,7 @@ class JwtTokensGateway(TokensGateway):
         self.__config = config
 
     def __encode(
-            self, subject: str, expires_time: timedelta | None = None
+        self, subject: str, expires_time: timedelta | None = None
     ) -> str:
         payload = {"sub": subject} | (
             {"exp": datetime.now(tz=timezone.utc) + expires_time}
@@ -39,7 +38,7 @@ class JwtTokensGateway(TokensGateway):
         )
 
     async def extract_token_info(
-            self, token: str, check_expires: bool = True
+        self, token: str, check_expires: bool = True
     ) -> TokenInfoDto:
         try:
             payload = jwt.decode(

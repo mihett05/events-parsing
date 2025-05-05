@@ -85,3 +85,14 @@ async def delete_organization(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(await use_case(organization_id, actor))
+
+
+@router.post(
+    "/token",
+    response_model=models.OrganizationTokenModel,
+)
+async def create_token(
+    use_case: FromDishka[use_cases.CreateOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.organization_token_map_to_pydantic(await use_case(actor))

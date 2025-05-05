@@ -1,4 +1,5 @@
 from .create import CreateUserUseCase
+from .create_role import CreateUserOrganizationRoleUseCase
 from .delete import DeleteUserUseCase
 from .read import ReadUserUseCase
 from .read_all import ReadAllUsersUseCase
@@ -12,4 +13,5 @@ __all__ = [
     "ReadUserRolesUseCase",
     "UpdateUserUseCase",
     "DeleteUserUseCase",
+    "CreateUserOrganizationRoleUseCase",
 ]
