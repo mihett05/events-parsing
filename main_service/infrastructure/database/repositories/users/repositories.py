@@ -96,8 +96,13 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create_from_entity(role)
 
-    async def read(self, user_id: int) -> list[UserOrganizationRole]:
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read_all(user_id)
+
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        return await self.__repository.read((user_id, organization_id))
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(role)

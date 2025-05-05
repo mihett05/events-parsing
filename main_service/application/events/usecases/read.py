@@ -15,7 +15,9 @@ class ReadEventUseCase:
 
     async def __call__(self, event_id: int) -> Event:
         event = await self.__repository.read(event_id)
-        self.__builder.providers(EventPermissionProvider(event.organization_id, None)).add(
+        self.__builder.providers(
+            EventPermissionProvider(event.organization_id, None)
+        ).add(
             PermissionsEnum.CAN_READ_EVENT,
         ).apply()
         return event

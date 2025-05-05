@@ -19,5 +19,5 @@ __all__ = [
     "CreateUserRoleUseCase",
     "DeleteUserRoleUseCase",
     "ReadUserRoleUseCase",
-    "UpdateUserRoleUseCase"
+    "UpdateUserRoleUseCase",
 ]
