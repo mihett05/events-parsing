@@ -22,10 +22,11 @@ async def test_authenticate_success(
 
 @pytest.mark.asyncio
 async def test_authenticate_wrong_password(
-    create_user1: User,
+    create_user1: Callable[..., Coroutine[Any, Any, User]],
     authenticate_user1_broken_password_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
+    create_user1 = await create_user1()
     with pytest.raises(InvalidCredentialsError) as ex:
         await authenticate_usecase(authenticate_user1_broken_password_dto)
     assert str(ex.value) == str(InvalidCredentialsError("password"))

@@ -1,3 +1,5 @@
+from typing import Callable, Coroutine, Any
+
 import pytest
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.tokens.gateways import TokensGateway
@@ -7,11 +9,13 @@ from domain.users.entities import User
 
 @pytest.mark.asyncio
 async def test_login_success(
-    create_user1: User,
+    create_user1: Callable[..., Coroutine[Any, Any, User]],
     authenticate_user1_dto: AuthenticateUserDto,
     login_usecase: LoginUseCase,
     token_gateway: TokensGateway,
 ):
+    create_user1 = await create_user1()
+
     test_user, _ = await login_usecase(authenticate_user1_dto)
     attrs = ("fullname", "email", "id")
     for attr in attrs:

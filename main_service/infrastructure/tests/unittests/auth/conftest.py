@@ -57,6 +57,16 @@ async def register_user2_dto() -> RegisterUserDTO:
 async def authenticate_user2_dto() -> AuthenticateUserDto:
     return AuthenticateUserDto(email="tset@tset.moc", password="87654321")
 
+@pytest_asyncio.fixture
+async def user2_token_info_dto() -> TokenInfoDto:
+    date = datetime.now().date()
+    return TokenInfoDto(
+        subject="tset@tset.moc",
+        expires_in=datetime.combine(date, datetime.min.time())
+        + timedelta(days=1),
+    )
+
+
 
 @pytest_asyncio.fixture
 async def token_gateway(container: AsyncContainer) -> TokensGateway:
@@ -97,6 +107,15 @@ async def create_user2(
 async def prepare(
     pytestconfig: pytest.Config, users_repository: UsersRepository
 ):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def teardown(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    yield
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa

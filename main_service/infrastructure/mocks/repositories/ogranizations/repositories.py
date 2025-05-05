@@ -33,7 +33,7 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
     ) -> entities.Organization:
         organization.id = self.__next_id
         self.__next_id += 1
-        organization.created_at = datetime.datetime.utcnow()
+        organization.created_at = datetime.datetime.now(datetime.UTC)
         return await self.__repository.create(organization)
 
     async def read(self, id_: int) -> entities.Organization:
