@@ -1,8 +1,6 @@
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.organizations.entities import Organization
-from domain.organizations.repositories import (
-    OrganizationsRepository,
-)
+from domain.organizations.repositories import OrganizationsRepository
 
 
 class ReadAllOrganizationUseCase:

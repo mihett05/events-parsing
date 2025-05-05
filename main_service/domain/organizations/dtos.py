@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from datetime import datetime
+from uuid import UUID
 
 
 @dataclass
 class CreateOrganizationDto:
     owner_id: int
     title: str
-    created_at: datetime
+    token: UUID
 
 
 @dataclass
