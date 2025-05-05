@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Callable, Coroutine, Any
 
 import pytest_asyncio
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
@@ -39,7 +40,7 @@ async def user1_token_info_dto() -> TokenInfoDto:
 
 @pytest_asyncio.fixture
 async def authenticate_user1_broken_password_dto() -> AuthenticateUserDto:
-    return AuthenticateUserDto(email="test@example.com", password="12345678")
+    return AuthenticateUserDto(email="test@example.com", password="1_23_56_8")
 
 
 @pytest_asyncio.fixture
@@ -73,9 +74,11 @@ async def create_user1(
     register_user1_dto: RegisterUserDTO,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
-) -> User:
-    user1, _ = await register_usecase(register_user1_dto)
-    return user1
+) -> Callable[..., Coroutine[Any, Any, User]]:
+    async def _factory() -> User:
+        user1, _ = await register_usecase(register_user1_dto)
+        return user1
+    return _factory
 
 
 @pytest_asyncio.fixture

@@ -6,7 +6,7 @@ from domain.users.entities import User
 
 
 @pytest.mark.asyncio
-async def test_authenticate_success(
+async def test_authorize_success(
     create_user1: User,
     user1_token_info_dto: TokenInfoDto,
     authorize_usecase: AuthorizeUseCase,
@@ -18,7 +18,7 @@ async def test_authenticate_success(
 
 
 @pytest.mark.asyncio
-async def test_authenticate_user_not_found(
+async def test_authorize_user_not_found(
     create_user2: User,
     user1_token_info_dto: TokenInfoDto,
     authorize_usecase: AuthorizeUseCase,

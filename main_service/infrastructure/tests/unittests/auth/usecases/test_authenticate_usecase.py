@@ -1,3 +1,5 @@
+from typing import Callable, Coroutine, Any
+
 import pytest
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
@@ -7,10 +9,11 @@ from domain.users.entities import User
 
 @pytest.mark.asyncio
 async def test_authenticate_success(
-    create_user1: User,
+    create_user1: Callable[..., Coroutine[Any, Any, User]],
     authenticate_user1_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
+    create_user1 = await create_user1()
     user = await authenticate_usecase(authenticate_user1_dto)
     assert user.email == create_user1.email
     assert user.fullname == create_user1.fullname
