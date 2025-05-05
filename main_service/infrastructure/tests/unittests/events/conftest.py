@@ -8,7 +8,6 @@ from domain.events.dtos import (
     CreateEventDto,
     ReadAllEventsDto,
     ReadAllEventsFeedDto,
-    ReadOrganizationEventsDto,
     ReadUserEventsDto,
 )
 from domain.events.entities import Event
@@ -56,15 +55,6 @@ async def read_feed_events_dto() -> ReadAllEventsFeedDto:
         organization_id=None,
         type=None,
         format=None,
-    )
-
-
-@pytest_asyncio.fixture
-async def read_organization_events_dto() -> ReadOrganizationEventsDto:
-    return ReadOrganizationEventsDto(
-        organization_id=1,
-        page=0,
-        page_size=50,
     )
 
 

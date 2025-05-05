@@ -1,5 +1,6 @@
 from domain.events.entities import Event
 from domain.exceptions import (
+    EntityAccessDenied,
     EntityAlreadyExistsError,
     EntityNotFoundError,
     InvalidEntityPeriodError,
@@ -19,3 +20,8 @@ class EventAlreadyExistsError(EntityAlreadyExistsError):
 class InvalidEventPeriodError(InvalidEntityPeriodError):
     def __init__(self):
         super().__init__(Event)
+
+
+class EventAccessDenied(EntityAccessDenied):
+    def __init__(self):
+        super().__init__()

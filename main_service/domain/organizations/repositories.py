@@ -27,28 +27,3 @@ class OrganizationsRepository(metaclass=ABCMeta):
     async def delete(
         self, organization: entities.Organization
     ) -> entities.Organization: ...
-
-
-class UserOrganizationRolesRepository(metaclass=ABCMeta):
-    @abstractmethod
-    async def create(
-        self, dto: dtos.CreateUserOrganizationRoleDto
-    ) -> entities.UserOrganizationRole: ...
-
-    @abstractmethod
-    async def read(self, id_: int) -> entities.UserOrganizationRole: ...
-
-    @abstractmethod
-    async def read_all(
-        self, dto: dtos.ReadUserOrganizationRolesDto
-    ) -> list[entities.UserOrganizationRole]: ...
-
-    @abstractmethod
-    async def update(
-        self, role: entities.UserOrganizationRole
-    ) -> entities.UserOrganizationRole: ...
-
-    @abstractmethod
-    async def delete(
-        self, role: entities.UserOrganizationRole
-    ) -> entities.UserOrganizationRole: ...

@@ -18,7 +18,6 @@ class UseCasesProvider(Provider):
         event_use_cases.FindEventUseCase,
         event_use_cases.ReadEventUseCase,
         event_use_cases.ReadForFeedEventsUseCase,
-        event_use_cases.ReadOrganizationEventsUseCase,
         event_use_cases.ReadUserEventsUseCase,
         event_use_cases.ReadAllEventUseCase,
         event_use_cases.ParseEventsUseCase,
@@ -45,6 +44,7 @@ class UseCasesProvider(Provider):
         users_use_cases.UpdateUserUseCase,
         users_use_cases.DeleteUserUseCase,
         users_use_cases.ReadAllUsersUseCase,
+        users_use_cases.ReadUserRolesUseCase,
         users_use_cases.CreateUserUseCase,
     )
 

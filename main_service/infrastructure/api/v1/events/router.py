@@ -43,7 +43,7 @@ async def read_feed_events(
 
 
 @router.get("/feed_filters", response_model=models.FilterModel)
-async def get_types_and_formats(
+async def get_filter_values(
     use_case: FromDishka[ReadAllOrganizationUseCase],
 ):
     return models.FilterModel(

@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, func
+from domain.users.enums import RoleEnum
+from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database.postgres import Base
@@ -22,4 +24,18 @@ class UserDatabaseModel(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class UserOrganizationRoleDatabaseModel(Base):
+    __tablename__ = "user_organization_role"
+
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id"), primary_key=True
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
+    )
+    role: Mapped[RoleEnum] = mapped_column(
+        ENUM(RoleEnum, name="RoleEnum"), nullable=False
     )

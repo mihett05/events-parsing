@@ -1,4 +1,12 @@
-from .models import UserDatabaseModel
-from .repositories import UsersDatabaseRepository
+from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
+from .repositories import (
+    UserOrganizationRolesDatabaseRepository,
+    UsersDatabaseRepository,
+)
 
-__all__ = ["UserDatabaseModel", "UsersDatabaseRepository"]
+__all__ = [
+    "UserDatabaseModel",
+    "UsersDatabaseRepository",
+    "UserOrganizationRoleDatabaseModel",
+    "UserOrganizationRolesDatabaseRepository",
+]
