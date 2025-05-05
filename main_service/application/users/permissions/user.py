@@ -21,9 +21,7 @@ class UserPermissionProvider(PermissionProvider):
         RoleEnum.OWNER: __maximum_perms,
         RoleEnum.ADMIN: __maximum_perms,
         RoleEnum.REDACTOR: __maximum_perms,
-        RoleEnum.PUBLIC: {
-            PermissionsEnum.CAN_READ_ROLE
-        },
+        RoleEnum.PUBLIC: {PermissionsEnum.CAN_READ_ROLE},
     }
 
     def __init__(
