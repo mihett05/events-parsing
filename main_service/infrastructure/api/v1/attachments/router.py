@@ -40,7 +40,7 @@ async def create_attachments(
     response_model=models.AttachmentModel,
     responses={404: {"model": ErrorModel}},
 )
-async def read_user(
+async def read_attachment(
     attachment_id: UUID,
     use_case: FromDishka[use_cases.ReadAttachmentUseCase],
     actor: Annotated[User, Depends(get_user)],

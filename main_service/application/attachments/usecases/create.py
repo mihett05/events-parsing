@@ -5,10 +5,17 @@ from domain.attachments.exceptions import (
     AttachmentNotFoundError,
 )
 from domain.attachments.repositories import AttachmentsRepository
+from domain.exceptions import EntityAccessDenied
 from domain.users.entities import User
 
 from application.attachments.gateways import FilesGateway
+from application.attachments.permissions.attachment import (
+    AttachmentPermissionProvider,
+)
+from application.auth.enums import PermissionsEnum
+from application.auth.permissions import PermissionBuilder
 from application.transactions import TransactionsGateway
+from application.users.usecases import ReadUserRolesUseCase
 
 
 class CreateAttachmentUseCase:
@@ -17,10 +24,14 @@ class CreateAttachmentUseCase:
         gateway: FilesGateway,
         tx: TransactionsGateway,
         repository: AttachmentsRepository,
+        builder: PermissionBuilder,
+        read_roles_use_case: ReadUserRolesUseCase,
     ):
         self.__gateway = gateway
         self.__transaction = tx
         self.__repository = repository
+        self.__builder = builder
+        self.__read_roles_use_case = read_roles_use_case
 
     async def __try_create_attachment(
         self, dto: CreateAttachmentDto
@@ -40,17 +51,22 @@ class CreateAttachmentUseCase:
     async def __call__(
         self, dtos: list[CreateAttachmentDto], actor: User | None
     ) -> tuple[list[Attachment], list[str]]:
-        # TODO: Переработать на функционал на создание либо всех, либо не одного
-        #  т.е. в случае хотя бы одной ошибки поднимаем ексепшн
-        #  сложность заключается в откате сохранения контента аттачментов
-        #  т.к. ошибка происходит если упал гетевей, а значит откатить в нем - проблема
-        #  Возможно решение - добавление состояния аттачменту и задача, которая удаляет failed
-        #  чтобы в FileStorage не было пустышек
-
         failed = []
         succeed = []
+        roles = await self.__read_roles_use_case(actor.id)
         async with self.__transaction:
             for dto in dtos:
+                if dto.event is not None:
+                    try:
+                        self.__builder.providers(
+                            AttachmentPermissionProvider(
+                                dto.event.organization_id, roles
+                            )
+                        ).add(
+                            PermissionsEnum.CAN_CREATE_ATTACHMENT,
+                        ).apply()
+                    except EntityAccessDenied:
+                        failed.append(f"{dto.filename}{dto.extension}")
                 if attachment := await self.__try_create_attachment(dto):
                     succeed.append(attachment)
                 else:
