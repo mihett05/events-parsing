@@ -40,13 +40,12 @@ class ReadAttachmentUseCase:
             roles = await self.__read_roles_use_case(actor.id)
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id)
-                self.__builder.providers(
-                    AttachmentPermissionProvider(event.organization_id, roles)
-                ).add(
-                    PermissionsEnum.CAN_READ_ATTACHMENT,
-                ).apply()
-                await self.__gateway.add_link_to_attachment(attachment)
-                return attachment
             else:
-                await self.__gateway.add_link_to_attachment(attachment)
-                return attachment
+                event = None
+            self.__builder.providers(
+                AttachmentPermissionProvider(event is not None and event.organization_id or -1, roles, event)
+            ).add(
+                PermissionsEnum.CAN_READ_ATTACHMENT,
+            ).apply()
+            await self.__gateway.add_link_to_attachment(attachment)
+            return attachment

@@ -48,26 +48,28 @@ class CreateAttachmentUseCase:
                 await nested.commit()
                 return attachment
 
+    def __has_perms(self, organization_id, roles):
+        try:
+            self.__builder.providers(
+                AttachmentPermissionProvider(organization_id, roles)
+            ).add(
+                PermissionsEnum.CAN_CREATE_ATTACHMENT,
+            ).apply()
+            return True
+        except EntityAccessDenied:
+            return False
+
     async def __call__(
         self, dtos: list[CreateAttachmentDto], actor: User | None
     ) -> tuple[list[Attachment], list[str]]:
         failed = []
         succeed = []
         roles = await self.__read_roles_use_case(actor.id)
-        async with self.__transaction:
-            for dto in dtos:
-                if dto.event is not None:
-                    try:
-                        self.__builder.providers(
-                            AttachmentPermissionProvider(
-                                dto.event.organization_id, roles
-                            )
-                        ).add(
-                            PermissionsEnum.CAN_CREATE_ATTACHMENT,
-                        ).apply()
-                    except EntityAccessDenied:
-                        failed.append(f"{dto.filename}{dto.extension}")
-                if attachment := await self.__try_create_attachment(dto):
+        for dto in dtos:
+            async with self.__transaction:
+                if self.__has_perms(
+                        dto.event and dto.event.organization_id or -1, roles
+                ) and (attachment := await self.__try_create_attachment(dto)):
                     succeed.append(attachment)
                 else:
                     failed.append(f"{dto.filename}{dto.extension}")

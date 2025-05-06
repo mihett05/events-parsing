@@ -1,3 +1,4 @@
+from domain.events.entities import Event
 from domain.users.entities import UserOrganizationRole
 from domain.users.enums import RoleEnum
 
@@ -9,6 +10,10 @@ class AttachmentPermissionProvider(PermissionProvider):
     __maximum_perms = {
         PermissionsEnum.CAN_READ_ATTACHMENT,
         PermissionsEnum.CAN_CREATE_ATTACHMENT,
+    }
+
+    __public_event_permissions = {
+        PermissionsEnum.CAN_READ_ATTACHMENT
     }
 
     __perms: dict[RoleEnum, set[PermissionsEnum]] = {
@@ -23,20 +28,23 @@ class AttachmentPermissionProvider(PermissionProvider):
     }
 
     def __init__(
-        self, organization_id: int, user_roles: list[UserOrganizationRole]
+        self, organization_id: int, user_roles: list[UserOrganizationRole], event: Event | None = None
     ):
-        self.permissions = self.__get_perms(organization_id, user_roles)
+        self.permissions = self.__get_perms(organization_id, user_roles, event)
 
     def __get_perms(
-        self, organization_id: int, user_roles: list[UserOrganizationRole]
+        self, organization_id: int, user_roles: list[UserOrganizationRole], event: Event | None = None
     ) -> set[PermissionsEnum]:
+        result = self.__perms.get(RoleEnum.PUBLIC)
+        if event is not None and event.is_visible:
+            result |= self.__public_event_permissions
         for role in user_roles:
             if (
-                role.role.value.startswith("SUPER")
-                or role.organization_id == organization_id
+                    role.role.value.startswith("SUPER")
+                    or role.organization_id == organization_id
             ):
-                return self.__perms.get(role.role).copy()
-        return self.__perms.get(RoleEnum.PUBLIC).copy()
+                result |= self.__perms.get(role.role).copy()
+        return result
 
     def __call__(self) -> set[PermissionsEnum]:
         return self.permissions
