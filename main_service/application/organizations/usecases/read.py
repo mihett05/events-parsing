@@ -1,7 +1,5 @@
 from domain.organizations.entities import Organization
-from domain.organizations.repositories import (
-    OrganizationsRepository,
-)
+from domain.organizations.repositories import OrganizationsRepository
 
 
 class ReadOrganizationUseCase:
