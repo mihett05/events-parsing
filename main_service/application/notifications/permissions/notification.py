@@ -5,12 +5,12 @@ from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionProvider
 
 
-class EventPermissionProvider(PermissionProvider):
+class NotificationPermissionProvider(PermissionProvider):
     __maximum_perms = {
-        PermissionsEnum.CAN_CREATE_EVENT,
-        PermissionsEnum.CAN_DELETE_EVENT,
-        PermissionsEnum.CAN_READ_EVENT,
-        PermissionsEnum.CAN_UPDATE_EVENT,
+        PermissionsEnum.CAN_CREATE_NOTIFICATION,
+        PermissionsEnum.CAN_DELETE_NOTIFICATION,
+        PermissionsEnum.CAN_READ_NOTIFICATION,
+        PermissionsEnum.CAN_UPDATE_NOTIFICATION,
     }
 
     __perms: dict[RoleEnum, set[PermissionsEnum]] = {
@@ -22,10 +22,11 @@ class EventPermissionProvider(PermissionProvider):
         RoleEnum.ADMIN: __maximum_perms,
         RoleEnum.REDACTOR: __maximum_perms,
         RoleEnum.PUBLIC: {
-            PermissionsEnum.CAN_READ_EVENT,
+            PermissionsEnum.CAN_READ_NOTIFICATION,
+            PermissionsEnum.CAN_DELETE_NOTIFICATION,
         },
     }
-п
+
     def __init__(
         self, organization_id: int, user_roles: list[UserOrganizationRole]
     ):
