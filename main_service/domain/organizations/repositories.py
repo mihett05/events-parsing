@@ -46,6 +46,3 @@ class OrganizationTokensRepository(metaclass=ABCMeta):
     async def delete(
         self, token: entities.OrganizationToken
     ) -> entities.OrganizationToken: ...
-
-    @abstractmethod
-    async def validate(self, token: entities.OrganizationToken) -> bool: ...

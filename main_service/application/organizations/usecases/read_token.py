@@ -2,11 +2,32 @@ from uuid import UUID
 
 from domain.organizations.entities import OrganizationToken
 from domain.organizations.repositories import OrganizationTokensRepository
+from domain.users.entities import User
+
+from application.auth.enums import PermissionsEnum
+from application.auth.permissions import PermissionBuilder
+from application.organizations.permissions import OrganizationLinkPermissionProvider
+from application.transactions import TransactionsGateway
+from application.users.usecases import ReadUserRolesUseCase
 
 
 class ReadOrganizationTokenUseCase:
-    def __init__(self, repository: OrganizationTokensRepository):
+    def __init__(
+        self,
+        repository: OrganizationTokensRepository,
+        transaction: TransactionsGateway,
+        read_role_use_case: ReadUserRolesUseCase,
+        permission_builder: PermissionBuilder,
+    ):
         self.__repository = repository
+        self.__transaction = transaction
+        self.__builder = permission_builder
+        self.__read_roles_use_case = read_role_use_case
 
-    async def __call__(self, token_id: UUID) -> OrganizationToken:
-        return await self.__repository.read(token_id)
+    async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
+        async with self.__transaction:
+            roles = await self.__read_roles_use_case(actor.id)
+            self.__builder.providers(OrganizationLinkPermissionProvider(roles)).add(
+                PermissionsEnum.CAN_READ_ORGANIZATION_LINK
+            ).apply()
+            return await self.__repository.read(token_id)

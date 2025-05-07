@@ -24,7 +24,7 @@ class ValidateOrganizationTokenUseCase:
     async def __call__(self, token_id: UUID, actor: User) -> bool:
         async with self.__transaction:
             try:
-                token = await self.__read_use_case(token_id)
-                return await self.__repository.validate(token)
+                token = await self.__read_use_case(token_id, actor)
+                return not token.is_used
             except OrganizationTokenNotFoundError:
                 return False

@@ -110,6 +110,3 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
 
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
-
-    async def validate(self, token: entities.OrganizationToken) -> bool:
-        return not token.is_used
