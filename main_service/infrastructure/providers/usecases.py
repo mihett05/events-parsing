@@ -30,6 +30,10 @@ class UseCasesProvider(Provider):
         organizations_use_cases.UpdateOrganizationUseCase,
         organizations_use_cases.DeleteOrganizationUseCase,
         organizations_use_cases.ReadAllOrganizationUseCase,
+        organizations_use_cases.CreateOrganizationTokenUseCase,
+        organizations_use_cases.ReadOrganizationTokenUseCase,
+        organizations_use_cases.UpdateOrganizationTokenUseCase,
+        organizations_use_cases.DeleteOrganizationTokenUseCase,
         organizations_use_cases.ValidateOrganizationTokenUseCase,
     )
 
@@ -47,6 +51,7 @@ class UseCasesProvider(Provider):
         users_use_cases.ReadAllUsersUseCase,
         users_use_cases.ReadUserRolesUseCase,
         users_use_cases.CreateUserUseCase,
+        users_use_cases.CreateUserOrganizationRoleUseCase,
     )
 
     auth = provide_all(

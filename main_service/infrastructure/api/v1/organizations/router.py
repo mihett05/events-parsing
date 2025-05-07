@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 import application.organizations.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -85,3 +86,39 @@ async def delete_organization(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(await use_case(organization_id, actor))
+
+
+@router.post(
+    "/token",
+    response_model=models.OrganizationTokenModel,
+)
+async def create_token(
+    use_case: FromDishka[use_cases.CreateOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.organization_token_map_to_pydantic(await use_case(actor))
+
+@router.get(
+    "/token/{token_id}",
+    response_model=models.OrganizationTokenModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def read_token(
+    token_id: UUID,
+    use_case: FromDishka[use_cases.ReadOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)]
+):
+    return mappers.map_to_pydantic(await use_case(token_id, actor))
+
+
+@router.delete(
+    "/token/{token_id}",
+    response_model=models.OrganizationTokenModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def delete_token(
+    token_id: UUID,
+    use_case: FromDishka[use_cases.DeleteOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.map_to_pydantic(await use_case(token_id, actor))

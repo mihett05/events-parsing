@@ -1,19 +1,34 @@
+from uuid import UUID, uuid4
+
 from domain.organizations import dtos
-from domain.organizations.entities import Organization
+from domain.organizations import entities as entities
+from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
     OrganizationAlreadyExistsError,
     OrganizationNotFoundError,
+    OrganizationTokenAlreadyExistsError,
+    OrganizationTokenNotFoundError,
 )
-from domain.organizations.repositories import OrganizationsRepository
+from domain.organizations.repositories import (
+    OrganizationsRepository,
+    OrganizationTokensRepository,
+)
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.database.repositories.organizations.models import (
     OrganizationDatabaseModel,
+    OrganizationTokenDatabaseModel,
 )
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
-from .mappers import map_create_dto_to_model, map_from_db, map_to_db
+from .mappers import (
+    map_create_dto_to_model,
+    map_from_db,
+    map_to_db,
+    organization_token_map_from_db,
+    organization_token_map_to_db,
+)
 
 
 class OrganizationsDatabaseRepository(OrganizationsRepository):
@@ -63,3 +78,35 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
 
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
+
+
+class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
+    class Config(PostgresRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                model=OrganizationTokenDatabaseModel,
+                entity=OrganizationToken,
+                entity_mapper=organization_token_map_from_db,
+                model_mapper=organization_token_map_to_db,
+                create_model_mapper=None,
+                not_found_exception=OrganizationTokenNotFoundError,
+                already_exists_exception=OrganizationTokenAlreadyExistsError,
+            )
+
+    def __init__(self, session: AsyncSession):
+        self.__session = session
+        self.__config = self.Config()
+        self.__repository = PostgresRepository(session, self.__config)
+
+    async def read(self, token_id: UUID) -> OrganizationToken:
+        return await self.__repository.read(token_id)
+
+    async def create(self, creator_id) -> OrganizationToken:
+        token = OrganizationToken(uuid4(), creator_id)
+        return await self.__repository.create_from_entity(token)
+
+    async def update(self, token: OrganizationToken) -> OrganizationToken:
+        return await self.__repository.update(token)
+
+    async def delete(self, token: OrganizationToken) -> OrganizationToken:
+        return await self.__repository.delete(token)

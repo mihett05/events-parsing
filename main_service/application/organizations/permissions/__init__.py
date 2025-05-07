@@ -1,3 +1,9 @@
-from .organization import OrganizationPermissionProvider
+from .organization import (
+    OrganizationLinkPermissionProvider,
+    OrganizationPermissionProvider,
+)
 
-__all__ = ["OrganizationPermissionProvider"]
+__all__ = [
+    "OrganizationPermissionProvider",
+    "OrganizationLinkPermissionProvider",
+]

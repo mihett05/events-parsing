@@ -5,10 +5,10 @@ from uuid import UUID
 
 @dataclass
 class Organization:
-    id: int
-    created_at: datetime
     title: str
     owner_id: int
+    id: int | None = None
+    created_at: datetime | None = None
 
 
 @dataclass

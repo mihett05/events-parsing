@@ -23,7 +23,7 @@ class UpdateOrganizationTokenUseCase:
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
         async with self.__transaction:
-            token = await self.__read_use_case(token_id)
+            token = await self.__read_use_case(token_id, actor)
             token.used_by = actor.id
             token.is_used = True
             return await self.__repository.update(token)

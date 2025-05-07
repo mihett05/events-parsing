@@ -4,7 +4,7 @@ from domain.users.entities import User
 
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
-from application.organizations.permissions import OrganizationPermissionProvider
+from application.organizations.permissions import OrganizationLinkPermissionProvider
 from application.transactions import TransactionsGateway
 from application.users.usecases import ReadUserRolesUseCase
 
@@ -25,7 +25,7 @@ class CreateOrganizationTokenUseCase:
     async def __call__(self, actor: User) -> OrganizationToken:
         async with self.__transaction:
             roles = await self.__read_roles_use_case(actor.id)
-            self.__builder.providers(OrganizationPermissionProvider(roles)).add(
-                PermissionsEnum.CAN_SEND_ORGANIZATION_LINK
+            self.__builder.providers(OrganizationLinkPermissionProvider(roles)).add(
+                PermissionsEnum.CAN_CREATE_ORGANIZATION_LINK
             ).apply()
             return await self.__repository.create(actor.id)

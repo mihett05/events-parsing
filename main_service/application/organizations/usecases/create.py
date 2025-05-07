@@ -2,11 +2,17 @@ from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import OrganizationAccessDenied
 from domain.organizations.repositories import OrganizationsRepository
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import RoleEnum
 
+from application.organizations.usecases.update_token import (
+    UpdateOrganizationTokenUseCase,
+)
 from application.organizations.usecases.validate_token import (
     ValidateOrganizationTokenUseCase,
 )
+from application.transactions import TransactionsGateway
+from application.users.usecases import CreateUserOrganizationRoleUseCase
 
 
 class CreateOrganizationUseCase:
@@ -14,13 +20,28 @@ class CreateOrganizationUseCase:
         self,
         repository: OrganizationsRepository,
         validate_token_use_case: ValidateOrganizationTokenUseCase,
+        update_token_use_case: UpdateOrganizationTokenUseCase,
+        create_use_case: CreateUserOrganizationRoleUseCase,
+        transaction: TransactionsGateway,
     ):
         self.__repository = repository
         self.__validate_token_use_case = validate_token_use_case
+        self.__update_token_use_case = update_token_use_case
+        self.__create_use_case = create_use_case
+        self.__transaction = transaction
 
     async def __call__(
         self, dto: CreateOrganizationDto, actor: User
     ) -> Organization:
-        if self.__validate_token_use_case(dto.token, actor):
-            return await self.__repository.create(dto)
-        raise OrganizationAccessDenied
+        async with self.__transaction:
+            if await self.__validate_token_use_case(dto.token, actor):
+                await self.__update_token_use_case(dto.token, actor)
+                organization = await self.__repository.create(dto)
+                role = UserOrganizationRole(
+                    organization_id=organization.id,
+                    user_id=actor.id,
+                    role=RoleEnum.OWNER,
+                )
+                await self.__create_use_case(role, actor)
+                return organization
+            raise OrganizationAccessDenied
