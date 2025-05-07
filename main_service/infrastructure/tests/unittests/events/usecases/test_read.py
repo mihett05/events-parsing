@@ -9,8 +9,9 @@ from domain.events.exceptions import EventNotFoundError
 @pytest.mark.asyncio
 async def test_read_success(
     read_event_usecase: ReadEventUseCase,
-    create_event: Event,
+    create_event
 ):
+    create_event = await create_event()
     event = await read_event_usecase(create_event.id)
     assert event == create_event
 

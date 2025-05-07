@@ -11,8 +11,10 @@ from domain.events.exceptions import EventNotFoundError
 async def test_update_success(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_event: Event,
+    create_event
 ):
+    create_event = await create_event()
+
     create_event = copy(create_event)
     event = await update_event_usecase(update_event_dto, None)
 

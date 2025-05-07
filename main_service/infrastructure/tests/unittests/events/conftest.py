@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Callable, Coroutine, Any
 
 import pytest
 import pytest_asyncio
@@ -13,6 +14,8 @@ from domain.events.dtos import (
 from domain.events.entities import Event
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.events.repositories import EventsRepository
+from domain.users.entities import User
+from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
@@ -72,13 +75,20 @@ async def events_repository(container: AsyncContainer) -> EventsRepository:
     async with container() as nested:
         yield await nested.get(EventsRepository)
 
+@pytest_asyncio.fixture
+async def users_repository(container: AsyncContainer) -> UsersRepository:
+    async with container() as nested:
+        yield await nested.get(UsersRepository)
+
 
 @pytest_asyncio.fixture
 async def create_event(
     create_event_dto: CreateEventDto,
     events_repository: EventsRepository,
-) -> Event:
-    return await events_repository.create(create_event_dto)
+) -> Callable[..., Coroutine[Any, Any, Event]]:
+    async def _factory() -> Event:
+        return await events_repository.create(create_event_dto)
+    return _factory
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
@@ -88,3 +98,12 @@ async def prepare(
     if pytestconfig.getoption("--integration", default=False):
         return
     await events_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def teardown(
+    pytestconfig: pytest.Config, events_repository: EventsRepository
+):
+    yield
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await events_repository.clear() # noqa

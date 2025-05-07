@@ -30,6 +30,7 @@ class UseCasesProvider(Provider):
         organizations_use_cases.UpdateOrganizationUseCase,
         organizations_use_cases.DeleteOrganizationUseCase,
         organizations_use_cases.ReadAllOrganizationUseCase,
+        organizations_use_cases.ValidateOrganizationTokenUseCase,
     )
 
     mails = provide_all(

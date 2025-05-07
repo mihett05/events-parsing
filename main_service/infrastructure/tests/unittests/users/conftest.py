@@ -9,23 +9,7 @@ from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 
 
-@pytest_asyncio.fixture
-async def get_user_entity() -> User:
-    return User(
-        email="test@example.com",
-        fullname="Ivanov Ivan Ivanovich",
-    )
 
-
-@pytest_asyncio.fixture
-async def get_user_entities() -> list[User]:
-    return [
-        User(
-            email=f"test{i}@test.com",
-            fullname=f"Iivan{i}",
-        )
-        for i in range(8)
-    ]
 
 
 @pytest_asyncio.fixture

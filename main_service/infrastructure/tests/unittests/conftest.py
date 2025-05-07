@@ -4,6 +4,7 @@ from dishka import AsyncContainer
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from domain.users.entities import User
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
 
@@ -48,3 +49,24 @@ async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
             await conn.execute(
                 text(f"TRUNCATE TABLE {table.name} RESTART IDENTITY CASCADE")
             )
+
+
+@pytest_asyncio.fixture
+async def get_user_entity() -> User:
+    return User(
+        email="test@example.com",
+        fullname="Ivanov Ivan Ivanovich",
+    )
+
+
+@pytest_asyncio.fixture
+async def get_user_entities() -> list[User]:
+    return [
+        User(
+            email=f"test{i}@test.com",
+            fullname=f"Ivan{i}",
+        )
+        for i in range(8)
+    ]
+
+

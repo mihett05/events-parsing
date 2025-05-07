@@ -3,7 +3,7 @@ from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository
 from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
-from domain.organizations.repositories import OrganizationsRepository
+from domain.organizations.repositories import OrganizationsRepository, OrganizationTokensRepository
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
@@ -37,6 +37,9 @@ class RepositoriesProvider(Provider):
         source=MailsDatabaseRepository, provides=MailsRepository
     )
     organizations_repository = provide(
+        source=OrganizationsDatabaseRepository, provides=OrganizationsRepository
+    )
+    organization_tokens_repository = provide(
         source=OrganizationsDatabaseRepository, provides=OrganizationsRepository
     )
     users_repository = provide(

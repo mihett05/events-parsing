@@ -58,3 +58,4 @@ async def prepare(
     if pytestconfig.getoption("--integration", default=False):
         return
     await mails_repository.clear()  # noqa
+
