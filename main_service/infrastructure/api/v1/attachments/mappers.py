@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import UUID
 
 from adaptix import P
 from adaptix.conversion import link_function
@@ -14,9 +15,19 @@ from .models import AttachmentModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-map_create_dto_from_pydantic = retort.get_converter(
-    UpdateAttachmentModelDto, UpdateAttachmentDto
+
+@retort.impl_converter(
+    recipe=[
+        link_function(
+            lambda dto, attachment_id: attachment_id,
+            P[UpdateAttachmentDto].attachment_id,
+        )
+    ]
 )
+def map_update_dto_from_pydantic(
+    dto: UpdateAttachmentModelDto, attachment_id: UUID
+) -> UpdateAttachmentDto: ...
+
 
 map_to_pydantic = retort.get_converter(
     Attachment,

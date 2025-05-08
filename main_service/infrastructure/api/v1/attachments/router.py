@@ -68,10 +68,13 @@ async def delete_attachment(
     responses={404: {"model": ErrorModel}},
 )
 async def update_attachment(
+    attachment_id: UUID,
     dto: UpdateAttachmentModelDto,
     use_case: FromDishka[use_cases.UpdateAttachmentUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(
-        await use_case(mappers.map_create_dto_from_pydantic(dto), actor)
+        await use_case(
+            mappers.map_update_dto_from_pydantic(dto, attachment_id), actor
+        )
     )
