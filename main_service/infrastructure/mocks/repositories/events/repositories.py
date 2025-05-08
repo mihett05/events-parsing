@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from domain.events import dtos as dtos
 from domain.events import entities as entities
 from domain.events.dtos import (
@@ -66,13 +68,7 @@ class EventsMemoryRepository(EventsRepository):
         data = await self.__repository.read_all()
         res = []
         for event in data:
-            start = (
-                dto.start_date is None
-                or dto.start_date <= event.start_date
-                or dto.start_date <= event.end_date
-            )
-            end = dto.end_date is None or event.start_date <= dto.end_date
-            if start and end:
+            if dto.start_date <= event.start_date <= dto.start_date + timedelta(days=1):
                 res.append(event)
         return res
 

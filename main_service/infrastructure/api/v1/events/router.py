@@ -3,7 +3,7 @@ from typing import Annotated
 
 import application.events.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
+from domain.events.dtos import ReadAllEventsFeedDto
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
@@ -14,23 +14,6 @@ from infrastructure.api.models import ErrorModel
 from infrastructure.api.v1.auth.deps import get_user
 
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
-
-
-@router.get("/calendar", response_model=list[models.EventModel])
-async def read_all_events(
-    use_case: FromDishka[use_cases.ReadAllEventUseCase],
-    start_date: date | None = None,
-    end_date: date | None = None,
-):
-    return map(
-        mappers.map_to_pydantic,
-        await use_case(
-            ReadAllEventsDto(
-                start_date=start_date,
-                end_date=end_date,
-            )
-        ),
-    )
 
 
 @router.get("/feed", response_model=list[models.EventModel])

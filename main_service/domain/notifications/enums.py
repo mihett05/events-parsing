@@ -13,6 +13,6 @@ class NotificationFormatEnum(Enum):
 
 
 class NotificationStatusEnum(Enum):
+    UNSENT = "UNSENT"
     SENT = "SENT"
     FAILED = "FAILED"
-    UNSENT = "UNSENT"

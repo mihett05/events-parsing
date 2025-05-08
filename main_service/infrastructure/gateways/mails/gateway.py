@@ -1,5 +1,4 @@
 import email
-import os
 from email.header import decode_header
 from email.parser import BytesParser
 from email.policy import default
@@ -39,14 +38,14 @@ class ImapEmailsGateway(EmailsGateway):
         failed_mails = []
         for i in range(0, 10, batch_size):
             batch_uids = email_ids[i : i + batch_size]
-            (
-                raw_mail_collection,
-                failed,
-            ) = await self.__fetch_collection_by_batch(batch_uids)
+
+            raw_collection, failed = await self.__fetch_collection_by_batch(batch_uids)
             failed_mails.extend(failed)
-            parsed_mails, failed = await self.__parse_mails(raw_mail_collection)
+
+            parsed_mails, failed = await self.__parse_mails(raw_collection)
             emails.extend(parsed_mails)
             failed_mails.extend(failed)
+
         await self.__mark_mail_as_unseen(failed_mails)
         return emails
 

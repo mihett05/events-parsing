@@ -30,6 +30,7 @@ pydantic-settings = "^2.9.1"
 python-multipart = "^0.0.20"
 miniopy-async = "^1.22.1"
 aiogram = "^3.20.0.post0"
+aiosmtplib = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -27,8 +27,14 @@ class EventsDatabaseRepository(EventsRepository):
             )
 
         def get_select_all_query(self, dto: dtos.ReadAllEventsDto) -> Select:
-            query = select(self.model).order_by(self.model.id)
-            query = self.__try_add_period_filter_to_query(query, dto)
+            query = (
+                select(self.model)
+                .order_by(self.model.id)
+                .where(self.model.start_date == dto.start_date)
+            )
+            if dto.for_update:
+                query = query.with_for_update(skip_locked=True)
+
             return query
 
         def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:

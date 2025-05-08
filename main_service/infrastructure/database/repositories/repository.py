@@ -117,8 +117,14 @@ class PostgresRepository(metaclass=ABCMeta):
     async def create_from_entity(self, entity: Entity) -> Entity:
         return await self.create(self.config.model_mapper(entity))
 
-    async def create_many(self, dtos: list[CreateModelType]) -> list[Entity]:
+    async def create_many_from_dto(self, dtos: list[CreateModelType]) -> list[Entity]:
         models = [self.config.create_model_mapper(dto) for dto in dtos]
+        return await self.__create_models(models)
+
+    async def create_many_from_entity(
+        self, dtos: list[CreateModelType]
+    ) -> list[Entity]:
+        models = [self.config.model_mapper(dto) for dto in dtos]
         return await self.__create_models(models)
 
     async def update(self, entity: Entity) -> Entity:

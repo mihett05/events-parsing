@@ -12,6 +12,11 @@ class NotificationsRepository(metaclass=ABCMeta):
     ) -> entities.Notification: ...
 
     @abstractmethod
+    async def create_many(
+        self, notifications: list[entities.Notification]
+    ) -> entities.Notification: ...
+
+    @abstractmethod
     async def read(self, id_: int) -> entities.Notification: ...
 
     @abstractmethod

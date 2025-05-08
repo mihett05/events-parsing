@@ -31,8 +31,10 @@ class ReadOrganizationEventsDto:
 
 @dataclass
 class ReadAllEventsDto:
-    start_date: date | None
-    end_date: date | None
+    page: int
+    page_size: int
+    start_date: datetime
+    for_update: bool
 
 
 @dataclass

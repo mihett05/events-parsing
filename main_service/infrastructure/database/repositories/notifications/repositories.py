@@ -28,13 +28,16 @@ class NotificationsDatabaseRepository(NotificationsRepository):
             )
 
         def get_select_all_query(self, dto: dtos.ReadNotificationsDto) -> Select:
-            return (
+            query = (
                 select(self.model)
                 .where(self.model.status == NotificationStatusEnum.UNSENT)
+                .where(self.model.event_id == dto.event_id)
                 .order_by(self.model.id)
-                .offset(dto.page * dto.page_size)
-                .limit(dto.page_size)
             )
+            if dto.for_update:
+                query = query.with_for_update(skip_locked=True)
+
+            return query
 
     def __init__(self, session: AsyncSession):
         self.__session = session
@@ -62,6 +65,9 @@ class NotificationsDatabaseRepository(NotificationsRepository):
 
     async def create(self, dto: dtos.CreateNotificationDto) -> Notification:
         return await self.__repository.create_from_dto(dto)
+
+    async def create_many(self, entities: list[Notification]) -> list[Notification]:
+        return await self.__repository.create_many_from_entity(entities)
 
     async def delete(self, notification: Notification) -> Notification:
         return await self.__repository.delete(notification)
