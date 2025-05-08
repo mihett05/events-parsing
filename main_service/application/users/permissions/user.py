@@ -38,7 +38,7 @@ class UserRolesPermissionProvider(PermissionProvider):
                 role.role.value.startswith("SUPER")
                 or role.organization_id == organization_id
             ):
-                result |= self.__perms.get(role.role).copy()
+                result |= self.__perms.get(role.role)
         return result
 
     def __call__(self) -> set[PermissionsEnum]:

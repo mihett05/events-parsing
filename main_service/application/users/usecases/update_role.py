@@ -26,19 +26,15 @@ class UpdateUserRoleUseCase:
         self.__read_roles_use_case = read_roles_use_case
 
     async def __call__(
-        self, dto: UserOrganizationRole, actor: User
+        self, entity: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
         async with self.__transaction:
             roles = await self.__read_roles_use_case(actor.id)
             self.__builder.providers(
-                UserRolesPermissionProvider(dto.organization_id, roles)
+                UserRolesPermissionProvider(entity.organization_id, roles)
             ).add(PermissionsEnum.CAN_UPDATE_ROLE).apply()
-            user_role_changed = False
             for role in roles:
-                if role.organization_id == dto.organization_id:
-                    role.role = dto.role
-                    user_role_changed = role
-                    break
-            if not user_role_changed:
-                raise EntityAccessDenied
-            return await self.__repository.update(user_role_changed)
+                if role.organization_id == entity.organization_id:
+                    role.role = entity.role
+                    return await self.__repository.update(role)
+            raise EntityAccessDenied
