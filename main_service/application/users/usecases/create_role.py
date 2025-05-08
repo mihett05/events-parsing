@@ -4,7 +4,7 @@ from domain.users.repositories import UserOrganizationRolesRepository
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.transactions import TransactionsGateway
-from application.users.permissions.user import UserPermissionProvider
+from application.users.permissions.user import UserRolesPermissionProvider
 from application.users.usecases import ReadUserRolesUseCase
 
 
@@ -22,11 +22,11 @@ class CreateUserRoleUseCase:
         self.__read_roles_use_case = read_roles_use_case
 
     async def __call__(
-        self, role: UserOrganizationRole, actor: User | None
+        self, role: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
         async with self.__transaction:
             roles = await self.__read_roles_use_case(actor.id)
             self.__builder.providers(
-                UserPermissionProvider(role.organization_id, roles)
+                UserRolesPermissionProvider(role.organization_id, roles)
             ).add(PermissionsEnum.CAN_CREATE_ROLE).apply()
             return await self.__repository.create(role)

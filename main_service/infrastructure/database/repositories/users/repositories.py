@@ -117,7 +117,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
 
     async def read(
         self, user_id: int, organization_id: int
-    ) -> list[UserOrganizationRole]:
+    ) -> UserOrganizationRole:
         return await self.__repository.read(
             {"user_id": user_id, "organization_id": organization_id}
         )

@@ -5,7 +5,7 @@ from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionProvider
 
 
-class UserPermissionProvider(PermissionProvider):
+class UserRolesPermissionProvider(PermissionProvider):
     __maximum_perms = {
         PermissionsEnum.CAN_CREATE_ROLE,
         PermissionsEnum.CAN_DELETE_ROLE,
@@ -32,13 +32,14 @@ class UserPermissionProvider(PermissionProvider):
     def __get_perms(
         self, organization_id: int, user_roles: list[UserOrganizationRole]
     ) -> set[PermissionsEnum]:
+        result = self.__perms.get(RoleEnum.PUBLIC).copy()
         for role in user_roles:
             if (
                 role.role.value.startswith("SUPER")
                 or role.organization_id == organization_id
             ):
-                return self.__perms.get(role.role).copy()
-        return self.__perms.get(RoleEnum.PUBLIC).copy()
+                result |= self.__perms.get(role.role).copy()
+        return result
 
     def __call__(self) -> set[PermissionsEnum]:
         return self.permissions
