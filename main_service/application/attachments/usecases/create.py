@@ -60,15 +60,15 @@ class CreateAttachmentUseCase:
             return False
 
     async def __call__(
-        self, dtos: list[CreateAttachmentDto], actor: User | None
+        self, dtos: list[CreateAttachmentDto], actor: User
     ) -> tuple[list[Attachment], list[str]]:
         failed = []
         succeed = []
         roles = await self.__read_roles_use_case(actor.id)
-        for dto in dtos:
-            async with self.__transaction:
+        async with self.__transaction:
+            for dto in dtos:
                 if self.__has_perms(
-                        dto.event and dto.event.organization_id or -1, roles
+                    dto.event and dto.event.organization_id or -1, roles
                 ) and (attachment := await self.__try_create_attachment(dto)):
                     succeed.append(attachment)
                 else:

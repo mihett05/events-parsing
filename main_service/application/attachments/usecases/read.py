@@ -32,9 +32,7 @@ class ReadAttachmentUseCase:
         self.__read_roles_use_case = read_roles_use_case
         self.__read_event_use_case = read_event_use_case
 
-    async def __call__(
-        self, attachment_id: UUID, actor: User | None
-    ) -> Attachment:
+    async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
             roles = await self.__read_roles_use_case(actor.id)
@@ -43,7 +41,11 @@ class ReadAttachmentUseCase:
             else:
                 event = None
             self.__builder.providers(
-                AttachmentPermissionProvider(event is not None and event.organization_id or -1, roles, event)
+                AttachmentPermissionProvider(
+                    event is not None and event.organization_id or -1,
+                    roles,
+                    event,
+                )
             ).add(
                 PermissionsEnum.CAN_READ_ATTACHMENT,
             ).apply()

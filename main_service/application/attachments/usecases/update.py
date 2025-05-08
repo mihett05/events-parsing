@@ -1,5 +1,4 @@
-from uuid import UUID
-
+from domain.attachments.dtos import UpdateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
 from domain.users.entities import User
@@ -15,41 +14,43 @@ from application.transactions import TransactionsGateway
 from application.users.usecases import ReadUserRolesUseCase
 
 
-class DeleteAttachmentUseCase:
+class UpdateAttachmentUseCase:
     def __init__(
         self,
         gateway: FilesGateway,
-        tx: TransactionsGateway,
         repository: AttachmentsRepository,
+        tx: TransactionsGateway,
         builder: PermissionBuilder,
         read_roles_use_case: ReadUserRolesUseCase,
         read_event_use_case: ReadEventUseCase,
     ):
         self.__gateway = gateway
-        self.__transaction = tx
         self.__repository = repository
+        self.__transaction = tx
         self.__builder = builder
         self.__read_roles_use_case = read_roles_use_case
         self.__read_event_use_case = read_event_use_case
 
-    async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
+    async def __call__(
+        self, attachment_update_dto: UpdateAttachmentDto, actor: User
+    ) -> Attachment:
         async with self.__transaction:
-            attachment = await self.__repository.read(attachment_id)
+            attachment = await self.__repository.read(
+                attachment_update_dto.attachment_id
+            )
             roles = await self.__read_roles_use_case(actor.id)
-
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id)
             else:
                 event = None
-
             self.__builder.providers(
                 AttachmentPermissionProvider(
-                    event is not None and event.organization_id or -1, roles
+                    event is not None and event.organization_id or -1,
+                    roles,
+                    event,
                 )
             ).add(
-                PermissionsEnum.CAN_DELETE_ATTACHMENT,
+                PermissionsEnum.CAN_UPDATE_ATTACHMENT,
             ).apply()
-
-            attachment = await self.__repository.delete(attachment)
-
-            return await self.__gateway.delete(attachment)
+            attachment.filename = attachment_update_dto.filename
+            return await self.__repository.update(attachment)
