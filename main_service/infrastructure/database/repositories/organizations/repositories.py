@@ -1,7 +1,7 @@
 from uuid import UUID, uuid4
 
 from domain.organizations import dtos
-from domain.organizations import entities as entities
+from domain.organizations.dtos import CreateOrganizationTokenDto
 from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
     OrganizationAlreadyExistsError,
@@ -26,6 +26,7 @@ from .mappers import (
     map_create_dto_to_model,
     map_from_db,
     map_to_db,
+    organization_token_map_create_to_model,
     organization_token_map_from_db,
     organization_token_map_to_db,
 )
@@ -88,7 +89,7 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
                 entity=OrganizationToken,
                 entity_mapper=organization_token_map_from_db,
                 model_mapper=organization_token_map_to_db,
-                create_model_mapper=None,
+                create_model_mapper=organization_token_map_create_to_model,
                 not_found_exception=OrganizationTokenNotFoundError,
                 already_exists_exception=OrganizationTokenAlreadyExistsError,
             )
@@ -101,9 +102,10 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
     async def read(self, token_id: UUID) -> OrganizationToken:
         return await self.__repository.read(token_id)
 
-    async def create(self, creator_id) -> OrganizationToken:
-        token = OrganizationToken(uuid4(), creator_id)
-        return await self.__repository.create_from_entity(token)
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
+        return await self.__repository.create_from_dto(dto)
 
     async def update(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.update(token)

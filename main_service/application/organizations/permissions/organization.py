@@ -48,7 +48,7 @@ class OrganizationPermissionProvider(PermissionProvider):
                 role.role.value.startswith("SUPER")
                 or role.organization_id == organization_id
             ):
-                result |= self.__perms.get(role.role).copy()
+                result |= self.__perms.get(role.role)
         return result
 
     def __call__(self) -> set[PermissionsEnum]:
@@ -86,7 +86,7 @@ class OrganizationLinkPermissionProvider(PermissionProvider):
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
         for role in user_roles:
             if role.role.value.startswith("SUPER"):
-                result |= self.__perms.get(role.role).copy()
+                result |= self.__perms.get(role.role)
         return result
 
     def __call__(self) -> set[PermissionsEnum]:

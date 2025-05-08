@@ -1,6 +1,9 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, link_function
-from domain.organizations.dtos import CreateOrganizationDto
+from domain.organizations.dtos import (
+    CreateOrganizationDto,
+    CreateOrganizationTokenDto,
+)
 from domain.organizations.entities import Organization, OrganizationToken
 
 from infrastructure.database.mappers import postgres_retort
@@ -46,4 +49,13 @@ organization_token_map_to_db = retort.get_converter(
 organization_token_map_from_db = retort.get_converter(
     OrganizationTokenDatabaseModel,
     OrganizationToken,
+)
+
+organization_token_map_create_to_model = retort.get_converter(
+    CreateOrganizationTokenDto,
+    OrganizationTokenDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[OrganizationTokenDatabaseModel].used_by),
+        allow_unlinked_optional(P[OrganizationTokenDatabaseModel].is_used),
+    ],
 )

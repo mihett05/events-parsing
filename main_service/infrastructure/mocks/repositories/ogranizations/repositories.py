@@ -3,12 +3,11 @@ from uuid import UUID
 
 from domain.organizations import dtos as dtos
 from domain.organizations import entities as entities
+from domain.organizations.dtos import CreateOrganizationTokenDto
 from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
-    OrganizationAccessDenied,
     OrganizationAlreadyExistsError,
     OrganizationNotFoundError,
-    OrganizationTokenAccessDenied,
     OrganizationTokenAlreadyExistsError,
     OrganizationTokenNotFoundError,
 )
@@ -30,7 +29,6 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
                 entity=Organization,
                 not_found_exception=OrganizationNotFoundError,
                 already_exists_exception=OrganizationAlreadyExistsError,
-                access_denied_exception=OrganizationAccessDenied,
             )
 
     def __init__(self):
@@ -68,19 +66,16 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
                 entity=OrganizationToken,
                 not_found_exception=OrganizationTokenNotFoundError,
                 already_exists_exception=OrganizationTokenAlreadyExistsError,
-                access_denied_exception=OrganizationTokenAccessDenied,
             )
 
     def __init__(self):
-        self.__next_id = 1
         self.__repository = MockRepository(self.Config())
 
-    async def create(self, creator_id: int) -> OrganizationToken:
-        uuid = UUID("0" * (32 - len(str(self.__next_id))) + str(self.__next_id))
-        self.__next_id += 1
-        return await self.__repository.create(
-            OrganizationToken(uuid, creator_id)
-        )
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
+        token = OrganizationToken(id=dto.id, created_by=dto.created_by)
+        return await self.__repository.create(token)
 
     async def read(self, token_id: UUID) -> OrganizationToken:
         return await self.__repository.read(token_id)

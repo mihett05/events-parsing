@@ -32,7 +32,9 @@ class OrganizationsRepository(metaclass=ABCMeta):
 
 class OrganizationTokensRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, creator_id: int) -> entities.OrganizationToken: ...
+    async def create(
+        self, dto: dtos.CreateOrganizationTokenDto
+    ) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def read(self, token_id: UUID) -> entities.OrganizationToken: ...

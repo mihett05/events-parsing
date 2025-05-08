@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 from domain.exceptions import (
-    EntityAccessDenied,
     EntityAlreadyExistsError,
     EntityNotFoundError,
 )
@@ -19,7 +18,6 @@ class MockRepositoryConfig(metaclass=ABCMeta):
     already_exists_exception: type[EntityAlreadyExistsError] = (
         EntityAlreadyExistsError
     )
-    access_denied_exception: type[EntityAccessDenied] = EntityAccessDenied
 
     def extract_id(self, entity: Entity) -> Id:
         return entity.id
