@@ -96,8 +96,20 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create_from_entity(role)
 
-    async def read(self, user_id: int) -> list[UserOrganizationRole]:
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read_all(user_id)
+
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        return self.__config.entity_mapper(
+            select(self.__config.model)
+            .where(
+                self.__config.model.user_id == user_id
+                and self.__config.model.organization_id == organization_id
+            )
+            .scalar()
+        )
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(role)

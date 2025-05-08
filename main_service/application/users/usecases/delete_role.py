@@ -1,0 +1,40 @@
+from domain.exceptions import EntityAccessDenied
+from domain.users.entities import User, UserOrganizationRole
+from domain.users.repositories import UserOrganizationRolesRepository
+
+from application.transactions import TransactionsGateway
+
+from ...auth.enums import PermissionsEnum
+from ...auth.permissions import PermissionBuilder
+from ..permissions.user import UserRolesPermissionProvider
+from . import ReadUserRolesUseCase
+from .read_role import ReadUserRoleUseCase
+
+
+class DeleteUserRoleUseCase:
+    def __init__(
+        self,
+        repository: UserOrganizationRolesRepository,
+        read_role_use_case: ReadUserRoleUseCase,
+        permission_builder: PermissionBuilder,
+        transaction: TransactionsGateway,
+        read_roles_use_case: ReadUserRolesUseCase,
+    ):
+        self.__repository = repository
+        self.__read_role_use_case = read_role_use_case
+        self.__transaction = transaction
+        self.__builder = permission_builder
+        self.__read_roles_use_case = read_roles_use_case
+
+    async def __call__(
+        self, entity: UserOrganizationRole, actor: User
+    ) -> UserOrganizationRole:
+        async with self.__transaction:
+            roles = await self.__read_roles_use_case(actor.id)
+            self.__builder.providers(
+                UserRolesPermissionProvider(entity.organization_id, roles)
+            ).add(PermissionsEnum.CAN_DELETE_ROLE).apply()
+            for role in roles:
+                if role.organization_id == entity.organization_id:
+                    return await self.__repository.delete(role)
+            raise EntityAccessDenied
