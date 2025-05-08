@@ -102,15 +102,14 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def read(
         self, user_id: int, organization_id: int
     ) -> UserOrganizationRole:
-        roles = await self.__repository.read_all(user_id)
-        user_role = None
-        for role in roles:
-            if role.organization_id == organization_id:
-                user_role = role
-                break
-        if user_role is None:
-            raise UserNotFoundError
-        return user_role
+        return self.__config.entity_mapper(
+            select(self.__config.model)
+            .where(
+                self.__config.model.user_id == user_id
+                and self.__config.model.organization_id == organization_id
+            )
+            .scalar()
+        )
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(role)
