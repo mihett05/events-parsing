@@ -7,8 +7,10 @@ from domain.events.dtos import CreateEventDto
 async def test_create_success(
     create_event_usecase: CreateEventUseCase,
     create_event_dto: CreateEventDto,
+    create_user1
 ):
-    event = await create_event_usecase(dto=create_event_dto, actor=None)
+    user = await create_user1()
+    event = await create_event_usecase(dto=create_event_dto, actor=user)
 
     attrs = (
         "title",
