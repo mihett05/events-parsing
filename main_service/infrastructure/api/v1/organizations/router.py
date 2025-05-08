@@ -98,6 +98,7 @@ async def create_token(
 ):
     return mappers.organization_token_map_to_pydantic(await use_case(actor))
 
+
 @router.get(
     "/token/{token_id}",
     response_model=models.OrganizationTokenModel,
@@ -106,9 +107,11 @@ async def create_token(
 async def read_token(
     token_id: UUID,
     use_case: FromDishka[use_cases.ReadOrganizationTokenUseCase],
-    actor: Annotated[User, Depends(get_user)]
+    actor: Annotated[User, Depends(get_user)],
 ):
-    return mappers.map_to_pydantic(await use_case(token_id, actor))
+    return mappers.organization_token_map_to_pydantic(
+        await use_case(token_id, actor)
+    )
 
 
 @router.delete(
@@ -121,4 +124,6 @@ async def delete_token(
     use_case: FromDishka[use_cases.DeleteOrganizationTokenUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
-    return mappers.map_to_pydantic(await use_case(token_id, actor))
+    return mappers.organization_token_map_to_pydantic(
+        await use_case(token_id, actor)
+    )

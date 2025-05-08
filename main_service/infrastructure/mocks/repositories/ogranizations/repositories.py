@@ -1,13 +1,21 @@
 import datetime
+from uuid import UUID
 
 from domain.organizations import dtos as dtos
 from domain.organizations import entities as entities
-from domain.organizations.entities import Organization
+from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
+    OrganizationAccessDenied,
     OrganizationAlreadyExistsError,
     OrganizationNotFoundError,
+    OrganizationTokenAccessDenied,
+    OrganizationTokenAlreadyExistsError,
+    OrganizationTokenNotFoundError,
 )
-from domain.organizations.repositories import OrganizationsRepository
+from domain.organizations.repositories import (
+    OrganizationsRepository,
+    OrganizationTokensRepository,
+)
 
 from infrastructure.mocks.repositories.crud import (
     MockRepository,
@@ -22,6 +30,7 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
                 entity=Organization,
                 not_found_exception=OrganizationNotFoundError,
                 already_exists_exception=OrganizationAlreadyExistsError,
+                access_denied_exception=OrganizationAccessDenied,
             )
 
     def __init__(self):
@@ -50,3 +59,34 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
 
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
+
+
+class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
+    class Config(MockRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                entity=OrganizationToken,
+                not_found_exception=OrganizationTokenNotFoundError,
+                already_exists_exception=OrganizationTokenAlreadyExistsError,
+                access_denied_exception=OrganizationTokenAccessDenied,
+            )
+
+    def __init__(self):
+        self.__next_id = 1
+        self.__repository = MockRepository(self.Config())
+
+    async def create(self, creator_id: int) -> OrganizationToken:
+        uuid = UUID("0" * (32 - len(str(self.__next_id))) + str(self.__next_id))
+        self.__next_id += 1
+        return await self.__repository.create(
+            OrganizationToken(uuid, creator_id)
+        )
+
+    async def read(self, token_id: UUID) -> OrganizationToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: OrganizationToken) -> OrganizationToken:
+        return await self.__repository.update(token)
+
+    async def delete(self, token: OrganizationToken) -> OrganizationToken:
+        return await self.__repository.delete(token)

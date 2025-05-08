@@ -12,7 +12,9 @@ class OrganizationDatabaseModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     owner_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=False
+        ForeignKey("users.id", ondelete="SET DEFAULT"),
+        nullable=False,
+        default=0,
     )
 
     created_at: Mapped[datetime] = mapped_column(
@@ -27,9 +29,9 @@ class OrganizationTokenDatabaseModel(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True)
     created_by: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=False
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     used_by: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"), default=None, nullable=True
+        ForeignKey("users.id", ondelete="SET NULL"), default=None, nullable=True
     )
     is_used: Mapped[bool] = mapped_column(default=False)
