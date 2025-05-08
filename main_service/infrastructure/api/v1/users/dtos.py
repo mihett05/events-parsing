@@ -16,6 +16,6 @@ class CreateUserRoleModelDto(CamelModel):
 
 
 class UpdateUserRoleModelDto(CamelModel):
+    user_id: int
     organization_id: int
-
     role: RoleEnum
