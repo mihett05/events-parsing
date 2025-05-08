@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, UploadFile
 import infrastructure.api.v1.attachments.mappers as mappers
 import infrastructure.api.v1.attachments.models as models
 from infrastructure.api.models import ErrorModel
+from infrastructure.api.v1.attachments.dtos import UpdateAttachmentModelDto
 from infrastructure.api.v1.auth.deps import get_user
 
 router = APIRouter(route_class=DishkaRoute, tags=["Attachments"])
@@ -46,3 +47,31 @@ async def read_attachment(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(await use_case(attachment_id, actor))
+
+
+@router.delete(
+    "/{attachment_id}",
+    response_model=models.AttachmentModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def delete_attachment(
+    attachment_id: UUID,
+    use_case: FromDishka[use_cases.DeleteAttachmentUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.map_to_pydantic(await use_case(attachment_id, actor))
+
+
+@router.put(
+    "/{attachment_id}",
+    response_model=models.AttachmentModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def update_attachment(
+    dto: UpdateAttachmentModelDto,
+    use_case: FromDishka[use_cases.UpdateAttachmentUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.map_to_pydantic(
+        await use_case(mappers.map_create_dto_from_pydantic(dto), actor)
+    )

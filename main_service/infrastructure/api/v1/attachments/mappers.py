@@ -2,16 +2,21 @@ from pathlib import Path
 
 from adaptix import P
 from adaptix.conversion import link_function
-from domain.attachments.dtos import CreateAttachmentDto
+from domain.attachments.dtos import CreateAttachmentDto, UpdateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.events.entities import Event
 from fastapi import UploadFile
 
 from infrastructure.api.retort import pydantic_retort
 
+from .dtos import UpdateAttachmentModelDto
 from .models import AttachmentModel
 
 retort = pydantic_retort.extend(recipe=[])
+
+map_create_dto_from_pydantic = retort.get_converter(
+    UpdateAttachmentModelDto, UpdateAttachmentDto
+)
 
 map_to_pydantic = retort.get_converter(
     Attachment,
