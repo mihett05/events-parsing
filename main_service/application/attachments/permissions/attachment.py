@@ -41,15 +41,15 @@ class AttachmentPermissionProvider(PermissionProvider):
         user_roles: list[UserOrganizationRole],
         event: Event | None = None,
     ) -> set[PermissionsEnum]:
-        result = self.__perms.get(RoleEnum.PUBLIC)
-        if event is not None and event.is_visible:
+        result = self.__perms.get(RoleEnum.PUBLIC).copy()
+        if event and event.is_visible:
             result |= self.__public_event_permissions
         for role in user_roles:
             if (
                 role.role.value.startswith("SUPER")
                 or role.organization_id == organization_id
             ):
-                result |= self.__perms.get(role.role).copy()
+                result |= self.__perms.get(role.role)
         return result
 
     def __call__(self) -> set[PermissionsEnum]:

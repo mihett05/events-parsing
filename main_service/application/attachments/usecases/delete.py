@@ -36,15 +36,13 @@ class DeleteAttachmentUseCase:
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
             roles = await self.__read_roles_use_case(actor.id)
-
+            event = None
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id)
-            else:
-                event = None
 
             self.__builder.providers(
                 AttachmentPermissionProvider(
-                    event is not None and event.organization_id or -1, roles
+                    event and event.organization_id or -1, roles
                 )
             ).add(
                 PermissionsEnum.CAN_DELETE_ATTACHMENT,

@@ -39,18 +39,20 @@ class UpdateAttachmentUseCase:
                 attachment_update_dto.attachment_id
             )
             roles = await self.__read_roles_use_case(actor.id)
+            event = None
+
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id)
-            else:
-                event = None
+
             self.__builder.providers(
                 AttachmentPermissionProvider(
-                    event is not None and event.organization_id or -1,
+                    event and event.organization_id or -1,
                     roles,
                     event,
                 )
             ).add(
                 PermissionsEnum.CAN_UPDATE_ATTACHMENT,
             ).apply()
+
             attachment.filename = attachment_update_dto.filename
             return await self.__repository.update(attachment)
