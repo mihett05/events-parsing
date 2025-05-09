@@ -7,6 +7,7 @@ from application.auth.permissions import PermissionBuilder
 from application.events.permissions import EventPermissionProvider
 from application.events.usecases.read import ReadEventUseCase
 from application.transactions import TransactionsGateway
+from application.users.usecases import ReadUserRolesUseCase
 
 
 class DeleteEventUseCase:
@@ -16,21 +17,22 @@ class DeleteEventUseCase:
         tx: TransactionsGateway,
         read_uc: ReadEventUseCase,
         builder: PermissionBuilder,
+        read_roles_use_case: ReadUserRolesUseCase,
     ):
         self.__repository = repository
         self.__transaction = tx
 
         self.__read_use_case = read_uc
+        self.__read_roles_use_case = read_roles_use_case
         self.__builder = builder
 
     async def __call__(self, event_id: int, actor: User | None) -> Event:
         async with self.__transaction:
             event = await self.__read_use_case(event_id)
-
-            self.__builder.providers(EventPermissionProvider(event, actor)).add(
+            roles = await self.__read_roles_use_case(actor.id)
+            self.__builder.providers(
+                EventPermissionProvider(event.organization_id, roles)
+            ).add(
                 PermissionsEnum.CAN_DELETE_EVENT,
             ).apply()
-
-            await self.__repository.delete(event)
-
-        return event
+            return await self.__repository.delete(event)

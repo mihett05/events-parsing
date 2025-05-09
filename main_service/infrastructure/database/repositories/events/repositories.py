@@ -5,7 +5,7 @@ from domain.events.exceptions import (
     EventNotFoundError,
 )
 from domain.events.repositories import EventsRepository
-from sqlalchemy import Select, and_, select
+from sqlalchemy import Select, and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -37,11 +37,15 @@ class EventsDatabaseRepository(EventsRepository):
 
             return query
 
-        def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
-            query = select(self.model).order_by(self.model.id)
+        def get_select_all_feed_query(
+            self, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
+            query = select(self.model).order_by(desc(self.model.start_date))
 
             query = self.__try_add_period_filter_to_query(query, dto)
             query = self.__try_add_organization_filter_to_query(query, dto)
+            query = self.__try_add_type_filter_to_query(query, dto)
+            query = self.__try_add_format_filter_to_query(query, dto)
             query = self.__add_offset_to_query(query, dto)
             return query
 
@@ -67,6 +71,20 @@ class EventsDatabaseRepository(EventsRepository):
             if dto.organization_id is None:
                 return query
             return query.where(self.model.organization_id == dto.organization_id)
+
+        def __try_add_type_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
+            if dto.type is None:
+                return query
+            return query.where(self.model.type == dto.type)
+
+        def __try_add_format_filter_to_query(
+            self, query, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
+            if dto.format is None:
+                return query
+            return query.where(self.model.format == dto.format)
 
         def __add_offset_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto

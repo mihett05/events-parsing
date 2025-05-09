@@ -1,12 +1,14 @@
 from datetime import datetime
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
+
 from infrastructure.api.models import CamelModel
 
 
 class CreateEventModelDto(CamelModel):
     title: str
-    type: str
-    format: str
+    type: EventTypeEnum
+    format: EventFormatEnum
     location: str | None
     description: str | None
     end_date: datetime

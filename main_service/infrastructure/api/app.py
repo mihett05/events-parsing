@@ -7,7 +7,11 @@ from dishka.integrations.fastapi import setup_dishka
 from dishka.integrations.faststream import (
     setup_dishka as faststream_setup_dishka,
 )
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.exceptions import (
+    EntityAccessDenied,
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+)
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -69,6 +73,13 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     ):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(exc)},
+        )
+
+    @app.exception_handler(EntityAccessDenied)
+    async def entity_access_denied_handler(_: Request, exc: EntityAccessDenied):
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
             content={"message": str(exc)},
         )
 

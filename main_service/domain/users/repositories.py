@@ -28,3 +28,25 @@ class UsersRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def delete(self, user: entities.User) -> entities.User: ...
+
+
+class UserOrganizationRolesRepository(metaclass=ABCMeta):
+    @abstractmethod
+    async def create(
+        self, role: entities.UserOrganizationRole
+    ) -> entities.UserOrganizationRole: ...
+
+    @abstractmethod
+    async def read(
+        self, user_id: int
+    ) -> list[entities.UserOrganizationRole]: ...
+
+    @abstractmethod
+    async def update(
+        self, role: entities.UserOrganizationRole
+    ) -> entities.UserOrganizationRole: ...
+
+    @abstractmethod
+    async def delete(
+        self, role: entities.UserOrganizationRole
+    ) -> entities.UserOrganizationRole: ...

@@ -1,16 +1,18 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.users.entities import User
 
 
 @dataclass
 class Event:
-    type: str
     title: str
-    format: str
     location: str | None
     start_date: datetime
+
+    type: EventTypeEnum = EventTypeEnum.OTHER
+    format: EventFormatEnum = EventFormatEnum.OTHER
 
     id: int | None = None
     organization_id: int | None = None

@@ -1,15 +1,30 @@
 from adaptix import P
 from adaptix.conversion import coercer, link_function
 from domain.users.entities import User, UserSettings
+from adaptix.conversion import allow_unlinked_optional, link_function
+from domain.users.entities import User, UserOrganizationRole
 
 from ...mappers import postgres_retort
 from .models import UserDatabaseModel, UserSettingsDatabaseModel
+from infrastructure.database.mappers import postgres_retort
+
+from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])
 
 user_settings_from_db_mapper = retort.get_converter(
     UserSettingsDatabaseModel,
     UserSettings,
+)
+
+user_organization_role_map_from_db = retort.get_converter(
+    UserOrganizationRoleDatabaseModel,
+    UserOrganizationRole,
+)
+
+user_organization_role_map_to_db = retort.get_converter(
+    UserOrganizationRole,
+    UserOrganizationRoleDatabaseModel,
 )
 
 map_from_db = retort.get_converter(

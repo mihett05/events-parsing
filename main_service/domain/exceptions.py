@@ -15,3 +15,8 @@ class EntityNotFoundError(EntityException):
 class EntityAlreadyExistsError(EntityException):
     def __init__(self, entity: type[Entity] | None = None):
         super().__init__(f"{entity.__name__} already exists")
+
+
+class EntityAccessDenied(EntityException):
+    def __init__(self):
+        super().__init__(f"Access denied")

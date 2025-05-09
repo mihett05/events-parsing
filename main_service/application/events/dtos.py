@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from domain.events.enums import EventFormatEnum, EventTypeEnum
+
 
 @dataclass
 class UpdateEventDto:
@@ -29,6 +31,7 @@ class EventInfo:
     title: str
     description: str | None
     dates: DatesInfo
-    type: str
-    format: str
+    type: EventTypeEnum
+    format: EventFormatEnum
     location: str | None
+    organization_name: str | None

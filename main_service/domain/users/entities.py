@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domain.users.enums import UserNotificationSendToEnum
+from domain.users.enums import UserNotificationSendToEnum, RoleEnum
 
 
 @dataclass
@@ -26,3 +26,10 @@ class User:
     telegram_id: int | None = None
     created_at: datetime = None
     settings: UserSettings = None
+
+
+@dataclass
+class UserOrganizationRole:
+    organization_id: int
+    user_id: int
+    role: RoleEnum
