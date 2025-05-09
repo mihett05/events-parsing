@@ -48,3 +48,8 @@ class OrganizationTokensRepository(metaclass=ABCMeta):
     async def delete(
         self, token: entities.OrganizationToken
     ) -> entities.OrganizationToken: ...
+
+    @abstractmethod
+    async def read_all(
+        self, dto: dtos.ReadOrganizationTokensDto
+    ) -> list[entities.OrganizationToken]: ...

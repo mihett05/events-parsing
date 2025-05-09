@@ -3,7 +3,10 @@ from uuid import UUID
 
 from domain.organizations import dtos as dtos
 from domain.organizations import entities as entities
-from domain.organizations.dtos import CreateOrganizationTokenDto
+from domain.organizations.dtos import (
+    CreateOrganizationTokenDto,
+    ReadOrganizationTokensDto,
+)
 from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
     OrganizationAlreadyExistsError,
@@ -85,3 +88,13 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
 
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
+
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
+        data = await self.__repository.read_all()
+        result = []
+        for token in data:
+            if token.created_by == dto.created_by:
+                result.append(token)
+        return result[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]

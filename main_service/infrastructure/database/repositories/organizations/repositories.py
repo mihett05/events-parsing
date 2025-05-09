@@ -1,7 +1,10 @@
 from uuid import UUID, uuid4
 
 from domain.organizations import dtos
-from domain.organizations.dtos import CreateOrganizationTokenDto
+from domain.organizations.dtos import (
+    CreateOrganizationTokenDto,
+    ReadOrganizationTokensDto,
+)
 from domain.organizations.entities import Organization, OrganizationToken
 from domain.organizations.exceptions import (
     OrganizationAlreadyExistsError,
@@ -94,6 +97,21 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
                 already_exists_exception=OrganizationTokenAlreadyExistsError,
             )
 
+        def get_select_all_query(
+            self, dto: ReadOrganizationTokensDto
+        ) -> Select:
+            query = (
+                select(self.model)
+                .where(self.model.created_by == dto.created_by)
+                .order_by(self.model.id)
+            )
+            return self.__add_offset_to_query(query, dto)
+
+        def __add_offset_to_query(
+            self, query, dto: ReadOrganizationTokensDto
+        ) -> Select:
+            return query.offset(dto.page * dto.page_size).limit(dto.page_size)
+
     def __init__(self, session: AsyncSession):
         self.__session = session
         self.__config = self.Config()
@@ -112,3 +130,8 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
 
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
+
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
+        return await self.__repository.read_all(dto)

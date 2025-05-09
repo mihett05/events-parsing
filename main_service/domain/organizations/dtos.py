@@ -19,3 +19,10 @@ class ReadOrganizationsDto:
 class CreateOrganizationTokenDto:
     created_by: int
     id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
+class ReadOrganizationTokensDto:
+    created_by: int
+    page: int
+    page_size: int
