@@ -5,21 +5,18 @@ import { YearCalendarHeader } from './YearCalendarHeader';
 import { YearCalendarGrid } from './YearCalendarGrid';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { useAppDispatch } from '@/shared/store/hooks';
-import { CalendarView, setCalendarView } from '@/features/events/slice';
+import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
+import {
+  CalendarView,
+  selectFilteredCalendarEvents,
+  setCalendarView,
+} from '@/features/events/slice';
 
 export const YearCalendar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const {
-    currentDate,
-    events,
-    isLoading,
-    error,
-    calendarView,
-    handlePrev,
-    handleNext,
-    handleToday,
-  } = useCalendarViewData();
+  const { currentDate, isLoading, error, calendarView, handlePrev, handleNext, handleToday } =
+    useCalendarViewData();
+  const events = useAppSelector(selectFilteredCalendarEvents);
 
   const handleViewChange = (newView: CalendarView) => {
     dispatch(setCalendarView(newView));
@@ -50,7 +47,7 @@ export const YearCalendar: React.FC = () => {
       {error && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, p: 1 }}>
           <Paper elevation={2} sx={{ p: 1, bgcolor: 'error.light', color: 'error.contrastText' }}>
-            <Typography variant="caption">{error.messageKey}</Typography>
+            <Typography variant="caption">{error}</Typography>
           </Paper>
         </Box>
       )}
