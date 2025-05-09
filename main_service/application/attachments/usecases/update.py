@@ -1,5 +1,4 @@
-from uuid import UUID
-
+from domain.attachments.dtos import UpdateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
 from domain.users.entities import User
@@ -15,7 +14,7 @@ from application.transactions import TransactionsGateway
 from application.users.usecases import ReadUserRolesUseCase
 
 
-class ReadAttachmentUseCase:
+class UpdateAttachmentUseCase:
     def __init__(
         self,
         gateway: FilesGateway,
@@ -32,11 +31,16 @@ class ReadAttachmentUseCase:
         self.__read_roles_use_case = read_roles_use_case
         self.__read_event_use_case = read_event_use_case
 
-    async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
+    async def __call__(
+        self, attachment_update_dto: UpdateAttachmentDto, actor: User
+    ) -> Attachment:
         async with self.__transaction:
-            attachment = await self.__repository.read(attachment_id)
+            attachment = await self.__repository.read(
+                attachment_update_dto.attachment_id
+            )
             roles = await self.__read_roles_use_case(actor.id)
             event = None
+
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id)
 
@@ -47,8 +51,8 @@ class ReadAttachmentUseCase:
                     event,
                 )
             ).add(
-                PermissionsEnum.CAN_READ_ATTACHMENT,
+                PermissionsEnum.CAN_UPDATE_ATTACHMENT,
             ).apply()
 
-            await self.__gateway.add_link_to_attachment(attachment)
-            return attachment
+            attachment.filename = attachment_update_dto.filename
+            return await self.__repository.update(attachment)
