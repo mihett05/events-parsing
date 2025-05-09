@@ -1,13 +1,13 @@
 from datetime import date, datetime
 
-from domain.notifications.enums import (
-    NotificationFormatEnum,
-    NotificationStatusEnum,
-)
 from sqlalchemy import Date, DateTime, ForeignKey, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column
 
+from domain.notifications.enums import (
+    NotificationFormatEnum,
+    NotificationStatusEnum,
+)
 from infrastructure.database.postgres import Base
 
 
@@ -20,7 +20,7 @@ class NotificationDatabaseModel(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    event_id: Mapped[int] = mapped_column(ForeignKey("event.id"), nullable=False)
+    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), nullable=False)
     recipient_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
