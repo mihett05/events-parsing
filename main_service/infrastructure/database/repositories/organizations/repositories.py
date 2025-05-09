@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from domain.organizations import dtos
 from domain.organizations.dtos import (
@@ -93,9 +93,7 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
                 already_exists_exception=OrganizationTokenAlreadyExistsError,
             )
 
-        def get_select_all_query(
-            self, dto: ReadOrganizationTokensDto
-        ) -> Select:
+        def get_select_all_query(self, dto: ReadOrganizationTokensDto) -> Select:
             query = (
                 select(self.model)
                 .where(self.model.created_by == dto.created_by)
@@ -116,9 +114,7 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
     async def read(self, token_id: UUID) -> OrganizationToken:
         return await self.__repository.read(token_id)
 
-    async def create(
-        self, dto: CreateOrganizationTokenDto
-    ) -> OrganizationToken:
+    async def create(self, dto: CreateOrganizationTokenDto) -> OrganizationToken:
         return await self.__repository.create_from_dto(dto)
 
     async def update(self, token: OrganizationToken) -> OrganizationToken:
@@ -127,7 +123,5 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
 
-    async def read_all(
-        self, dto: ReadOrganizationTokensDto
-    ) -> list[OrganizationToken]:
+    async def read_all(self, dto: ReadOrganizationTokensDto) -> list[OrganizationToken]:
         return await self.__repository.read_all(dto)

@@ -45,5 +45,6 @@ map_to_pydantic = retort.get_converter(
     ]
 )
 def map_update_dto_from_pydantic(
-    dto: UpdateEventModelDto, event_id: int
+    dto: UpdateEventModelDto,
+    event_id: int,  # noqa
 ) -> UpdateEventDto: ...

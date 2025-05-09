@@ -45,9 +45,7 @@ class RepositoriesProvider(Provider):
         source=OrganizationTokensDatabaseRepository,
         provides=OrganizationTokensRepository,
     )
-    users_repository = provide(
-        source=UsersDatabaseRepository, provides=UsersRepository
-    )
+    users_repository = provide(source=UsersDatabaseRepository, provides=UsersRepository)
     notification_repository = provide(
         source=NotificationsDatabaseRepository, provides=NotificationsRepository
     )

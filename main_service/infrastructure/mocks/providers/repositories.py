@@ -8,7 +8,6 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
-    UserOrganizationRolesRepository,
     UsersRepository,
 )
 

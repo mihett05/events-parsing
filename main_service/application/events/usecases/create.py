@@ -6,6 +6,7 @@ from domain.users.entities import User
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.events.permissions import EventPermissionProvider
+from application.transactions import TransactionsGateway
 from application.users.usecases import ReadUserRolesUseCase
 
 
@@ -15,7 +16,7 @@ class CreateEventUseCase:
         repository: EventsRepository,
         read_roles_use_case: ReadUserRolesUseCase,
         permission_builder: PermissionBuilder,
-        transaction: TransactionsGatewa,
+        transaction: TransactionsGateway,
     ):
         self.__repository = repository
         self.__builder = permission_builder

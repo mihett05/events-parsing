@@ -14,6 +14,7 @@ async def test_update(
     create_organization: Organization,
 ):
     create_organization = copy(create_organization)
+    # TODO: change actor to user
     return_organization = await update_organization_usecase(
         update_organization_dto, None
     )
@@ -28,4 +29,5 @@ async def test_update_not_found(
 ):
     update_organization_dto.id = 3434
     with pytest.raises(OrganizationNotFoundError):
+        # TODO: change actor to user
         _ = await update_organization_usecase(update_organization_dto, None)

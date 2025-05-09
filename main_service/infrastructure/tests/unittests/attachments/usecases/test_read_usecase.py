@@ -8,5 +8,6 @@ async def test_read_success(
     create_attachment: Attachment,
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
+    # TODO: change actor to user
     attachment = await read_attachment_usecase(create_attachment.id, None)
     assert attachment == create_attachment

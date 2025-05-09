@@ -15,6 +15,7 @@ async def test_delete_success(
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
+    # TODO: change actor to user
     deleted_attachment = await files_gateway.delete(create_attachment)
     assert deleted_attachment == create_attachment
     with pytest.raises(AttachmentNotFoundError):

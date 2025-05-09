@@ -13,6 +13,7 @@ async def test_update_success(
     update_event_dto: UpdateEventDto,
     create_event: Event,
 ):
+    # TODO: change actor to user
     create_event = copy(create_event)
     event = await update_event_usecase(update_event_dto, None)
 
@@ -29,5 +30,6 @@ async def test_update_not_found(
     update_event_dto: UpdateEventDto,
 ):
     update_event_dto.event_id = 42
+    # TODO: change actor to user
     with pytest.raises(EventNotFoundError):
         _ = await update_event_usecase(update_event_dto, None)

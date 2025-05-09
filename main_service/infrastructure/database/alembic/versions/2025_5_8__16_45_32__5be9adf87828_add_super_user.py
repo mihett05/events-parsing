@@ -8,7 +8,6 @@ Create Date: 2025-05-08 16:45:32.438150
 
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -21,7 +20,8 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.execute("ALTER TABLE organizations ALTER COLUMN owner_id SET DEFAULT 0")
     op.execute(
-        "INSERT INTO users (id, email, is_active, salt, hashed_password, fullname) VALUES (0, 'admin@admin.com', true, 'xktpxZ4o+4YtOvlMX6lo5P05biLfDZp7pPMezpt7vSA=', '$2b$12$vlYjXXy.QJi7PoSPzESOVOBSZfaTqRPMMcLybCC04mqtCkWh42PDy', 'admin')"
+        "INSERT INTO users (id, email, is_active, salt, hashed_password, fullname) "
+        "VALUES (0, 'admin@admin.com', true, 'xktpxZ4o+4YtOvlMX6lo5P05biLfDZp7pPMezpt7vSA=', '$2b$12$vlYjXXy.QJi7PoSPzESOVOBSZfaTqRPMMcLybCC04mqtCkWh42PDy', 'admin')"
     )
     op.execute(
         "INSERT INTO organizations (id, owner_id, title) VALUES (0, 0, 'SUPER ORG')"

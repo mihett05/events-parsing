@@ -25,7 +25,8 @@ retort = pydantic_retort.extend(recipe=[])
     ]
 )
 def map_create_dto_from_pydantic(
-    model: CreateOrganizationModelDto, user: User
+    model: CreateOrganizationModelDto,
+    user: User,  # noqa
 ) -> CreateOrganizationDto: ...
 
 
@@ -54,7 +55,8 @@ map_to_pydantic = retort.get_converter(
     ]
 )
 def map_update_dto_from_pydantic(
-    dto: UpdateOrganizationModelDto, organization_id: int
+    dto: UpdateOrganizationModelDto,
+    organization_id: int,  # noqa
 ) -> UpdateOrganizationDto: ...
 
 

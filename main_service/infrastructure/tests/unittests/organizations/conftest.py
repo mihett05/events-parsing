@@ -1,4 +1,4 @@
-from datetime import datetime
+from uuid import uuid4
 
 import pytest_asyncio
 from application.organizations.dtos import UpdateOrganizationDto
@@ -13,8 +13,8 @@ from domain.organizations.repositories import OrganizationsRepository
 
 @pytest_asyncio.fixture
 async def create_organization_dto() -> CreateOrganizationDto:
-    date = datetime.now().now()
-    return CreateOrganizationDto(title="Test Organization", created_at=date, owner_id=1)
+    # TODO: Добавить создание токена в моковом репе
+    return CreateOrganizationDto(title="Test Organization", owner_id=1, token=uuid4())
 
 
 @pytest_asyncio.fixture
