@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction, createEntityAdapter } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
 import { CalendarEvent } from '@entities/Event';
-import { api } from '@shared/api/api';
+import { api, EventFormatEnum, EventTypeEnum, FilterModel } from '@shared/api/api';
 import { mapEventToCalendarEvent } from '@entities/Event/model/mappers';
 import { RootState } from '@/shared/store/store';
 
@@ -8,15 +8,21 @@ export const eventsAdapter = createEntityAdapter<CalendarEvent>();
 
 export type CalendarView = 'day' | 'month' | 'year';
 
-type FilterState = {
-  start: string | null;
-  end: string | null;
-  type: string | null;
-  format: string | null;
+export type FilterState = {
+  type: EventTypeEnum | null;
+  format: EventFormatEnum | null;
+  organizationId: number | null;
 };
-type FilterVariants = {
-  types: string[];
-  formats: string[];
+
+export interface OrganizationFilterOption {
+  id: number;
+  title: string;
+}
+
+export type FilterVariants = {
+  types: EventTypeEnum[];
+  formats: EventFormatEnum[];
+  organizations: OrganizationFilterOption[];
 };
 
 interface EventsState {
@@ -30,6 +36,7 @@ interface EventsState {
   calendarView: CalendarView;
   filters: FilterState;
   filterVariants: FilterVariants;
+  areFilterVariantsLoaded: boolean;
 }
 
 const initialState: EventsState = {
@@ -42,36 +49,16 @@ const initialState: EventsState = {
   selectedDate: new Date().toISOString(),
   calendarView: 'month',
   filters: {
-    start: null,
-    end: null,
-    type: null,
     format: null,
+    type: null,
+    organizationId: null,
   },
   filterVariants: {
     formats: [],
     types: [],
+    organizations: [],
   },
-};
-
-const updateFilterVariants = (state: EventsState) => {
-  const events = eventsAdapter.getSelectors().selectAll(state.events);
-  const formats = new Set<string>();
-  const types = new Set<string>();
-
-  events.forEach((event) => {
-    if (event.format) formats.add(event.format);
-    if (event.type) types.add(event.type);
-  });
-
-  const newFormats = Array.from(formats);
-  const newTypes = Array.from(types);
-
-  if (
-    JSON.stringify(state.filterVariants.formats) !== JSON.stringify(newFormats) ||
-    JSON.stringify(state.filterVariants.types) !== JSON.stringify(newTypes)
-  ) {
-    state.filterVariants = { formats: newFormats, types: newTypes };
-  }
+  areFilterVariantsLoaded: false,
 };
 
 const eventsSlice = createSlice({
@@ -93,23 +80,53 @@ const eventsSlice = createSlice({
       if (state.calendarView !== action.payload) {
         state.calendarView = action.payload;
         state.error = null;
-        eventsAdapter.removeAll(state.events);
+        state.page = 0;
       }
     },
     setFilters: (state, action: PayloadAction<Partial<FilterState>>) => {
-      const newFilters = { ...state.filters, ...action.payload };
-      if (JSON.stringify(state.filters) !== JSON.stringify(newFilters)) {
-        state.filters = newFilters;
-        state.page = 0;
-        state.events = eventsAdapter.getInitialState();
+      const currentFilters = state.filters;
+      const newPartialFilters = action.payload;
+      let filtersChanged = false;
+      if (
+        newPartialFilters.hasOwnProperty('type') &&
+        currentFilters.type !== newPartialFilters.type
+      ) {
+        currentFilters.type = newPartialFilters.type!;
+        filtersChanged = true;
+      }
+      if (
+        newPartialFilters.hasOwnProperty('format') &&
+        currentFilters.format !== newPartialFilters.format
+      ) {
+        currentFilters.format = newPartialFilters.format!;
+        filtersChanged = true;
+      }
+      if (
+        newPartialFilters.hasOwnProperty('organizationId') &&
+        currentFilters.organizationId !== newPartialFilters.organizationId
+      ) {
+        currentFilters.organizationId = newPartialFilters.organizationId as number | null;
+        filtersChanged = true;
+      }
+      if (filtersChanged) {
         state.error = null;
       }
     },
     resetFilters: (state) => {
-      if (JSON.stringify(state.filters) !== JSON.stringify(initialState.filters)) {
-        state.filters = initialState.filters;
-        state.page = 0;
-        state.events = eventsAdapter.getInitialState();
+      let filtersChanged = false;
+      if (state.filters.type !== initialState.filters.type) {
+        state.filters.type = initialState.filters.type;
+        filtersChanged = true;
+      }
+      if (state.filters.format !== initialState.filters.format) {
+        state.filters.format = initialState.filters.format;
+        filtersChanged = true;
+      }
+      if (state.filters.organizationId !== initialState.filters.organizationId) {
+        state.filters.organizationId = initialState.filters.organizationId;
+        filtersChanged = true;
+      }
+      if (filtersChanged) {
         state.error = null;
       }
     },
@@ -138,7 +155,6 @@ const eventsSlice = createSlice({
           } else {
             eventsAdapter.addMany(state.events, newEvents);
           }
-          updateFilterVariants(state);
         },
       )
       .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchRejected, (state) => {
@@ -158,7 +174,6 @@ const eventsSlice = createSlice({
             .map(mapEventToCalendarEvent)
             .filter(Boolean) as CalendarEvent[];
           eventsAdapter.upsertMany(state.events, mappedEvents);
-          updateFilterVariants(state);
         },
       )
       .addMatcher(
@@ -167,10 +182,53 @@ const eventsSlice = createSlice({
           state.isLoading = false;
           state.error = error.message ?? 'calendar.errorLoading';
         },
+      )
+      .addMatcher(api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchPending, (state) => {
+        state.isLoading = true;
+      })
+      .addMatcher(
+        api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchFulfilled,
+        (state, action: PayloadAction<FilterModel>) => {
+          state.filterVariants.types = action.payload.type ? [...action.payload.type] : [];
+          state.filterVariants.formats = action.payload.format ? [...action.payload.format] : [];
+          state.filterVariants.organizations = action.payload.organization
+            ? action.payload.organization.map((org) => ({ id: org.id, title: org.title }))
+            : [];
+          state.areFilterVariantsLoaded = true;
+          state.error = null;
+        },
+      )
+      .addMatcher(
+        api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchRejected,
+        (state, { error }) => {
+          state.isLoading = false;
+          state.error = error.message ?? 'calendar.errorLoading';
+        },
       );
   },
 });
 
+// export const {
+//   incrementPage,
+//   setSelectedDate,
+//   setCalendarView,
+//   setFilters,
+//   resetFilters,
+//   clearError,
+// } = eventsSlice.actions;
+// export default eventsSlice.reducer;
+
+// export const getEventsState = (state: RootState) => state.events;
+// export const eventsSelectors = eventsAdapter.getSelectors<RootState>(
+//   (state) => state.events.events,
+// );
+// export const selectEventsLoading = (state: RootState) => state.events.isLoading;
+// export const selectEventsFetchingMore = (state: RootState) => state.events.isFetchingMore;
+// export const selectEventsError = (state: RootState) => state.events.error;
+// export const selectEventsCurrentPage = (state: RootState) => state.events.page;
+// export const selectSelectedDate = (state: RootState) => state.events.selectedDate;
+// export const selectFilterVariants = (state: RootState) => state.events.filterVariants;
+// export const selectCalendarView = (state: RootState) => state.events.calendarView;
 export const {
   incrementPage,
   setSelectedDate,
@@ -182,13 +240,34 @@ export const {
 export default eventsSlice.reducer;
 
 export const getEventsState = (state: RootState) => state.events;
+
 export const eventsSelectors = eventsAdapter.getSelectors<RootState>(
   (state) => state.events.events,
 );
+
 export const selectEventsLoading = (state: RootState) => state.events.isLoading;
 export const selectEventsFetchingMore = (state: RootState) => state.events.isFetchingMore;
 export const selectEventsError = (state: RootState) => state.events.error;
 export const selectEventsCurrentPage = (state: RootState) => state.events.page;
 export const selectSelectedDate = (state: RootState) => state.events.selectedDate;
 export const selectFilterVariants = (state: RootState) => state.events.filterVariants;
+export const selectActiveFilters = (state: RootState) => state.events.filters;
+export const selectAreFilterVariantsLoaded = (state: RootState) =>
+  state.events.areFilterVariantsLoaded;
 export const selectCalendarView = (state: RootState) => state.events.calendarView;
+
+export const selectFilteredCalendarEvents = createSelector(
+  [eventsSelectors.selectAll, selectActiveFilters],
+  (allEvents, filters) => {
+    if (filters.type === null && filters.format === null && filters.organizationId === null) {
+      return allEvents;
+    }
+    return allEvents.filter((event) => {
+      const typeMatch = filters.type === null || event.type === filters.type;
+      const formatMatch = filters.format === null || event.format === filters.format;
+      const organizationMatch =
+        filters.organizationId === null || event.organizationId === filters.organizationId;
+      return typeMatch && formatMatch && organizationMatch;
+    });
+  },
+);
