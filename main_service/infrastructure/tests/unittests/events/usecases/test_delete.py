@@ -13,6 +13,7 @@ async def test_delete_success(
     create_event
 ):
     create_event = await create_event()
+    # TODO: добавить актора
     event = await delete_event_usecase(create_event.id, None)
     assert event == create_event
 
@@ -24,5 +25,6 @@ async def test_delete_success(
 async def test_delete_not_found(
     delete_event_usecase: DeleteEventUseCase,
 ):
+    # TODO: change actor to user
     with pytest.raises(EventNotFoundError):
         await delete_event_usecase(random.randint(100, 200), None)

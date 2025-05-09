@@ -1,6 +1,14 @@
 from datetime import datetime
 
+from domain.users.enums import UserNotificationSendToEnum
+
 from infrastructure.api.models import CamelModel
+
+
+class UserSettingsModel(CamelModel):
+    id: int
+    user_id: int
+    type: UserNotificationSendToEnum
 
 
 class UserModel(CamelModel):
@@ -12,3 +20,4 @@ class UserModel(CamelModel):
 
     telegram_id: int | None
     created_at: datetime
+    settings: UserSettingsModel

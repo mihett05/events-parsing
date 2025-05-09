@@ -5,18 +5,50 @@ from domain.attachments.repositories import AttachmentsRepository
 from domain.users.entities import User
 
 from application.attachments.gateways import FilesGateway
+from application.attachments.permissions.attachment import (
+    AttachmentPermissionProvider,
+)
+from application.auth.enums import PermissionsEnum
+from application.auth.permissions import PermissionBuilder
+from application.events.usecases import ReadEventUseCase
+from application.transactions import TransactionsGateway
+from application.users.usecases import ReadUserRolesUseCase
 
 
 class ReadAttachmentUseCase:
     def __init__(
-        self, gateway: FilesGateway, repository: AttachmentsRepository
+        self,
+        gateway: FilesGateway,
+        repository: AttachmentsRepository,
+        tx: TransactionsGateway,
+        builder: PermissionBuilder,
+        read_roles_use_case: ReadUserRolesUseCase,
+        read_event_use_case: ReadEventUseCase,
     ):
         self.__gateway = gateway
         self.__repository = repository
+        self.__transaction = tx
+        self.__builder = builder
+        self.__read_roles_use_case = read_roles_use_case
+        self.__read_event_use_case = read_event_use_case
 
-    async def __call__(
-        self, attachment_id: UUID, actor: User | None
-    ) -> Attachment:
-        attachment = await self.__repository.read(attachment_id)
-        await self.__gateway.add_link_to_attachment(attachment)
-        return attachment
+    async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
+        async with self.__transaction:
+            attachment = await self.__repository.read(attachment_id)
+            roles = await self.__read_roles_use_case(actor.id)
+            event = None
+            if attachment.event_id is not None:
+                event = await self.__read_event_use_case(attachment.event_id, actor)
+
+            self.__builder.providers(
+                AttachmentPermissionProvider(
+                    event and event.organization_id or -1,
+                    roles,
+                    event,
+                )
+            ).add(
+                PermissionsEnum.CAN_READ_ATTACHMENT,
+            ).apply()
+
+            await self.__gateway.add_link_to_attachment(attachment)
+            return attachment

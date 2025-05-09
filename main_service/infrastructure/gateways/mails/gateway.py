@@ -1,8 +1,10 @@
 import email
-import os
 from email.header import decode_header
+from email.parser import BytesParser
+from email.policy import default
 from email.utils import parsedate_to_datetime
 from io import BytesIO
+from pathlib import Path
 from typing import Iterable
 
 from aioimaplib import Response, aioimaplib
@@ -36,14 +38,14 @@ class ImapEmailsGateway(EmailsGateway):
         failed_mails = []
         for i in range(0, 10, batch_size):
             batch_uids = email_ids[i : i + batch_size]
-            (
-                raw_mail_collection,
-                failed,
-            ) = await self.__fetch_collection_by_batch(batch_uids)
+
+            raw_collection, failed = await self.__fetch_collection_by_batch(batch_uids)
             failed_mails.extend(failed)
-            parsed_mails, failed = await self.__parse_mails(raw_mail_collection)
+
+            parsed_mails, failed = await self.__parse_mails(raw_collection)
             emails.extend(parsed_mails)
             failed_mails.extend(failed)
+
         await self.__mark_mail_as_unseen(failed_mails)
         return emails
 
@@ -64,7 +66,6 @@ class ImapEmailsGateway(EmailsGateway):
     async def __ensure_folder_exists(self, folder_name: str):
         try:
             response = await self.client.list("INBOX", "*")
-            print(response)
             folders = [
                 line.decode("utf-8").split('"/"')[-1].strip('"')
                 for line in response.lines
@@ -113,6 +114,27 @@ class ImapEmailsGateway(EmailsGateway):
     ) -> ParsedMailInfoDto:
         raw_message = raw_message.lines[1]
         message = email.message_from_bytes(raw_message)
+        return ParsedMailInfoDto(
+            imap_mail_uid=email_uid,
+            theme=self.__decode_header(message.get("Subject", "")),
+            sender=self.__decode_header(message.get("From", "")),
+            raw_content=await self.__get_message_body(raw_message),
+            received_date=parsedate_to_datetime(message["date"]).date()
+            if "date" in message
+            else None,
+            attachments=await self.__get_message_attachments(message),
+        )
+
+    async def __get_message_body(self, raw_message):
+        msg = BytesParser(policy=default).parsebytes(raw_message)
+        if msg.is_multipart():
+            for part in msg.walk():
+                content_type = part.get_content_type()
+                if content_type == "text/plain":
+                    return part.get_payload(decode=False).encode()
+        return msg.get_payload(decode=False).encode()
+
+    async def __get_message_attachments(self, message):
         attachments = []
         if message.is_multipart():
             for part in message.walk():
@@ -121,17 +143,7 @@ class ImapEmailsGateway(EmailsGateway):
                     attachment = await self.__parse_attachment(part)
                     if attachment:
                         attachments.append(attachment)
-
-        return ParsedMailInfoDto(
-            imap_mail_uid=email_uid,
-            theme=self.__decode_header(message.get("Subject", "")),
-            sender=self.__decode_header(message.get("From", "")),
-            raw_content=raw_message,
-            received_date=parsedate_to_datetime(message["date"]).date()
-            if "date" in message
-            else None,
-            attachments=attachments,
-        )
+        return attachments
 
     async def __parse_attachment(self, part) -> ParsedAttachmentInfoDto | None:
         filename = part.get_filename()
@@ -139,9 +151,8 @@ class ImapEmailsGateway(EmailsGateway):
             return None
 
         filename = self.__decode_header(filename)
-
-        _, extension = os.path.splitext(filename)
-        extension = extension.lower().lstrip(".") if extension else ""
+        extension = Path(filename).suffix.lower()
+        filename = Path(filename).stem
 
         payload = part.get_payload(decode=True)
         if not payload:
@@ -171,9 +182,7 @@ class ImapEmailsGateway(EmailsGateway):
     @staticmethod
     def __decode_payload(payload, charset=None):
         encodings_to_try = [charset, "utf-8"]
-        encodings_to_try = list(
-            dict.fromkeys([e for e in encodings_to_try if e])
-        )
+        encodings_to_try = list(dict.fromkeys([e for e in encodings_to_try if e]))
         for encoding in encodings_to_try:
             try:
                 return payload.decode(encoding, errors="replace")
@@ -185,9 +194,7 @@ class ImapEmailsGateway(EmailsGateway):
         decoded_parts = []
         for part, encoding in decode_header(header):
             if isinstance(part, bytes):
-                decoded_parts.append(
-                    ImapEmailsGateway.__decode_payload(part, encoding)
-                )
+                decoded_parts.append(ImapEmailsGateway.__decode_payload(part, encoding))
             else:
                 decoded_parts.append(str(part))
         return "".join(decoded_parts)

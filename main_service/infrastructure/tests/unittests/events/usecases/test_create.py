@@ -9,6 +9,8 @@ async def test_create_success(
     create_event_dto: CreateEventDto,
     create_user1
 ):
+    # TODO: change actor to user
+    event = await create_event_usecase(dto=create_event_dto, actor=None)
     user = await create_user1()
     event = await create_event_usecase(dto=create_event_dto, actor=user)
 

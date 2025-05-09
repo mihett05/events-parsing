@@ -1,8 +1,10 @@
+from datetime import date
 from typing import Annotated
 
 import application.events.usecases as use_cases
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from domain.events.dtos import ReadAllEventsFeedDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
@@ -20,19 +22,8 @@ from infrastructure.api.v1.organizations.mappers import (
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 
 
-@router.get("/calendar", response_model=list[models.EventModel])
-async def read_calendar_events(
-    use_case: FromDishka[use_cases.ReadAllEventUseCase],
-    dto: dtos.ReadAllEventsCalendarModelDto = Depends(),
-):
-    return map(
-        mappers.map_to_pydantic,
-        await use_case(mappers.map_read_all_dto_calendar_from_pydantic(dto)),
-    )
-
-
-@router.get("/feed", response_model=list[models.EventModel])
-async def read_feed_events(
+@router.get("/", response_model=list[models.EventModel])
+async def read_all_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
     dto: dtos.ReadAllEventsFeedModelDto = Depends(),
 ):
@@ -42,7 +33,7 @@ async def read_feed_events(
     )
 
 
-@router.get("/feed_filters", response_model=models.FilterModel)
+@router.get("/filters", response_model=models.FilterModel)
 async def get_filter_values(
     use_case: FromDishka[ReadAllOrganizationUseCase],
 ):
@@ -81,8 +72,9 @@ async def create_event(
 async def read_event(
     event_id: int,
     use_case: FromDishka[use_cases.ReadEventUseCase],
+    actor: Annotated[User, Depends(get_user)],
 ):
-    return mappers.map_to_pydantic(await use_case(event_id))
+    return mappers.map_to_pydantic(await use_case(event_id, actor))
 
 
 @router.put(

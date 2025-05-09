@@ -12,11 +12,13 @@ async def test_read_success(
     create_event
 ):
     create_event = await create_event()
+    # TODO: добавить актора
     event = await read_event_usecase(create_event.id)
     assert event == create_event
 
 
 @pytest.mark.asyncio
 async def test_read_not_found(read_event_usecase: ReadEventUseCase):
+    # TODO: добавить актора
     with pytest.raises(EventNotFoundError):
         await read_event_usecase(random.randint(100, 200))

@@ -1,12 +1,20 @@
 from adaptix import P
-from adaptix.conversion import allow_unlinked_optional, link_function
-from domain.users.entities import User, UserOrganizationRole
+from adaptix.conversion import coercer, link_function
+from domain.users.entities import User, UserOrganizationRole, UserSettings
 
-from infrastructure.database.mappers import postgres_retort
-
-from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
+from ...mappers import postgres_retort
+from .models import (
+    UserDatabaseModel,
+    UserOrganizationRoleDatabaseModel,
+    UserSettingsDatabaseModel,
+)
 
 retort = postgres_retort.extend(recipe=[])
+
+user_settings_from_db_mapper = retort.get_converter(
+    UserSettingsDatabaseModel,
+    UserSettings,
+)
 
 user_organization_role_map_from_db = retort.get_converter(
     UserOrganizationRoleDatabaseModel,
@@ -21,18 +29,38 @@ user_organization_role_map_to_db = retort.get_converter(
 map_from_db = retort.get_converter(
     UserDatabaseModel,
     User,
+    recipe=[
+        coercer(
+            UserSettingsDatabaseModel,
+            UserSettings,
+            user_settings_from_db_mapper,
+        )
+    ],
 )
 
 map_to_db = retort.get_converter(
     User,
     UserDatabaseModel,
     recipe=[
-        allow_unlinked_optional(P[User].salt),
-        allow_unlinked_optional(P[User].created_at),
-        allow_unlinked_optional(P[User].hashed_password),
         link_function(
             lambda user: user.id,
             P[UserDatabaseModel].id,
+        ),
+        link_function(
+            lambda user: user.salt,
+            P[UserDatabaseModel].salt,
+        ),
+        link_function(
+            lambda user: user.settings,
+            P[UserDatabaseModel].settings,
+        ),
+        link_function(
+            lambda user: user.created_at,
+            P[UserDatabaseModel].created_at,
+        ),
+        link_function(
+            lambda user: user.hashed_password,
+            P[UserDatabaseModel].hashed_password,
         ),
     ],
 )

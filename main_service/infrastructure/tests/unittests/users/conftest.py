@@ -46,8 +46,7 @@ async def create_users(
     users_repository: UsersRepository,
 ) -> list[User]:
     return [
-        await users_repository.create(user_entity)
-        for user_entity in get_user_entities
+        await users_repository.create(user_entity) for user_entity in get_user_entities
     ]
 
 

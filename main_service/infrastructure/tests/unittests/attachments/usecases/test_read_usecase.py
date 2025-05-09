@@ -9,6 +9,7 @@ async def test_read_success(
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
     create_attachment = await create_attachment()
+    # TODO: change actor to user
     attachment = await read_attachment_usecase(create_attachment.id, None)
     attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
     for attr in attrs:

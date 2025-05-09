@@ -30,18 +30,17 @@ class CreateOrganizationUseCase:
         self.__create_use_case = create_use_case
         self.__transaction = transaction
 
-    async def __call__(
-        self, dto: CreateOrganizationDto, actor: User
-    ) -> Organization:
+    async def __call__(self, dto: CreateOrganizationDto, actor: User) -> Organization:
         async with self.__transaction:
-            if await self.__validate_token_use_case(dto.token, actor):
-                await self.__update_token_use_case(dto.token, actor)
-                organization = await self.__repository.create(dto)
-                role = UserOrganizationRole(
-                    organization_id=organization.id,
-                    user_id=actor.id,
-                    role=RoleEnum.OWNER,
-                )
-                await self.__create_use_case(role, actor)
-                return organization
-            raise OrganizationAccessDenied
+            if not await self.__validate_token_use_case(dto.token, actor):
+                raise OrganizationAccessDenied
+
+            await self.__update_token_use_case(dto.token, actor)
+            organization = await self.__repository.create(dto)
+            role = UserOrganizationRole(
+                organization_id=organization.id,
+                user_id=actor.id,
+                role=RoleEnum.OWNER,
+            )
+            await self.__create_use_case(role, actor)
+            return organization

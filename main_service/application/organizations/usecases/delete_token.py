@@ -6,7 +6,9 @@ from domain.users.entities import User
 
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
-from application.organizations.permissions import OrganizationLinkPermissionProvider
+from application.organizations.permissions import (
+    OrganizationLinkPermissionProvider,
+)
 from application.organizations.usecases.read_token import (
     ReadOrganizationTokenUseCase,
 )

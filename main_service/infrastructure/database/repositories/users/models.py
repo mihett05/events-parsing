@@ -1,11 +1,23 @@
 from datetime import datetime
 
-from domain.users.enums import RoleEnum
+from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.database.postgres import Base
+
+
+class UserSettingsDatabaseModel(Base):
+    __tablename__ = "user_settings"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+
+    type: Mapped[UserNotificationSendToEnum] = mapped_column(
+        ENUM(UserNotificationSendToEnum, name="UserNotificationSendToEnum"),
+        default=UserNotificationSendToEnum.EMAIL,
+    )
 
 
 class UserDatabaseModel(Base):
@@ -26,6 +38,10 @@ class UserDatabaseModel(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
+    settings: Mapped[UserSettingsDatabaseModel] = relationship(
+        cascade="all, delete-orphan", uselist=False
+    )
+
 
 class UserOrganizationRoleDatabaseModel(Base):
     __tablename__ = "user_organization_role"
@@ -34,7 +50,7 @@ class UserOrganizationRoleDatabaseModel(Base):
         ForeignKey("organizations.id", ondelete="CASCADE"), primary_key=True
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), primary_key=True
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     role: Mapped[RoleEnum] = mapped_column(
         ENUM(RoleEnum, name="RoleEnum"), nullable=False

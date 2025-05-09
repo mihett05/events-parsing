@@ -1,6 +1,11 @@
 from enum import Enum
 
 
+class UserNotificationSendToEnum(Enum):
+    EMAIL = "EMAIL"
+    TELEGRAM = "TELEGRAM"
+
+
 class RoleEnum(Enum):
     SUPER_USER = "SUPER_USER"
     SUPER_OWNER = "SUPER_AUTOBUS"

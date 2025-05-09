@@ -32,7 +32,9 @@ class OrganizationsRepository(metaclass=ABCMeta):
 
 class OrganizationTokensRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, creator_id: int) -> entities.OrganizationToken: ...
+    async def create(
+        self, dto: dtos.CreateOrganizationTokenDto
+    ) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def read(self, token_id: UUID) -> entities.OrganizationToken: ...
@@ -46,3 +48,8 @@ class OrganizationTokensRepository(metaclass=ABCMeta):
     async def delete(
         self, token: entities.OrganizationToken
     ) -> entities.OrganizationToken: ...
+
+    @abstractmethod
+    async def read_all(
+        self, dto: dtos.ReadOrganizationTokensDto
+    ) -> list[entities.OrganizationToken]: ...

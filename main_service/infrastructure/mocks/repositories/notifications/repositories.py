@@ -5,6 +5,7 @@ from domain.notifications.dtos import (
     ReadNotificationsDto,
 )
 from domain.notifications.entities import Notification
+from domain.notifications.enums import NotificationStatusEnum
 from domain.notifications.exceptions import (
     NotificationAlreadyExistsError,
     NotificationNotFoundError,
@@ -38,12 +39,32 @@ class NotificationsMemoryRepository(NotificationsRepository):
         self.__next_id += 1
         return await self.__repository.create(notification)
 
+    async def create_many(
+        self, notifications: list[Notification]
+    ) -> list[Notification]:
+        result = []
+        for notification in notifications:
+            notification.id = self.__next_id
+            notification.created_at = datetime.now()
+
+            result.append(await self.__repository.create(notification))
+            self.__next_id += 1
+
+        return result
+
     async def read(self, notification_id: int) -> Notification:
         return await self.__repository.read(notification_id)
 
     async def read_all(self, dto: ReadNotificationsDto) -> list[Notification]:
-        data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+        data: list[Notification] = await self.__repository.read_all()
+        return [item for item in data if item.event_id]
+
+    async def change_notifications_statuses(
+        self, notifications: list[Notification], status: NotificationStatusEnum
+    ):
+        for notification in notifications:
+            notification.status = status
+            await self.__repository.update(notification)
 
     async def delete(self, notification: Notification) -> Notification:
         return await self.__repository.delete(notification)

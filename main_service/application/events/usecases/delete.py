@@ -26,9 +26,9 @@ class DeleteEventUseCase:
         self.__read_roles_use_case = read_roles_use_case
         self.__builder = builder
 
-    async def __call__(self, event_id: int, actor: User | None) -> Event:
+    async def __call__(self, event_id: int, actor: User) -> Event:
         async with self.__transaction:
-            event = await self.__read_use_case(event_id)
+            event = await self.__read_use_case(event_id, actor)
             roles = await self.__read_roles_use_case(actor.id)
             self.__builder.providers(
                 EventPermissionProvider(event.organization_id, roles)

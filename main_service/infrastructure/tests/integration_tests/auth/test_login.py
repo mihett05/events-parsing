@@ -4,7 +4,9 @@ import pytest
 from httpx import AsyncClient
 from starlette import status
 
+from infrastructure.api.v1.auth.dtos import AuthenticateUserModelDto
 from infrastructure.api.v1.auth.models import UserWithTokenModel
+from infrastructure.api.v1.users.models import UserModel
 
 
 @pytest.mark.asyncio
