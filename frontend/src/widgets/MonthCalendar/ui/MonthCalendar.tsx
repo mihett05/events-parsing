@@ -8,21 +8,18 @@ import { generateCalendarDays, useDayEventsPopover, useLocalizedDayNames } from 
 import { useCalendarViewData } from '@/features/events/hooks/useCalendarViewData';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { useAppDispatch } from '@/shared/store/hooks';
-import { CalendarView, setCalendarView } from '@/features/events/slice';
+import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
+import {
+  CalendarView,
+  selectFilteredCalendarEvents,
+  setCalendarView,
+} from '@/features/events/slice';
 
 export const MonthCalendar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const {
-    events,
-    isLoading,
-    error,
-    currentDate,
-    calendarView,
-    handlePrev,
-    handleNext,
-    handleToday,
-  } = useCalendarViewData();
+  const { currentDate, isLoading, error, calendarView, handlePrev, handleNext, handleToday } =
+    useCalendarViewData();
+  const events = useAppSelector(selectFilteredCalendarEvents);
 
   const {
     popoverId,

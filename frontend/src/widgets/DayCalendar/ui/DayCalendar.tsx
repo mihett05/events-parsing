@@ -4,21 +4,18 @@ import { DayCalendarHeader } from './DayCalendarHeader';
 import { DayCalendarBody } from './DayCalendarBody';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { useAppDispatch } from '@/shared/store/hooks';
-import { CalendarView, setCalendarView } from '@/features/events/slice';
+import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
+import {
+  CalendarView,
+  selectFilteredCalendarEvents,
+  setCalendarView,
+} from '@/features/events/slice';
 
 export const DayCalendar = () => {
   const dispatch = useAppDispatch();
-  const {
-    currentDate,
-    events,
-    isLoading,
-    error,
-    calendarView,
-    handlePrev,
-    handleNext,
-    handleToday,
-  } = useCalendarViewData();
+  const { currentDate, isLoading, error, calendarView, handlePrev, handleNext, handleToday } =
+    useCalendarViewData();
+  const events = useAppSelector(selectFilteredCalendarEvents);
 
   const handleViewChange = (newView: CalendarView) => {
     dispatch(setCalendarView(newView));

@@ -3,11 +3,11 @@ import { useReadAllEventsV1EventsFeedGetQuery } from '@/shared/api/api';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import {
   incrementPage,
-  eventsSelectors,
   selectEventsError,
   selectEventsCurrentPage,
   selectEventsLoading,
   selectEventsFetchingMore,
+  selectFilteredCalendarEvents,
 } from '@features/events/slice';
 import { RootState } from '@/shared/store/store';
 
@@ -16,7 +16,7 @@ export const useEventsFeed = () => {
 
   const page = useAppSelector(selectEventsCurrentPage);
   const pageSize = useAppSelector((state: RootState) => state.events.pageSize);
-  const events = useAppSelector(eventsSelectors.selectAll);
+  const events = useAppSelector(selectFilteredCalendarEvents);
   const errorKey = useAppSelector(selectEventsError);
   const isLoading = useAppSelector(selectEventsLoading);
   const isFetchingMore = useAppSelector(selectEventsFetchingMore);

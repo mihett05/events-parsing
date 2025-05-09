@@ -4,6 +4,7 @@ import { Box, Divider, CircularProgress } from '@mui/material';
 import { useEventsFeed } from '../lib/hooks';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
+import { CalendarFilters } from '@/features/events/filter/ui/EventsFilter';
 
 export const EventsFeed = () => {
   const { events, isLoading, isFetchingMore, error, handleLoadMore } = useEventsFeed();
@@ -44,12 +45,15 @@ export const EventsFeed = () => {
   }
 
   return (
+    <>
     <Box display="flex" flexDirection="column" gap={5}>
       {error && events.length > 0 && (
         <Box sx={{ my: 2 }}>
           <ErrorMessage {...error} />
         </Box>
       )}
+      
+      <CalendarFilters />
 
       {events.map((event, index) => (
         <React.Fragment key={event.id}>
@@ -67,5 +71,6 @@ export const EventsFeed = () => {
         </Box>
       )}
     </Box>
+    </>
   );
 };
