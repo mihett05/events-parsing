@@ -208,27 +208,6 @@ const eventsSlice = createSlice({
   },
 });
 
-// export const {
-//   incrementPage,
-//   setSelectedDate,
-//   setCalendarView,
-//   setFilters,
-//   resetFilters,
-//   clearError,
-// } = eventsSlice.actions;
-// export default eventsSlice.reducer;
-
-// export const getEventsState = (state: RootState) => state.events;
-// export const eventsSelectors = eventsAdapter.getSelectors<RootState>(
-//   (state) => state.events.events,
-// );
-// export const selectEventsLoading = (state: RootState) => state.events.isLoading;
-// export const selectEventsFetchingMore = (state: RootState) => state.events.isFetchingMore;
-// export const selectEventsError = (state: RootState) => state.events.error;
-// export const selectEventsCurrentPage = (state: RootState) => state.events.page;
-// export const selectSelectedDate = (state: RootState) => state.events.selectedDate;
-// export const selectFilterVariants = (state: RootState) => state.events.filterVariants;
-// export const selectCalendarView = (state: RootState) => state.events.calendarView;
 export const {
   incrementPage,
   setSelectedDate,
