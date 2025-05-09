@@ -15,7 +15,9 @@ class MailDatabaseModel(Base):
     __tablename__ = "mails"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), nullable=True)
+    event_id: Mapped[int] = mapped_column(
+        ForeignKey("events.id", ondelete="SET NULL"), nullable=True
+    )
 
     received_date: Mapped[date] = mapped_column(Date)
     created_at: Mapped[datetime] = mapped_column(

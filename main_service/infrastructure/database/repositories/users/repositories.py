@@ -102,6 +102,11 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         def get_select_all_query(self, user_id: int) -> Select:
             return select(self.model).where(self.model.user_id == user_id)
 
+        def extract_id_from_model(
+            self, model: UserOrganizationRoleDatabaseModel
+        ):
+            return model.organization_id, model.user_id
+
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session

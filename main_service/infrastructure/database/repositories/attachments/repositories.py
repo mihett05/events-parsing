@@ -51,3 +51,6 @@ class AttachmentsDatabaseRepository(AttachmentsRepository):
 
     async def delete(self, attachment: Attachment) -> Attachment:
         return await self.__repository.delete(attachment)
+
+    async def update(self, attachment: Attachment) -> Attachment:
+        return await self.__repository.update(attachment)

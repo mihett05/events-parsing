@@ -25,3 +25,9 @@ class CreateAttachmentDto:
     mail: Mail | None = None
     event: Event | None = None
     id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
+class UpdateAttachmentDto:
+    filename: str
+    attachment_id: UUID
