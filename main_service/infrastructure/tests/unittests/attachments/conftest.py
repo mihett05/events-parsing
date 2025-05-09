@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import BinaryIO, Iterable
+from typing import BinaryIO, Iterable, Callable, Coroutine, Any
 
 import pytest
 import pytest_asyncio
@@ -85,10 +85,12 @@ async def create_attachment(
     create_attachment_dtos: list[CreateAttachmentDto],
     files_gateway: FilesGateway,
     create_attachment_content: BinaryIO,
-) -> Attachment:
-    attachment = await attachments_repository.create(create_attachment_dtos[0])
-    await files_gateway.create(attachment, create_attachment_content)
-    return attachment
+) -> Callable[..., Coroutine[Any, Any, Attachment]]:
+    async def _factory():
+        attachment = await attachments_repository.create(create_attachment_dtos[0])
+        await files_gateway.create(attachment, create_attachment_content)
+        return attachment
+    return _factory
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)

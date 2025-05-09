@@ -1,3 +1,5 @@
+from typing import Callable, Coroutine, Any
+
 import pytest
 import pytest_asyncio
 from dishka import AsyncContainer
@@ -16,9 +18,12 @@ from domain.organizations.repositories import OrganizationsRepository
 
 
 @pytest_asyncio.fixture
-async def create_notification_dto() -> CreateNotificationDto:
+async def create_notification_dto(
+    create_user1
+) -> CreateNotificationDto:
+    user = await create_user1()
     return CreateNotificationDto(
-        recipient_id=1,
+        recipient_id=user.id,
         text="Example",
         type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
@@ -46,9 +51,10 @@ async def notification_repository(
 async def create_notification(
     create_notification_dto: CreateNotificationDto,
     notification_repository: NotificationsRepository,
-) -> Notification:
-    return await notification_repository.create(create_notification_dto)
-
+) -> Callable[..., Coroutine[Any, Any, Notification]]:
+    async def _factory():
+        return await notification_repository.create(create_notification_dto)
+    return _factory
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(

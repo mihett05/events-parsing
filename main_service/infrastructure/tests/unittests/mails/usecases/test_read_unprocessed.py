@@ -1,3 +1,4 @@
+from datetime import timedelta
 from random import choice
 
 import pytest
@@ -19,13 +20,21 @@ async def test_read_organization_mails_success(
     theme = create_mail_dto.theme
     for i in range(10):
         create_mail_dto.theme = f"{theme}_{i}"
+        create_mail_dto.retry_after -= timedelta(days=10)
         create_mail_dto.state = choice(
             [MailStateEnum.UNPROCESSED, MailStateEnum.PROCESSED]
         )
         count += create_mail_dto.state == MailStateEnum.UNPROCESSED
 
         mail = await mails_repository.create(create_mail_dto)
+        print(type(mails_repository))
         if create_mail_dto.state == MailStateEnum.UNPROCESSED:
+            print(mail)
+            print()
+            if mail.state == MailStateEnum.UNPROCESSED:
+                print(mail.retry_after)
+                print()
+
             data.append(mail)
 
     unprocessed_mails = await read_unprocessed_mails_usecase(read_all_mails_dto)

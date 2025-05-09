@@ -55,7 +55,15 @@ async def create_users(
 async def prepare(
     pytestconfig: pytest.Config, users_repository: UsersRepository
 ):
-    yield
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def teardown(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    yield
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear() # noqa

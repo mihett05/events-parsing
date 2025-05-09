@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 import pytest_asyncio
@@ -18,6 +18,7 @@ async def create_mail_dto() -> CreateMailDto:
         sender="example@example.com",
         raw_content="Example Contend".encode("utf-8"),
         received_date=datetime.now().date(),
+
     )
 
 

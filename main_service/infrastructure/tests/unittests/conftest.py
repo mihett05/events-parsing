@@ -64,8 +64,10 @@ async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
 @pytest_asyncio.fixture
 async def get_user_entity() -> User:
     return User(
-        email="test@example.com",
+        email="taaaaaa@example.com",
         fullname="Ivanov Ivan Ivanovich",
+        salt="morskaya_sol",
+        hashed_password="parol",
     )
 
 
@@ -75,6 +77,8 @@ async def get_user_entities() -> list[User]:
         User(
             email=f"test{i}@test.com",
             fullname=f"Ivan{i}",
+            salt="morskaya_sol",
+            hashed_password="parol",
         )
         for i in range(8)
     ]
@@ -84,7 +88,6 @@ async def get_user_entities() -> list[User]:
 async def create_user1(
     register_user1_dto: RegisterUserDTO,
     register_usecase: RegisterUseCase,
-    users_repository: UsersRepository,
 ) -> Callable[..., Coroutine[Any, Any, User]]:
     async def _factory() -> User:
         user1, _ = await register_usecase(register_user1_dto)
@@ -124,9 +127,12 @@ async def create_organization(
     return _factory
 
 @pytest_asyncio.fixture
-async def create_organization_dto() -> CreateOrganizationDto:
+async def create_organization_dto(
+        create_user1
+) -> CreateOrganizationDto:
+    user = await create_user1()
     return CreateOrganizationDto(
-        title="Test Organization", owner_id=1, token=
+        title="Test Organization", owner_id=user.id,
     )
 
 @pytest_asyncio.fixture
