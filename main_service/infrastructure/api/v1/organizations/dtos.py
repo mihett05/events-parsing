@@ -1,11 +1,11 @@
-from datetime import datetime
+from uuid import UUID
 
 from infrastructure.api.models import CamelModel
 
 
 class CreateOrganizationModelDto(CamelModel):
     title: str
-    created_at: datetime
+    token: UUID
 
 
 class UpdateOrganizationModelDto(CamelModel):

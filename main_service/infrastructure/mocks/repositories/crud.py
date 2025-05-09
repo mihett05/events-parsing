@@ -2,7 +2,10 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+)
 
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
