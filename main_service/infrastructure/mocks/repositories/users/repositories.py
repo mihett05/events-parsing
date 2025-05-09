@@ -1,10 +1,19 @@
+from collections import defaultdict
 from datetime import datetime
 
 from domain.users import dtos as dtos
 from domain.users import entities as entities
-from domain.users.entities import User
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from domain.users.repositories import UsersRepository
+from domain.users.entities import User, UserOrganizationRole
+from domain.users.exceptions import (
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    UserRoleAlreadyExistsError,
+    UserRoleNotFoundError,
+)
+from domain.users.repositories import (
+    UserOrganizationRolesRepository,
+    UsersRepository,
+)
 
 from ..crud import MockRepository, MockRepositoryConfig
 
@@ -50,3 +59,58 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+
+class UserRolesMemoryRepository(UserOrganizationRolesRepository):
+    storage: defaultdict[int, list[UserOrganizationRole]]
+    __config: MockRepositoryConfig
+
+    def __init__(self, config: MockRepositoryConfig):
+        self.storage = defaultdict(list)
+        self.__config = config
+
+    async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
+        if role.user_id in self.storage:
+            raise self.__config.already_exists_exception()
+        self.storage[role.user_id].append(role)
+        return role
+
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        if user_id not in self.storage:
+            raise self.__config.not_found_exception()
+        for role in self.storage[user_id]:
+            if role.organization_id == organization_id:
+                return role
+        raise self.__config.not_found_exception()
+
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
+        if user_id not in self.storage:
+            raise self.__config.not_found_exception()
+        return self.storage[user_id]
+
+    async def update(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        if user_role.user_id not in self.storage:
+            raise self.__config.not_found_exception()
+        for role in self.storage[user_role.user_id]:
+            if role.organization_id == user_role.organization_id:
+                role = user_role
+                return role
+        raise self.__config.not_found_exception()
+
+    async def delete(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        if user_role.user_id not in self.storage:
+            raise self.__config.not_found_exception()
+        role_storage_index = None
+        for index, role in enumerate(self.storage[user_role.user_id]):
+            if role.organization_id == user_role.organization_id:
+                role_storage_index = index
+                break
+        if role_storage_index:
+            self.storage[user_role.user_id].pop(role_storage_index)
+        raise self.__config.not_found_exception()
