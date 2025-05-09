@@ -2,13 +2,14 @@ from datetime import date
 from typing import Annotated
 
 import application.events.usecases as use_cases
+from application.auth.usecases import AuthorizeUseCase
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
@@ -105,8 +106,9 @@ async def create_event(
 async def read_event(
     event_id: int,
     use_case: FromDishka[use_cases.ReadEventUseCase],
+    actor: Annotated[User, Depends(get_user)],
 ):
-    return mappers.map_to_pydantic(await use_case(event_id))
+    return mappers.map_to_pydantic(await use_case(event_id, actor))
 
 
 @router.put(
