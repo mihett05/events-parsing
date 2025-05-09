@@ -46,31 +46,31 @@ export const EventsFeed = () => {
 
   return (
     <>
-    <Box display="flex" flexDirection="column" gap={5}>
-      {error && events.length > 0 && (
-        <Box sx={{ my: 2 }}>
-          <ErrorMessage {...error} />
-        </Box>
-      )}
-      
-      <CalendarFilters />
+      <Box display="flex" flexDirection="column" gap={5}>
+        {error && events.length > 0 && (
+          <Box sx={{ my: 2 }}>
+            <ErrorMessage {...error} />
+          </Box>
+        )}
 
-      {events.map((event, index) => (
-        <React.Fragment key={event.id}>
-          {' '}
-          <EventArticle event={event} />
-          {index < events.length - 1 && <Divider sx={{ my: 3 }} />}
-        </React.Fragment>
-      ))}
+        <CalendarFilters />
 
-      <Box ref={sentinelRef} sx={{ height: '20px', mt: 2 }} />
+        {events.map((event, index) => (
+          <React.Fragment key={event.id}>
+            {' '}
+            <EventArticle event={event} />
+            {index < events.length - 1 && <Divider sx={{ my: 3 }} />}
+          </React.Fragment>
+        ))}
 
-      {isFetchingMore && (
-        <Box display="flex" justifyContent="center" my={4}>
-          <CircularProgress size={30} />
-        </Box>
-      )}
-    </Box>
+        <Box ref={sentinelRef} sx={{ height: '20px', mt: 2 }} />
+
+        {isFetchingMore && (
+          <Box display="flex" justifyContent="center" my={4}>
+            <CircularProgress size={30} />
+          </Box>
+        )}
+      </Box>
     </>
   );
 };
