@@ -12,6 +12,10 @@ class ParsedAttachmentInfoDto:
     extension: str
     content: BinaryIO
 
+    @property
+    def file_path(self) -> str:
+        return self.filename + self.extension
+
 
 @dataclass
 class CreateAttachmentDto:

@@ -47,7 +47,7 @@ class MailsDatabaseRepository(MailsRepository):
     async def create_many(
         self, create_dtos: list[dtos.CreateMailDto]
     ) -> list[entities.Mail]:
-        return await self.__repository.create_many(create_dtos)
+        return await self.__repository.create_many_from_dto(create_dtos)
 
     async def create(self, dto: dtos.CreateMailDto) -> Mail:
         return await self.__repository.create_from_dto(dto)

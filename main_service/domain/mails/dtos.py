@@ -21,15 +21,15 @@ class CreateMailDto:
     imap_mail_uid: str
     theme: str
     sender: str
+    received_date: date
 
     raw_content: bytes
-    received_date: date
-    attachments: list[CreateAttachmentDto] = field(default_factory=list)
-
-    state: MailStateEnum = MailStateEnum.UNPROCESSED
     retry_after: datetime = field(
         default_factory=lambda: datetime.now() + timedelta(minutes=30)
     )
+    state: MailStateEnum = MailStateEnum.UNPROCESSED
+
+    attachments: list[CreateAttachmentDto] = field(default_factory=list)
 
 
 @dataclass

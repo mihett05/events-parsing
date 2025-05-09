@@ -15,8 +15,12 @@ class UsersRepository(metaclass=ABCMeta):
     async def read_by_email(self, email: str) -> entities.User: ...
 
     @abstractmethod
-    async def read_all(
-        self, dto: dtos.ReadAllUsersDto
+    async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[entities.User]: ...
+
+    @abstractmethod
+    async def read_by_ids(
+        self,
+        user_ids: list[int],
     ) -> list[entities.User]: ...
 
     @abstractmethod
@@ -33,9 +37,7 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     ) -> entities.UserOrganizationRole: ...
 
     @abstractmethod
-    async def read(
-        self, user_id: int
-    ) -> list[entities.UserOrganizationRole]: ...
+    async def read(self, user_id: int) -> list[entities.UserOrganizationRole]: ...
 
     @abstractmethod
     async def update(

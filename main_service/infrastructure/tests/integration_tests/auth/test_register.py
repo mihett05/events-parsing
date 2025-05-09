@@ -27,9 +27,7 @@ async def test_register_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(get_user1_model, attr) == getattr(
-            response_model.user, attr
-        )
+        assert getattr(get_user1_model, attr) == getattr(response_model.user, attr)
 
     response = await get_test_client.delete(
         "/v1/users/",

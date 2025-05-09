@@ -15,6 +15,9 @@ retort = postgres_retort.extend(recipe=[])
 map_from_db = retort.get_converter(
     EventDatabaseModel,
     Event,
+    recipe=[
+        allow_unlinked_optional(P[Event].members),
+    ],
 )
 
 map_to_db = retort.get_converter(

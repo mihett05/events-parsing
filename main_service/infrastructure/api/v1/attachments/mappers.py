@@ -25,7 +25,8 @@ retort = pydantic_retort.extend(recipe=[])
     ]
 )
 def map_update_dto_from_pydantic(
-    dto: UpdateAttachmentModelDto, attachment_id: UUID
+    dto: UpdateAttachmentModelDto,
+    attachment_id: UUID,  # noqa
 ) -> UpdateAttachmentDto: ...
 
 

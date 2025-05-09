@@ -13,6 +13,7 @@ async def test_delete(
     read_organization_usecase: ReadOrganizationUseCase,
     create_organization: Organization,
 ):
+    # TODO: change actor to user
     return_organization = await delete_organization_usecase(
         create_organization.id, None
     )

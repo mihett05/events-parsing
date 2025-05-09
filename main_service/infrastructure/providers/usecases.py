@@ -50,6 +50,7 @@ class UseCasesProvider(Provider):
         users_use_cases.UpdateUserUseCase,
         users_use_cases.DeleteUserUseCase,
         users_use_cases.ReadAllUsersUseCase,
+        users_use_cases.ReadUsersByIdsUseCase,
         users_use_cases.ReadUserRolesUseCase,
         users_use_cases.CreateUserUseCase,
         users_use_cases.CreateUserOrganizationRoleUseCase,
@@ -67,6 +68,7 @@ class UseCasesProvider(Provider):
         notification_use_cases.CreateNotificationUseCase,
         notification_use_cases.ReadNotificationUseCase,
         notification_use_cases.ReadAllNotificationsUseCase,
+        notification_use_cases.UpdateNotificationsStatusUseCase,
         notification_use_cases.DeleteNotificationUseCase,
     )
 

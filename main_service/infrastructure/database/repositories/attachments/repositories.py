@@ -44,7 +44,7 @@ class AttachmentsDatabaseRepository(AttachmentsRepository):
     async def create_many(
         self, create_dtos: list[CreateAttachmentDto]
     ) -> list[Attachment]:
-        return await self.__repository.create_many(create_dtos)
+        return await self.__repository.create_many_from_dto(create_dtos)
 
     async def read(self, attachment_id: UUID) -> Attachment:
         return await self.__repository.read(attachment_id)

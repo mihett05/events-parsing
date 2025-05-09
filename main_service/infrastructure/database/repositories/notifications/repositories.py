@@ -6,7 +6,7 @@ from domain.notifications.exceptions import (
     NotificationNotFoundError,
 )
 from domain.notifications.repositories import NotificationsRepository
-from sqlalchemy import Select, select
+from sqlalchemy import Select, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -27,16 +27,16 @@ class NotificationsDatabaseRepository(NotificationsRepository):
                 already_exists_exception=NotificationAlreadyExistsError,
             )
 
-        def get_select_all_query(
-            self, dto: dtos.ReadNotificationsDto
-        ) -> Select:
-            return (
+        def get_select_all_query(self, dto: dtos.ReadNotificationsDto) -> Select:
+            query = (
                 select(self.model)
                 .where(self.model.status == NotificationStatusEnum.UNSENT)
                 .order_by(self.model.id)
-                .offset(dto.page * dto.page_size)
-                .limit(dto.page_size)
             )
+            if dto.for_update:
+                query = query.with_for_update(skip_locked=True)
+
+            return query
 
     def __init__(self, session: AsyncSession):
         self.__session = session
@@ -46,13 +46,27 @@ class NotificationsDatabaseRepository(NotificationsRepository):
     async def read(self, notification_id: int) -> Notification:
         return await self.__repository.read(notification_id)
 
-    async def read_all(
-        self, dto: dtos.ReadNotificationsDto
-    ) -> list[Notification]:
+    async def read_all(self, dto: dtos.ReadNotificationsDto) -> list[Notification]:
         return await self.__repository.read_all(dto)
+
+    async def change_notifications_statuses(
+        self, notifications: list[Notification], status: NotificationStatusEnum
+    ):
+        ids = list(map(self.__config.extract_id_from_entity, notifications))
+        query = (
+            update(NotificationDatabaseModel)
+            .where(NotificationDatabaseModel.id.in_(ids))
+            .values(status=status)
+            .execution_options(synchronize_session="fetch")
+            .returning(self.__config.model)
+        )
+        await self.__session.execute(query)
 
     async def create(self, dto: dtos.CreateNotificationDto) -> Notification:
         return await self.__repository.create_from_dto(dto)
+
+    async def create_many(self, entities: list[Notification]) -> list[Notification]:
+        return await self.__repository.create_many_from_entity(entities)
 
     async def delete(self, notification: Notification) -> Notification:
         return await self.__repository.delete(notification)

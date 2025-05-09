@@ -8,13 +8,12 @@ async def test_create_success(
     create_organization_usecase: CreateOrganizationUseCase,
     create_organization_dto: CreateOrganizationDto,
 ):
+    # TODO: change actor to user
     organization = await create_organization_usecase(
         dto=create_organization_dto, actor=None
     )
     attrs = ("title", "created_at", "owner_id")
     for attr in attrs:
-        assert getattr(organization, attr) == getattr(
-            create_organization_dto, attr
-        )
+        assert getattr(organization, attr) == getattr(create_organization_dto, attr)
 
     assert organization.id == 1

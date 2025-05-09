@@ -229,9 +229,7 @@ def downgrade() -> None:
         ["recipient_id"],
         ["id"],
     )
-    op.drop_constraint(
-        op.f("fk_mails_event_id_events"), "mails", type_="foreignkey"
-    )
+    op.drop_constraint(op.f("fk_mails_event_id_events"), "mails", type_="foreignkey")
     op.create_foreign_key(
         "fk_mails_event_id_events", "mails", "events", ["event_id"], ["id"]
     )

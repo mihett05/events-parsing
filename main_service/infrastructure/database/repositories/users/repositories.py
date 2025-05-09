@@ -9,6 +9,8 @@ from domain.users.repositories import (
 )
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
@@ -17,7 +19,11 @@ from .mappers import (
     user_organization_role_map_from_db,
     user_organization_role_map_to_db,
 )
-from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
+from .models import (
+    UserDatabaseModel,
+    UserOrganizationRoleDatabaseModel,
+    UserSettingsDatabaseModel,
+)
 
 
 class UsersDatabaseRepository(UsersRepository):
@@ -44,6 +50,9 @@ class UsersDatabaseRepository(UsersRepository):
                 .limit(dto.page_size)
             )
 
+        def get_options(self) -> list[LoaderOption]:
+            return [selectinload(self.model.settings)]
+
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session
@@ -52,8 +61,13 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[entities.User]:
         return await self.__repository.read_all(dto)
 
+    async def read_by_ids(self, user_ids: list[int]) -> list[entities.User]:
+        return await self.__repository.read_by_ids(user_ids)
+
     async def create(self, user: User) -> User:
-        return await self.__repository.create_from_entity(user)
+        model: UserDatabaseModel = self.__config.model_mapper(user)
+        model.settings = UserSettingsDatabaseModel()
+        return await self.__repository.create(model)
 
     async def read(self, user_id: int) -> User:
         return await self.__repository.read(user_id)
@@ -88,9 +102,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         def get_select_all_query(self, user_id: int) -> Select:
             return select(self.model).where(self.model.user_id == user_id)
 
-        def extract_id_from_model(
-            self, model: UserOrganizationRoleDatabaseModel
-        ):
+        def extract_id_from_model(self, model: UserOrganizationRoleDatabaseModel):
             return model.organization_id, model.user_id
 
     def __init__(self, session: AsyncSession):

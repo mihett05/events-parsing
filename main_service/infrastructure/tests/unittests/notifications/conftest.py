@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest_asyncio
 from dishka import AsyncContainer
 from domain.notifications.dtos import (
@@ -8,7 +10,6 @@ from domain.notifications.entities import Notification
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
-    NotificationTypeEnum,
 )
 from domain.notifications.repositories import NotificationsRepository
 
@@ -18,17 +19,17 @@ async def create_notification_dto() -> CreateNotificationDto:
     return CreateNotificationDto(
         recipient_id=1,
         text="Example",
-        type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
+        event_id=1,
+        send_date=datetime.now().date(),
     )
 
 
 @pytest_asyncio.fixture
 async def read_all_notifications_dto() -> ReadNotificationsDto:
     return ReadNotificationsDto(
-        page=0,
-        page_size=50,
+        page=0, page_size=50, send_date=datetime.now().date(), for_update=True
     )
 
 

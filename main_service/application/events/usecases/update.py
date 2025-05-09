@@ -26,9 +26,9 @@ class UpdateEventUseCase:
         self.__builder = builder
         self.__read_roles_use_case = read_roles_use_case
 
-    async def __call__(self, dto: UpdateEventDto, actor: User | None) -> Event:
+    async def __call__(self, dto: UpdateEventDto, actor: User) -> Event:
         async with self.__transaction:
-            event = await self.__read_event_use_case(dto.event_id)
+            event = await self.__read_event_use_case(dto.event_id, actor)
             roles = await self.__read_roles_use_case(actor.id)
             self.__builder.providers(
                 EventPermissionProvider(event.organization_id, roles)
