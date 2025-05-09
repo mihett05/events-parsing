@@ -7,6 +7,7 @@ class UpdateUserDto:
     fullname: str
     telegram_id: int | None = None
 
+
 @dataclass
 class DeleteUserRoleDto:
     user_id: int

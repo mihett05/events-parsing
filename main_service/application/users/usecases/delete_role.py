@@ -3,10 +3,10 @@ from domain.users.entities import User, UserOrganizationRole
 from domain.users.repositories import UserOrganizationRolesRepository
 
 from application.transactions import TransactionsGateway
-from ..dtos import DeleteUserRoleDto
 
 from ...auth.enums import PermissionsEnum
 from ...auth.permissions import PermissionBuilder
+from ..dtos import DeleteUserRoleDto
 from ..permissions.user import UserRolesPermissionProvider
 from . import ReadUserRolesUseCase
 from .read_role import ReadUserRoleUseCase
@@ -35,5 +35,7 @@ class DeleteUserRoleUseCase:
             self.__builder.providers(
                 UserRolesPermissionProvider(dto.organization_id, roles)
             ).add(PermissionsEnum.CAN_DELETE_ROLE).apply()
-            role = await self.__repository.read(dto.user_id, dto.organization_id)
+            role = await self.__repository.read(
+                dto.user_id, dto.organization_id
+            )
             return await self.__repository.delete(role)

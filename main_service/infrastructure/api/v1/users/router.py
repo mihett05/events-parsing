@@ -75,7 +75,7 @@ async def delete_user(
 
 
 @router.get(
-    "/{user_id}/{organization_id}",
+    "/roles/{user_id}/{organization_id}",
     response_model=models.UserRoleModel,
     responses={404: {"model": ErrorModel}},
 )
@@ -90,7 +90,7 @@ async def read_user_role(
 
 
 @router.get(
-    "/{user_id}",
+    "/roles/{user_id}",
     response_model=list[models.UserRoleModel],
     responses={404: {"model": ErrorModel}},
 )
@@ -102,7 +102,7 @@ async def read_user_roles(
 
 
 @router.post(
-    "/",
+    "/roles",
     response_model=models.UserRoleModel,
     responses={404: {"model": ErrorModel}},
 )
@@ -117,7 +117,7 @@ async def create_user_role(
 
 
 @router.put(
-    "/{user_id}",
+    "/roles/{user_id}",
     response_model=models.UserRoleModel,
     responses={404: {"model": ErrorModel}},
 )
@@ -135,7 +135,7 @@ async def update_user_role(
 
 
 @router.delete(
-    "/{user_id}/{organization_id}",
+    "/roles/{user_id}/{organization_id}",
     response_model=models.UserRoleModel,
     responses={404: {"model": ErrorModel}},
 )
