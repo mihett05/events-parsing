@@ -37,9 +37,7 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     ) -> entities.UserOrganizationRole: ...
 
     @abstractmethod
-    async def read(
-        self, user_id: int
-    ) -> list[entities.UserOrganizationRole]: ...
+    async def read(self, user_id: int) -> list[entities.UserOrganizationRole]: ...
 
     @abstractmethod
     async def update(

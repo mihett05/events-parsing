@@ -4,10 +4,9 @@ from typing import Annotated
 import application.events.usecases as use_cases
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.events.dtos import ReadAllEventsDto, ReadAllEventsFeedDto
+from domain.events.dtos import ReadAllEventsFeedDto
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
-from domain.events.dtos import ReadAllEventsFeedDto
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 

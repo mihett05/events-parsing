@@ -12,6 +12,7 @@ async def test_delete_success(
     delete_event_usecase: DeleteEventUseCase,
     create_event: Event,
 ):
+    # TODO: добавить актора
     event = await delete_event_usecase(create_event.id, None)
     assert event == create_event
 

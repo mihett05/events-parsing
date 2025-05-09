@@ -1,14 +1,13 @@
 from adaptix import P
 from adaptix.conversion import coercer, link_function
-from domain.users.entities import User, UserSettings
-from adaptix.conversion import allow_unlinked_optional, link_function
-from domain.users.entities import User, UserOrganizationRole
+from domain.users.entities import User, UserOrganizationRole, UserSettings
 
 from ...mappers import postgres_retort
-from .models import UserDatabaseModel, UserSettingsDatabaseModel
-from infrastructure.database.mappers import postgres_retort
-
-from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
+from .models import (
+    UserDatabaseModel,
+    UserOrganizationRoleDatabaseModel,
+    UserSettingsDatabaseModel,
+)
 
 retort = postgres_retort.extend(recipe=[])
 

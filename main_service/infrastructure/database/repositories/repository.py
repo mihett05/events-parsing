@@ -91,9 +91,7 @@ class PostgresRepository(metaclass=ABCMeta):
         self, query: Select | Update | Insert
     ) -> list[Entity]:
         result = await self.session.scalars(self.config.add_options(query))
-        return [
-            self.config.entity_mapper(model) for model in result.unique().all()
-        ]
+        return [self.config.entity_mapper(model) for model in result.unique().all()]
 
     async def read(self, model_id: Id) -> Entity:
         if model := await self.session.get(

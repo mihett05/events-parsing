@@ -31,7 +31,6 @@ class NotificationsDatabaseRepository(NotificationsRepository):
             query = (
                 select(self.model)
                 .where(self.model.status == NotificationStatusEnum.UNSENT)
-                .where(self.model.event_id == dto.event_id)
                 .order_by(self.model.id)
             )
             if dto.for_update:

@@ -18,4 +18,4 @@ class EventAlreadyExistsError(EntityAlreadyExistsError):
 
 class EventAccessDenied(EntityAccessDenied):
     def __init__(self):
-        super().__init__(Event)
+        super().__init__()

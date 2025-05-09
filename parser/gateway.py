@@ -46,7 +46,7 @@ async def start_parsing():
 
 @app.after_startup
 async def fill_data():
-    asyncio.create_task(start_parsing())
+    asyncio.create_task(start_parsing())  # noqa
 
 
 @broker.subscriber(subscribe_queue)

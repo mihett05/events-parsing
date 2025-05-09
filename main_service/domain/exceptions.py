@@ -19,4 +19,4 @@ class EntityAlreadyExistsError(EntityException):
 
 class EntityAccessDenied(EntityException):
     def __init__(self):
-        super().__init__(f"Access denied")
+        super().__init__("Access denied")

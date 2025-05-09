@@ -66,7 +66,6 @@ class ImapEmailsGateway(EmailsGateway):
     async def __ensure_folder_exists(self, folder_name: str):
         try:
             response = await self.client.list("INBOX", "*")
-            print(response)
             folders = [
                 line.decode("utf-8").split('"/"')[-1].strip('"')
                 for line in response.lines

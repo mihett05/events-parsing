@@ -8,6 +8,7 @@ async def test_create_success(
     create_event_usecase: CreateEventUseCase,
     create_event_dto: CreateEventDto,
 ):
+    # TODO: change actor to user
     event = await create_event_usecase(dto=create_event_dto, actor=None)
 
     attrs = (

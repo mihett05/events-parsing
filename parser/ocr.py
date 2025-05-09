@@ -15,7 +15,7 @@ def extract_text_from_image(image_path):
         img = Image.open(image_path)
         text = pytesseract.image_to_string(img, lang="rus")
         return text
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -66,7 +66,7 @@ def extract_text_from_docx(docx_url):
         docx_file = io.BytesIO(response.content)
         doc = Document(docx_file)
         return "\n".join([para.text for para in doc.paragraphs])
-    except Exception as e:
+    except Exception:
         return None
 
 

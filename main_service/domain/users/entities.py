@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domain.users.enums import UserNotificationSendToEnum, RoleEnum
+from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 
 
 @dataclass

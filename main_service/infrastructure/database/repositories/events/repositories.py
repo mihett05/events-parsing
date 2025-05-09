@@ -37,9 +37,7 @@ class EventsDatabaseRepository(EventsRepository):
 
             return query
 
-        def get_select_all_feed_query(
-            self, dto: dtos.ReadAllEventsFeedDto
-        ) -> Select:
+        def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
             query = select(self.model).order_by(desc(self.model.start_date))
 
             query = self.__try_add_period_filter_to_query(query, dto)

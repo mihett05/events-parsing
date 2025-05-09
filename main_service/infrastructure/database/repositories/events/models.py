@@ -41,7 +41,3 @@ class EventDatabaseModel(Base):
         DateTime(timezone=True), default=None
     )
     start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-
-
-
-

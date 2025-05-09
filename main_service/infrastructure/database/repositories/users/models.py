@@ -1,10 +1,6 @@
 from datetime import datetime
 
-from domain.users.enums import RoleEnum
-from sqlalchemy import DateTime, ForeignKey, func
-from sqlalchemy.dialects.postgresql import ENUM
-from sqlalchemy.orm import Mapped, mapped_column
-from domain.users.enums import UserNotificationSendToEnum
+from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -53,9 +49,7 @@ class UserOrganizationRoleDatabaseModel(Base):
     organization_id: Mapped[int] = mapped_column(
         ForeignKey("organizations.id"), primary_key=True
     )
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), primary_key=True
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
     role: Mapped[RoleEnum] = mapped_column(
         ENUM(RoleEnum, name="RoleEnum"), nullable=False
     )

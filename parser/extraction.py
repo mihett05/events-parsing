@@ -58,9 +58,7 @@ class OpenAiExtraction:
             return result
         for item in response_dict:
             try:
-                event = EventInfo(
-                    **{**item, "dates": DatesInfo(**item["dates"])}
-                )
+                event = EventInfo(**{**item, "dates": DatesInfo(**item["dates"])})
                 if event.location == "null":
                     event.location = None
                 pattern = re.compile(r"^\d{2}-\d{2}-\d{4}$")

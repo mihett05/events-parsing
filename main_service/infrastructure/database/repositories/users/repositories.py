@@ -19,7 +19,11 @@ from .mappers import (
     user_organization_role_map_from_db,
     user_organization_role_map_to_db,
 )
-from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel
+from .models import (
+    UserDatabaseModel,
+    UserOrganizationRoleDatabaseModel,
+    UserSettingsDatabaseModel,
+)
 
 
 class UsersDatabaseRepository(UsersRepository):

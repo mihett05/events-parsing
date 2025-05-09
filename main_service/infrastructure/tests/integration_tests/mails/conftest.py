@@ -66,7 +66,7 @@ async def create_mails(
     return [
         ParsedMailInfoDto(
             imap_mail_uid=f"{i}",
-            theme=f"Уведомление",
+            theme="Уведомление",
             sender=get_config.imap_username,
             raw_content=f"hello{i}".encode("utf-8"),
             attachments=[
