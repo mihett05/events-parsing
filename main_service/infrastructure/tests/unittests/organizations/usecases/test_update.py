@@ -8,15 +8,17 @@ from domain.organizations.exceptions import OrganizationNotFoundError
 
 
 @pytest.mark.asyncio
-async def test_update(
+async def test_update_organization(
     update_organization_usecase: UpdateOrganizationUseCase,
     update_organization_dto: UpdateOrganizationDto,
     create_organization: Organization,
+    create_user1
 ):
+    create_user1 = await create_user1()
     create_organization = copy(create_organization)
     # TODO: change actor to user
     return_organization = await update_organization_usecase(
-        update_organization_dto, None
+        update_organization_dto, create_user1
     )
     assert return_organization.title != create_organization.title
     assert return_organization.title == update_organization_dto.title

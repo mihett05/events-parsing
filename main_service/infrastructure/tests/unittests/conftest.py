@@ -12,7 +12,7 @@ from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User
-from domain.users.repositories import UsersRepository
+
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
 import application.auth.usecases as auth_usecases

@@ -27,7 +27,6 @@ async def create_notification_dto(
     return CreateNotificationDto(
         recipient_id=user.id,
         text="Example",
-        type=NotificationTypeEnum.EMAIL,
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
         event_id=1,

@@ -28,6 +28,7 @@ from infrastructure.mocks.repositories.ogranizations.repositories import (
 from infrastructure.mocks.repositories.users import (
     UsersMemoryRepository,
 )
+from infrastructure.mocks.repositories.users.repositories import UserRolesMemoryRepository
 
 
 class RepositoriesProvider(Provider):
@@ -47,7 +48,7 @@ class RepositoriesProvider(Provider):
         provides=AttachmentsRepository,
     )
     user_organization_roles = provide(
-        source=UserOrganizationRolesRepository,
+        source=UserRolesMemoryRepository,
         provides=UserOrganizationRolesRepository,
     )
     organization_tokens = provide(

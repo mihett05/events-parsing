@@ -1,10 +1,11 @@
+from collections import defaultdict
 from datetime import datetime
 
 from domain.users import dtos as dtos
 from domain.users import entities as entities
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from domain.users.repositories import UsersRepository
+from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
 
 from ..crud import MockRepository, MockRepositoryConfig
 
@@ -53,3 +54,32 @@ class UsersMemoryRepository(UsersRepository):
 
     async def clear(self):
         await self.__repository.clear()
+
+
+class UserRolesMemoryRepository(UserOrganizationRolesRepository):
+
+
+    def __init__(self):
+        pass
+
+    async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
+        pass
+
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        pass
+
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
+        pass
+
+    async def update(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        pass
+
+    async def delete(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        pass
+
