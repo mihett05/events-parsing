@@ -40,11 +40,10 @@ class MockRepository(Generic[Entity, Id]):
     __config: MockRepositoryConfig
 
     def __init__(self, config: MockRepositoryConfig):
-        self.storage = get_storage(type(config.entity))
+        self.storage = get_storage(config.entity)
         self.__config = config
 
     async def create(self, entity: Entity) -> Entity:
-        print(type(entity), self.storage)
         entity_id = self.__config.extract_id(entity)
         if entity_id in self.storage:
             raise self.__config.already_exists_exception()
