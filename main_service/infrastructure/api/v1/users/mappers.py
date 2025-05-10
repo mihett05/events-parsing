@@ -66,14 +66,3 @@ def map_update_role_dto_from_pydantic(
 ) -> UserOrganizationRole: ...
 
 
-@retort.impl_converter(
-    recipe=[
-        link_function(
-            lambda dto: dto.organization.id,
-            P[UserOrganizationRole].organization_id,
-        )
-    ]
-)
-def map_delete_role_dto_from_pydantic(
-    organization_id: int, user_id: int, role=None
-) -> UserOrganizationRole: ...

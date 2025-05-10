@@ -7,6 +7,7 @@ from domain.organizations.repositories import (
     OrganizationsRepository,
 )
 from domain.users.repositories import (
+    UserOrganizationRolesRepository,
     UsersRepository,
 )
 
@@ -22,7 +23,11 @@ from infrastructure.mocks.repositories.ogranizations.repositories import (
     OrganizationsMemoryRepository,
 )
 from infrastructure.mocks.repositories.users import (
+    UserOrganizationRolesMemoryRepository,
     UsersMemoryRepository,
+)
+from infrastructure.mocks.repositories.users.repositories import (
+    UserOrganizationRolesMemoryRepository,
 )
 
 
@@ -41,4 +46,8 @@ class RepositoriesProvider(Provider):
     attachments = provide(
         source=AttachmentsMemoryRepository,
         provides=AttachmentsRepository,
+    )
+    roles = provide(
+        source=UserOrganizationRolesMemoryRepository,
+        provides=UserOrganizationRolesRepository,
     )

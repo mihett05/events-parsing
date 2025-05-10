@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime
 
 from domain.users import dtos as dtos
@@ -7,8 +6,6 @@ from domain.users.entities import User, UserOrganizationRole
 from domain.users.exceptions import (
     UserAlreadyExistsError,
     UserNotFoundError,
-    UserRoleAlreadyExistsError,
-    UserRoleNotFoundError,
 )
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
@@ -61,17 +58,18 @@ class UsersMemoryRepository(UsersRepository):
         return await self.__repository.delete(user)
 
 
-class UserRolesMemoryRepository(UserOrganizationRolesRepository):
-    storage: defaultdict[int, list[UserOrganizationRole]]
+class UserOrganizationRolesMemoryRepository(UserOrganizationRolesRepository):
+    storage: dict[int, list[UserOrganizationRole]]
     __config: MockRepositoryConfig
 
     def __init__(self, config: MockRepositoryConfig):
-        self.storage = defaultdict(list)
+        self.storage = dict()
         self.__config = config
 
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         if role.user_id in self.storage:
             raise self.__config.already_exists_exception()
+
         self.storage[role.user_id].append(role)
         return role
 
@@ -112,5 +110,7 @@ class UserRolesMemoryRepository(UserOrganizationRolesRepository):
                 role_storage_index = index
                 break
         if role_storage_index:
+            deleted_role = self.storage[user_role.user_id][role_storage_index]
             self.storage[user_role.user_id].pop(role_storage_index)
+            return deleted_role
         raise self.__config.not_found_exception()
