@@ -9,7 +9,7 @@ from application.attachments.permissions.attachment import (
 )
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
-from application.events.usecases import ReadEventUseCase
+from application.events.usecases.read import ReadEventUseCase
 from application.transactions import TransactionsGateway
 from application.users.usecases import ReadUserRolesUseCase
 

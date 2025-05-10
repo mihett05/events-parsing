@@ -1,10 +1,11 @@
 from datetime import datetime
+from uuid import UUID
 
 from domain.users import dtos as dtos
 from domain.users import entities as entities
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from domain.users.repositories import UsersRepository
+from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository, ActivationTokenRepository
 
 from ..crud import MockRepository, MockRepositoryConfig
 
@@ -50,3 +51,37 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+class UserRolesMemoryRepository(UserOrganizationRolesRepository):
+
+
+    def __init__(self):
+        pass
+
+    async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
+        pass
+
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        pass
+
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
+        pass
+
+    async def update(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        pass
+
+    async def delete(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
+        pass
+
+class ActivationTokenMemoryRepository(ActivationTokenRepository):
+    async def read_activation_token(self, token_uuid: UUID) -> entities.UserActivationToken:
+        pass
+
+    async def create_activation_token(self, user: entities.User) -> entities.UserActivationToken:
+        pass

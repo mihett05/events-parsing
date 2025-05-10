@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from uuid import UUID
 
 import domain.users.dtos as dtos
 import domain.users.entities as entities
@@ -48,3 +49,15 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     async def delete(
         self, role: entities.UserOrganizationRole
     ) -> entities.UserOrganizationRole: ...
+
+
+class ActivationTokenRepository(metaclass=ABCMeta):
+    @abstractmethod
+    async def create_activation_token(
+        self, user: entities.User
+    ) -> entities.UserActivationToken: ...
+
+    @abstractmethod
+    async def read_activation_token(
+        self, token_uuid: UUID
+    ) -> entities.UserActivationToken: ...
