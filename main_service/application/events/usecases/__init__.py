@@ -18,7 +18,6 @@ __all__ = [
     "ParseEventsUseCase",
     "PlanningEventsNotificationsUseCase",
     "ReadEventUseCase",
-    "ReadUserEventsUseCase",
     "ReadAllEventUseCase",
     "ReadForFeedEventsUseCase",
     "ReadUserEventsUseCase",

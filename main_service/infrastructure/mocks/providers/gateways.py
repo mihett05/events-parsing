@@ -7,9 +7,11 @@ from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
 from infrastructure.gateways.attachments import StaticDirFilesGateway
+from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
 from infrastructure.mocks.gateways.events.gateway import (
     MemoryCoordinatorGateway,
 )
+from infrastructure.mocks.gateways.notifications.gateway import NotificationEmailMemoryGateway
 
 
 class GatewaysProvider(Provider):
@@ -24,3 +26,4 @@ class GatewaysProvider(Provider):
     )
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
     security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
+    notification_email_gateway = provide(source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway)
