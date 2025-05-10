@@ -1,3 +1,4 @@
+import pytest
 import pytest_asyncio
 from application.users.dtos import UpdateUserDto
 from dishka import AsyncContainer
@@ -8,23 +9,7 @@ from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 
 
-@pytest_asyncio.fixture
-async def get_user_entity() -> User:
-    return User(
-        email="test@test.com",
-        fullname="Ivanov Ivan Ivanovich",
-    )
 
-
-@pytest_asyncio.fixture
-async def get_user_entities() -> list[User]:
-    return [
-        User(
-            email=f"test{i}@test.com",
-            fullname=f"Iivan{i}",
-        )
-        for i in range(8)
-    ]
 
 
 @pytest_asyncio.fixture
@@ -63,3 +48,21 @@ async def create_users(
     return [
         await users_repository.create(user_entity) for user_entity in get_user_entities
     ]
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def teardown(
+    pytestconfig: pytest.Config, users_repository: UsersRepository
+):
+    yield
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear() # noqa

@@ -32,6 +32,10 @@ miniopy-async = "^1.22.1"
 aiogram = "^3.20.0.post0"
 aiosmtplib = "^4.0.1"
 
+[tool.poetry.group.tests.dependencies]
+testcontainers = {extras = ["minio", "postgres", "rabbitmq"], version = "^4.10.0"}
+httpx = "^0.28.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

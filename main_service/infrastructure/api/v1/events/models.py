@@ -12,6 +12,7 @@ class EventModel(CamelModel):
     type: EventTypeEnum
     format: EventFormatEnum
     created_at: datetime
+    organization_id: int | None = None
 
     is_visible: bool
     location: str | None

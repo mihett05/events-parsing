@@ -11,10 +11,19 @@ from domain.attachments.repositories import AttachmentsRepository
 @pytest.mark.asyncio
 async def test_delete_success(
     delete_attachment_usecase: DeleteAttachmentUseCase,
-    create_attachment: Attachment,
+    create_attachment,
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
+    create_attachment = await create_attachment()
+    deleted_attachment = await delete_attachment_usecase(
+        create_attachment.id, None
+    )
+    attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
+    for attr in attrs:
+        assert getattr(deleted_attachment, attr) == getattr(
+            create_attachment, attr
+        )
     # TODO: change actor to user
     deleted_attachment = await delete_attachment_usecase(create_attachment.id, None)
     assert deleted_attachment == create_attachment

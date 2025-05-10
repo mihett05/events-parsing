@@ -31,6 +31,8 @@ from infrastructure.database.repositories.users import (
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
 
+
+
     attachments_repository = provide(
         source=AttachmentsDatabaseRepository, provides=AttachmentsRepository
     )

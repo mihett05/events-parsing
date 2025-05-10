@@ -43,7 +43,6 @@ map_to_db = retort.get_converter(
     ],
 )
 
-
 map_create_dto_to_model = retort.get_converter(
     CreateMailDto,
     MailDatabaseModel,

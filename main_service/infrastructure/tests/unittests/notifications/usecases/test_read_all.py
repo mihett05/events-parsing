@@ -8,9 +8,12 @@ from domain.notifications.entities import Notification
 async def test_read_all_success(
     read_all_notifications_usecase: ReadAllNotificationsUseCase,
     read_all_notifications_dto: ReadNotificationsDto,
-    create_notification: Notification,
+    create_notification,
 ):
-    notifications = await read_all_notifications_usecase(dto=read_all_notifications_dto)
+    create_notification = await create_notification()
+    notifications = await read_all_notifications_usecase(
+        dto=read_all_notifications_dto
+    )
     assert len(notifications) == 1
     assert notifications[0] == create_notification
 

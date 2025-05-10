@@ -1,3 +1,6 @@
+from typing import Callable, Coroutine, Any
+
+import pytest
 from datetime import datetime
 
 import pytest_asyncio
@@ -10,14 +13,19 @@ from domain.notifications.entities import Notification
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
+    NotificationTypeEnum,
 )
 from domain.notifications.repositories import NotificationsRepository
+from domain.organizations.repositories import OrganizationsRepository
 
 
 @pytest_asyncio.fixture
-async def create_notification_dto() -> CreateNotificationDto:
+async def create_notification_dto(
+    create_user1
+) -> CreateNotificationDto:
+    user = await create_user1()
     return CreateNotificationDto(
-        recipient_id=1,
+        recipient_id=user.id,
         text="Example",
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
@@ -45,5 +53,16 @@ async def notification_repository(
 async def create_notification(
     create_notification_dto: CreateNotificationDto,
     notification_repository: NotificationsRepository,
-) -> Notification:
-    return await notification_repository.create(create_notification_dto)
+) -> Callable[..., Coroutine[Any, Any, Notification]]:
+    async def _factory():
+        return await notification_repository.create(create_notification_dto)
+    return _factory
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    notification_repository: OrganizationsRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await notification_repository.clear()  # noqa

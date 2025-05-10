@@ -18,7 +18,6 @@ from domain.organizations.repositories import (
     OrganizationsRepository,
     OrganizationTokensRepository,
 )
-
 from infrastructure.mocks.repositories.crud import (
     MockRepository,
     MockRepositoryConfig,
@@ -39,27 +38,34 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
         self.__repository = MockRepository(self.Config())
 
     async def create(
-        self, organization: entities.Organization
+            self, dto: dtos.CreateOrganizationDto
     ) -> entities.Organization:
-        organization.id = self.__next_id
+        organization = entities.Organization(
+            title=dto.title,
+            owner_id=dto.owner_id,
+            id=self.__next_id,
+            created_at=datetime.datetime.now(datetime.UTC),
+        )
         self.__next_id += 1
-        organization.created_at = datetime.datetime.utcnow()
         return await self.__repository.create(organization)
 
     async def read(self, id_: int) -> entities.Organization:
         return await self.__repository.read(id_)
 
     async def read_all(
-        self, dto: dtos.ReadOrganizationsDto
+            self, dto: dtos.ReadOrganizationsDto
     ) -> list[entities.Organization]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+        return data[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
 
     async def update(self, organization: Organization) -> Organization:
         return await self.__repository.update(organization)
 
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
+
+    async def clear(self):
+        await self.__repository.clear()
 
 
 class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
@@ -93,4 +99,4 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
         for token in data:
             if token.created_by == dto.created_by:
                 result.append(token)
-        return result[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+        return result[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
