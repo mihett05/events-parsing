@@ -3,6 +3,7 @@ from datetime import datetime
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 
 from infrastructure.api.models import CamelModel
+from infrastructure.api.v1.attachments.models import AttachmentModel
 from infrastructure.api.v1.organizations.models import OrganizationModel
 
 
@@ -16,6 +17,8 @@ class EventModel(CamelModel):
     is_visible: bool
     location: str | None
     description: str | None
+
+    attachments: list[AttachmentModel]
 
     start_date: datetime
     end_date: datetime | None
