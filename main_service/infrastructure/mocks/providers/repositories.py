@@ -24,7 +24,9 @@ from infrastructure.mocks.repositories.users import (
     UserOrganizationRolesMemoryRepository,
     UsersMemoryRepository,
 )
-from infrastructure.mocks.repositories.users.repositories import UserOrganizationRolesMemoryRepository
+from infrastructure.mocks.repositories.users.repositories import (
+    UserOrganizationRolesMemoryRepository,
+)
 
 
 class RepositoriesProvider(Provider):

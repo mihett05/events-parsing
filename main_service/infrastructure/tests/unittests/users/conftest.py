@@ -1,12 +1,15 @@
 import pytest_asyncio
-from application.users.dtos import UpdateUserDto, DeleteUserRoleDto
+from application.users.dtos import DeleteUserRoleDto, UpdateUserDto
 from dishka import AsyncContainer
 from domain.users.dtos import (
     ReadAllUsersDto,
 )
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
-from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
+from domain.users.repositories import (
+    UserOrganizationRolesRepository,
+    UsersRepository,
+)
 
 
 @pytest_asyncio.fixture
@@ -69,33 +72,40 @@ async def create_users(
 
 @pytest_asyncio.fixture
 async def get_user_role_entity() -> UserOrganizationRole:
-    return UserOrganizationRole(user_id=1, organization_id=1, role=RoleEnum.SUPER_OWNER)
+    return UserOrganizationRole(
+        user_id=1, organization_id=1, role=RoleEnum.SUPER_OWNER
+    )
+
 
 @pytest_asyncio.fixture
 async def update_user_role_entity() -> UserOrganizationRole:
     return UserOrganizationRole(
-        user_id=1,
-        organization_id=1,
-        role = RoleEnum.PUBLIC
+        user_id=1, organization_id=1, role=RoleEnum.PUBLIC
     )
+
 
 @pytest_asyncio.fixture
 async def delete_user_role_dto() -> DeleteUserRoleDto:
-    return DeleteUserRoleDto(
-        user_id=1,
-        organization_id=1
-    )
+    return DeleteUserRoleDto(user_id=1, organization_id=1)
+
 
 @pytest_asyncio.fixture
-async def user_organization_roles_repository(container: AsyncContainer) -> UserOrganizationRolesRepository:
+async def user_organization_roles_repository(
+    container: AsyncContainer,
+) -> UserOrganizationRolesRepository:
     async with container() as nested:
         yield await nested.get(UserOrganizationRolesRepository)
 
 
 @pytest_asyncio.fixture
 async def create_user_role(
-    get_role_entity: UserOrganizationRole,
-    roles_repository: UserOrganizationRolesRepository,
+    get_user_role_entity: UserOrganizationRole,
+    user_organization_roles_repository: UserOrganizationRolesRepository,
 ) -> UserOrganizationRole:
-    role = await roles_repository.create(get_role_entity)
+    role = await user_organization_roles_repository.create(get_user_role_entity)
     return role
+
+
+@pytest_asyncio.fixture
+async def get_actor() -> User:
+    return User(id=777, fullname="Ivanov Ivan Ivanovich", email="test@test.com")

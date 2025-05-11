@@ -60,5 +60,3 @@ map_create_role_dto_to_entity = retort.get_converter(
 def map_update_role_dto_from_pydantic(
     dto: UpdateUserRoleModelDto, user_id: int
 ) -> UserOrganizationRole: ...
-
-

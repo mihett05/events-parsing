@@ -3,9 +3,12 @@ from datetime import datetime
 from domain.users import dtos as dtos
 from domain.users import entities as entities
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import RoleEnum
 from domain.users.exceptions import (
     UserAlreadyExistsError,
     UserNotFoundError,
+    UserRoleAlreadyExistsError,
+    UserRoleNotFoundError,
 )
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
@@ -56,41 +59,51 @@ class UsersMemoryRepository(UsersRepository):
 
 
 class UserOrganizationRolesMemoryRepository(UserOrganizationRolesRepository):
-    storage: dict[int, list[UserOrganizationRole]]
-    __config: MockRepositoryConfig
+    class Config(MockRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                entity=UserOrganizationRole,
+                not_found_exception=UserRoleNotFoundError,
+                already_exists_exception=UserRoleAlreadyExistsError,
+            )
 
-    def __init__(self, config: MockRepositoryConfig):
-        self.storage = dict()
-        self.__config = config
+    def __init__(self):
+        self.__next_id = 1
+        self.__repository = dict()
+        self.__repository[777] = [
+            UserOrganizationRole(777, 1, RoleEnum.SUPER_OWNER)
+        ]
+        self.__config = self.Config()
 
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
-        if role.user_id in self.storage:
+        if role.user_id in self.__repository:
             raise self.__config.already_exists_exception()
 
-        self.storage[role.user_id].append(role)
+        self.__repository[role.user_id] = []
+        self.__repository[role.user_id].append(role)
         return role
 
     async def read(
         self, user_id: int, organization_id: int
     ) -> UserOrganizationRole:
-        if user_id not in self.storage:
+        if user_id not in self.__repository:
             raise self.__config.not_found_exception()
-        for role in self.storage[user_id]:
+        for role in self.__repository[user_id]:
             if role.organization_id == organization_id:
                 return role
         raise self.__config.not_found_exception()
 
     async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
-        if user_id not in self.storage:
+        if user_id not in self.__repository:
             raise self.__config.not_found_exception()
-        return self.storage[user_id]
+        return self.__repository[user_id]
 
     async def update(
         self, user_role: UserOrganizationRole
     ) -> UserOrganizationRole:
-        if user_role.user_id not in self.storage:
+        if user_role.user_id not in self.__repository:
             raise self.__config.not_found_exception()
-        for role in self.storage[user_role.user_id]:
+        for role in self.__repository[user_role.user_id]:
             if role.organization_id == user_role.organization_id:
                 role = user_role
                 return role
@@ -99,15 +112,17 @@ class UserOrganizationRolesMemoryRepository(UserOrganizationRolesRepository):
     async def delete(
         self, user_role: UserOrganizationRole
     ) -> UserOrganizationRole:
-        if user_role.user_id not in self.storage:
+        if user_role.user_id not in self.__repository:
             raise self.__config.not_found_exception()
         role_storage_index = None
-        for index, role in enumerate(self.storage[user_role.user_id]):
+        for index, role in enumerate(self.__repository[user_role.user_id]):
             if role.organization_id == user_role.organization_id:
                 role_storage_index = index
                 break
         if role_storage_index:
-            deleted_role = self.storage[user_role.user_id][role_storage_index]
-            self.storage[user_role.user_id].pop(role_storage_index)
+            deleted_role = self.__repository[user_role.user_id][
+                role_storage_index
+            ]
+            self.__repository[user_role.user_id].pop(role_storage_index)
             return deleted_role
         raise self.__config.not_found_exception()
