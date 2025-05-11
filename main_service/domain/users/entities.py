@@ -39,7 +39,6 @@ class UserOrganizationRole:
 @dataclass
 class UserActivationToken:
     id: UUID
-    created_by: int
     user_id: int
     user: User
     is_used: bool = False

@@ -8,8 +8,9 @@ from application.auth.usecases import (
     RegisterUseCase,
 )
 from application.auth.usecases.login import LoginUseCase
-from application.users.usecases.update import ValidateActivationTokenUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
+
+from application.users.usecases import ValidateActivationTokenUseCase
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 from starlette import status
