@@ -16,7 +16,7 @@ from infrastructure.api.mappers import map_mail_info_to_create_dto
 
 
 def background_task_runner(delay: timedelta):
-    async def _runner(func: Callable[..., Coroutine[None]]):
+    async def _runner(func: Callable[..., Coroutine[..., ..., ...]]):
         @wraps
         async def _wrapper(*args, **kwargs):
             while True:
