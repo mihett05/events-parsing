@@ -1,11 +1,16 @@
 from adaptix import P
-from adaptix.conversion import link_function
+from adaptix.conversion import coercer, link_function
 from application.events.dtos import UpdateEventDto
+from domain.attachments.entities import Attachment
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
 
 from infrastructure.api.retort import pydantic_retort
+from infrastructure.api.v1.attachments.mappers import (
+    map_to_pydantic as attachment_map_to_pydantic,
+)
 
+from ..attachments.models import AttachmentModel
 from .dtos import (
     CreateEventModelDto,
     UpdateEventModelDto,
@@ -32,6 +37,7 @@ map_to_pydantic = retort.get_converter(
             lambda event: event.organization_id,
             P[EventModel].organization_id,
         ),
+        coercer(Attachment, AttachmentModel, attachment_map_to_pydantic),
     ],
 )
 

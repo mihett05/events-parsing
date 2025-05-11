@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from domain.attachments.entities import Attachment
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.users.entities import User
 
@@ -23,4 +24,5 @@ class Event:
     end_date: datetime | None = None
     end_registration: datetime | None = None
 
+    attachments: list[Attachment] = field(default_factory=list)
     members: list[User] = field(default_factory=list)
