@@ -8,19 +8,21 @@ import { generateCalendarDays, useDayEventsPopover, useLocalizedDayNames } from 
 import { useCalendarViewData } from '@/features/events/hooks/useCalendarViewData';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { CalendarControlProps } from '@/widgets/CalendarCommon/types';
-import { FilterState } from '@/features/events/slice';
-import { useTranslation } from 'react-i18next';
+import { useAppDispatch } from '@/shared/store/hooks';
+import { CalendarView, setCalendarView } from '@/features/events/slice';
 
-export const MonthCalendar: React.FC<CalendarControlProps> = ({
-  currentCalendarView,
-  currentDate,
-  activeFilters,
-  onNavigate,
-}) => {
-  const { t } = useTranslation();
-  const { events, isLoading, error, handlePrev, handleNext, handleToday, handleViewChange } =
-    useCalendarViewData(currentCalendarView, currentDate, activeFilters, onNavigate);
+export const MonthCalendar: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const {
+    events,
+    isLoading,
+    error,
+    currentDate,
+    calendarView,
+    handlePrev,
+    handleNext,
+    handleToday,
+  } = useCalendarViewData();
 
   const {
     popoverId,
@@ -34,8 +36,8 @@ export const MonthCalendar: React.FC<CalendarControlProps> = ({
   const dayNames = useLocalizedDayNames(1);
   const calendarDays = generateCalendarDays(currentDate, 1);
 
-  const handleFilterChangeInHeader = (newFilters: Partial<FilterState>) => {
-    onNavigate({ filters: newFilters });
+  const handleViewChange = (newView: CalendarView) => {
+    dispatch(setCalendarView(newView));
   };
 
   if (isLoading && events.length === 0) {
@@ -43,7 +45,7 @@ export const MonthCalendar: React.FC<CalendarControlProps> = ({
   }
 
   if (error && events.length === 0) {
-    return <ErrorMessage defaultMessage={t(error, 'Ошибка загрузки календаря')} />;
+    return <ErrorMessage {...error} />;
   }
 
   return (
@@ -56,26 +58,24 @@ export const MonthCalendar: React.FC<CalendarControlProps> = ({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        minHeight: { xs: '70vh', sm: '75vh' },
+        minHeight: '75vh',
         position: 'relative',
       }}
     >
       {error && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, p: 1 }}>
           <Paper elevation={2} sx={{ p: 1, bgcolor: 'error.light', color: 'error.contrastText' }}>
-            <Typography variant="caption">{t(error, 'Ошибка при обновлении')}</Typography>
+            <Typography variant="caption">{error.messageKey}</Typography>
           </Paper>
         </Box>
       )}
       <CalendarHeader
         currentDate={currentDate}
-        currentView={currentCalendarView}
+        currentView={calendarView}
         onPrev={handlePrev}
         onNext={handleNext}
         onToday={handleToday}
         onViewChange={handleViewChange}
-        activeFilters={activeFilters}
-        onFilterChange={handleFilterChangeInHeader}
       />
       <Box
         sx={{

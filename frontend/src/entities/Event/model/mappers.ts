@@ -25,7 +25,6 @@ export const mapEventToCalendarEvent = (event: EventModel): CalendarEvent | null
     format: event.format,
     color: EVENT_COLORS[event.id % EVENT_COLORS.length],
     endRegistration: endRegistration,
-    organizationId: event.organizationId === undefined ? null : event.organizationId,
   };
 
   return newEvent;
