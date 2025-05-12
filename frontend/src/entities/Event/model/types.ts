@@ -9,5 +9,4 @@ export interface CalendarEvent {
   format: string;
   color: string;
   endRegistration?: Date;
-  organizationId?: number | null;
 }
