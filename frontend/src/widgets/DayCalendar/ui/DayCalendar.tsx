@@ -4,22 +4,24 @@ import { DayCalendarHeader } from './DayCalendarHeader';
 import { DayCalendarBody } from './DayCalendarBody';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { CalendarControlProps } from '@/widgets/CalendarCommon/types';
-import { FilterState } from '@/features/events/slice';
-import { useTranslation } from 'react-i18next';
+import { useAppDispatch } from '@/shared/store/hooks';
+import { CalendarView, setCalendarView } from '@/features/events/slice';
 
-export const DayCalendar: React.FC<CalendarControlProps> = ({
-  currentCalendarView,
-  currentDate,
-  activeFilters,
-  onNavigate,
-}) => {
-  const { t } = useTranslation();
-  const { events, isLoading, error, handlePrev, handleNext, handleToday, handleViewChange } =
-    useCalendarViewData(currentCalendarView, currentDate, activeFilters, onNavigate);
+export const DayCalendar = () => {
+  const dispatch = useAppDispatch();
+  const {
+    currentDate,
+    events,
+    isLoading,
+    error,
+    calendarView,
+    handlePrev,
+    handleNext,
+    handleToday,
+  } = useCalendarViewData();
 
-  const handleFilterChangeInHeader = (newFilters: Partial<FilterState>) => {
-    onNavigate({ filters: newFilters });
+  const handleViewChange = (newView: CalendarView) => {
+    dispatch(setCalendarView(newView));
   };
 
   if (isLoading && events.length === 0) {
@@ -27,7 +29,7 @@ export const DayCalendar: React.FC<CalendarControlProps> = ({
   }
 
   if (error && events.length === 0) {
-    return <ErrorMessage defaultMessage={t(error, 'Ошибка загрузки календаря')} />;
+    return <ErrorMessage {...error} />;
   }
 
   return (
@@ -47,19 +49,17 @@ export const DayCalendar: React.FC<CalendarControlProps> = ({
       {error && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, p: 1 }}>
           <Paper elevation={2} sx={{ p: 1, bgcolor: 'error.light', color: 'error.contrastText' }}>
-            <Typography variant="caption">{t(error, 'Ошибка при обновлении')}</Typography>
+            <Typography variant="caption">{error.messageKey}</Typography>
           </Paper>
         </Box>
       )}
       <DayCalendarHeader
         currentDate={currentDate}
-        currentView={currentCalendarView}
+        currentView={calendarView}
         onPrev={handlePrev}
         onNext={handleNext}
         onToday={handleToday}
         onViewChange={handleViewChange}
-        activeFilters={activeFilters}
-        onFilterChange={handleFilterChangeInHeader}
       />
       <DayCalendarBody currentDate={currentDate} events={events} isLoading={isLoading} />
     </Paper>

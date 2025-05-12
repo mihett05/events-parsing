@@ -50,14 +50,10 @@
     "errorLoading": "Ошибка загрузки календаря",
     "invalidDate": "Неверные данные даты",
     "view": {
-      "view": "Вид",
       "day": "День",
       "month": "Месяц",
       "year": "Год"
-    },
-    "loadingFilters": "Загрузка фильтров...",
-    "errorLoadingFilters": "Ошибка загрузки вариантов фильтров.",
-    "noAvailableFilters": "Нет доступных фильтров."
+    }
   },
   "dayView": {
     "title": "События на {{date}}",
@@ -78,21 +74,10 @@
   },
   "feed": {
     "errorLoading": "Ошибка загрузки ленты.",
-    "loadMore": "Загрузить еще",
-    "noEventsFound": "Событий по заданным фильтрам не найдено.",
-    "allItemsLoaded": "Все события загружены.",
-    "loadingInitial": "Загрузка событий..."
+    "loadMore": "Загрузить еще"
   },
   "errors": {
     "generic": "Произошла ошибка. Попробуйте позже.",
     "loading": "Ошибка загрузки."
-  },
-  "filter": {
-    "typeLabel": "Тип события",
-    "allTypes": "Все типы",
-    "formatLabel": "Формат события",
-    "allFormats": "Все форматы",
-    "organizationLabel": "Организация",
-    "allOrganizations": "Все организации"
   }
 }
