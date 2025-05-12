@@ -1,6 +1,6 @@
 from adaptix import P
 from adaptix.conversion import link_function
-from application.users.dtos import UpdateUserDto
+from application.users.dtos import UpdateUserDto, DeleteUserRoleDto
 from domain.users.entities import User, UserOrganizationRole
 
 from infrastructure.api.retort import pydantic_retort
@@ -49,14 +49,12 @@ map_create_role_dto_to_entity = retort.get_converter(
 )
 
 
-@retort.impl_converter(
-    recipe=[
-        link_function(
-            lambda dto: dto.organization.id,
-            P[UserOrganizationRole].organization_id,
-        )
-    ]
+map_update_role_entity_from_pydantic = retort.get_converter(
+    UpdateUserRoleModelDto, UserOrganizationRole
 )
-def map_update_role_dto_from_pydantic(
-    dto: UpdateUserRoleModelDto, user_id: int
-) -> UserOrganizationRole: ...
+
+
+def map_delete_role_to_dto(
+    user_id: int, organization_id:int
+) -> DeleteUserRoleDto:
+    return DeleteUserRoleDto(user_id, organization_id)

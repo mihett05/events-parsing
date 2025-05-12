@@ -117,19 +117,18 @@ async def create_user_role(
 
 
 @router.put(
-    "/roles/{user_id}",
+    "/roles/update",
     response_model=models.UserRoleModel,
     responses={404: {"model": ErrorModel}},
 )
 async def update_user_role(
-    user_id: int,
     dto: dtos.UpdateUserRoleModelDto,
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.UpdateUserRoleUseCase],
 ):
     return mappers.map_role_to_pydantic(
         await use_case(
-            mappers.map_update_role_dto_from_pydantic(dto, user_id), actor
+            mappers.map_update_role_entity_from_pydantic(dto), actor
         )
     )
 
@@ -147,7 +146,7 @@ async def delete_user_role(
 ):
     return mappers.map_role_to_pydantic(
         await use_case(
-            mappers.map_delete_role_dto_from_pydantic(user_id, organization_id),
+            mappers.map_delete_role_to_dto(user_id, organization_id),
             actor,
         )
     )

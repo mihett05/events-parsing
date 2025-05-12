@@ -108,7 +108,6 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
                 self.__config.model.user_id == user_id
                 and self.__config.model.organization_id == organization_id
             )
-            .scalar()
         )
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
