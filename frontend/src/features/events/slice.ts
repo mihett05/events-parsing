@@ -32,9 +32,6 @@ interface EventsState {
   error: string | null;
   page: number;
   pageSize: number;
-  selectedDate: string;
-  calendarView: CalendarView;
-  filters: FilterState;
   filterVariants: FilterVariants;
   areFilterVariantsLoaded: boolean;
 }
@@ -46,13 +43,6 @@ const initialState: EventsState = {
   isLoading: false,
   isFetchingMore: false,
   error: null,
-  selectedDate: new Date().toISOString(),
-  calendarView: 'month',
-  filters: {
-    format: null,
-    type: null,
-    organizationId: null,
-  },
   filterVariants: {
     formats: [],
     types: [],
@@ -65,69 +55,12 @@ const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
+    },
     incrementPage: (state) => {
       if (!state.isLoading && !state.isFetchingMore) {
         state.page++;
-      }
-    },
-    setSelectedDate: (state, action: PayloadAction<string>) => {
-      if (state.selectedDate !== action.payload) {
-        state.selectedDate = action.payload;
-        state.error = null;
-      }
-    },
-    setCalendarView: (state, action: PayloadAction<CalendarView>) => {
-      if (state.calendarView !== action.payload) {
-        state.calendarView = action.payload;
-        state.error = null;
-        state.page = 0;
-      }
-    },
-    setFilters: (state, action: PayloadAction<Partial<FilterState>>) => {
-      const currentFilters = state.filters;
-      const newPartialFilters = action.payload;
-      let filtersChanged = false;
-      if (
-        newPartialFilters.hasOwnProperty('type') &&
-        currentFilters.type !== newPartialFilters.type
-      ) {
-        currentFilters.type = newPartialFilters.type!;
-        filtersChanged = true;
-      }
-      if (
-        newPartialFilters.hasOwnProperty('format') &&
-        currentFilters.format !== newPartialFilters.format
-      ) {
-        currentFilters.format = newPartialFilters.format!;
-        filtersChanged = true;
-      }
-      if (
-        newPartialFilters.hasOwnProperty('organizationId') &&
-        currentFilters.organizationId !== newPartialFilters.organizationId
-      ) {
-        currentFilters.organizationId = newPartialFilters.organizationId as number | null;
-        filtersChanged = true;
-      }
-      if (filtersChanged) {
-        state.error = null;
-      }
-    },
-    resetFilters: (state) => {
-      let filtersChanged = false;
-      if (state.filters.type !== initialState.filters.type) {
-        state.filters.type = initialState.filters.type;
-        filtersChanged = true;
-      }
-      if (state.filters.format !== initialState.filters.format) {
-        state.filters.format = initialState.filters.format;
-        filtersChanged = true;
-      }
-      if (state.filters.organizationId !== initialState.filters.organizationId) {
-        state.filters.organizationId = initialState.filters.organizationId;
-        filtersChanged = true;
-      }
-      if (filtersChanged) {
-        state.error = null;
       }
     },
     clearError: (state) => {
@@ -208,14 +141,7 @@ const eventsSlice = createSlice({
   },
 });
 
-export const {
-  incrementPage,
-  setSelectedDate,
-  setCalendarView,
-  setFilters,
-  resetFilters,
-  clearError,
-} = eventsSlice.actions;
+export const { setPage, incrementPage, clearError } = eventsSlice.actions;
 export default eventsSlice.reducer;
 
 export const getEventsState = (state: RootState) => state.events;
@@ -224,21 +150,23 @@ export const eventsSelectors = eventsAdapter.getSelectors<RootState>(
   (state) => state.events.events,
 );
 
+export const selectAllEvents = eventsSelectors.selectAll;
+
 export const selectEventsLoading = (state: RootState) => state.events.isLoading;
 export const selectEventsFetchingMore = (state: RootState) => state.events.isFetchingMore;
 export const selectEventsError = (state: RootState) => state.events.error;
 export const selectEventsCurrentPage = (state: RootState) => state.events.page;
-export const selectSelectedDate = (state: RootState) => state.events.selectedDate;
 export const selectFilterVariants = (state: RootState) => state.events.filterVariants;
-export const selectActiveFilters = (state: RootState) => state.events.filters;
 export const selectAreFilterVariantsLoaded = (state: RootState) =>
   state.events.areFilterVariantsLoaded;
-export const selectCalendarView = (state: RootState) => state.events.calendarView;
 
-export const selectFilteredCalendarEvents = createSelector(
-  [eventsSelectors.selectAll, selectActiveFilters],
+export const selectFilteredEvents = createSelector(
+  [selectAllEvents, (_state: RootState, filters: FilterState | null | undefined) => filters],
   (allEvents, filters) => {
-    if (filters.type === null && filters.format === null && filters.organizationId === null) {
+    if (
+      !filters ||
+      (filters.type === null && filters.format === null && filters.organizationId === null)
+    ) {
       return allEvents;
     }
     return allEvents.filter((event) => {

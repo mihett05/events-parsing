@@ -1,15 +1,23 @@
 import { createBrowserRouter } from 'react-router';
-import { CalendarPage } from '@pages/CalendarPage';
-import { EventsFeedPage } from '@pages/EventsFeedPage';
+import { CalendarPage } from '@pages/CalendarPage/CalendarPage';
+import { EventsFeedPage } from '@/pages/EventsFeedPage/EventsFeedPage';
 import { AppPaths } from '@/shared/routes';
 
 export const router = createBrowserRouter([
   {
-    path: AppPaths.calendar(),
+    path: AppPaths.eventsFeed(),
+    element: <EventsFeedPage />,
+  },
+  {
+    path: '/:calendarView/:date',
     element: <CalendarPage />,
   },
   {
-    path: AppPaths.eventsFeed(),
-    element: <EventsFeedPage />,
+    path: '/:calendarView',
+    element: <CalendarPage />,
+  },
+  {
+    path: AppPaths.calendarBase(),
+    element: <CalendarPage />,
   },
 ]);
