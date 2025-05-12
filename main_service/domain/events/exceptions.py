@@ -1,4 +1,4 @@
-from domain.events.entities import Event
+from domain.events.entities import Event, EventUser
 from domain.exceptions import (
     EntityAccessDenied,
     EntityAlreadyExistsError,
@@ -17,5 +17,20 @@ class EventAlreadyExistsError(EntityAlreadyExistsError):
 
 
 class EventAccessDenied(EntityAccessDenied):
+    def __init__(self):
+        super().__init__()
+
+
+class EventUserNotFoundError(EntityNotFoundError):
+    def __init__(self):
+        super().__init__(EventUser)
+
+
+class EventUserAlreadyExistsError(EntityAlreadyExistsError):
+    def __init__(self):
+        super().__init__(EventUser)
+
+
+class EventUserAccessDenied(EntityAccessDenied):
     def __init__(self):
         super().__init__()

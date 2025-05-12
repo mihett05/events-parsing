@@ -5,6 +5,12 @@ from domain.events.enums import EventFormatEnum, EventTypeEnum
 from infrastructure.api.models import CamelModel
 from infrastructure.api.v1.attachments.models import AttachmentModel
 from infrastructure.api.v1.organizations.models import OrganizationModel
+from infrastructure.api.v1.users.models import UserModel
+
+
+class EventUserModel(CamelModel):
+    event_id: int
+    user_id: int
 
 
 class EventModel(CamelModel):
@@ -19,6 +25,7 @@ class EventModel(CamelModel):
     description: str | None
 
     attachments: list[AttachmentModel]
+    members: list[UserModel]
 
     start_date: datetime
     end_date: datetime | None

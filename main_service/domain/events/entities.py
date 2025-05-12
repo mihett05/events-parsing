@@ -7,6 +7,12 @@ from domain.users.entities import User
 
 
 @dataclass
+class EventUser:
+    event_id: int
+    user_id: int
+
+
+@dataclass
 class Event:
     title: str
     location: str | None
