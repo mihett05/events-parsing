@@ -5,21 +5,30 @@ import { YearCalendarHeader } from './YearCalendarHeader';
 import { YearCalendarGrid } from './YearCalendarGrid';
 import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
-import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
-import {
-  CalendarView,
-  selectFilteredCalendarEvents,
-  setCalendarView,
-} from '@/features/events/slice';
+import { CalendarControlProps } from '@/widgets/CalendarCommon/types';
+import { FilterState } from '@/features/events/slice';
+import { useTranslation } from 'react-i18next';
 
-export const YearCalendar: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { currentDate, isLoading, error, calendarView, handlePrev, handleNext, handleToday } =
-    useCalendarViewData();
-  const events = useAppSelector(selectFilteredCalendarEvents);
+export const YearCalendar: React.FC<CalendarControlProps> = ({
+  currentCalendarView,
+  currentDate,
+  activeFilters,
+  onNavigate,
+}) => {
+  const { t } = useTranslation();
+  const { events, isLoading, error, handlePrev, handleNext, handleToday, handleViewChange } =
+    useCalendarViewData(currentCalendarView, currentDate, activeFilters, onNavigate);
 
-  const handleViewChange = (newView: CalendarView) => {
-    dispatch(setCalendarView(newView));
+  const handleFilterChangeInHeader = (newFilters: Partial<FilterState>) => {
+    onNavigate({ filters: newFilters });
+  };
+
+  const handleMonthSelect = (selectedMonthDate: Date) => {
+    onNavigate({ view: 'month', date: selectedMonthDate });
+  };
+
+  const handleDaySelect = (selectedDayDate: Date) => {
+    onNavigate({ view: 'day', date: selectedDayDate });
   };
 
   if (isLoading && events.length === 0) {
@@ -27,7 +36,7 @@ export const YearCalendar: React.FC = () => {
   }
 
   if (error && events.length === 0) {
-    return <ErrorMessage {...error} />;
+    return <ErrorMessage defaultMessage={t(error, 'Ошибка загрузки календаря')} />;
   }
 
   return (
@@ -47,19 +56,26 @@ export const YearCalendar: React.FC = () => {
       {error && (
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, p: 1 }}>
           <Paper elevation={2} sx={{ p: 1, bgcolor: 'error.light', color: 'error.contrastText' }}>
-            <Typography variant="caption">{error}</Typography>
+            <Typography variant="caption">{t(error, 'Ошибка при обновлении')}</Typography>
           </Paper>
         </Box>
       )}
       <YearCalendarHeader
         currentDate={currentDate}
-        currentView={calendarView}
+        currentView={currentCalendarView}
         onPrev={handlePrev}
         onNext={handleNext}
         onToday={handleToday}
         onViewChange={handleViewChange}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChangeInHeader}
       />
-      <YearCalendarGrid currentDate={currentDate} events={events} />
+      <YearCalendarGrid
+        currentDate={currentDate}
+        events={events}
+        onMonthClick={handleMonthSelect}
+        onDayClick={handleDaySelect}
+      />
     </Paper>
   );
 };

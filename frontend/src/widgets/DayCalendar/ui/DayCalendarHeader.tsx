@@ -13,29 +13,40 @@ import {
 import { format, isValid } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import { CalendarView } from '@/features/events/slice';
+import { CalendarView as AppCalendarView, FilterState } from '@/features/events/slice';
 import { CalendarFilters } from '@/features/events/filter/ui/EventsFilter';
+import { InputLabel } from '@mui/material';
 
 interface DayCalendarHeaderProps {
   currentDate: Date;
-  currentView: CalendarView;
+  currentView: AppCalendarView;
   onPrev: () => void;
   onNext: () => void;
   onToday: () => void;
-  onViewChange: (newView: CalendarView) => void;
+  onViewChange: (newView: AppCalendarView) => void;
+  activeFilters: FilterState;
+  onFilterChange: (newFilters: Partial<FilterState>) => void;
 }
 
 export const DayCalendarHeader: React.FC<DayCalendarHeaderProps> = React.memo(
-  ({ currentDate, currentView, onPrev, onNext, onToday, onViewChange }) => {
+  ({
+    currentDate,
+    currentView,
+    onPrev,
+    onNext,
+    onToday,
+    onViewChange,
+    activeFilters,
+    onFilterChange,
+  }) => {
     const { t } = useTranslation();
 
     const formattedDate = isValid(currentDate)
       ? format(currentDate, 'PPPP', { locale: ru })
       : t('calendar.loading');
 
-    const handleViewChange = (event: SelectChangeEvent<CalendarView>) => {
-      const newView = event.target.value as CalendarView;
-      onViewChange(newView);
+    const handleViewSelectChange = (event: SelectChangeEvent<AppCalendarView>) => {
+      onViewChange(event.target.value as AppCalendarView);
     };
 
     return (
@@ -55,6 +66,7 @@ export const DayCalendarHeader: React.FC<DayCalendarHeaderProps> = React.memo(
               size="small"
               onClick={onToday}
               sx={{ textTransform: 'none', mr: 0.5 }}
+              title={t('calendar.today')}
             >
               {t('calendar.today')}
             </Button>
@@ -81,11 +93,14 @@ export const DayCalendarHeader: React.FC<DayCalendarHeaderProps> = React.memo(
             {formattedDate}
           </Typography>
           <FormControl size="small" variant="outlined" sx={{ minWidth: 100, ml: 1 }}>
+            <InputLabel id="calendar-view-select-label-day" sx={{ display: 'none' }}>
+              {t('calendar.view.view', 'Вид')}
+            </InputLabel>
             <Select
-              labelId="calendar-view-select-label"
-              id="calendar-view-select"
+              labelId="calendar-view-select-label-day"
+              id="calendar-view-select-day"
               value={currentView}
-              onChange={handleViewChange}
+              onChange={handleViewSelectChange}
               sx={{ fontSize: '0.875rem' }}
             >
               <MenuItem value="day">{t('calendar.view.day')}</MenuItem>
@@ -94,7 +109,7 @@ export const DayCalendarHeader: React.FC<DayCalendarHeaderProps> = React.memo(
             </Select>
           </FormControl>
         </Stack>
-        <CalendarFilters />
+        <CalendarFilters activeFilters={activeFilters} onFilterChange={onFilterChange} />
       </>
     );
   },

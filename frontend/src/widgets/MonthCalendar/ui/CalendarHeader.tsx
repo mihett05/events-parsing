@@ -1,4 +1,3 @@
-import React from 'react';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
@@ -13,25 +12,30 @@ import {
 import { format, isValid } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import { CalendarView } from '@/features/events/slice';
+import { CalendarView as AppCalendarView, FilterState } from '@/features/events/slice';
 import { CalendarFilters } from '@/features/events/filter/ui/EventsFilter';
+import { InputLabel } from '@mui/material';
 
-interface CalendarHeaderProps {
+interface MonthCalendarHeaderProps {
   currentDate: Date;
-  currentView: CalendarView;
+  currentView: AppCalendarView;
   onPrev: () => void;
   onNext: () => void;
   onToday: () => void;
-  onViewChange: (newView: CalendarView) => void;
+  onViewChange: (newView: AppCalendarView) => void;
+  activeFilters: FilterState;
+  onFilterChange: (newFilters: Partial<FilterState>) => void;
 }
 
-export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
+export const CalendarHeader: React.FC<MonthCalendarHeaderProps> = ({
   currentDate,
   currentView,
   onPrev,
   onNext,
   onToday,
   onViewChange,
+  activeFilters,
+  onFilterChange,
 }) => {
   const { t } = useTranslation();
 
@@ -39,9 +43,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     ? format(currentDate, 'LLLL yyyy', { locale: ru })
     : t('calendar.loading');
 
-  const handleViewChange = (event: SelectChangeEvent<CalendarView>) => {
-    const newView = event.target.value as CalendarView;
-    onViewChange(newView);
+  const handleViewSelectChange = (event: SelectChangeEvent<AppCalendarView>) => {
+    onViewChange(event.target.value as AppCalendarView);
   };
 
   return (
@@ -61,6 +64,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             size="small"
             onClick={onToday}
             sx={{ textTransform: 'none', mr: 0.5 }}
+            title={t('calendar.today')}
           >
             {t('calendar.today')}
           </Button>
@@ -87,11 +91,14 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           {formattedDate}
         </Typography>
         <FormControl size="small" variant="outlined" sx={{ minWidth: 100, ml: 1 }}>
+          <InputLabel id="calendar-view-select-label-month" sx={{ display: 'none' }}>
+            {t('calendar.view.view', 'Вид')}
+          </InputLabel>
           <Select
-            labelId="calendar-view-select-label"
-            id="calendar-view-select"
+            labelId="calendar-view-select-label-month"
+            id="calendar-view-select-month"
             value={currentView}
-            onChange={handleViewChange}
+            onChange={handleViewSelectChange}
             sx={{ fontSize: '0.875rem' }}
           >
             <MenuItem value="day">{t('calendar.view.day')}</MenuItem>
@@ -100,7 +107,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           </Select>
         </FormControl>
       </Stack>
-      <CalendarFilters />
+      <CalendarFilters activeFilters={activeFilters} onFilterChange={onFilterChange} />
     </>
   );
 };

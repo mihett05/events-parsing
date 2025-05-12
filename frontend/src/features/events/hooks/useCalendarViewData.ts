@@ -1,10 +1,10 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { useReadAllEventsV1EventsCalendarGetQuery } from '@/shared/api/api';
 import {
-  selectSelectedDate,
-  selectCalendarView,
-  setSelectedDate as setSelectedDateAction,
   CalendarView,
+  FilterState,
+  selectEventsLoading,
+  selectEventsError,
+  selectFilteredEvents,
 } from '@/features/events/slice';
 import {
   startOfYear,
@@ -22,6 +22,8 @@ import {
   isValid,
   format as formatDateFns,
 } from 'date-fns';
+import { useAppSelector } from '@/shared/store/hooks';
+import { CalendarNavOptions } from '@/widgets/CalendarCommon/types';
 
 const getCalendarDateRange = (
   date: Date,
@@ -41,37 +43,30 @@ const getCalendarDateRange = (
       break;
     case 'month':
     default:
-      const monthStart = startOfMonth(date);
-      start = subMonths(monthStart, 1);
-      const monthEnd = endOfMonth(date);
-      end = addMonths(monthEnd, 1);
+      const monthStartAnchor = startOfMonth(date);
+      start = subMonths(monthStartAnchor, 1);
+      const monthEndAnchor = endOfMonth(date);
+      end = addMonths(monthEndAnchor, 1);
       end = endOfDay(end);
       break;
   }
-
   return {
     startDate: formatDateFns(start, 'yyyy-MM-dd'),
     endDate: formatDateFns(end, 'yyyy-MM-dd'),
   };
 };
 
-export const useCalendarViewData = () => {
-  const dispatch = useDispatch();
-  const selectedDateString = useSelector(selectSelectedDate);
-  const calendarView = useSelector(selectCalendarView);
+export const useCalendarViewData = (
+  currentView: CalendarView,
+  currentDate: Date,
+  activeFiltersForClientSide: FilterState,
+  onNavigate: (options: CalendarNavOptions) => void,
+) => {
+  const dateRange = getCalendarDateRange(currentDate, currentView);
+  const apiStartDate = dateRange.startDate;
+  const apiEndDate = dateRange.endDate;
 
-  const currentDate = new Date(selectedDateString);
-
-  const dateRange = getCalendarDateRange(currentDate, calendarView);
-
-  const apiStartDate = dateRange?.startDate
-    ? formatDateFns(dateRange.startDate, 'yyyy-MM-dd')
-    : undefined;
-  const apiEndDate = dateRange?.endDate
-    ? formatDateFns(dateRange.endDate, 'yyyy-MM-dd')
-    : undefined;
-
-  const { isLoading, error, refetch } = useReadAllEventsV1EventsCalendarGetQuery(
+  const { refetch } = useReadAllEventsV1EventsCalendarGetQuery(
     {
       startDate: apiStartDate,
       endDate: apiEndDate,
@@ -81,43 +76,46 @@ export const useCalendarViewData = () => {
     },
   );
 
+  const reduxIsLoading = useAppSelector(selectEventsLoading);
+  const reduxError = useAppSelector(selectEventsError);
+  const filteredEvents = useAppSelector((state) =>
+    selectFilteredEvents(state, activeFiltersForClientSide),
+  );
+
   const handlePrev = () => {
     if (!isValid(currentDate)) return;
     let newDate;
-    if (calendarView === 'year') newDate = subYears(currentDate, 1);
-    else if (calendarView === 'month') newDate = subMonths(currentDate, 1);
+    if (currentView === 'year') newDate = subYears(currentDate, 1);
+    else if (currentView === 'month') newDate = subMonths(currentDate, 1);
     else newDate = subDays(currentDate, 1);
-    dispatch(setSelectedDateAction(newDate.toISOString()));
+    onNavigate({ date: newDate });
   };
 
   const handleNext = () => {
     if (!isValid(currentDate)) return;
     let newDate;
-    if (calendarView === 'year') newDate = addYears(currentDate, 1);
-    else if (calendarView === 'month') newDate = addMonths(currentDate, 1);
+    if (currentView === 'year') newDate = addYears(currentDate, 1);
+    else if (currentView === 'month') newDate = addMonths(currentDate, 1);
     else newDate = addDays(currentDate, 1);
-    dispatch(setSelectedDateAction(newDate.toISOString()));
+    onNavigate({ date: newDate });
   };
 
   const handleToday = () => {
-    dispatch(setSelectedDateAction(new Date().toISOString()));
+    onNavigate({ date: new Date() });
   };
 
-  const parsedError = error
-    ? (error as any)?.data?.detail?.[0]?.msg ||
-      (error as any)?.data?.message ||
-      (error as any)?.status ||
-      'Произошла ошибка загрузки'
-    : null;
+  const handleViewChange = (newView: CalendarView) => {
+    onNavigate({ view: newView });
+  };
 
   return {
-    currentDate: isValid(currentDate) ? currentDate : new Date(),
-    isLoading,
-    error: parsedError,
-    calendarView,
+    events: filteredEvents,
+    isLoading: reduxIsLoading,
+    error: reduxError,
     handlePrev,
     handleNext,
     handleToday,
+    handleViewChange,
     refetchCalendarEvents: refetch,
   };
 };
