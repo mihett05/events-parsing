@@ -1,8 +1,12 @@
 import domain.users.dtos as dtos
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import User, UserOrganizationRole
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from domain.users.exceptions import (
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    UserRoleAlreadyExistsError,
+    UserRoleNotFoundError,
+)
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
@@ -95,8 +99,8 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
                 entity_mapper=user_organization_role_map_from_db,
                 model_mapper=user_organization_role_map_to_db,
                 create_model_mapper=None,
-                not_found_exception=EntityNotFoundError,
-                already_exists_exception=EntityAlreadyExistsError,
+                not_found_exception=UserRoleNotFoundError,
+                already_exists_exception=UserRoleAlreadyExistsError,
             )
 
         def get_select_all_query(self, user_id: int) -> Select:
@@ -105,7 +109,10 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         def extract_id_from_model(
             self, model: UserOrganizationRoleDatabaseModel
         ):
-            return model.organization_id, model.user_id
+            return {
+                "organization_id": model.organization_id,
+                "user_id": model.user_id,
+            }
 
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()

@@ -94,7 +94,7 @@ async def read_user_roles(
     user_id: int,
     use_case: FromDishka[use_cases.ReadUserRolesUseCase],
 ):
-    return map(mappers.map_to_pydantic, await use_case(user_id))
+    return map(mappers.map_role_to_pydantic, await use_case(user_id))
 
 
 @router.post(
@@ -123,9 +123,7 @@ async def update_user_role(
     use_case: FromDishka[use_cases.UpdateUserRoleUseCase],
 ):
     return mappers.map_role_to_pydantic(
-        await use_case(
-            mappers.map_update_role_entity_from_pydantic(dto), actor
-        )
+        await use_case(mappers.map_update_role_entity_from_pydantic(dto), actor)
     )
 
 
