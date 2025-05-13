@@ -16,7 +16,6 @@ i18n
   .init({
     resources,
     fallbackLng: 'ru',
-    debug: import.meta.env.DEV,
 
     interpolation: {
       escapeValue: false,
