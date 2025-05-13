@@ -1,12 +1,18 @@
 from adaptix import P
 from adaptix.conversion import coercer, link_function
-from domain.users.entities import User, UserOrganizationRole, UserSettings, UserActivationToken
+from domain.users.entities import (
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+    UserSettings,
+)
+
 from ...mappers import postgres_retort
 from .models import (
+    UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
-    UserActivationTokenDatabaseModel
 )
 
 retort = postgres_retort.extend(recipe=[])
@@ -68,23 +74,11 @@ map_to_db = retort.get_converter(
 user_activation_token_map_from_db = retort.get_converter(
     UserActivationTokenDatabaseModel,
     UserActivationToken,
-    recipe=[
-        coercer(
-            UserDatabaseModel,
-            User,
-            map_from_db
-        )
-    ]
+    recipe=[coercer(UserDatabaseModel, User, map_from_db)],
 )
 
 user_activation_token_map_to_db = retort.get_converter(
     UserActivationToken,
     UserActivationTokenDatabaseModel,
-    recipe=[
-        coercer(
-            User,
-            UserDatabaseModel,
-            map_to_db
-        )
-    ]
+    recipe=[coercer(User, UserDatabaseModel, map_to_db)],
 )

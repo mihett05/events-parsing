@@ -5,10 +5,11 @@ from domain.users.entities import User, UserActivationToken
 from infrastructure.config import Config
 from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
 
-from ...users.usecases import CreateUserUseCase
-from ...users.usecases.create_user_activation_token import (
+from application.users.usecases import CreateUserUseCase
+from application.users.usecases.create_user_activation_token import (
     CreateUserActivationTokenUseCase,
 )
+
 from ..dtos import RegisterUserDTO
 from ..tokens.gateways import SecurityGateway
 

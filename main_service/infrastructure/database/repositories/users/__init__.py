@@ -1,8 +1,12 @@
-from .models import UserDatabaseModel, UserOrganizationRoleDatabaseModel, UserActivationTokenDatabaseModel
+from .models import (
+    UserActivationTokenDatabaseModel,
+    UserDatabaseModel,
+    UserOrganizationRoleDatabaseModel,
+)
 from .repositories import (
+    UserActivationTokenDatabaseRepository,
     UserOrganizationRolesDatabaseRepository,
     UsersDatabaseRepository,
-    UserActivationTokenDatabaseRepository,
 )
 
 __all__ = [
@@ -10,5 +14,5 @@ __all__ = [
     "UsersDatabaseRepository",
     "UserOrganizationRoleDatabaseModel",
     "UserOrganizationRolesDatabaseRepository",
-    "UserActivationTokenDatabaseRepository"
+    "UserActivationTokenDatabaseRepository",
 ]

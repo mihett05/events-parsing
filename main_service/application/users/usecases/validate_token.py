@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from domain.users.entities import User
+from domain.users.repositories import ActivationTokenRepository, UsersRepository
+
 from application.auth.tokens.dtos import TokenPairDto
 from application.auth.usecases import CreateTokenPairUseCase
 from application.transactions import TransactionsGateway
 from application.users.usecases.read import ReadUserUseCase
 from application.users.usecases.update import UpdateUserUseCase
-from domain.users.entities import User
-from domain.users.repositories import UsersRepository, ActivationTokenRepository
 
 
 class ValidateActivationTokenUseCase:

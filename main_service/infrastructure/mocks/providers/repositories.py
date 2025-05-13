@@ -8,7 +8,9 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
-    UsersRepository, UserOrganizationRolesRepository, ActivationTokenRepository,
+    ActivationTokenRepository,
+    UserOrganizationRolesRepository,
+    UsersRepository,
 )
 
 from infrastructure.mocks.repositories.attachments import (
@@ -26,8 +28,11 @@ from infrastructure.mocks.repositories.ogranizations.repositories import (
 from infrastructure.mocks.repositories.users import (
     UsersMemoryRepository,
 )
-from infrastructure.mocks.repositories.users.repositories import UserRolesMemoryRepository
-from infrastructure.mocks.repositories.users.repositories import ActivationTokenMemoryRepository
+from infrastructure.mocks.repositories.users.repositories import (
+    ActivationTokenMemoryRepository,
+    UserRolesMemoryRepository,
+)
+
 
 class RepositoriesProvider(Provider):
     scope = Scope.APP
@@ -54,6 +59,5 @@ class RepositoriesProvider(Provider):
         provides=UserOrganizationRolesRepository,
     )
     activation_token_repository = provide(
-        source=ActivationTokenMemoryRepository,
-        provides=ActivationTokenRepository
+        source=ActivationTokenMemoryRepository, provides=ActivationTokenRepository
     )

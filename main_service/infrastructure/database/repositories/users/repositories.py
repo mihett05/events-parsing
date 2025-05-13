@@ -3,7 +3,7 @@ from uuid import UUID
 import domain.users.dtos as dtos
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
-from domain.users.entities import User, UserOrganizationRole, UserActivationToken
+from domain.users.entities import User, UserActivationToken, UserOrganizationRole
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
@@ -18,16 +18,16 @@ from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
     map_from_db,
     map_to_db,
-    user_organization_role_map_from_db,
-    user_organization_role_map_to_db,
     user_activation_token_map_from_db,
     user_activation_token_map_to_db,
+    user_organization_role_map_from_db,
+    user_organization_role_map_to_db,
 )
 from .models import (
+    UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
-    UserActivationTokenDatabaseModel,
 )
 
 
