@@ -102,7 +102,9 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         def get_select_all_query(self, user_id: int) -> Select:
             return select(self.model).where(self.model.user_id == user_id)
 
-        def extract_id_from_model(self, model: UserOrganizationRoleDatabaseModel):
+        def extract_id_from_model(
+            self, model: UserOrganizationRoleDatabaseModel
+        ):
             return model.organization_id, model.user_id
 
     def __init__(self, session: AsyncSession):
@@ -113,7 +115,14 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create_from_entity(role)
 
-    async def read(self, user_id: int) -> list[UserOrganizationRole]:
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> list[UserOrganizationRole]:
+        return await self.__repository.read(
+            {"user_id": user_id, "organization_id": organization_id}
+        )
+
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read_all(user_id)
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
