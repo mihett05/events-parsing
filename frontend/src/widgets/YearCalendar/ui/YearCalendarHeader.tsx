@@ -27,88 +27,89 @@ interface YearCalendarHeaderProps {
   onFilterChange: (newFilters: Partial<FilterState>) => void;
 }
 
-export const YearCalendarHeader: React.FC<YearCalendarHeaderProps> = React.memo(
-  ({
-    currentDate,
-    currentView,
-    onPrev,
-    onNext,
-    onToday,
-    onViewChange,
-    activeFilters,
-    onFilterChange,
-  }) => {
-    const { t } = useTranslation();
+export const YearCalendarHeader: React.FC<YearCalendarHeaderProps> = ({
+  currentDate,
+  currentView,
+  onPrev,
+  onNext,
+  onToday,
+  onViewChange,
+  activeFilters,
+  onFilterChange,
+}) => {
+  const { t } = useTranslation();
 
-    const currentYear = isValid(currentDate) ? getYear(currentDate) : '...';
-    const formattedTitle = t('yearView.title', { year: currentYear });
+  const currentYear = isValid(currentDate) ? getYear(currentDate) : '...';
 
-    const handleViewSelectChange = (event: SelectChangeEvent<AppCalendarView>) => {
-      onViewChange(event.target.value as AppCalendarView);
-    };
+  const handleViewSelectChange = (event: SelectChangeEvent<AppCalendarView>) => {
+    onViewChange(event.target.value as AppCalendarView);
+  };
 
-    return (
-      <>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-          px={{ xs: 1, sm: 2 }}
-          py={1}
-          sx={{ borderBottom: '1px solid #eee', flexShrink: 0 }}
-        >
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={onToday}
-              sx={{ textTransform: 'none', mr: 0.5 }}
-              title={t('calendar.today')}
-            >
-              {t('calendar.today')}
-            </Button>
-            <IconButton size="small" onClick={onPrev} title={t('calendar.previousYear')}>
-              <ChevronLeftIcon />
-            </IconButton>
-            <IconButton size="small" onClick={onNext} title={t('calendar.nextYear')}>
-              <ChevronRightIcon />
-            </IconButton>
-          </Stack>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{
-              fontWeight: 500,
-              textAlign: 'center',
-              fontSize: { xs: '1.1rem', sm: '1.25rem' },
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              mx: 1,
-            }}
+  return (
+    <>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={1}
+        px={{ xs: 1, sm: 2 }}
+        py={1}
+        sx={{ borderBottom: '1px solid #eee', flexShrink: 0 }}
+      >
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={onToday}
+            sx={{ textTransform: 'none', mr: 0.5 }}
+            title={t('calendar.today')}
           >
-            {formattedTitle}
-          </Typography>
-          <FormControl size="small" variant="outlined" sx={{ minWidth: 100, ml: 1 }}>
-            <InputLabel id="calendar-view-select-label-year" sx={{ display: 'none' }}>
-              {t('calendar.view.view', 'Вид')}
-            </InputLabel>
-            <Select
-              labelId="calendar-view-select-label-year"
-              id="calendar-view-select-year"
-              value={currentView}
-              onChange={handleViewSelectChange}
-              sx={{ fontSize: '0.875rem' }}
-            >
-              <MenuItem value="day">{t('calendar.view.day')}</MenuItem>
-              <MenuItem value="month">{t('calendar.view.month')}</MenuItem>
-              <MenuItem value="year">{t('calendar.view.year')}</MenuItem>
-            </Select>
-          </FormControl>
+            {t('calendar.today')}
+          </Button>
+          <IconButton size="small" onClick={onPrev} title={t('calendar.previousYear')}>
+            <ChevronLeftIcon />
+          </IconButton>
+          <IconButton size="small" onClick={onNext} title={t('calendar.nextYear')}>
+            <ChevronRightIcon />
+          </IconButton>
         </Stack>
-        <CalendarFilters activeFilters={activeFilters} onFilterChange={onFilterChange} />
-      </>
-    );
-  },
-);
+        <Typography
+          variant="h6"
+          component="h2"
+          sx={{
+            fontWeight: 500,
+            textAlign: 'center',
+            fontSize: { xs: '1.1rem', sm: '1.25rem' },
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            mx: { xs: 0.5, sm: 1 },
+          }}
+        >
+          {currentYear}
+        </Typography>
+        <FormControl
+          size="small"
+          variant="outlined"
+          sx={{ minWidth: { xs: 80, sm: 100 }, ml: { xs: 0.5, sm: 1 } }}
+        >
+          <InputLabel id="calendar-view-select-label-year" sx={{ display: 'none' }}>
+            {t('calendar.view.view', 'Вид')}
+          </InputLabel>
+          <Select
+            labelId="calendar-view-select-label-year"
+            id="calendar-view-select-year"
+            value={currentView}
+            onChange={handleViewSelectChange}
+            sx={{ fontSize: '0.875rem' }}
+          >
+            <MenuItem value="day">{t('calendar.view.day')}</MenuItem>
+            <MenuItem value="month">{t('calendar.view.month')}</MenuItem>
+            <MenuItem value="year">{t('calendar.view.year')}</MenuItem>
+          </Select>
+        </FormControl>
+      </Stack>
+      <CalendarFilters activeFilters={activeFilters} onFilterChange={onFilterChange} />
+    </>
+  );
+};
