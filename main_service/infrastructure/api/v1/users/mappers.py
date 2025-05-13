@@ -1,7 +1,7 @@
 from adaptix import P
-from adaptix.conversion import coercer, link_function
-from application.users.dtos import DeleteUserRoleDto, UpdateUserDto
-from domain.users.entities import User, UserOrganizationRole, UserSettings
+from adaptix.conversion import link_function
+from application.users.dtos import UpdateUserDto
+from domain.users.entities import User
 
 from infrastructure.api.retort import pydantic_retort
 
@@ -10,7 +10,7 @@ from .dtos import (
     UpdateUserModelDto,
     UpdateUserRoleModelDto,
 )
-from .models import UserModel, UserRoleModel, UserSettingsModel
+from .models import UserModel
 
 retort = pydantic_retort.extend(recipe=[])
 

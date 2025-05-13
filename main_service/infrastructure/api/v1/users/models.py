@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from domain.users.enums import RoleEnum, UserNotificationSendToEnum
+from domain.users.enums import UserNotificationSendToEnum
 
 from infrastructure.api.models import CamelModel
 
@@ -20,11 +20,3 @@ class UserModel(CamelModel):
 
     telegram_id: int | None
     created_at: datetime
-    settings: UserSettingsModel
-
-
-class UserRoleModel(CamelModel):
-    user_id: int
-    organization_id: int
-
-    role: RoleEnum

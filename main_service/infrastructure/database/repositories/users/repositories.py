@@ -106,6 +106,12 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         def get_select_all_query(self, user_id: int) -> Select:
             return select(self.model).where(self.model.user_id == user_id)
 
+        def extract_id_from_entity(self, entity: UserOrganizationRole):
+            return {
+                "organization_id": entity.organization_id,
+                "user_id": entity.user_id,
+            }
+
         def extract_id_from_model(
             self, model: UserOrganizationRoleDatabaseModel
         ):
