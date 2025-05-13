@@ -14,7 +14,7 @@ import { ru } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { CalendarView as AppCalendarView, FilterState } from '@/features/events/slice';
 import { CalendarFilters } from '@/features/events/filter/ui/EventsFilter';
-import { InputLabel } from '@mui/material';
+import { InputLabel, useMediaQuery, useTheme } from '@mui/material';
 
 interface MonthCalendarHeaderProps {
   currentDate: Date;
@@ -38,9 +38,12 @@ export const CalendarHeader: React.FC<MonthCalendarHeaderProps> = ({
   onFilterChange,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const dateFormatting = isMobile ? 'LLL yyyy' : 'LLLL yyyy';
   const formattedDate = isValid(currentDate)
-    ? format(currentDate, 'LLLL yyyy', { locale: ru })
+    ? format(currentDate, dateFormatting, { locale: ru })
     : t('calendar.loading');
 
   const handleViewSelectChange = (event: SelectChangeEvent<AppCalendarView>) => {
@@ -88,9 +91,13 @@ export const CalendarHeader: React.FC<MonthCalendarHeaderProps> = ({
             mx: 1,
           }}
         >
-          {formattedDate}
+          {formattedDate[0].toUpperCase() + formattedDate.slice(1)}
         </Typography>
-        <FormControl size="small" variant="outlined" sx={{ minWidth: 100, ml: 1 }}>
+        <FormControl
+          size="small"
+          variant="outlined"
+          sx={{ minWidth: { xs: 85, sm: 100 }, ml: { xs: 0.5, sm: 1 } }}
+        >
           <InputLabel id="calendar-view-select-label-month" sx={{ display: 'none' }}>
             {t('calendar.view.view', 'Вид')}
           </InputLabel>
