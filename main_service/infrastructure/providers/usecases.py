@@ -58,6 +58,8 @@ class UseCasesProvider(Provider):
         users_use_cases.ReadUserRolesUseCase,
         users_use_cases.CreateUserUseCase,
         users_use_cases.CreateUserOrganizationRoleUseCase,
+        users_use_cases.CreateUserActivationTokenUseCase,
+        users_use_cases.ValidateActivationTokenUseCase,
     )
 
     auth = provide_all(

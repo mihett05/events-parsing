@@ -1,7 +1,9 @@
+from uuid import UUID
+
 import domain.users.dtos as dtos
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
-from domain.users.entities import User, UserOrganizationRole
+from domain.users.entities import User, UserOrganizationRole, UserActivationToken
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
@@ -18,11 +20,14 @@ from .mappers import (
     map_to_db,
     user_organization_role_map_from_db,
     user_organization_role_map_to_db,
+    user_activation_token_map_from_db,
+    user_activation_token_map_to_db,
 )
 from .models import (
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
+    UserActivationTokenDatabaseModel,
 )
 
 
@@ -121,3 +126,40 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
 
     async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.delete(role)
+
+
+class UserActivationTokenDatabaseRepository(UserOrganizationRolesRepository):
+    class Config(PostgresRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                model=UserOrganizationRoleDatabaseModel,
+                entity=UserActivationToken,
+                entity_mapper=user_activation_token_map_from_db,
+                model_mapper=user_activation_token_map_to_db,
+                create_model_mapper=None,
+                not_found_exception=EntityNotFoundError,
+                already_exists_exception=EntityAlreadyExistsError,
+            )
+
+        def get_select_all_query(self, token_id: UUID) -> Select:
+            return select(self.model).where(self.model.id == token_id)
+
+        def extract_id_from_model(self, model: UserActivationTokenDatabaseModel):
+            return model.id
+
+    def __init__(self, session: AsyncSession):
+        self.__config = self.Config()
+        self.__session = session
+        self.__repository = PostgresRepository(session, self.__config)
+
+    async def create(self, token: UserActivationToken) -> UserActivationToken:
+        return await self.__repository.create_from_entity(token)
+
+    async def read(self, token_id: UUID) -> UserActivationToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: UserActivationToken) -> UserActivationToken:
+        return await self.__repository.update(token)
+
+    async def delete(self, token: UserActivationToken) -> UserActivationToken:
+        return await self.__repository.delete(token)

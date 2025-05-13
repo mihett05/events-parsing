@@ -6,6 +6,8 @@ from .read_all import ReadAllUsersUseCase
 from .read_by_ids import ReadUsersByIdsUseCase
 from .read_roles import ReadUserRolesUseCase
 from .update import UpdateUserUseCase
+from .validate_token import ValidateActivationTokenUseCase
+from .create_user_activation_token import CreateUserActivationTokenUseCase
 
 __all__ = [
     "CreateUserUseCase",
@@ -16,4 +18,6 @@ __all__ = [
     "UpdateUserUseCase",
     "DeleteUserUseCase",
     "CreateUserOrganizationRoleUseCase",
+    "CreateUserActivationTokenUseCase",
+    "ValidateActivationTokenUseCase"
 ]

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from uuid import UUID
 
 from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 
@@ -33,3 +34,11 @@ class UserOrganizationRole:
     organization_id: int
     user_id: int
     role: RoleEnum
+
+
+@dataclass
+class UserActivationToken:
+    id: UUID
+    user_id: int
+    user: User
+    is_used: bool = False

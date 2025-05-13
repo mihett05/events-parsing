@@ -1,12 +1,12 @@
 from adaptix import P
 from adaptix.conversion import coercer, link_function
-from domain.users.entities import User, UserOrganizationRole, UserSettings
-
+from domain.users.entities import User, UserOrganizationRole, UserSettings, UserActivationToken
 from ...mappers import postgres_retort
 from .models import (
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
+    UserActivationTokenDatabaseModel
 )
 
 retort = postgres_retort.extend(recipe=[])
@@ -63,4 +63,28 @@ map_to_db = retort.get_converter(
             P[UserDatabaseModel].hashed_password,
         ),
     ],
+)
+
+user_activation_token_map_from_db = retort.get_converter(
+    UserActivationTokenDatabaseModel,
+    UserActivationToken,
+    recipe=[
+        coercer(
+            UserDatabaseModel,
+            User,
+            map_from_db
+        )
+    ]
+)
+
+user_activation_token_map_to_db = retort.get_converter(
+    UserActivationToken,
+    UserActivationTokenDatabaseModel,
+    recipe=[
+        coercer(
+            User,
+            UserDatabaseModel,
+            map_to_db
+        )
+    ]
 )
