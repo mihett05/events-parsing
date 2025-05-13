@@ -22,6 +22,10 @@ class UseCasesProvider(Provider):
         event_use_cases.ReadAllEventUseCase,
         event_use_cases.ParseEventsUseCase,
         event_use_cases.UpdateEventUseCase,
+        event_use_cases.CreateEventUserUseCase,
+        event_use_cases.ReadForEventEventUserUseCase,
+        event_use_cases.ReadForUserEventUserUseCase,
+        event_use_cases.DeleteEventUserUseCase,
     )
 
     organizations = provide_all(
@@ -70,6 +74,8 @@ class UseCasesProvider(Provider):
         notification_use_cases.ReadAllNotificationsUseCase,
         notification_use_cases.UpdateNotificationsStatusUseCase,
         notification_use_cases.DeleteNotificationUseCase,
+        notification_use_cases.SendNotificationsUseCase,
+        notification_use_cases.ProcessUnsentNotificationsUseCase,
     )
 
     attachments = provide_all(

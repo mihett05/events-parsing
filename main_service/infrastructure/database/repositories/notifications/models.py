@@ -1,13 +1,13 @@
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, UniqueConstraint, func
-from sqlalchemy.dialects.postgresql import ENUM
-from sqlalchemy.orm import Mapped, mapped_column
-
 from domain.notifications.enums import (
     NotificationFormatEnum,
     NotificationStatusEnum,
 )
+from sqlalchemy import Date, DateTime, ForeignKey, UniqueConstraint, func
+from sqlalchemy.dialects.postgresql import ENUM
+from sqlalchemy.orm import Mapped, mapped_column
+
 from infrastructure.database.postgres import Base
 
 

@@ -27,9 +27,11 @@ def upgrade() -> None:
         "INSERT INTO organizations (id, owner_id, title) VALUES (0, 0, 'SUPER ORG')"
     )
     op.execute("INSERT INTO user_organization_role VALUES (0, 0, 'SUPER_USER')")
+    op.execute("INSERT INTO user_settings VALUES (0, 0, 'EMAIL')")
 
 
 def downgrade() -> None:
+    op.execute("DELETE FROM user_settings WHERE id=0")
     op.execute(
         "DELETE FROM user_organization_role WHERE user_id=0 AND organization_id=0"
     )

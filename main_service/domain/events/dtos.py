@@ -48,3 +48,10 @@ class ReadAllEventsFeedDto:
     organization_id: int | None
     type: EventTypeEnum | None
     format: EventFormatEnum | None
+
+
+@dataclass
+class ReadEventUsersDto:
+    event_id: int
+    page: int
+    page_size: int

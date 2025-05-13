@@ -1,7 +1,6 @@
 import asyncio
 from datetime import date, datetime, timedelta
-from functools import wraps
-from typing import Callable, Coroutine
+from typing import Any, Callable, Coroutine
 
 from application.events.usecases import (
     ParseEventsUseCase,
@@ -15,12 +14,16 @@ from dishka import AsyncContainer
 from infrastructure.api.mappers import map_mail_info_to_create_dto
 
 
-def background_task_runner(delay: timedelta):
-    async def _runner(func: Callable[..., Coroutine[None]]):
-        @wraps
-        async def _wrapper(*args, **kwargs):
+def background_task_runner(
+    delay: timedelta,
+) -> Callable[
+    [Callable[..., Coroutine[Any, Any, Any]]],
+    Callable[[AsyncContainer], Coroutine[Any, Any, None]],
+]:
+    def _runner(func: Callable[..., Coroutine[..., ..., ...]]):
+        async def _wrapper(container: AsyncContainer):
             while True:
-                _ = await func(*args, **kwargs)
+                _ = await func(container)
                 await asyncio.sleep(delay.total_seconds())
 
         return _wrapper
