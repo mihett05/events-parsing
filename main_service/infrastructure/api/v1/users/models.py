@@ -20,4 +20,3 @@ class UserModel(CamelModel):
 
     telegram_id: int | None
     created_at: datetime
-    settings: UserSettingsModel

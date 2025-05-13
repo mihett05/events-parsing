@@ -1,3 +1,6 @@
-from .repositories import UsersMemoryRepository
+from .repositories import (
+    UserOrganizationRolesMemoryRepository,
+    UsersMemoryRepository,
+)
 
-__all__ = ["UsersMemoryRepository"]
+__all__ = ["UsersMemoryRepository", "UserOrganizationRolesMemoryRepository"]
