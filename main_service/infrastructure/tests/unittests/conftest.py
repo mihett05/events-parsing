@@ -95,6 +95,7 @@ async def create_user1(
 
     return _factory
 
+
 @pytest_asyncio.fixture
 async def register_user1_dto() -> RegisterUserDTO:
     return RegisterUserDTO(

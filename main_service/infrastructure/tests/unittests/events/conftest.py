@@ -111,3 +111,12 @@ async def teardown(
     if pytestconfig.getoption("--integration", default=False):
         return
     await events_repository.clear() # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    users_repository: UsersRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa

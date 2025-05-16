@@ -24,7 +24,7 @@ class AttachmentPermissionProvider(PermissionProvider):
         RoleEnum.OWNER: __maximum_perms,
         RoleEnum.ADMIN: __maximum_perms,
         RoleEnum.REDACTOR: __maximum_perms,
-        RoleEnum.PUBLIC: {},
+        RoleEnum.PUBLIC: set(),
     }
 
     def __init__(

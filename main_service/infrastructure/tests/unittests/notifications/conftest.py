@@ -17,6 +17,7 @@ from domain.notifications.enums import (
 )
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import OrganizationsRepository
+from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
@@ -50,6 +51,16 @@ async def notification_repository(
 
 
 @pytest_asyncio.fixture
+async def users_repository(container: AsyncContainer) -> UsersRepository:
+    async with container() as nested:
+        yield await nested.get(UsersRepository)
+
+@pytest_asyncio.fixture
+async def orgatizations_repository(container: AsyncContainer) -> OrganizationsRepository:
+    async with container() as nested:
+        yield await nested.get(OrganizationsRepository)
+
+@pytest_asyncio.fixture
 async def create_notification(
     create_notification_dto: CreateNotificationDto,
     notification_repository: NotificationsRepository,
@@ -61,8 +72,26 @@ async def create_notification(
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
     pytestconfig: pytest.Config,
-    notification_repository: OrganizationsRepository,
+    orgatizations_repository: OrganizationsRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await orgatizations_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    notification_repository: NotificationsRepository,
 ):
     if pytestconfig.getoption("--integration", default=False):
         return
     await notification_repository.clear()  # noqa
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config,
+    users_repository: UsersRepository,
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await users_repository.clear()  # noqa

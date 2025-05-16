@@ -11,13 +11,14 @@ from domain.events.exceptions import EventNotFoundError
 async def test_update_success(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_event
+    create_event,
+    create_user1
 ):
     create_event = await create_event()
+    user = await create_user1()
 
-    # TODO: change actor to user
     create_event = copy(create_event)
-    event = await update_event_usecase(update_event_dto, None)
+    event = await update_event_usecase(update_event_dto, user)
 
     assert event.title != create_event.title
     assert event.description != create_event.description
@@ -30,8 +31,10 @@ async def test_update_success(
 async def test_update_not_found(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
+    create_user1
 ):
     update_event_dto.event_id = 42
-    # TODO: change actor to user
+    user = await create_user1()
+
     with pytest.raises(EventNotFoundError):
-        _ = await update_event_usecase(update_event_dto, None)
+        _ = await update_event_usecase(update_event_dto, user)

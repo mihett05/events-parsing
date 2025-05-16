@@ -13,6 +13,9 @@ from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.repositories import UsersRepository
 
+@pytest_asyncio.fixture
+async def get_token() -> CreateOrganizationDto:
+    return CreateOrganizationDto(title="Test Organization", owner_id=1, token=uuid4())
 
 @pytest_asyncio.fixture
 async def create_organization_dto() -> CreateOrganizationDto:
