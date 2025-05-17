@@ -8,6 +8,7 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
+    TelegramTokensRepository,
     UsersRepository,
 )
 
@@ -24,6 +25,7 @@ from infrastructure.mocks.repositories.ogranizations.repositories import (
     OrganizationTokensMemoryRepository,
 )
 from infrastructure.mocks.repositories.users import (
+    TelegramTokensMemoryRepository,
     UsersMemoryRepository,
 )
 
@@ -47,4 +49,7 @@ class RepositoriesProvider(Provider):
     organization_tokens = provide(
         source=OrganizationTokensMemoryRepository,
         provides=OrganizationTokensRepository,
+    )
+    telegram_tokens = provide(
+        source=TelegramTokensMemoryRepository, provides=TelegramTokensRepository
     )

@@ -1,10 +1,16 @@
 from datetime import datetime
+from uuid import UUID
 
 from domain.users import dtos as dtos
 from domain.users import entities as entities
-from domain.users.entities import User
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from domain.users.repositories import UsersRepository
+from domain.users.entities import TelegramToken, User
+from domain.users.exceptions import (
+    TelegramTokenAlreadyExistsError,
+    TelegramTokenNotFoundError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+)
+from domain.users.repositories import TelegramTokensRepository, UsersRepository
 
 from ..crud import MockRepository, MockRepositoryConfig
 
@@ -50,3 +56,26 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+
+class TelegramTokensMemoryRepository(TelegramTokensRepository):
+    class Config(MockRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                entity=TelegramToken,
+                not_found_exception=TelegramTokenNotFoundError,
+                already_exists_exception=TelegramTokenAlreadyExistsError,
+            )
+
+    def __init__(self):
+        self.__repository = MockRepository(self.Config())
+
+    async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
+        token = TelegramToken(id=dto.id, user_id=dto.user_id, created_at=datetime.now())
+        return await self.__repository.create(token)
+
+    async def read(self, token_id: UUID) -> TelegramToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: TelegramToken) -> TelegramToken:
+        return await self.__repository.update(token)

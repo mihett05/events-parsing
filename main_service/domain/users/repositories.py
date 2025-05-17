@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from uuid import UUID
 
 import domain.users.dtos as dtos
 import domain.users.entities as entities
@@ -48,3 +49,16 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     async def delete(
         self, role: entities.UserOrganizationRole
     ) -> entities.UserOrganizationRole: ...
+
+
+class TelegramTokensRepository(metaclass=ABCMeta):
+    @abstractmethod
+    async def create(
+        self, dto: dtos.CreateTelegramTokenDto
+    ) -> entities.TelegramToken: ...
+
+    @abstractmethod
+    async def read(self, token_id: UUID) -> entities.TelegramToken: ...
+
+    @abstractmethod
+    async def update(self, token: entities.TelegramToken) -> entities.TelegramToken: ...

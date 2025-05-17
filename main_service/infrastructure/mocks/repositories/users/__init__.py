@@ -1,3 +1,3 @@
-from .repositories import UsersMemoryRepository
+from .repositories import TelegramTokensMemoryRepository, UsersMemoryRepository
 
-__all__ = ["UsersMemoryRepository"]
+__all__ = ["UsersMemoryRepository", "TelegramTokensMemoryRepository"]
