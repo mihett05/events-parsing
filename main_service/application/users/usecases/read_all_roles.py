@@ -7,4 +7,4 @@ class ReadUserRolesUseCase:
         self.__repository = repository
 
     async def __call__(self, user_id: int) -> list[UserOrganizationRole]:
-        return await self.__repository.read(user_id)
+        return await self.__repository.read_all(user_id)
