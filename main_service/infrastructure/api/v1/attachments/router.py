@@ -28,7 +28,7 @@ async def create_attachments(
     read_event_use_case: FromDishka[ReadEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
-    event = await read_event_use_case(event_id)
+    event = await read_event_use_case(event_id, actor)
     attachments, fails = await create_attachments_use_case(
         list(map(lambda file: mappers.map_file_to_dto(file, event), files)),
         actor,
