@@ -1,9 +1,17 @@
+from uuid import UUID
+
 import domain.users.dtos as dtos
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
-from domain.users.entities import User, UserOrganizationRole
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from domain.users.entities import TelegramToken, User, UserOrganizationRole
+from domain.users.exceptions import (
+    TelegramTokenAlreadyExistsError,
+    TelegramTokenNotFoundError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+)
 from domain.users.repositories import (
+    TelegramTokensRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -16,10 +24,14 @@ from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
     map_from_db,
     map_to_db,
+    telegram_token_map_create_to_model,
+    telegram_token_map_from_db,
+    telegram_token_map_to_db,
     user_organization_role_map_from_db,
     user_organization_role_map_to_db,
 )
 from .models import (
+    TelegramTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
@@ -121,3 +133,31 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
 
     async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.delete(role)
+
+
+class TelegramTokensDatabaseRepository(TelegramTokensRepository):
+    class Config(PostgresRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                model=TelegramTokenDatabaseModel,
+                entity=TelegramToken,
+                entity_mapper=telegram_token_map_from_db,
+                model_mapper=telegram_token_map_to_db,
+                create_model_mapper=telegram_token_map_create_to_model,
+                not_found_exception=TelegramTokenNotFoundError,
+                already_exists_exception=TelegramTokenAlreadyExistsError,
+            )
+
+    def __init__(self, session: AsyncSession):
+        self.__session = session
+        self.__config = self.Config()
+        self.__repository = PostgresRepository(session, self.__config)
+
+    async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
+        return await self.__repository.create_from_dto(dto)
+
+    async def read(self, token_id: UUID) -> TelegramToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: TelegramToken) -> TelegramToken:
+        return await self.__repository.update(token)

@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 from sqlalchemy import DateTime, ForeignKey, func
@@ -54,4 +55,17 @@ class UserOrganizationRoleDatabaseModel(Base):
     )
     role: Mapped[RoleEnum] = mapped_column(
         ENUM(RoleEnum, name="RoleEnum"), nullable=False
+    )
+
+
+class TelegramTokenDatabaseModel(Base):
+    __tablename__ = "telegram_tokens"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    is_used: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
     )

@@ -9,8 +9,6 @@ from .read_by_ids import ReadUsersByIdsUseCase
 from .read_roles import ReadUserRolesUseCase
 from .read_telegram_token import ReadTelegramTokenUseCase
 from .update import UpdateUserUseCase
-from .update_telegram_token import UpdateTelegramTokenUseCase
-from .validate_telegram_token import ValidateTelegramTokenUseCase
 
 __all__ = [
     "CreateUserUseCase",
@@ -24,6 +22,4 @@ __all__ = [
     "ConnectTelegramUseCase",
     "CreateTelegramTokenUseCase",
     "ReadTelegramTokenUseCase",
-    "ValidateTelegramTokenUseCase",
-    "UpdateTelegramTokenUseCase",
 ]

@@ -8,6 +8,7 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
+    TelegramTokensRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -24,6 +25,7 @@ from infrastructure.database.repositories.organizations import (
     OrganizationTokensDatabaseRepository,
 )
 from infrastructure.database.repositories.users import (
+    TelegramTokensDatabaseRepository,
     UserOrganizationRolesDatabaseRepository,
     UsersDatabaseRepository,
 )
@@ -56,4 +58,7 @@ class RepositoriesProvider(Provider):
     user_organization_roles_repository = provide(
         source=UserOrganizationRolesDatabaseRepository,
         provides=UserOrganizationRolesRepository,
+    )
+    telegram_tokens = provide(
+        source=TelegramTokensDatabaseRepository, provides=TelegramTokensRepository
     )
