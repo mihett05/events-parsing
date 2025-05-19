@@ -67,3 +67,11 @@ async def delete_user(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(await use_case(actor))
+
+
+@router.post("/telegram")
+async def create_telegram_link(
+    use_case: FromDishka[use_cases.CreateTelegramTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return await use_case(actor)

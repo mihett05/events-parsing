@@ -3,7 +3,7 @@ from domain.users.repositories import UsersRepository
 
 from application.transactions import TransactionsGateway
 from application.users.dtos import UpdateUserDto
-from application.users.usecases import ReadUserUseCase
+from application.users.usecases.read import ReadUserUseCase
 
 
 class UpdateUserUseCase:
@@ -20,7 +20,8 @@ class UpdateUserUseCase:
     async def __call__(self, dto: UpdateUserDto, actor: User | None) -> User:
         async with self.__transaction:
             user = await self.__read_user_use_case(dto.user_id)
-            user.fullname = dto.fullname
+            if dto.fullname:
+                user.fullname = dto.fullname
             if dto.telegram_id:
                 user.telegram_id = dto.telegram_id
 

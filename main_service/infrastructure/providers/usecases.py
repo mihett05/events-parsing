@@ -58,6 +58,9 @@ class UseCasesProvider(Provider):
         users_use_cases.ReadUserRolesUseCase,
         users_use_cases.CreateUserUseCase,
         users_use_cases.CreateUserOrganizationRoleUseCase,
+        users_use_cases.CreateTelegramTokenUseCase,
+        users_use_cases.ReadTelegramTokenUseCase,
+        users_use_cases.ConnectTelegramUseCase,
     )
 
     auth = provide_all(
