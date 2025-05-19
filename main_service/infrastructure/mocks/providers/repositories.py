@@ -1,6 +1,8 @@
 from dishka import Provider, Scope, provide
+
+from application.notifications.factory import NotificationGatewayAbstractFactory
 from domain.attachments.repositories import AttachmentsRepository
-from domain.events.repositories import EventsRepository
+from domain.events.repositories import EventsRepository, EventUsersRepository
 from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import OrganizationsRepository, OrganizationTokensRepository
@@ -12,6 +14,8 @@ from domain.organizations.repositories import (
 from domain.users.repositories import (
     UsersRepository,
 )
+from infrastructure.gateways.notifications.factory import NotificationGatewayFactory
+from infrastructure.gateways.notifications.gateways import NotificationTelegramGateway
 
 from infrastructure.mocks.repositories.attachments import (
     AttachmentsMemoryRepository,
@@ -36,6 +40,7 @@ class RepositoriesProvider(Provider):
 
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
+    event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
     users = provide(source=UsersMemoryRepository, provides=UsersRepository)
     notifications = provide(
         source=NotificationsMemoryRepository, provides=NotificationsRepository
