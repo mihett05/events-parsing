@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from uuid import UUID
 
-from domain.users.dtos import ReadAllUsersDto
+from domain.users.dtos import CreateActivationTokenDto, ReadAllUsersDto
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
 
 
@@ -30,6 +30,9 @@ class UsersRepository(metaclass=ABCMeta):
     @abstractmethod
     async def delete(self, user: User) -> User: ...
 
+    @abstractmethod
+    async def update_is_active_statement(self, user_id: int, status: bool): ...
+
 
 class UserOrganizationRolesRepository(metaclass=ABCMeta):
     @abstractmethod
@@ -45,9 +48,15 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
 
 
-class ActivationTokenRepository(metaclass=ABCMeta):
+class UserActivationTokenRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create_activation_token(self, user: User) -> UserActivationToken: ...
+    async def create(self, dto: CreateActivationTokenDto) -> UserActivationToken: ...
 
     @abstractmethod
-    async def read_activation_token(self, token_uuid: UUID) -> UserActivationToken: ...
+    async def read(self, token_uuid: UUID) -> UserActivationToken: ...
+
+    @abstractmethod
+    async def update_is_used_statement(self, token_id: UUID): ...
+
+    @abstractmethod
+    async def delete(self, token: UserActivationToken) -> UserActivationToken: ...

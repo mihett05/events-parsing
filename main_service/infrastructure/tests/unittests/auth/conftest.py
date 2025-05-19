@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from uuid import UUID
 
 import pytest_asyncio
 from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
@@ -6,7 +7,7 @@ from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import RegisterUseCase
 from dishka import AsyncContainer
-from domain.users.entities import User
+from domain.users.entities import User, UserActivationToken
 from domain.users.repositories import UsersRepository
 
 
@@ -16,6 +17,18 @@ async def register_user1_dto() -> RegisterUserDTO:
         email="test@test.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
+    )
+
+
+@pytest_asyncio.fixture
+async def user_1_activation_token() -> UserActivationToken:
+    return UserActivationToken(
+        user_id=1,
+        user=User(
+            email="test@test.com",
+            fullname="Ivanov Ivan Ivanovich",
+        ),
+        id=UUID(int=1),
     )
 
 
@@ -51,6 +64,18 @@ async def register_user2_dto() -> RegisterUserDTO:
 
 
 @pytest_asyncio.fixture
+async def user_2_activation_token() -> UserActivationToken:
+    return UserActivationToken(
+        user_id=2,
+        user=User(
+            email="tset@tset.moc",
+            fullname="Romanov Roman Romanovich",
+        ),
+        id=UUID(int=2),
+    )
+
+
+@pytest_asyncio.fixture
 async def authenticate_user2_dto() -> AuthenticateUserDto:
     return AuthenticateUserDto(email="tset@tset.moc", password="87654321")
 
@@ -72,9 +97,9 @@ async def create_user1(
     register_user1_dto: RegisterUserDTO,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
-) -> User:
-    user1, _ = await register_usecase(register_user1_dto)
-    return user1
+) -> UserActivationToken:
+    token_1 = await register_usecase(register_user1_dto)
+    return token_1
 
 
 @pytest_asyncio.fixture
@@ -82,6 +107,6 @@ async def create_user2(
     register_user2_dto: RegisterUserDTO,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
-) -> User:
-    user2, _ = await register_usecase(register_user2_dto)
-    return user2
+) -> UserActivationToken:
+    token_2 = await register_usecase(register_user2_dto)
+    return token_2

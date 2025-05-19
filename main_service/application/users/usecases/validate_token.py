@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from domain.users.entities import User
-from domain.users.repositories import ActivationTokenRepository, UsersRepository
+from domain.users.repositories import UserActivationTokenRepository, UsersRepository
 
 from application.auth.tokens.dtos import TokenPairDto
 from application.auth.usecases import CreateTokenPairUseCase
@@ -14,7 +14,7 @@ class ValidateActivationTokenUseCase:
     def __init__(
         self,
         users_repository: UsersRepository,
-        token_repository: ActivationTokenRepository,
+        token_repository: UserActivationTokenRepository,
         read_user_use_case: ReadUserUseCase,
         tx: TransactionsGateway,
         create_token_pair_use_case: CreateTokenPairUseCase,
@@ -28,8 +28,10 @@ class ValidateActivationTokenUseCase:
         self.update_user_use_case = update_user_use_case
 
     async def __call__(self, token_uuid: UUID) -> tuple[User, TokenPairDto]:
-        token = await self.__token_repository.read_activation_token(token_uuid)
         async with self.__transaction:
-            token.user.is_active = True
-            await self.__users_repository.update(token.user)
+            token = await self.__token_repository.read(token_uuid)
+            await self.__token_repository.update_is_used_statement(token.id)
+            await self.__users_repository.update_is_active_statement(
+                token.user.id, True
+            )
             return token.user, await self.__create_token_pair_use_case(token.user)

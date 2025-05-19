@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide
 from domain.attachments.repositories import AttachmentsRepository
-from domain.events.repositories import EventsRepository
+from domain.events.repositories import EventsRepository, EventUsersRepository
 from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import (
@@ -8,7 +8,7 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
-    ActivationTokenRepository,
+    UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -29,8 +29,8 @@ from infrastructure.mocks.repositories.users import (
     UsersMemoryRepository,
 )
 from infrastructure.mocks.repositories.users.repositories import (
-    ActivationTokenMemoryRepository,
-    UserRolesMemoryRepository,
+    UserActivationTokenMemoryRepository,
+    UserOrganizationsRolesMemoryRepository,
 )
 
 
@@ -39,6 +39,7 @@ class RepositoriesProvider(Provider):
 
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
+    event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
     users = provide(source=UsersMemoryRepository, provides=UsersRepository)
     notifications = provide(
         source=NotificationsMemoryRepository, provides=NotificationsRepository
@@ -55,9 +56,10 @@ class RepositoriesProvider(Provider):
         provides=OrganizationTokensRepository,
     )
     user_organization_roles = provide(
-        source=UserRolesMemoryRepository,
+        source=UserOrganizationsRolesMemoryRepository,
         provides=UserOrganizationRolesRepository,
     )
     activation_token_repository = provide(
-        source=ActivationTokenMemoryRepository, provides=ActivationTokenRepository
+        source=UserActivationTokenMemoryRepository,
+        provides=UserActivationTokenRepository,
     )

@@ -68,9 +68,9 @@ async def register_user(
 )
 async def validate_token(
     token_uuid: UUID,
-    validate_use_case: FromDishka[ValidateActivationTokenUseCase],
+    activate_user_use_case: FromDishka[ValidateActivationTokenUseCase],
 ):
-    user, tokens_pair = await validate_use_case(token_uuid)
+    user, tokens_pair = await activate_user_use_case(token_uuid)
     return __make_response(user, tokens_pair)
 
 

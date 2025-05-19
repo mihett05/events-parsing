@@ -6,16 +6,18 @@ from domain.users import entities as entities
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
 from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
 from domain.users.repositories import (
+    UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
-from sqlalchemy import Select, select
+from sqlalchemy import Select, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
+    create_user_activation_token_map,
     map_from_db,
     map_to_db,
     user_activation_token_map_from_db,
@@ -90,6 +92,16 @@ class UsersDatabaseRepository(UsersRepository):
     async def delete(self, user: entities.User) -> entities.User:
         return await self.__repository.delete(user)
 
+    async def change_user_active_status(self, user_id: int, status: bool):
+        query = (
+            update(UserDatabaseModel)
+            .where(UserDatabaseModel.id == user_id)
+            .values(is_active=status)
+            .execution_options(synchronize_session="fetch")
+            .returning(self.__config.model)
+        )
+        await self.__session.execute(query)
+
 
 class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     class Config(PostgresRepositoryConfig):
@@ -128,38 +140,39 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         return await self.__repository.delete(role)
 
 
-class UserActivationTokenDatabaseRepository(UserOrganizationRolesRepository):
+class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
     class Config(PostgresRepositoryConfig):
         def __init__(self):
             super().__init__(
-                model=UserOrganizationRoleDatabaseModel,
+                model=UserActivationTokenDatabaseModel,
                 entity=UserActivationToken,
                 entity_mapper=user_activation_token_map_from_db,
                 model_mapper=user_activation_token_map_to_db,
-                create_model_mapper=None,
+                create_model_mapper=create_user_activation_token_map,
                 not_found_exception=EntityNotFoundError,
                 already_exists_exception=EntityAlreadyExistsError,
             )
-
-        def get_select_all_query(self, token_id: UUID) -> Select:
-            return select(self.model).where(self.model.id == token_id)
-
-        def extract_id_from_model(self, model: UserActivationTokenDatabaseModel):
-            return model.id
 
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
 
-    async def create(self, token: UserActivationToken) -> UserActivationToken:
-        return await self.__repository.create_from_entity(token)
+    async def create(self, dto: dtos.CreateActivationTokenDto) -> UserActivationToken:
+        return await self.__repository.create_from_dto(dto)
 
     async def read(self, token_id: UUID) -> UserActivationToken:
         return await self.__repository.read(token_id)
 
-    async def update(self, token: UserActivationToken) -> UserActivationToken:
-        return await self.__repository.update(token)
+    async def update_is_used_statement(self, token_id: UUID):
+        query = (
+            update(UserActivationTokenDatabaseModel)
+            .where(UserActivationTokenDatabaseModel.id == token_id)
+            .values(is_used=True)
+            .execution_options(synchronize_session="fetch")
+            .returning(self.__config.model)
+        )
+        await self.__session.execute(query)
 
     async def delete(self, token: UserActivationToken) -> UserActivationToken:
         return await self.__repository.delete(token)

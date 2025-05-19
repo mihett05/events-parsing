@@ -67,8 +67,6 @@ class UserActivationTokenDatabaseModel(Base):
         ForeignKey("users.id", ondelete="cascade"), default=None, nullable=True
     )
 
-    user: Mapped[UserDatabaseModel] = relationship(
-        "UserDatabaseModel", foreign_keys=user_id
-    )
+    user: Mapped[UserDatabaseModel] = relationship("UserDatabaseModel", uselist=False)
 
     is_used: Mapped[bool] = mapped_column(default=False)

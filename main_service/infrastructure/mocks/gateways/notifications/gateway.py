@@ -16,6 +16,13 @@ class NotificationEmailMemoryGateway(NotificationEmailGateway):
             imap_password="spit po 25 chasov v den'",
         )
 
+    async def __aenter__(self):
+        print("entering notification email gateway context")
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        print("exiting notification email gateway context")
+
     async def send(
         self,
         notification: Notification,
