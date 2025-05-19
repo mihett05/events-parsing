@@ -104,6 +104,7 @@ async def register_user1_dto() -> RegisterUserDTO:
         fullname="Ivanov Ivan Ivanovich",
     )
 
+
 @pytest_asyncio.fixture
 async def register_usecase(
     container: AsyncContainer,

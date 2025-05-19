@@ -13,6 +13,7 @@ async def test_create_success(
     user = await create_user1()
 
     succeed, failed = await create_attachment_usecase(create_attachment_dtos, user)
+    print(failed)
     assert len(failed) == 0
     assert len(succeed) == len(create_attachment_dtos)
 
