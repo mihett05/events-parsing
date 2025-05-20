@@ -7,7 +7,7 @@ from .router import router
 
 async def create_bot(container: AsyncContainer) -> tuple[Bot, Dispatcher]:
     telegram_bot = await container.get(Bot)
-    dp = await container.get(Dispatcher)
+    dp = Dispatcher()
     dp.include_router(router)
     setup_dishka(container, router=dp, auto_inject=True)
     return telegram_bot, dp
