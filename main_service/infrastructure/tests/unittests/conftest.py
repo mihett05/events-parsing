@@ -1,22 +1,21 @@
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
+import application.auth.usecases as auth_usecases
+import application.users.usecases as user_usecases
 import pytest
 import pytest_asyncio
-from dishka import AsyncContainer
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine
-
 from application.auth.dtos import RegisterUserDTO
 from application.auth.usecases import RegisterUseCase
+from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
-import application.auth.usecases as auth_usecases
-import application.users.usecases as user_usecases
 
 
 def pytest_addoption(parser):
@@ -112,12 +111,14 @@ async def register_usecase(
     async with container() as nested:
         yield await nested.get(auth_usecases.RegisterUseCase)
 
+
 @pytest_asyncio.fixture
 async def create_usecase_usecase(
     container: AsyncContainer,
 ) -> user_usecases.CreateUserRoleUseCase:
     async with container() as nested:
         yield await nested.get(user_usecases.CreateUserRoleUseCase)
+
 
 @pytest_asyncio.fixture
 async def create_organization(
@@ -126,16 +127,18 @@ async def create_organization(
 ) -> Callable[..., Coroutine[Any, Any, Organization]]:
     async def _factory():
         return await organizations_repository.create(create_organization_dto)
+
     return _factory
 
+
 @pytest_asyncio.fixture
-async def create_organization_dto(
-        create_user1
-) -> CreateOrganizationDto:
+async def create_organization_dto(create_user1) -> CreateOrganizationDto:
     user = await create_user1()
     return CreateOrganizationDto(
-        title="Test Organization", owner_id=user.id,
+        title="Test Organization",
+        owner_id=user.id,
     )
+
 
 @pytest_asyncio.fixture
 async def organizations_repository(

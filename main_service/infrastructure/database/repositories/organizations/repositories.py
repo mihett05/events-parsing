@@ -48,7 +48,9 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
                 already_exists_exception=OrganizationAlreadyExistsError,
             )
 
-        def get_select_all_query(self, dto: dtos.ReadOrganizationsDto) -> Select:
+        def get_select_all_query(
+            self, dto: dtos.ReadOrganizationsDto
+        ) -> Select:
             query = select(self.model).order_by(self.model.id)
             return self.__try_add_pagination(query, dto)
 
@@ -67,7 +69,9 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)
 
-    async def read_all(self, dto: dtos.ReadOrganizationsDto) -> list[Organization]:
+    async def read_all(
+        self, dto: dtos.ReadOrganizationsDto
+    ) -> list[Organization]:
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateOrganizationDto) -> Organization:
@@ -93,7 +97,9 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
                 already_exists_exception=OrganizationTokenAlreadyExistsError,
             )
 
-        def get_select_all_query(self, dto: ReadOrganizationTokensDto) -> Select:
+        def get_select_all_query(
+            self, dto: ReadOrganizationTokensDto
+        ) -> Select:
             query = (
                 select(self.model)
                 .where(self.model.created_by == dto.created_by)
@@ -114,7 +120,9 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
     async def read(self, token_id: UUID) -> OrganizationToken:
         return await self.__repository.read(token_id)
 
-    async def create(self, dto: CreateOrganizationTokenDto) -> OrganizationToken:
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
         return await self.__repository.create_from_dto(dto)
 
     async def update(self, token: OrganizationToken) -> OrganizationToken:
@@ -123,5 +131,7 @@ class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
 
-    async def read_all(self, dto: ReadOrganizationTokensDto) -> list[OrganizationToken]:
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
         return await self.__repository.read_all(dto)

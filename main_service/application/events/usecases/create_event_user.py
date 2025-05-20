@@ -1,6 +1,5 @@
 from domain.events.entities import EventUser
 from domain.events.repositories import EventUsersRepository
-
 from domain.users.entities import User
 
 from application.transactions import TransactionsGateway

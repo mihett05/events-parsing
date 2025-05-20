@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Callable, Coroutine
+from uuid import UUID
 
 import pytest
 import pytest_asyncio
@@ -8,7 +9,7 @@ from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import RegisterUseCase
 from dishka import AsyncContainer
-from domain.users.entities import User
+from domain.users.entities import User, UserActivationToken
 from domain.users.repositories import UsersRepository
 
 
@@ -18,6 +19,18 @@ async def register_user1_dto() -> RegisterUserDTO:
         email="test@example.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
+    )
+
+
+@pytest_asyncio.fixture
+async def user_1_activation_token() -> UserActivationToken:
+    return UserActivationToken(
+        user_id=1,
+        user=User(
+            email="test@test.com",
+            fullname="Ivanov Ivan Ivanovich",
+        ),
+        id=UUID(int=1),
     )
 
 
@@ -50,6 +63,18 @@ async def register_user2_dto() -> RegisterUserDTO:
         email="tset@tset.moc",
         password="87654321",
         fullname="Romanov Roman Romanovich",
+    )
+
+
+@pytest_asyncio.fixture
+async def user_2_activation_token() -> UserActivationToken:
+    return UserActivationToken(
+        user_id=2,
+        user=User(
+            email="tset@tset.moc",
+            fullname="Romanov Roman Romanovich",
+        ),
+        id=UUID(int=2),
     )
 
 

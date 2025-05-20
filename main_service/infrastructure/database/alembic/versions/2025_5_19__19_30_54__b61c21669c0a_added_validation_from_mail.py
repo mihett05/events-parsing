@@ -41,7 +41,9 @@ def upgrade() -> None:
         new_values=["HTML", "RAW_TEXT", "MARKDOWN"],
         affected_columns=[
             TableReference(
-                table_schema="public", table_name="notifications", column_name="format"
+                table_schema="public",
+                table_name="notifications",
+                column_name="format",
             )
         ],
         enum_values_to_rename=[],
@@ -52,7 +54,9 @@ def upgrade() -> None:
         new_values=["UNSENT", "SENT", "FAILED"],
         affected_columns=[
             TableReference(
-                table_schema="public", table_name="notifications", column_name="status"
+                table_schema="public",
+                table_name="notifications",
+                column_name="status",
             )
         ],
         enum_values_to_rename=[],
@@ -69,7 +73,9 @@ def downgrade() -> None:
         new_values=["SENT", "UNSENT"],
         affected_columns=[
             TableReference(
-                table_schema="public", table_name="notifications", column_name="status"
+                table_schema="public",
+                table_name="notifications",
+                column_name="status",
             )
         ],
         enum_values_to_rename=[],
@@ -80,7 +86,9 @@ def downgrade() -> None:
         new_values=["HTML", "RAW_TEXT"],
         affected_columns=[
             TableReference(
-                table_schema="public", table_name="notifications", column_name="format"
+                table_schema="public",
+                table_name="notifications",
+                column_name="format",
             )
         ],
         enum_values_to_rename=[],

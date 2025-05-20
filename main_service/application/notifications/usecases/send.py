@@ -10,7 +10,9 @@ class SendNotificationsUseCase:
     def __init__(self, gateways: NotificationGatewayAbstractFactory):
         self.__gateways = gateways
 
-    async def __call__(self, notifications: list[Notification], users: dict[int, User]):
+    async def __call__(
+        self, notifications: list[Notification], users: dict[int, User]
+    ):
         # TODO: тут потом можно продумать механизм ролбека,
         #  то есть что делать с notification если мы отправили, но не смогли обновить базу
         #  как вариант, на стороне гетевея собирать бакет того, что надо отправить

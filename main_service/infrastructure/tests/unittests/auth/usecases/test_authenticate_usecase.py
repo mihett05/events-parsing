@@ -16,9 +16,9 @@ async def test_authenticate_success(
     create_user1 = await create_user1()
     user = await authenticate_usecase(authenticate_user1_dto)
     print(type(create_user1))
-    assert user.email == create_user1.user.email
-    assert user.fullname == create_user1.user.fullname
-    assert user.id == create_user1.user.id
+    assert user.email == create_user1.email
+    assert user.fullname == create_user1.fullname
+    assert user.id == create_user1.id
 
 
 @pytest.mark.asyncio

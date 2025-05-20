@@ -10,7 +10,9 @@ from domain.attachments.dtos import CreateAttachmentDto, ParsedAttachmentInfoDto
 from domain.mails.dtos import ParsedMailInfoDto
 
 from infrastructure.config import Config
-from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
+from infrastructure.gateways.notifications.gateways import (
+    NotificationEmailGateway,
+)
 
 
 @pytest_asyncio.fixture

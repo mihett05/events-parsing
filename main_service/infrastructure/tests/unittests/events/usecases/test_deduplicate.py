@@ -29,7 +29,7 @@ async def test_deduplicate_create_new(
 async def test_deduplicate_found_one(
     deduplicate_event_usecase: DeduplicateEventUseCase,
     create_event_dto: CreateEventDto,
-    create_event
+    create_event,
 ):
     create_event = await create_event()
     event, _ = await deduplicate_event_usecase(None, create_event_dto)

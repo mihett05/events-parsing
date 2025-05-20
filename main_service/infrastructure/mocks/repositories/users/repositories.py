@@ -3,27 +3,35 @@ from uuid import UUID
 
 from domain.users import dtos as dtos
 from domain.users import entities as entities
-from domain.users.entities import User, UserOrganizationRole
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
-from domain.users.entities import User, UserActivationToken, UserOrganizationRole
+from domain.users.entities import (
+    TelegramToken,
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+)
 from domain.users.enums import RoleEnum
 from domain.users.exceptions import (
+    TelegramTokenAlreadyExistsError,
+    TelegramTokenNotFoundError,
     UserAlreadyExistsError,
     UserNotFoundError,
     UserRoleAlreadyExistsError,
     UserRoleNotFoundError,
 )
 from domain.users.repositories import (
+    TelegramTokensRepository,
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
 
-from ..crud import MockRepository, MockRepositoryConfig
+from ..crud import Entity, Id, MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
+    async def update_is_active_statement(self, user_id: int, status: bool):
+        pass
+
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(
@@ -54,7 +62,7 @@ class UsersMemoryRepository(UsersRepository):
 
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[User]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
+        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
     async def read_by_ids(self, user_ids: list[int]) -> list[User]:
         return [await self.read(user_id) for user_id in user_ids]
@@ -64,6 +72,38 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+    async def clear(self):
+        await self.__repository.clear()
+
+    async def update_is_active_statement(self, user_id: int, status: bool):
+        # TODO add method
+        pass
+
+
+class TelegramTokensMemoryRepository(TelegramTokensRepository):
+    class Config(MockRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                entity=TelegramToken,
+                not_found_exception=TelegramTokenNotFoundError,
+                already_exists_exception=TelegramTokenAlreadyExistsError,
+            )
+
+    def __init__(self):
+        self.__repository = MockRepository(self.Config())
+
+    async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
+        token = TelegramToken(
+            id=dto.id, user_id=dto.user_id, created_at=datetime.now()
+        )
+        return await self.__repository.create(token)
+
+    async def read(self, token_id: UUID) -> TelegramToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: TelegramToken) -> TelegramToken:
+        return await self.__repository.update(token)
 
     async def clear(self):
         await self.__repository.clear()
@@ -78,6 +118,9 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
                 already_exists_exception=UserRoleAlreadyExistsError,
             )
 
+        def extract_id(self, role: UserOrganizationRole):
+            return role.organization_id, role.user_id
+
     def __init__(self):
         self.__repository = MockRepository(self.Config())
 
@@ -87,15 +130,26 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     async def read(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read(user_id)
 
-    async def update(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
+    async def update(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
         return await self.__repository.update(user_role)
-      
+
     async def update_is_active_statement(self, user: User, status: bool):
         user.is_active = status
         await self.__repository.update(user)
 
-    async def delete(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
+    async def delete(
+        self, user_role: UserOrganizationRole
+    ) -> UserOrganizationRole:
         return await self.__repository.delete(user_role)
+
+    async def read_all(self, *args) -> list[UserOrganizationRole]:
+        # TODO Добавить аргументы
+        return await self.__repository.read_all()
+
+    async def clear(self):
+        await self.__repository.clear()
 
 
 class UserActivationTokenMemoryRepository(UserActivationTokenRepository):
@@ -122,3 +176,6 @@ class UserActivationTokenMemoryRepository(UserActivationTokenRepository):
 
     async def delete(self, token: UserActivationToken) -> UserActivationToken:
         return await self.__repository.delete(token)
+
+    async def clear(self):
+        await self.__repository.clear()

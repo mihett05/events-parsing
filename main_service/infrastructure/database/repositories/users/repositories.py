@@ -3,14 +3,22 @@ from uuid import UUID
 import domain.users.dtos as dtos
 from domain.exceptions import EntityNotFoundError, EntityAlreadyExistsError
 from domain.users import entities as entities
-from domain.users.entities import User, UserActivationToken, UserOrganizationRole
+from domain.users.entities import (
+    TelegramToken,
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+)
 from domain.users.exceptions import (
+    TelegramTokenAlreadyExistsError,
+    TelegramTokenNotFoundError,
     UserAlreadyExistsError,
     UserNotFoundError,
     UserRoleAlreadyExistsError,
     UserRoleNotFoundError,
 )
 from domain.users.repositories import (
+    TelegramTokensRepository,
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
@@ -25,12 +33,16 @@ from .mappers import (
     create_user_activation_token_map,
     map_from_db,
     map_to_db,
+    telegram_token_map_create_to_model,
+    telegram_token_map_from_db,
+    telegram_token_map_to_db,
     user_activation_token_map_from_db,
     user_activation_token_map_to_db,
     user_organization_role_map_from_db,
     user_organization_role_map_to_db,
 )
 from .models import (
+    TelegramTokenDatabaseModel,
     UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
@@ -96,6 +108,9 @@ class UsersDatabaseRepository(UsersRepository):
 
     async def delete(self, user: entities.User) -> entities.User:
         return await self.__repository.delete(user)
+
+    async def update_is_active_statement(self, user_id: int, status: bool):
+        return await self.update_is_active_statement(user_id, status)
 
     async def change_user_active_status(self, user_id: int, status: bool):
         query = (
@@ -163,6 +178,34 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         return await self.__repository.delete(role)
 
 
+class TelegramTokensDatabaseRepository(TelegramTokensRepository):
+    class Config(PostgresRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                model=TelegramTokenDatabaseModel,
+                entity=TelegramToken,
+                entity_mapper=telegram_token_map_from_db,
+                model_mapper=telegram_token_map_to_db,
+                create_model_mapper=telegram_token_map_create_to_model,
+                not_found_exception=TelegramTokenNotFoundError,
+                already_exists_exception=TelegramTokenAlreadyExistsError,
+            )
+
+    def __init__(self, session: AsyncSession):
+        self.__session = session
+        self.__config = self.Config()
+        self.__repository = PostgresRepository(session, self.__config)
+
+    async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
+        return await self.__repository.create_from_dto(dto)
+
+    async def read(self, token_id: UUID) -> TelegramToken:
+        return await self.__repository.read(token_id)
+
+    async def update(self, token: TelegramToken) -> TelegramToken:
+        return await self.__repository.update(token)
+
+
 class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
     class Config(PostgresRepositoryConfig):
         def __init__(self):
@@ -181,7 +224,9 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
 
-    async def create(self, dto: dtos.CreateActivationTokenDto) -> UserActivationToken:
+    async def create(
+        self, dto: dtos.CreateActivationTokenDto
+    ) -> UserActivationToken:
         return await self.__repository.create_from_dto(dto)
 
     async def read(self, token_id: UUID) -> UserActivationToken:

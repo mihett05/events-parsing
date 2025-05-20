@@ -1,8 +1,8 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
-from adaptix.conversion import coercer, link_function
-from domain.users.dtos import CreateActivationTokenDto
+from adaptix.conversion import allow_unlinked_optional, coercer, link_function
+from domain.users.dtos import CreateActivationTokenDto, CreateTelegramTokenDto
 from domain.users.entities import (
+    TelegramToken,
     User,
     UserActivationToken,
     UserOrganizationRole,
@@ -11,6 +11,7 @@ from domain.users.entities import (
 
 from ...mappers import postgres_retort
 from .models import (
+    TelegramTokenDatabaseModel,
     UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
@@ -22,6 +23,11 @@ retort = postgres_retort.extend(recipe=[])
 user_settings_from_db_mapper = retort.get_converter(
     UserSettingsDatabaseModel,
     UserSettings,
+)
+
+user_settings_to_db_mapper = retort.get_converter(
+    UserSettings,
+    UserSettingsDatabaseModel,
 )
 
 user_organization_role_map_from_db = retort.get_converter(
@@ -58,9 +64,10 @@ map_to_db = retort.get_converter(
             lambda user: user.salt,
             P[UserDatabaseModel].salt,
         ),
-        link_function(
-            lambda user: user.settings,
-            P[UserDatabaseModel].settings,
+        coercer(
+            UserSettingsDatabaseModel,
+            UserSettings,
+            user_settings_to_db_mapper,
         ),
         link_function(
             lambda user: user.created_at,
@@ -70,6 +77,30 @@ map_to_db = retort.get_converter(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
         ),
+    ],
+)
+
+telegram_token_map_to_db = retort.get_converter(
+    TelegramToken,
+    TelegramTokenDatabaseModel,
+    recipe=[
+        link_function(
+            lambda token: token.created_at,
+            P[TelegramTokenDatabaseModel].created_at,
+        ),
+    ],
+)
+
+telegram_token_map_from_db = retort.get_converter(
+    TelegramTokenDatabaseModel, TelegramToken
+)
+
+telegram_token_map_create_to_model = retort.get_converter(
+    CreateTelegramTokenDto,
+    TelegramTokenDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[TelegramTokenDatabaseModel].created_at),
+        allow_unlinked_optional(P[TelegramTokenDatabaseModel].is_used),
     ],
 )
 

@@ -1,7 +1,10 @@
 from uuid import UUID
 
 from domain.users.entities import User
-from domain.users.repositories import UserActivationTokenRepository, UsersRepository
+from domain.users.repositories import (
+    UserActivationTokenRepository,
+    UsersRepository,
+)
 
 from application.auth.tokens.dtos import TokenPairDto
 from application.auth.usecases import CreateTokenPairUseCase
@@ -34,4 +37,6 @@ class ValidateActivationTokenUseCase:
             await self.__users_repository.update_is_active_statement(
                 token.user.id, True
             )
-            return token.user, await self.__create_token_pair_use_case(token.user)
+            return token.user, await self.__create_token_pair_use_case(
+                token.user
+            )

@@ -15,6 +15,8 @@ class ReadForEventEventUserUseCase:
         self.__repository = repository
         self.__transaction = transaction
 
-    async def __call__(self, dto: ReadEventUsersDto, actor: User) -> list[EventUser]:
+    async def __call__(
+        self, dto: ReadEventUsersDto, actor: User
+    ) -> list[EventUser]:
         async with self.__transaction:
             return await self.__repository.read_for_event(dto)
