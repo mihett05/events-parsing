@@ -107,6 +107,7 @@ class UsersDatabaseRepository(UsersRepository):
 
     async def delete(self, user: entities.User) -> entities.User:
         return await self.__repository.delete(user)
+
     async def update_is_active_statement(self, user_id: int, status: bool):
         return await self.update_is_active_statement(user_id, status)
 

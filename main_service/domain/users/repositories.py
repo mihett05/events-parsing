@@ -59,7 +59,7 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
         self, role: UserOrganizationRole
     ) -> UserOrganizationRole: ...
 
-    #TODO add read_all
+    # TODO add read_all
 
 
 class UserActivationTokenRepository(metaclass=ABCMeta):

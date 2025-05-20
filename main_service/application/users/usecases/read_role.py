@@ -10,4 +10,4 @@ class ReadUserRoleUseCase:
         self, user_id: int, organization_id: int
     ) -> UserOrganizationRole:
         return await self.__repository.read(user_id, organization_id)
-        #return await self.__repository.read(user_id, organization_id)
+        # return await self.__repository.read(user_id, organization_id)

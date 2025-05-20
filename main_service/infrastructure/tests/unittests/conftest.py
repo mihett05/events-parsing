@@ -91,6 +91,7 @@ async def create_user1(
     async def _factory() -> User:
         token1 = await register_usecase(register_user1_dto)
         return token1.user
+
     return _factory
 
 

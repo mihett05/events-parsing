@@ -105,12 +105,12 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
         yield await nested.get(UsersRepository)
 
 
-#@pytest_asyncio.fixture
-#async def create_user1(
+# @pytest_asyncio.fixture
+# async def create_user1(
 #    register_user1_dto: RegisterUserDTO,
 #    register_usecase: RegisterUseCase,
 #    users_repository: UsersRepository,
-#) -> User:
+# ) -> User:
 #    token_1 = await register_usecase(register_user1_dto)
 #    return token_1.user
 

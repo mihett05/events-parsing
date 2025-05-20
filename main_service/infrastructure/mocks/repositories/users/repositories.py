@@ -77,7 +77,7 @@ class UsersMemoryRepository(UsersRepository):
         await self.__repository.clear()
 
     async def update_is_active_statement(self, user_id: int, status: bool):
-        #TODO add method
+        # TODO add method
         pass
 
 
