@@ -16,7 +16,9 @@ class EventsRepository(metaclass=ABCMeta):
     async def read(self, event_id: int) -> entities.Event: ...
 
     @abstractmethod
-    async def read_all(self, dto: dtos.ReadAllEventsDto) -> list[entities.Event]: ...
+    async def read_all(
+        self, dto: dtos.ReadAllEventsDto
+    ) -> list[entities.Event]: ...
 
     @abstractmethod
     async def read_for_feed(
@@ -42,7 +44,9 @@ class EventsRepository(metaclass=ABCMeta):
 
 class EventUsersRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, event_user: entities.EventUser) -> entities.EventUser: ...
+    async def create(
+        self, event_user: entities.EventUser
+    ) -> entities.EventUser: ...
 
     @abstractmethod
     async def read_for_user(
@@ -55,4 +59,6 @@ class EventUsersRepository(metaclass=ABCMeta):
     ) -> list[entities.EventUser]: ...
 
     @abstractmethod
-    async def delete(self, event_user: entities.EventUser) -> entities.EventUser: ...
+    async def delete(
+        self, event_user: entities.EventUser
+    ) -> entities.EventUser: ...

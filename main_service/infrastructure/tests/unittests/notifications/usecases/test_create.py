@@ -1,5 +1,8 @@
 import pytest
-from application.notifications.usecases import CreateNotificationUseCase, DeleteNotificationUseCase
+from application.notifications.usecases import (
+    CreateNotificationUseCase,
+    DeleteNotificationUseCase,
+)
 from domain.notifications.dtos import CreateNotificationDto
 
 

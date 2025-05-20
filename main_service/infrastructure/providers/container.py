@@ -7,6 +7,7 @@ from .database import DatabaseProvider
 from .gateways import GatewaysProvider
 from .permissions import PermissionProvider
 from .repositories import RepositoriesProvider
+from .telegram_bot import BotProvider
 from .usecases import UseCasesProvider
 
 
@@ -16,6 +17,7 @@ def get_container_infrastructure() -> list[Provider]:
         GatewaysProvider(),
         DatabaseProvider(),
         RepositoriesProvider(),
+        BotProvider(),
     ]
 
 

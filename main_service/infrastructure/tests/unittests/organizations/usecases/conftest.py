@@ -38,8 +38,8 @@ async def delete_organization_usecase(container: AsyncContainer):
     async with container() as nested:
         yield await nested.get(usecases.DeleteOrganizationUseCase)
 
+
 @pytest_asyncio.fixture
 async def create_organization_token_usecase(container: AsyncContainer):
     async with container() as nested:
         yield await nested.get(usecases.CreateOrganizationTokenUseCase)
-

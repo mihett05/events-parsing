@@ -18,7 +18,6 @@ async def create_mail_dto() -> CreateMailDto:
         sender="example@example.com",
         raw_content="Example Contend".encode("utf-8"),
         received_date=datetime.now().date(),
-
     )
 
 
@@ -59,4 +58,3 @@ async def prepare(
     if pytestconfig.getoption("--integration", default=False):
         return
     await mails_repository.clear()  # noqa
-

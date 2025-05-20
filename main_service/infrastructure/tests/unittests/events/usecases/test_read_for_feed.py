@@ -8,7 +8,7 @@ from domain.events.entities import Event
 async def test_read_all_success(
     read_feed_events_usecase: ReadForFeedEventsUseCase,
     read_feed_events_dto: ReadAllEventsFeedDto,
-    create_event
+    create_event,
 ):
     create_event = await create_event()
 

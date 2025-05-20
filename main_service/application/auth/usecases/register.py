@@ -4,7 +4,9 @@ from domain.notifications.entities import Notification
 from domain.users.dtos import CreateActivationTokenDto
 from domain.users.entities import User, UserActivationToken
 from infrastructure.config import Config
-from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
+from infrastructure.gateways.notifications.gateways import (
+    NotificationEmailGateway,
+)
 
 from application.users.usecases import CreateUserUseCase
 from application.users.usecases.create_user_activation_token import (
@@ -41,7 +43,9 @@ class RegisterUseCase:
         )
 
     async def __call__(self, dto: RegisterUserDTO) -> UserActivationToken:
-        password_dto = self.security_gateway.create_hashed_password(dto.password)
+        password_dto = self.security_gateway.create_hashed_password(
+            dto.password
+        )
         user = User(
             email=dto.email,
             fullname=dto.fullname,

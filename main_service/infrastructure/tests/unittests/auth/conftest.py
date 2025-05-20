@@ -82,6 +82,7 @@ async def user_2_activation_token() -> UserActivationToken:
 async def authenticate_user2_dto() -> AuthenticateUserDto:
     return AuthenticateUserDto(email="tset@tset.moc", password="87654321")
 
+
 @pytest_asyncio.fixture
 async def user2_token_info_dto() -> TokenInfoDto:
     date = datetime.now().date()
@@ -90,7 +91,6 @@ async def user2_token_info_dto() -> TokenInfoDto:
         expires_in=datetime.combine(date, datetime.min.time())
         + timedelta(days=1),
     )
-
 
 
 @pytest_asyncio.fixture
@@ -132,6 +132,7 @@ async def prepare(
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def teardown(

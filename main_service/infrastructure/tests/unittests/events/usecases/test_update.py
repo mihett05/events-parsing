@@ -12,7 +12,7 @@ async def test_update_success(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
     create_event,
-    create_user1
+    create_user1,
 ):
     create_event = await create_event()
     user = await create_user1()
@@ -31,7 +31,7 @@ async def test_update_success(
 async def test_update_not_found(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_user1
+    create_user1,
 ):
     update_event_dto.event_id = 42
     user = await create_user1()

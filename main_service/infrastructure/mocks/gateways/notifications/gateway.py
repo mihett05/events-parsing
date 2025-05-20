@@ -4,7 +4,9 @@ from domain.attachments.dtos import ParsedAttachmentInfoDto
 from domain.notifications.entities import Notification
 from domain.users.entities import User
 
-from infrastructure.gateways.notifications.gateways import NotificationEmailGateway
+from infrastructure.gateways.notifications.gateways import (
+    NotificationEmailGateway,
+)
 
 
 class NotificationEmailMemoryGateway(NotificationEmailGateway):

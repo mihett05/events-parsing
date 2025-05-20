@@ -12,7 +12,7 @@ async def test_delete(
     delete_organization_usecase: DeleteOrganizationUseCase,
     read_organization_usecase: ReadOrganizationUseCase,
     create_organization: Organization,
-create_user1
+    create_user1,
 ):
     create_user1 = await create_user1()
 

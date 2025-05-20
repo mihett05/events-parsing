@@ -1,14 +1,13 @@
 from adaptix import P
-from adaptix.conversion import coercer, link_function
 from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
-from adaptix.conversion import link_function
+from adaptix.conversion import coercer, link_function
 from application.events.dtos import UpdateEventDto
+from domain.attachments.entities import Attachment
 from domain.events.dtos import (
     CreateEventDto,
     ReadAllEventsDto,
     ReadAllEventsFeedDto,
 )
-from domain.attachments.entities import Attachment
 from domain.events.entities import Event, EventUser
 from domain.users.entities import User
 
@@ -32,14 +31,14 @@ from .models import EventModel, EventUserModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-map_create_dto_from_pydantic = retort.get_converter(CreateEventModelDto, CreateEventDto)
+map_create_dto_from_pydantic = retort.get_converter(
+    CreateEventModelDto, CreateEventDto
+)
 map_read_all_dto_from_pydantic = retort.get_converter(
     ReadAllEventsFeedModelDto,
     ReadAllEventsFeedDto,
-
-
 )
-'''
+"""
 map_read_all_dto_calendar_from_pydantic = retort.get_converter(
     ReadAllEventsCalendarModelDto,
     ReadAllEventsDto,
@@ -48,7 +47,7 @@ map_read_all_dto_calendar_from_pydantic = retort.get_converter(
         allow_unlinked_optional(P[ReadAllEventsDto].page_size),
         allow_unlinked_optional(P[ReadAllEventsDto].for_update),
     ],
-)'''
+)"""
 
 event_user_map_to_pydantic = retort.get_converter(EventUser, EventUserModel)
 
