@@ -8,7 +8,7 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
-
+    UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -18,23 +18,19 @@ from infrastructure.database.repositories import (
     EventsDatabaseRepository,
     MailsDatabaseRepository,
     NotificationsDatabaseRepository,
+    UserActivationTokenDatabaseRepository,
+    UserOrganizationRolesDatabaseRepository,
+    UsersDatabaseRepository,
 )
 from infrastructure.database.repositories.events import EventsUserDatabaseRepository
 from infrastructure.database.repositories.organizations import (
     OrganizationsDatabaseRepository,
     OrganizationTokensDatabaseRepository,
 )
-from infrastructure.database.repositories.users import (
-    UserOrganizationRolesDatabaseRepository,
-    UsersDatabaseRepository,
-)
 
 
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
-
-
-
     attachments_repository = provide(
         source=AttachmentsDatabaseRepository, provides=AttachmentsRepository
     )
@@ -59,4 +55,8 @@ class RepositoriesProvider(Provider):
     user_organization_roles_repository = provide(
         source=UserOrganizationRolesDatabaseRepository,
         provides=UserOrganizationRolesRepository,
+    )
+    activation_token_repository = provide(
+        source=UserActivationTokenDatabaseRepository,
+        provides=UserActivationTokenRepository,
     )

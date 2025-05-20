@@ -2,6 +2,7 @@ from datetime import date
 from typing import Annotated
 
 import application.events.usecases as use_cases
+from application.auth.usecases import AuthorizeUseCase
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import (
@@ -12,7 +13,7 @@ from domain.events.dtos import (
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers

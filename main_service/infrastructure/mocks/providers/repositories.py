@@ -9,9 +9,10 @@ from domain.organizations.repositories import OrganizationsRepository, Organizat
 from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
 from domain.organizations.repositories import (
     OrganizationsRepository,
-    OrganizationTokensRepository,
 )
 from domain.users.repositories import (
+    UserActivationTokenRepository,
+    UserOrganizationRolesRepository,
     UsersRepository,
 )
 from infrastructure.gateways.notifications.factory import NotificationGatewayFactory
@@ -27,17 +28,18 @@ from infrastructure.mocks.repositories.notifications import (
 )
 from infrastructure.mocks.repositories.ogranizations.repositories import (
     OrganizationsMemoryRepository,
-    OrganizationTokensMemoryRepository,
 )
 from infrastructure.mocks.repositories.users import (
+    UserOrganizationRolesMemoryRepository,
     UsersMemoryRepository,
 )
-from infrastructure.mocks.repositories.users.repositories import UserRolesMemoryRepository
-
+from infrastructure.mocks.repositories.users.repositories import (
+    UserActivationTokenMemoryRepository,
+    UserOrganizationsRolesMemoryRepository,
+)
 
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
-
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
     event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
@@ -59,5 +61,13 @@ class RepositoriesProvider(Provider):
     organization_tokens = provide(
         source=OrganizationTokensMemoryRepository,
         provides=OrganizationTokensRepository,
+    )
+    roles = provide(
+        source=UserOrganizationRolesMemoryRepository,
+        provides=UserOrganizationRolesRepository,
+    )
+    activation_token_repository = provide(
+        source=UserActivationTokenMemoryRepository,
+        provides=UserActivationTokenRepository,
     )
 

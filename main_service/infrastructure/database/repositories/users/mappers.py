@@ -1,9 +1,17 @@
 from adaptix import P
+from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
 from adaptix.conversion import coercer, link_function
-from domain.users.entities import User, UserOrganizationRole, UserSettings
+from domain.users.dtos import CreateActivationTokenDto
+from domain.users.entities import (
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+    UserSettings,
+)
 
 from ...mappers import postgres_retort
 from .models import (
+    UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
@@ -62,5 +70,27 @@ map_to_db = retort.get_converter(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
         ),
+    ],
+)
+
+user_activation_token_map_from_db = retort.get_converter(
+    UserActivationTokenDatabaseModel,
+    UserActivationToken,
+    recipe=[coercer(UserDatabaseModel, User, map_from_db)],
+)
+
+user_activation_token_map_to_db = retort.get_converter(
+    UserActivationToken,
+    UserActivationTokenDatabaseModel,
+    recipe=[coercer(User, UserDatabaseModel, map_to_db)],
+)
+
+create_user_activation_token_map = retort.get_converter(
+    CreateActivationTokenDto,
+    UserActivationTokenDatabaseModel,
+    recipe=[
+        coercer(User, UserDatabaseModel, map_to_db),
+        allow_unlinked_optional(P[UserActivationTokenDatabaseModel].id),
+        allow_unlinked_optional(P[UserActivationTokenDatabaseModel].is_used),
     ],
 )

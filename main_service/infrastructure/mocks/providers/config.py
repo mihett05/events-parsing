@@ -1,5 +1,6 @@
 from application.auth.tokens.config import TokenConfig
 from dishka import Provider, Scope, provide
+from domain.users.entities import User
 
 from domain.users.entities import User
 from infrastructure.config import Config, get_mock_config
