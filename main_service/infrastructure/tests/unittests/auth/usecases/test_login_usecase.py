@@ -19,4 +19,4 @@ async def test_login_success(
     test_user, _ = await login_usecase(authenticate_user1_dto)
     attrs = ("fullname", "email", "id")
     for attr in attrs:
-        assert getattr(test_user, attr) == getattr(create_user1.user, attr)
+        assert getattr(test_user, attr) == getattr(create_user1, attr)

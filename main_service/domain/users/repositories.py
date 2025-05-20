@@ -47,6 +47,8 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     @abstractmethod
     async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
 
+    #TODO add read_all
+
 
 class UserActivationTokenRepository(metaclass=ABCMeta):
     @abstractmethod

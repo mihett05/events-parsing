@@ -22,10 +22,6 @@ from infrastructure.mocks.gateways.notifications.gateway import (
 )
 
 
-class NotificationEmailMemoryGateway:
-    pass
-
-
 class GatewaysProvider(Provider):
     scope = Scope.APP
 

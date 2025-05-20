@@ -105,14 +105,14 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
         yield await nested.get(UsersRepository)
 
 
-@pytest_asyncio.fixture
-async def create_user1(
-    register_user1_dto: RegisterUserDTO,
-    register_usecase: RegisterUseCase,
-    users_repository: UsersRepository,
-) -> UserActivationToken:
-    token_1 = await register_usecase(register_user1_dto)
-    return token_1
+#@pytest_asyncio.fixture
+#async def create_user1(
+#    register_user1_dto: RegisterUserDTO,
+#    register_usecase: RegisterUseCase,
+#    users_repository: UsersRepository,
+#) -> User:
+#    token_1 = await register_usecase(register_user1_dto)
+#    return token_1.user
 
 
 @pytest_asyncio.fixture
@@ -120,9 +120,9 @@ async def create_user2(
     register_user2_dto: RegisterUserDTO,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
-) -> UserActivationToken:
+) -> User:
     token_2 = await register_usecase(register_user2_dto)
-    return token_2
+    return token_2.user
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
