@@ -3,7 +3,13 @@ from uuid import UUID
 
 from domain.users import dtos as dtos
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from domain.users.enums import RoleEnum
+from domain.users.exceptions import (
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    UserRoleAlreadyExistsError,
+    UserRoleNotFoundError,
+)
 from domain.users.repositories import (
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
@@ -55,18 +61,14 @@ class UsersMemoryRepository(UsersRepository):
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
 
-    async def update_is_active_statement(self, user: User, status: bool):
-        user.is_active = status
-        await self.__repository.update(user)
-
 
 class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(
                 entity=UserOrganizationRole,
-                not_found_exception=UserNotFoundError,
-                already_exists_exception=UserAlreadyExistsError,
+                not_found_exception=UserRoleNotFoundError,
+                already_exists_exception=UserRoleAlreadyExistsError,
             )
 
     def __init__(self):
@@ -80,6 +82,10 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
 
     async def update(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(user_role)
+      
+    async def update_is_active_statement(self, user: User, status: bool):
+        user.is_active = status
+        await self.__repository.update(user)
 
     async def delete(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.delete(user_role)

@@ -5,7 +5,6 @@ from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import (
     OrganizationsRepository,
-    OrganizationTokensRepository,
 )
 from domain.users.repositories import (
     UserActivationTokenRepository,
@@ -23,9 +22,9 @@ from infrastructure.mocks.repositories.notifications import (
 )
 from infrastructure.mocks.repositories.ogranizations.repositories import (
     OrganizationsMemoryRepository,
-    OrganizationTokensMemoryRepository,
 )
 from infrastructure.mocks.repositories.users import (
+    UserOrganizationRolesMemoryRepository,
     UsersMemoryRepository,
 )
 from infrastructure.mocks.repositories.users.repositories import (
@@ -51,9 +50,9 @@ class RepositoriesProvider(Provider):
         source=AttachmentsMemoryRepository,
         provides=AttachmentsRepository,
     )
-    organization_tokens = provide(
-        source=OrganizationTokensMemoryRepository,
-        provides=OrganizationTokensRepository,
+    roles = provide(
+        source=UserOrganizationRolesMemoryRepository,
+        provides=UserOrganizationRolesRepository,
     )
     user_organization_roles = provide(
         source=UserOrganizationsRolesMemoryRepository,

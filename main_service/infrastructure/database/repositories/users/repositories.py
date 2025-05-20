@@ -1,10 +1,14 @@
 from uuid import UUID
 
 import domain.users.dtos as dtos
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
-from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from domain.users.exceptions import (
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    UserRoleAlreadyExistsError,
+    UserRoleNotFoundError,
+)
 from domain.users.repositories import (
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
@@ -112,15 +116,26 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
                 entity_mapper=user_organization_role_map_from_db,
                 model_mapper=user_organization_role_map_to_db,
                 create_model_mapper=None,
-                not_found_exception=EntityNotFoundError,
-                already_exists_exception=EntityAlreadyExistsError,
+                not_found_exception=UserRoleNotFoundError,
+                already_exists_exception=UserRoleAlreadyExistsError,
             )
 
         def get_select_all_query(self, user_id: int) -> Select:
             return select(self.model).where(self.model.user_id == user_id)
 
-        def extract_id_from_model(self, model: UserOrganizationRoleDatabaseModel):
-            return model.organization_id, model.user_id
+        def extract_id_from_entity(self, entity: UserOrganizationRole):
+            return {
+                "organization_id": entity.organization_id,
+                "user_id": entity.user_id,
+            }
+
+        def extract_id_from_model(
+            self, model: UserOrganizationRoleDatabaseModel
+        ):
+            return {
+                "organization_id": model.organization_id,
+                "user_id": model.user_id,
+            }
 
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
@@ -130,7 +145,14 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create_from_entity(role)
 
-    async def read(self, user_id: int) -> list[UserOrganizationRole]:
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> UserOrganizationRole:
+        return await self.__repository.read(
+            {"user_id": user_id, "organization_id": organization_id}
+        )
+
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read_all(user_id)
 
     async def update(self, role: UserOrganizationRole) -> UserOrganizationRole:
