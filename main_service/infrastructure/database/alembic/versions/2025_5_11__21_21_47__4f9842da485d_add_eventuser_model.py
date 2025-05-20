@@ -38,9 +38,7 @@ def upgrade() -> None:
             name=op.f("fk_event_users_user_id_users"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint(
-            "event_id", "user_id", name=op.f("pk_event_users")
-        ),
+        sa.PrimaryKeyConstraint("event_id", "user_id", name=op.f("pk_event_users")),
     )
     # ### end Alembic commands ###
 

@@ -52,9 +52,7 @@ async def create_mail(
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config, mails_repository: MailsRepository
-):
+async def prepare(pytestconfig: pytest.Config, mails_repository: MailsRepository):
     if pytestconfig.getoption("--integration", default=False):
         return
     await mails_repository.clear()  # noqa

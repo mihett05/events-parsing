@@ -27,9 +27,7 @@ class DeleteOrganizationUseCase:
 
     async def __call__(self, organization_id: int, actor: User) -> Organization:
         async with self.__transaction:
-            organization = await self.__read_organization_use_case(
-                organization_id
-            )
+            organization = await self.__read_organization_use_case(organization_id)
             roles = await self.__read_roles_use_case(actor.id)
             self.__builder.providers(
                 OrganizationPermissionProvider(roles, organization_id)

@@ -31,9 +31,7 @@ from .models import EventModel, EventUserModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-map_create_dto_from_pydantic = retort.get_converter(
-    CreateEventModelDto, CreateEventDto
-)
+map_create_dto_from_pydantic = retort.get_converter(CreateEventModelDto, CreateEventDto)
 map_read_all_dto_from_pydantic = retort.get_converter(
     ReadAllEventsFeedModelDto,
     ReadAllEventsFeedDto,

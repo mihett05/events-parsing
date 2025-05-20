@@ -87,9 +87,7 @@ async def create_attachment(
     create_attachment_content: BinaryIO,
 ) -> Callable[..., Coroutine[Any, Any, Attachment]]:
     async def _factory():
-        attachment = await attachments_repository.create(
-            create_attachment_dtos[0]
-        )
+        attachment = await attachments_repository.create(create_attachment_dtos[0])
         await files_gateway.create(attachment, create_attachment_content)
         return attachment
 

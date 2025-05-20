@@ -28,9 +28,7 @@ class CreateOrganizationTokenUseCase:
     async def __call__(self, actor: User) -> OrganizationToken:
         async with self.__transaction:
             roles = await self.__read_roles_use_case(actor.id)
-            self.__builder.providers(
-                OrganizationLinkPermissionProvider(roles)
-            ).add(PermissionsEnum.CAN_CREATE_ORGANIZATION_LINK).apply()
-            return await self.__repository.create(
-                CreateOrganizationTokenDto(actor.id)
-            )
+            self.__builder.providers(OrganizationLinkPermissionProvider(roles)).add(
+                PermissionsEnum.CAN_CREATE_ORGANIZATION_LINK
+            ).apply()
+            return await self.__repository.create(CreateOrganizationTokenDto(actor.id))

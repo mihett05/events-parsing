@@ -15,9 +15,7 @@ Entity = TypeVar("Entity")
 class MockRepositoryConfig(metaclass=ABCMeta):
     entity: type[Entity]
     not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
-    already_exists_exception: type[EntityAlreadyExistsError] = (
-        EntityAlreadyExistsError
-    )
+    already_exists_exception: type[EntityAlreadyExistsError] = EntityAlreadyExistsError
 
     def extract_id(self, entity: Entity) -> Id:
         return entity.id

@@ -24,9 +24,7 @@ class UserRolesPermissionProvider(PermissionProvider):
         RoleEnum.PUBLIC: {PermissionsEnum.CAN_READ_ROLE},
     }
 
-    def __init__(
-        self, organization_id: int, user_roles: list[UserOrganizationRole]
-    ):
+    def __init__(self, organization_id: int, user_roles: list[UserOrganizationRole]):
         self.permissions = self.__get_perms(organization_id, user_roles)
 
     def __get_perms(

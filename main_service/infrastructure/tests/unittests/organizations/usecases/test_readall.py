@@ -10,9 +10,7 @@ async def test_readall(
     readall_organizations_dto: ReadOrganizationsDto,
     create_organization: Organization,
 ):
-    organizations = await readall_organization_usecase(
-        readall_organizations_dto
-    )
+    organizations = await readall_organization_usecase(readall_organizations_dto)
     assert len(organizations) == 1
     assert organizations[0] == create_organization
 
@@ -23,8 +21,6 @@ async def test_read_all_empty(
     readall_organizations_dto: ReadOrganizationsDto,
 ):
     readall_organizations_dto.page = 100
-    organizations = await readall_organization_usecase(
-        readall_organizations_dto
-    )
+    organizations = await readall_organization_usecase(readall_organizations_dto)
 
     assert len(organizations) == 0

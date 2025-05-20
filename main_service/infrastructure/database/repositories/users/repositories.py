@@ -1,7 +1,7 @@
 from uuid import UUID
 
 import domain.users.dtos as dtos
-from domain.exceptions import EntityNotFoundError, EntityAlreadyExistsError
+from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import (
     TelegramToken,
@@ -145,9 +145,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
                 "user_id": entity.user_id,
             }
 
-        def extract_id_from_model(
-            self, model: UserOrganizationRoleDatabaseModel
-        ):
+        def extract_id_from_model(self, model: UserOrganizationRoleDatabaseModel):
             return {
                 "organization_id": model.organization_id,
                 "user_id": model.user_id,
@@ -161,9 +159,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create_from_entity(role)
 
-    async def read(
-        self, user_id: int, organization_id: int
-    ) -> UserOrganizationRole:
+    async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole:
         return await self.__repository.read(
             {"user_id": user_id, "organization_id": organization_id}
         )
@@ -224,9 +220,7 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
 
-    async def create(
-        self, dto: dtos.CreateActivationTokenDto
-    ) -> UserActivationToken:
+    async def create(self, dto: dtos.CreateActivationTokenDto) -> UserActivationToken:
         return await self.__repository.create_from_dto(dto)
 
     async def read(self, token_id: UUID) -> UserActivationToken:

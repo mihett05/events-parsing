@@ -28,8 +28,7 @@ async def create_event_dto() -> CreateEventDto:
         location=None,
         description="Example Description",
         organization_id=None,
-        end_date=datetime.combine(date, datetime.min.time())
-        + timedelta(days=1),
+        end_date=datetime.combine(date, datetime.min.time()) + timedelta(days=1),
         start_date=datetime.combine(date, datetime.min.time()),
         end_registration=datetime.combine(date, datetime.min.time())
         - timedelta(days=1),
@@ -99,18 +98,14 @@ async def create_event(
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config, events_repository: EventsRepository
-):
+async def prepare(pytestconfig: pytest.Config, events_repository: EventsRepository):
     if pytestconfig.getoption("--integration", default=False):
         return
     await events_repository.clear()  # noqa
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def teardown(
-    pytestconfig: pytest.Config, events_repository: EventsRepository
-):
+async def teardown(pytestconfig: pytest.Config, events_repository: EventsRepository):
     yield
     if pytestconfig.getoption("--integration", default=False):
         return

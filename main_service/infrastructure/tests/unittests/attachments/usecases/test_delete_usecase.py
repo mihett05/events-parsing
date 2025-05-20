@@ -18,14 +18,10 @@ async def test_delete_success(
 ):
     user = await create_user1()
     create_attachment = await create_attachment()
-    deleted_attachment = await delete_attachment_usecase(
-        create_attachment.id, user
-    )
+    deleted_attachment = await delete_attachment_usecase(create_attachment.id, user)
     attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
     for attr in attrs:
-        assert getattr(deleted_attachment, attr) == getattr(
-            create_attachment, attr
-        )
+        assert getattr(deleted_attachment, attr) == getattr(create_attachment, attr)
 
 
 @pytest.mark.asyncio
@@ -38,9 +34,7 @@ async def test_delete_success(
 ):
     user = await create_user1()
     create_attachment = await create_attachment()
-    deleted_attachment = await delete_attachment_usecase(
-        create_attachment.id, user
-    )
+    deleted_attachment = await delete_attachment_usecase(create_attachment.id, user)
     assert deleted_attachment == create_attachment
 
     with pytest.raises(AttachmentNotFoundError):

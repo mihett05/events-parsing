@@ -38,9 +38,7 @@ async def container(pytestconfig: pytest.Config):
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def setup_db_tables(
-    pytestconfig: pytest.Config, container: AsyncContainer
-):
+async def setup_db_tables(pytestconfig: pytest.Config, container: AsyncContainer):
     if not pytestconfig.getoption("--integration", default=False):
         return
     engine = await container.get(AsyncEngine)

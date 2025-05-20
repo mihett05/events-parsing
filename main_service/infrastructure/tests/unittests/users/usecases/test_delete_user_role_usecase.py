@@ -20,9 +20,7 @@ async def delete_user_success(
     role = await read_user_role_usecase(
         delete_user_role_dto.user_id, delete_user_role_dto.organization_id
     )
-    deleted_role = await delete_user_role_usecase(
-        delete_user_role_dto, get_actor
-    )
+    deleted_role = await delete_user_role_usecase(delete_user_role_dto, get_actor)
     assert deleted_role == role
 
     with pytest.raises(UserRoleNotFoundError):

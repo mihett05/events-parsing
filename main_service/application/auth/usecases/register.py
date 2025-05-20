@@ -43,9 +43,7 @@ class RegisterUseCase:
         )
 
     async def __call__(self, dto: RegisterUserDTO) -> UserActivationToken:
-        password_dto = self.security_gateway.create_hashed_password(
-            dto.password
-        )
+        password_dto = self.security_gateway.create_hashed_password(dto.password)
         user = User(
             email=dto.email,
             fullname=dto.fullname,

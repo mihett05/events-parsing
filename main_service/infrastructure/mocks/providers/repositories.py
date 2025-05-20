@@ -45,9 +45,7 @@ class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
-    event_users = provide(
-        source=EventUsersRepository, provides=EventUsersRepository
-    )
+    event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
     users = provide(source=UsersMemoryRepository, provides=UsersRepository)
     notifications = provide(
         source=NotificationsMemoryRepository, provides=NotificationsRepository

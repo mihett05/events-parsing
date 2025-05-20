@@ -94,9 +94,7 @@ class TelegramTokensMemoryRepository(TelegramTokensRepository):
         self.__repository = MockRepository(self.Config())
 
     async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
-        token = TelegramToken(
-            id=dto.id, user_id=dto.user_id, created_at=datetime.now()
-        )
+        token = TelegramToken(id=dto.id, user_id=dto.user_id, created_at=datetime.now())
         return await self.__repository.create(token)
 
     async def read(self, token_id: UUID) -> TelegramToken:
@@ -130,18 +128,14 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     async def read(self, user_id: int) -> list[UserOrganizationRole]:
         return await self.__repository.read(user_id)
 
-    async def update(
-        self, user_role: UserOrganizationRole
-    ) -> UserOrganizationRole:
+    async def update(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(user_role)
 
     async def update_is_active_statement(self, user: User, status: bool):
         user.is_active = status
         await self.__repository.update(user)
 
-    async def delete(
-        self, user_role: UserOrganizationRole
-    ) -> UserOrganizationRole:
+    async def delete(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.delete(user_role)
 
     async def read_all(self, *args) -> list[UserOrganizationRole]:

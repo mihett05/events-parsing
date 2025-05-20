@@ -29,9 +29,7 @@ class DeduplicateEventUseCase:
         event: Event | None = await self.__event_find_use_case(dto)
 
         if event is None:
-            event: Event = await self.__event_create_use_case(
-                dto, self.__super_user
-            )
+            event: Event = await self.__event_create_use_case(dto, self.__super_user)
 
         if mail_id is not None:
             mail = await self.__mail_update_use_case(

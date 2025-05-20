@@ -40,9 +40,7 @@ class GatewaysProvider(Provider):
         return Bot(token=config.telegram_bot_token)
 
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
-    security_gateway = provide(
-        source=BcryptSecurityGateway, provides=SecurityGateway
-    )
+    security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
     # TODO сделать гетевеи с заглушками
     notification_email_gateway = provide(
         source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway

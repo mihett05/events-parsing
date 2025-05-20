@@ -27,9 +27,7 @@ class CreateNotificationUseCase:
             await self.__create(event, send_date)
         )
 
-    async def __create(
-        self, event: Event, send_date: date
-    ) -> list[Notification]:
+    async def __create(self, event: Event, send_date: date) -> list[Notification]:
         return [
             Notification(
                 text=self.__templates[NotificationFormatEnum.RAW_TEXT].format(
