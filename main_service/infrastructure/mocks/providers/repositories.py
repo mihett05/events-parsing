@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide
 from domain.attachments.repositories import AttachmentsRepository
-from domain.events.repositories import EventsRepository
+from domain.events.repositories import EventsRepository, EventUsersRepository
 from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import (
@@ -8,6 +8,8 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
+    UserActivationTokenRepository,
+    UserOrganizationRolesRepository,
     UsersRepository,
 )
 
@@ -26,6 +28,10 @@ from infrastructure.mocks.repositories.ogranizations.repositories import (
 from infrastructure.mocks.repositories.users import (
     UsersMemoryRepository,
 )
+from infrastructure.mocks.repositories.users.repositories import (
+    UserActivationTokenMemoryRepository,
+    UserOrganizationsRolesMemoryRepository,
+)
 
 
 class RepositoriesProvider(Provider):
@@ -33,6 +39,7 @@ class RepositoriesProvider(Provider):
 
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
+    event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
     users = provide(source=UsersMemoryRepository, provides=UsersRepository)
     notifications = provide(
         source=NotificationsMemoryRepository, provides=NotificationsRepository
@@ -47,4 +54,12 @@ class RepositoriesProvider(Provider):
     organization_tokens = provide(
         source=OrganizationTokensMemoryRepository,
         provides=OrganizationTokensRepository,
+    )
+    user_organization_roles = provide(
+        source=UserOrganizationsRolesMemoryRepository,
+        provides=UserOrganizationRolesRepository,
+    )
+    activation_token_repository = provide(
+        source=UserActivationTokenMemoryRepository,
+        provides=UserActivationTokenRepository,
     )
