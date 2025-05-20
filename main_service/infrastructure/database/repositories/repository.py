@@ -1,3 +1,4 @@
+import traceback
 from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
@@ -70,6 +71,7 @@ class PostgresRepository(metaclass=ABCMeta):
             )
             return await self.get_entities_from_query(query)
         except IntegrityError:
+            traceback.print_exc()
             raise self.config.already_exists_exception()
 
     async def create(self, model: ModelType) -> Entity:
@@ -80,6 +82,7 @@ class PostgresRepository(metaclass=ABCMeta):
             await self.session.merge(model)
             return await self.read(self.config.extract_id_from_model(model))
         except IntegrityError:
+            traceback.print_exc()
             raise self.config.already_exists_exception()
 
     async def get_scalar_or_none(self, query: Select) -> ModelType | None:

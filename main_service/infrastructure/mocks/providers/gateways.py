@@ -4,7 +4,7 @@ from application.auth.tokens.gateways import SecurityGateway, TokensGateway
 from application.events.coordinator.gateway import CoordinatorGateway
 from application.notifications.factory import NotificationGatewayAbstractFactory
 from dishka import Provider, Scope, provide
-
+from application.notifications.factory import NotificationGatewayAbstractFactory
 from infrastructure.auth.bcrypt import BcryptSecurityGateway
 from infrastructure.auth.jwt import JwtTokensGateway
 from infrastructure.config import Config
@@ -22,6 +22,10 @@ from infrastructure.mocks.gateways.notifications.gateway import (
 )
 
 
+class NotificationEmailMemoryGateway:
+    pass
+
+
 class GatewaysProvider(Provider):
     scope = Scope.APP
 
@@ -32,6 +36,19 @@ class GatewaysProvider(Provider):
     coordinator_publisher = provide(
         source=MemoryCoordinatorGateway, provides=CoordinatorGateway
     )
+    notification_email_gateway = provide(
+        source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway
+    )
+    notification_gateway_factory = provide(
+        source=NotificationGatewayFactory,
+        provides=NotificationGatewayAbstractFactory,
+    )
+    telegram_notification_gateway = provide(NotificationTelegramGateway)
+
+    @provide
+    def telegram_bot(self, config: Config) -> Bot:
+        return Bot(token=config.telegram_bot_token)
+
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
     security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
     # TODO сделать гетевеи с заглушками

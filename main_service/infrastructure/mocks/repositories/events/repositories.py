@@ -97,3 +97,6 @@ class EventsMemoryRepository(EventsRepository):
 
     async def delete(self, event: Event) -> Event:
         return await self.__repository.delete(event)
+
+    async def clear(self):
+        await self.__repository.clear()

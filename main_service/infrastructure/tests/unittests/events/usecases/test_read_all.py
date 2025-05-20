@@ -8,8 +8,10 @@ from domain.events.entities import Event
 async def test_read_all_success(
     read_all_event_usecase: ReadAllEventUseCase,
     read_all_events_dto: ReadAllEventsDto,
-    create_event: Event,
+    create_event
 ):
+    create_event = await create_event()
+
     events = await read_all_event_usecase(read_all_events_dto)
 
     assert len(events) == 1

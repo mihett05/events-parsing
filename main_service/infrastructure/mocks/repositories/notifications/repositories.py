@@ -68,3 +68,6 @@ class NotificationsMemoryRepository(NotificationsRepository):
 
     async def delete(self, notification: Notification) -> Notification:
         return await self.__repository.delete(notification)
+
+    async def clear(self):
+        await self.__repository.clear()

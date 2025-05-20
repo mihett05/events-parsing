@@ -1,8 +1,12 @@
 from dishka import Provider, Scope, provide
+
+from application.notifications.factory import NotificationGatewayAbstractFactory
 from domain.attachments.repositories import AttachmentsRepository
 from domain.events.repositories import EventsRepository, EventUsersRepository
 from domain.mails.repositories import MailsRepository
 from domain.notifications.repositories import NotificationsRepository
+from domain.organizations.repositories import OrganizationsRepository, OrganizationTokensRepository
+from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
 from domain.organizations.repositories import (
     OrganizationsRepository,
 )
@@ -11,6 +15,8 @@ from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
 )
+from infrastructure.gateways.notifications.factory import NotificationGatewayFactory
+from infrastructure.gateways.notifications.gateways import NotificationTelegramGateway
 
 from infrastructure.mocks.repositories.attachments import (
     AttachmentsMemoryRepository,
@@ -32,10 +38,8 @@ from infrastructure.mocks.repositories.users.repositories import (
     UserOrganizationsRolesMemoryRepository,
 )
 
-
 class RepositoriesProvider(Provider):
-    scope = Scope.APP
-
+    scope = Scope.REQUEST
     mails = provide(source=MailsMemoryRepository, provides=MailsRepository)
     events = provide(source=EventsMemoryRepository, provides=EventsRepository)
     event_users = provide(source=EventUsersRepository, provides=EventUsersRepository)
@@ -50,15 +54,20 @@ class RepositoriesProvider(Provider):
         source=AttachmentsMemoryRepository,
         provides=AttachmentsRepository,
     )
-    roles = provide(
-        source=UserOrganizationRolesMemoryRepository,
+    user_organization_roles = provide(
+        source=UserRolesMemoryRepository,
         provides=UserOrganizationRolesRepository,
     )
-    user_organization_roles = provide(
-        source=UserOrganizationsRolesMemoryRepository,
+    organization_tokens = provide(
+        source=OrganizationTokensMemoryRepository,
+        provides=OrganizationTokensRepository,
+    )
+    roles = provide(
+        source=UserOrganizationRolesMemoryRepository,
         provides=UserOrganizationRolesRepository,
     )
     activation_token_repository = provide(
         source=UserActivationTokenMemoryRepository,
         provides=UserActivationTokenRepository,
     )
+

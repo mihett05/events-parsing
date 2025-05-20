@@ -2,6 +2,10 @@ from datetime import datetime
 from uuid import UUID
 
 from domain.users import dtos as dtos
+from domain.users import entities as entities
+from domain.users.entities import User, UserOrganizationRole
+from domain.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from domain.users.repositories import UsersRepository, UserOrganizationRolesRepository
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
 from domain.users.enums import RoleEnum
 from domain.users.exceptions import (
@@ -50,7 +54,7 @@ class UsersMemoryRepository(UsersRepository):
 
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[User]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+        return data[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
 
     async def read_by_ids(self, user_ids: list[int]) -> list[User]:
         return [await self.read(user_id) for user_id in user_ids]
@@ -60,6 +64,9 @@ class UsersMemoryRepository(UsersRepository):
 
     async def delete(self, user: User) -> User:
         return await self.__repository.delete(user)
+
+    async def clear(self):
+        await self.__repository.clear()
 
 
 class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
