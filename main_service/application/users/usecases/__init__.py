@@ -12,6 +12,7 @@ from .update import UpdateUserUseCase
 from .update_role import UpdateUserRoleUseCase
 from .validate_token import ValidateActivationTokenUseCase
 
+
 __all__ = [
     "CreateUserUseCase",
     "ReadUserUseCase",

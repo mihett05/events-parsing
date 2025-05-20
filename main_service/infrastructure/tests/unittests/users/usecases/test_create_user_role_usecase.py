@@ -1,5 +1,5 @@
 import pytest
-from application.users.usecases import CreateUserRoleUseCase
+from application.users.usecases import CreateUserRoleUseCase, CreateUserRoleUseCase
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
 

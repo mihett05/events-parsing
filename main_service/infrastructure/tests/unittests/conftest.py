@@ -90,8 +90,8 @@ async def create_user1(
     register_usecase: RegisterUseCase,
 ) -> Callable[..., Coroutine[Any, Any, User]]:
     async def _factory() -> User:
-        user1, _ = await register_usecase(register_user1_dto)
-        return user1
+        token1 = await register_usecase(register_user1_dto)
+        return token1.user
 
     return _factory
 
@@ -115,9 +115,9 @@ async def register_usecase(
 @pytest_asyncio.fixture
 async def create_usecase_usecase(
     container: AsyncContainer,
-) -> user_usecases.CreateUserOrganizationRoleUseCase:
+) -> user_usecases.CreateUserRoleUseCase:
     async with container() as nested:
-        yield await nested.get(user_usecases.CreateUserOrganizationRoleUseCase)
+        yield await nested.get(user_usecases.CreateUserRoleUseCase)
 
 @pytest_asyncio.fixture
 async def create_organization(

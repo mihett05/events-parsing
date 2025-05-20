@@ -3,7 +3,7 @@ from typing import Callable, Coroutine, Any
 import application.auth.usecases
 import pytest
 from application.auth.tokens.gateways import TokensGateway
-from domain.users.entities import UserActivationToken
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
@@ -14,12 +14,12 @@ async def test_create_token_pair_success(
 ):
     create_user1 = await create_user1()
 
-    get_token_pair = await create_token_pair_usecase(create_user1.user)
+    get_token_pair = await create_token_pair_usecase(create_user1)
     access_token_info = await token_gateway.extract_token_info(
         get_token_pair.access_token
     )
     refresh_token_info = await token_gateway.extract_token_info(
         get_token_pair.refresh_token
     )
-    assert access_token_info.subject == create_user1.user.email
-    assert refresh_token_info.subject == create_user1.user.email
+    assert access_token_info.subject == create_user1.email
+    assert refresh_token_info.subject == create_user1.email

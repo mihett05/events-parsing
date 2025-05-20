@@ -4,7 +4,7 @@ import pytest
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.usecases import AuthorizeUseCase
-from domain.users.entities import UserActivationToken
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
@@ -18,7 +18,7 @@ async def test_authorize_success(
     user = await authorize_usecase(user1_token_info_dto)
     attrs = ("fullname", "email", "id")
     for attr in attrs:
-        assert getattr(user, attr) == getattr(create_user1.user, attr)
+        assert getattr(user, attr) == getattr(create_user1, attr)
 
 
 @pytest.mark.asyncio
