@@ -5,7 +5,9 @@ from domain.users.exceptions import TelegramTokenNotFoundError, UserAccessDenied
 from domain.users.repositories import TelegramTokensRepository
 
 from application.users.dtos import UpdateUserDto
-from application.users.usecases.read_telegram_token import ReadTelegramTokenUseCase
+from application.users.usecases.read_telegram_token import (
+    ReadTelegramTokenUseCase,
+)
 from application.users.usecases.update import UpdateUserUseCase
 
 

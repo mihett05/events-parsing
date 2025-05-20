@@ -1,3 +1,4 @@
+from datetime import timedelta
 from random import choice
 
 import pytest
@@ -19,6 +20,7 @@ async def test_read_organization_mails_success(
     theme = create_mail_dto.theme
     for i in range(10):
         create_mail_dto.theme = f"{theme}_{i}"
+        create_mail_dto.retry_after += timedelta(days=10)
         create_mail_dto.state = choice(
             [MailStateEnum.UNPROCESSED, MailStateEnum.PROCESSED]
         )

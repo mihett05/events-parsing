@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from application.auth.tokens.dtos import TokenInfoDto, TokenPairDto
 from application.auth.usecases import (
@@ -7,10 +8,12 @@ from application.auth.usecases import (
     RegisterUseCase,
 )
 from application.auth.usecases.login import LoginUseCase
+from application.users.usecases import ValidateActivationTokenUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
-from starlette.responses import JSONResponse
+from starlette import status
+from starlette.responses import JSONResponse, Response
 
 from infrastructure.api.v1.auth.deps import extract_refresh_token
 from infrastructure.api.v1.auth.dtos import (
@@ -56,8 +59,18 @@ async def register_user(
     dto: CreateUserModelDto,
     register_use_case: FromDishka[RegisterUseCase],
 ):
-    user, tokens_pair = await register_use_case(map_create_dto_from_pydantic(dto))
+    token = await register_use_case(map_create_dto_from_pydantic(dto))
+    return Response(status_code=status.HTTP_200_OK)
 
+
+@router.post(
+    "/activate/{token_uuid}",
+)
+async def validate_token(
+    token_uuid: UUID,
+    activate_user_use_case: FromDishka[ValidateActivationTokenUseCase],
+):
+    user, tokens_pair = await activate_user_use_case(token_uuid)
     return __make_response(user, tokens_pair)
 
 

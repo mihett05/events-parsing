@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from domain.attachments.dtos import CreateAttachmentDto, ParsedAttachmentInfoDto
 from domain.mails.enums import MailStateEnum
@@ -19,13 +19,15 @@ class ParsedMailInfoDto:
 @dataclass
 class CreateMailDto:
     imap_mail_uid: str
+
     theme: str
     sender: str
     received_date: date
 
     raw_content: bytes
     retry_after: datetime = field(
-        default_factory=lambda: datetime.now() + timedelta(minutes=30)
+        default_factory=lambda: datetime.now(tz=timezone.utc)
+        + timedelta(minutes=30)
     )
     state: MailStateEnum = MailStateEnum.UNPROCESSED
 

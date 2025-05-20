@@ -42,3 +42,11 @@ class TelegramToken:
     user_id: int
     is_used: bool = False
     created_at: datetime | None = None
+
+
+@dataclass
+class UserActivationToken:
+    id: UUID
+    user_id: int
+    user: User
+    is_used: bool = False

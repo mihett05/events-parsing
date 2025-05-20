@@ -16,10 +16,14 @@ class NotificationTelegramGateway(NotificationGateway):
             NotificationFormatEnum.MARKDOWN: ParseMode.MARKDOWN,
         }
 
-    def __map_parse_mode(self, format_: NotificationFormatEnum) -> ParseMode | None:
+    def __map_parse_mode(
+        self, format_: NotificationFormatEnum
+    ) -> ParseMode | None:
         return self.__mapper[format_]
 
-    async def send(self, notification: Notification, recipient: User) -> Notification:
+    async def send(
+        self, notification: Notification, recipient: User
+    ) -> Notification:
         if recipient.telegram_id is None:
             raise FailedSendNotificationError
         try:

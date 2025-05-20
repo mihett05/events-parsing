@@ -2,7 +2,7 @@ from typing import Annotated
 from uuid import UUID
 
 import application.attachments.usecases as use_cases
-from application.events.usecases import ReadEventUseCase
+from application.events.usecases.read import ReadEventUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
 from fastapi import APIRouter, Depends, UploadFile
@@ -74,5 +74,7 @@ async def update_attachment(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(
-        await use_case(mappers.map_update_dto_from_pydantic(dto, attachment_id), actor)
+        await use_case(
+            mappers.map_update_dto_from_pydantic(dto, attachment_id), actor
+        )
     )

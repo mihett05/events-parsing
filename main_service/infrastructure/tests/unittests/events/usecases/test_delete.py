@@ -10,20 +10,22 @@ from domain.events.exceptions import EventNotFoundError
 async def test_delete_success(
     read_event_usecase: ReadEventUseCase,
     delete_event_usecase: DeleteEventUseCase,
-    create_event: Event,
+    create_event,
+    create_user1,
 ):
-    # TODO: добавить актора
-    event = await delete_event_usecase(create_event.id, None)
+    create_event = await create_event()
+    user = await create_user1()
+    event = await delete_event_usecase(create_event.id, user)
     assert event == create_event
 
     with pytest.raises(EventNotFoundError):
-        await read_event_usecase(event.id)
+        await read_event_usecase(event.id, user)
 
 
 @pytest.mark.asyncio
 async def test_delete_not_found(
-    delete_event_usecase: DeleteEventUseCase,
+    delete_event_usecase: DeleteEventUseCase, create_user1
 ):
-    # TODO: change actor to user
+    user = await create_user1()
     with pytest.raises(EventNotFoundError):
-        await delete_event_usecase(random.randint(100, 200), None)
+        await delete_event_usecase(random.randint(100, 200), user)

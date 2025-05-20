@@ -12,10 +12,12 @@ async def test_delete(
     delete_organization_usecase: DeleteOrganizationUseCase,
     read_organization_usecase: ReadOrganizationUseCase,
     create_organization: Organization,
+    create_user1,
 ):
-    # TODO: change actor to user
+    create_user1 = await create_user1()
+
     return_organization = await delete_organization_usecase(
-        create_organization.id, None
+        create_organization.id, create_user1
     )
     assert return_organization == create_organization
     with pytest.raises(OrganizationNotFoundError):

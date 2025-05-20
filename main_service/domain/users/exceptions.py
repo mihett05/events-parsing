@@ -3,7 +3,7 @@ from domain.exceptions import (
     EntityAlreadyExistsError,
     EntityNotFoundError,
 )
-from domain.users.entities import TelegramToken, User
+from domain.users.entities import TelegramToken, User, UserOrganizationRole
 
 
 class UserNotFoundError(EntityNotFoundError):
@@ -29,3 +29,13 @@ class TelegramTokenNotFoundError(EntityNotFoundError):
 class TelegramTokenAlreadyExistsError(EntityAlreadyExistsError):
     def __init__(self):
         super().__init__(TelegramToken)
+
+
+class UserRoleAlreadyExistsError(EntityAlreadyExistsError):
+    def __init__(self):
+        super().__init__(UserOrganizationRole)
+
+
+class UserRoleNotFoundError(EntityNotFoundError):
+    def __init__(self):
+        super().__init__(UserOrganizationRole)

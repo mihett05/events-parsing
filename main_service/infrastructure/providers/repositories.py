@@ -9,6 +9,7 @@ from domain.organizations.repositories import (
 )
 from domain.users.repositories import (
     TelegramTokensRepository,
+    UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -18,8 +19,13 @@ from infrastructure.database.repositories import (
     EventsDatabaseRepository,
     MailsDatabaseRepository,
     NotificationsDatabaseRepository,
+    UserActivationTokenDatabaseRepository,
+    UserOrganizationRolesDatabaseRepository,
+    UsersDatabaseRepository,
 )
-from infrastructure.database.repositories.events import EventsUserDatabaseRepository
+from infrastructure.database.repositories.events import (
+    EventsUserDatabaseRepository,
+)
 from infrastructure.database.repositories.organizations import (
     OrganizationsDatabaseRepository,
     OrganizationTokensDatabaseRepository,
@@ -33,7 +39,6 @@ from infrastructure.database.repositories.users import (
 
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
-
     attachments_repository = provide(
         source=AttachmentsDatabaseRepository, provides=AttachmentsRepository
     )
@@ -43,7 +48,9 @@ class RepositoriesProvider(Provider):
     event_users_repository = provide(
         source=EventsUserDatabaseRepository, provides=EventUsersRepository
     )
-    mails_repository = provide(source=MailsDatabaseRepository, provides=MailsRepository)
+    mails_repository = provide(
+        source=MailsDatabaseRepository, provides=MailsRepository
+    )
     organizations_repository = provide(
         source=OrganizationsDatabaseRepository, provides=OrganizationsRepository
     )
@@ -51,7 +58,9 @@ class RepositoriesProvider(Provider):
         source=OrganizationTokensDatabaseRepository,
         provides=OrganizationTokensRepository,
     )
-    users_repository = provide(source=UsersDatabaseRepository, provides=UsersRepository)
+    users_repository = provide(
+        source=UsersDatabaseRepository, provides=UsersRepository
+    )
     notification_repository = provide(
         source=NotificationsDatabaseRepository, provides=NotificationsRepository
     )
@@ -60,5 +69,10 @@ class RepositoriesProvider(Provider):
         provides=UserOrganizationRolesRepository,
     )
     telegram_tokens = provide(
-        source=TelegramTokensDatabaseRepository, provides=TelegramTokensRepository
+        source=TelegramTokensDatabaseRepository,
+        provides=TelegramTokensRepository,
+    )
+    activation_token_repository = provide(
+        source=UserActivationTokenDatabaseRepository,
+        provides=UserActivationTokenRepository,
     )

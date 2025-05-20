@@ -39,11 +39,15 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
         self.__repository = MockRepository(self.Config())
 
     async def create(
-        self, organization: entities.Organization
+        self, dto: dtos.CreateOrganizationDto
     ) -> entities.Organization:
-        organization.id = self.__next_id
+        organization = entities.Organization(
+            title=dto.title,
+            owner_id=dto.owner_id,
+            id=self.__next_id,
+            created_at=datetime.datetime.now(datetime.UTC),
+        )
         self.__next_id += 1
-        organization.created_at = datetime.datetime.utcnow()
         return await self.__repository.create(organization)
 
     async def read(self, id_: int) -> entities.Organization:
@@ -61,6 +65,9 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
 
+    async def clear(self):
+        await self.__repository.clear()
+
 
 class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     class Config(MockRepositoryConfig):
@@ -74,7 +81,9 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     def __init__(self):
         self.__repository = MockRepository(self.Config())
 
-    async def create(self, dto: CreateOrganizationTokenDto) -> OrganizationToken:
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
         token = OrganizationToken(id=dto.id, created_by=dto.created_by)
         return await self.__repository.create(token)
 
@@ -87,7 +96,9 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
 
-    async def read_all(self, dto: ReadOrganizationTokensDto) -> list[OrganizationToken]:
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
         data = await self.__repository.read_all()
         result = []
         for token in data:

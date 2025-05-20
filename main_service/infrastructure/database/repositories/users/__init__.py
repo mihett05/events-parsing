@@ -1,10 +1,12 @@
 from .models import (
     TelegramTokenDatabaseModel,
+    UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
 )
 from .repositories import (
     TelegramTokensDatabaseRepository,
+    UserActivationTokenDatabaseRepository,
     UserOrganizationRolesDatabaseRepository,
     UsersDatabaseRepository,
 )
@@ -16,4 +18,5 @@ __all__ = [
     "UserOrganizationRolesDatabaseRepository",
     "TelegramTokenDatabaseModel",
     "TelegramTokensDatabaseRepository",
+    "UserActivationTokenDatabaseRepository",
 ]
