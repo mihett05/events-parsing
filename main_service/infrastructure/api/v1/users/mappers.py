@@ -29,7 +29,7 @@ map_to_pydantic = retort.get_converter(
     ],
 )
 
-
+'''
 @retort.impl_converter(
     recipe=[
         link_function(
@@ -42,3 +42,9 @@ def map_update_dto_from_pydantic(
     dto: UpdateUserModelDto,
     user_id: int,  # noqa
 ) -> UpdateUserDto: ...
+'''
+def map_update_dto_from_pydantic(
+    dto: UpdateUserModelDto,
+    user_id: int,  # noqa
+) -> UpdateUserDto:
+    return UpdateUserDto(user_id=user_id, fullname=dto.fullname, telegram_id=dto.telegram_id)

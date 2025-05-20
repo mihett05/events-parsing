@@ -62,5 +62,21 @@ map_to_db = retort.get_converter(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
         ),
+        link_function(
+            lambda user: user.is_active,
+            P[UserDatabaseModel].is_active,
+        ),
+        link_function(
+            lambda user: user.email,
+            P[UserDatabaseModel].email,
+        ),
+        link_function(
+            lambda user: user.full_name,
+            P[UserDatabaseModel].full_name,
+        ),
+        link_function(
+            lambda user: user.settings,
+            P[UserDatabaseModel].settings,
+        ),
     ],
 )

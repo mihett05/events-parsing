@@ -52,10 +52,9 @@ async def update_user(
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.UpdateUserUseCase],
 ):
-    return mappers.map_to_pydantic(
-        await use_case(mappers.map_update_dto_from_pydantic(dto, user_id), actor)
-    )
-
+    user =  await use_case(mappers.map_update_dto_from_pydantic(dto, user_id), actor)
+    #return mappers.map_to_pydantic()
+    return user
 
 @router.delete(
     "/",
