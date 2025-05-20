@@ -18,6 +18,7 @@ from domain.organizations.repositories import (
     OrganizationsRepository,
     OrganizationTokensRepository,
 )
+
 from infrastructure.mocks.repositories.crud import (
     MockRepository,
     MockRepositoryConfig,
@@ -38,7 +39,7 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
         self.__repository = MockRepository(self.Config())
 
     async def create(
-            self, dto: dtos.CreateOrganizationDto
+        self, dto: dtos.CreateOrganizationDto
     ) -> entities.Organization:
         organization = entities.Organization(
             title=dto.title,
@@ -53,10 +54,10 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
         return await self.__repository.read(id_)
 
     async def read_all(
-            self, dto: dtos.ReadOrganizationsDto
+        self, dto: dtos.ReadOrganizationsDto
     ) -> list[entities.Organization]:
         data = await self.__repository.read_all()
-        return data[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
+        return data[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
 
     async def update(self, organization: Organization) -> Organization:
         return await self.__repository.update(organization)
@@ -80,7 +81,9 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     def __init__(self):
         self.__repository = MockRepository(self.Config())
 
-    async def create(self, dto: CreateOrganizationTokenDto) -> OrganizationToken:
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
         token = OrganizationToken(id=dto.id, created_by=dto.created_by)
         return await self.__repository.create(token)
 
@@ -93,10 +96,12 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
 
-    async def read_all(self, dto: ReadOrganizationTokensDto) -> list[OrganizationToken]:
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
         data = await self.__repository.read_all()
         result = []
         for token in data:
             if token.created_by == dto.created_by:
                 result.append(token)
-        return result[dto.page * dto.page_size: (dto.page + 1) * dto.page_size]
+        return result[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]

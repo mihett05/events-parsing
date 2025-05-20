@@ -11,9 +11,12 @@ async def test_create_success(
     mails, _ = await create_mails_usecase(dtos=[create_mail_dto], actor=None)
     mail = mails[0]
 
-    attrs = [attr for attr in set(dir(create_mail_dto)) & set(dir(mail))
-             if not attr.startswith('__')
-             and not callable(getattr(create_mail_dto, attr))]
+    attrs = [
+        attr
+        for attr in set(dir(create_mail_dto)) & set(dir(mail))
+        if not attr.startswith("__")
+        and not callable(getattr(create_mail_dto, attr))
+    ]
     print("-------------------")
     print(attrs)
     print("-------------------")
@@ -22,6 +25,5 @@ async def test_create_success(
     print(create_mail_dto)
     for attr in attrs:
         assert getattr(mail, attr) == getattr(create_mail_dto, attr)
-
 
     assert mail.id == 1

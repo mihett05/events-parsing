@@ -11,6 +11,12 @@ class ReadAllUsersDto:
 
 
 @dataclass
+class CreateTelegramTokenDto:
+    user_id: int
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
 class CreateActivationTokenDto:
     user_id: int
     user: User

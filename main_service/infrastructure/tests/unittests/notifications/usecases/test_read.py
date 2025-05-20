@@ -8,7 +8,7 @@ from domain.notifications.exceptions import NotificationNotFoundError
 async def test_read_success(
     read_notification_usecase: ReadNotificationUseCase,
     create_notification,
-        delete_notification_usecase,
+    delete_notification_usecase,
 ):
     create_notification = await create_notification()
     notification = await read_notification_usecase(create_notification.id)

@@ -1,6 +1,7 @@
 from typing import Annotated
 
 import application.users.usecases as use_cases
+from aiogram import Bot
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.dtos import ReadAllUsersDto
 from domain.users.entities import User
@@ -71,6 +72,15 @@ async def delete_user(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(await use_case(actor))
+
+
+@router.post("/telegram")
+async def create_telegram_link(
+    bot: FromDishka[Bot],
+    use_case: FromDishka[use_cases.CreateTelegramTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return await use_case((await bot.get_me()).username, actor)
 
 
 @router.get(

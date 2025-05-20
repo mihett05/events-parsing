@@ -27,6 +27,7 @@ async def test_delete_success(
             create_attachment, attr
         )
 
+
 @pytest.mark.asyncio
 async def test_delete_success(
     delete_attachment_usecase: DeleteAttachmentUseCase,
@@ -37,7 +38,9 @@ async def test_delete_success(
 ):
     user = await create_user1()
     create_attachment = await create_attachment()
-    deleted_attachment = await delete_attachment_usecase(create_attachment.id, user)
+    deleted_attachment = await delete_attachment_usecase(
+        create_attachment.id, user
+    )
     assert deleted_attachment == create_attachment
 
     with pytest.raises(AttachmentNotFoundError):

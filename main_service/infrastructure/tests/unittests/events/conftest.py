@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Callable, Coroutine, Any
+from typing import Any, Callable, Coroutine
 
 import pytest
 import pytest_asyncio
@@ -28,7 +28,8 @@ async def create_event_dto() -> CreateEventDto:
         location=None,
         description="Example Description",
         organization_id=None,
-        end_date=datetime.combine(date, datetime.min.time()) + timedelta(days=1),
+        end_date=datetime.combine(date, datetime.min.time())
+        + timedelta(days=1),
         start_date=datetime.combine(date, datetime.min.time()),
         end_registration=datetime.combine(date, datetime.min.time())
         - timedelta(days=1),
@@ -79,6 +80,7 @@ async def events_repository(container: AsyncContainer) -> EventsRepository:
     async with container() as nested:
         yield await nested.get(EventsRepository)
 
+
 @pytest_asyncio.fixture
 async def users_repository(container: AsyncContainer) -> UsersRepository:
     async with container() as nested:
@@ -92,6 +94,7 @@ async def create_event(
 ) -> Callable[..., Coroutine[Any, Any, Event]]:
     async def _factory() -> Event:
         return await events_repository.create(create_event_dto)
+
     return _factory
 
 
@@ -103,6 +106,7 @@ async def prepare(
         return
     await events_repository.clear()  # noqa
 
+
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def teardown(
     pytestconfig: pytest.Config, events_repository: EventsRepository
@@ -110,7 +114,8 @@ async def teardown(
     yield
     if pytestconfig.getoption("--integration", default=False):
         return
-    await events_repository.clear() # noqa
+    await events_repository.clear()  # noqa
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(

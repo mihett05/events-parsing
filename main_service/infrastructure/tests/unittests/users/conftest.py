@@ -13,9 +13,6 @@ from domain.users.repositories import (
 )
 
 
-
-
-
 @pytest_asyncio.fixture
 async def update_user_dto() -> UpdateUserDto:
     return UpdateUserDto(
@@ -50,8 +47,10 @@ async def create_users(
     users_repository: UsersRepository,
 ) -> list[User]:
     return [
-        await users_repository.create(user_entity) for user_entity in get_user_entities
+        await users_repository.create(user_entity)
+        for user_entity in get_user_entities
     ]
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
@@ -61,6 +60,7 @@ async def prepare(
         return
     await users_repository.clear()  # noqa
 
+
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def teardown(
     pytestconfig: pytest.Config, users_repository: UsersRepository
@@ -68,7 +68,8 @@ async def teardown(
     yield
     if pytestconfig.getoption("--integration", default=False):
         return
-    await users_repository.clear() # noqa
+    await users_repository.clear()  # noqa
+
 
 @pytest_asyncio.fixture
 async def get_user_role_entity() -> UserOrganizationRole:
@@ -109,4 +110,3 @@ async def create_user_role(
 @pytest_asyncio.fixture
 async def get_actor() -> User:
     return User(id=777, fullname="Ivanov Ivan Ivanovich", email="test@test.com")
-

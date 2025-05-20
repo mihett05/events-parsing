@@ -1,8 +1,14 @@
 from abc import ABCMeta, abstractmethod
 from uuid import UUID
 
+import domain.users.dtos as dtos
+import domain.users.entities as entities
 from domain.users.dtos import CreateActivationTokenDto, ReadAllUsersDto
-from domain.users.entities import User, UserActivationToken, UserOrganizationRole
+from domain.users.entities import (
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+)
 
 
 class UsersRepository(metaclass=ABCMeta):
@@ -36,21 +42,29 @@ class UsersRepository(metaclass=ABCMeta):
 
 class UserOrganizationRolesRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
+    async def create(
+        self, role: UserOrganizationRole
+    ) -> UserOrganizationRole: ...
 
     @abstractmethod
     async def read(self, user_id: int) -> list[UserOrganizationRole]: ...
 
     @abstractmethod
-    async def update(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
+    async def update(
+        self, role: UserOrganizationRole
+    ) -> UserOrganizationRole: ...
 
     @abstractmethod
-    async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
+    async def delete(
+        self, role: UserOrganizationRole
+    ) -> UserOrganizationRole: ...
 
 
 class UserActivationTokenRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, dto: CreateActivationTokenDto) -> UserActivationToken: ...
+    async def create(
+        self, dto: CreateActivationTokenDto
+    ) -> UserActivationToken: ...
 
     @abstractmethod
     async def read(self, token_uuid: UUID) -> UserActivationToken: ...
@@ -59,4 +73,21 @@ class UserActivationTokenRepository(metaclass=ABCMeta):
     async def update_is_used_statement(self, token_id: UUID): ...
 
     @abstractmethod
-    async def delete(self, token: UserActivationToken) -> UserActivationToken: ...
+    async def delete(
+        self, token: UserActivationToken
+    ) -> UserActivationToken: ...
+
+
+class TelegramTokensRepository(metaclass=ABCMeta):
+    @abstractmethod
+    async def create(
+        self, dto: dtos.CreateTelegramTokenDto
+    ) -> entities.TelegramToken: ...
+
+    @abstractmethod
+    async def read(self, token_id: UUID) -> entities.TelegramToken: ...
+
+    @abstractmethod
+    async def update(
+        self, token: entities.TelegramToken
+    ) -> entities.TelegramToken: ...

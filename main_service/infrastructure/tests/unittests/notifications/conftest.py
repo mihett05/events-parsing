@@ -1,8 +1,7 @@
-from typing import Callable, Coroutine, Any
+from datetime import datetime
+from typing import Any, Callable, Coroutine
 
 import pytest
-from datetime import datetime
-
 import pytest_asyncio
 from dishka import AsyncContainer
 from domain.notifications.dtos import (
@@ -21,9 +20,7 @@ from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
-async def create_notification_dto(
-    create_user1
-) -> CreateNotificationDto:
+async def create_notification_dto(create_user1) -> CreateNotificationDto:
     user = await create_user1()
     return CreateNotificationDto(
         recipient_id=user.id,
@@ -55,10 +52,14 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
     async with container() as nested:
         yield await nested.get(UsersRepository)
 
+
 @pytest_asyncio.fixture
-async def orgatizations_repository(container: AsyncContainer) -> OrganizationsRepository:
+async def orgatizations_repository(
+    container: AsyncContainer,
+) -> OrganizationsRepository:
     async with container() as nested:
         yield await nested.get(OrganizationsRepository)
+
 
 @pytest_asyncio.fixture
 async def create_notification(
@@ -67,7 +68,9 @@ async def create_notification(
 ) -> Callable[..., Coroutine[Any, Any, Notification]]:
     async def _factory():
         return await notification_repository.create(create_notification_dto)
+
     return _factory
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
@@ -78,6 +81,7 @@ async def prepare(
         return
     await orgatizations_repository.clear()  # noqa
 
+
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
     pytestconfig: pytest.Config,
@@ -86,6 +90,7 @@ async def prepare(
     if pytestconfig.getoption("--integration", default=False):
         return
     await notification_repository.clear()  # noqa
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(

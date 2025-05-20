@@ -10,7 +10,8 @@ from dishka.integrations.faststream import (
 from domain.exceptions import (
     EntityAccessDenied,
     EntityAlreadyExistsError,
-    EntityNotFoundError, InvalidEntityPeriodError,
+    EntityNotFoundError,
+    InvalidEntityPeriodError,
 )
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,7 +62,9 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     )
 
     @app.exception_handler(EntityNotFoundError)
-    async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):
+    async def entity_not_found_exception_handler(
+        _: Request, exc: EntityNotFoundError
+    ):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
