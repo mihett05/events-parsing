@@ -22,10 +22,6 @@ from infrastructure.mocks.gateways.notifications.gateway import (
 )
 
 
-class NotificationEmailMemoryGateway:
-    pass
-
-
 class GatewaysProvider(Provider):
     scope = Scope.APP
 
@@ -36,14 +32,6 @@ class GatewaysProvider(Provider):
     coordinator_publisher = provide(
         source=MemoryCoordinatorGateway, provides=CoordinatorGateway
     )
-    notification_email_gateway = provide(
-        source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway
-    )
-    notification_gateway_factory = provide(
-        source=NotificationGatewayFactory,
-        provides=NotificationGatewayAbstractFactory,
-    )
-    telegram_notification_gateway = provide(NotificationTelegramGateway)
 
     @provide
     def telegram_bot(self, config: Config) -> Bot:

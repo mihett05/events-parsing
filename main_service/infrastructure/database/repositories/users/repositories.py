@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import domain.users.dtos as dtos
+from domain.exceptions import EntityNotFoundError, EntityAlreadyExistsError
 from domain.users import entities as entities
 from domain.users.entities import User, UserActivationToken, UserOrganizationRole
 from domain.users.exceptions import (
