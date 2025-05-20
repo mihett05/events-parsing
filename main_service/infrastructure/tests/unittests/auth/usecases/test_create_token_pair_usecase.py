@@ -1,3 +1,5 @@
+from typing import Callable, Coroutine, Any
+
 import application.auth.usecases
 import pytest
 from application.auth.tokens.gateways import TokensGateway
@@ -6,10 +8,12 @@ from domain.users.entities import User
 
 @pytest.mark.asyncio
 async def test_create_token_pair_success(
-    create_user1: User,
+    create_user1: Callable[[], Coroutine[Any, Any, User]],
     create_token_pair_usecase: application.auth.usecases.CreateTokenPairUseCase,
     token_gateway: TokensGateway,
 ):
+    create_user1 = await create_user1()
+
     get_token_pair = await create_token_pair_usecase(create_user1)
     access_token_info = await token_gateway.extract_token_info(
         get_token_pair.access_token

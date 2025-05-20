@@ -2,6 +2,7 @@ from datetime import date
 from typing import Annotated
 
 import application.events.usecases as use_cases
+from application.auth.usecases import AuthorizeUseCase
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import (
@@ -12,7 +13,7 @@ from domain.events.dtos import (
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
@@ -29,27 +30,11 @@ router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 @router.get("/", response_model=list[models.EventModel])
 async def read_all_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
-    page: int = 0,
-    page_size: int = 50,
-    start_date: date | None = None,
-    end_date: date | None = None,
-    organization_id: int | None = None,
-    type_: EventTypeEnum | None = None,
-    format_: EventFormatEnum | None = None,
+    dto: dtos.ReadAllEventsFeedModelDto = Depends(),
 ):
     return map(
         mappers.map_to_pydantic,
-        await use_case(
-            ReadAllEventsFeedDto(
-                page=page,
-                page_size=page_size,
-                start_date=start_date,
-                end_date=end_date,
-                organization_id=organization_id,
-                type=type_,
-                format=format_,
-            )
-        ),
+        await use_case(mappers.map_read_all_dto_from_pydantic(dto)),
     )
 
 
@@ -173,7 +158,9 @@ async def update_event(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(
-        await use_case(mappers.map_update_dto_from_pydantic(dto, event_id), actor)
+        await use_case(
+            mappers.map_update_dto_from_pydantic(dto, event_id), actor
+        )
     )
 
 

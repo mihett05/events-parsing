@@ -1,5 +1,7 @@
 from dishka import AsyncContainer, Provider, make_async_container
 
+from infrastructure.config import Config, get_config
+
 from .config import ConfigProvider
 from .database import DatabaseProvider
 from .gateways import GatewaysProvider
@@ -30,4 +32,5 @@ def create_container() -> AsyncContainer:
     return make_async_container(
         *get_container_infrastructure(),
         *get_container_application(),
+        context={Config: get_config()},
     )

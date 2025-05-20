@@ -9,6 +9,7 @@ from domain.organizations.repositories import (
 )
 from domain.users.repositories import (
     TelegramTokensRepository,
+    UserActivationTokenRepository,
     UserOrganizationRolesRepository,
     UsersRepository,
 )
@@ -18,6 +19,9 @@ from infrastructure.database.repositories import (
     EventsDatabaseRepository,
     MailsDatabaseRepository,
     NotificationsDatabaseRepository,
+    UserActivationTokenDatabaseRepository,
+    UserOrganizationRolesDatabaseRepository,
+    UsersDatabaseRepository,
 )
 from infrastructure.database.repositories.events import EventsUserDatabaseRepository
 from infrastructure.database.repositories.organizations import (
@@ -31,9 +35,9 @@ from infrastructure.database.repositories.users import (
 )
 
 
+
 class RepositoriesProvider(Provider):
     scope = Scope.REQUEST
-
     attachments_repository = provide(
         source=AttachmentsDatabaseRepository, provides=AttachmentsRepository
     )
@@ -61,4 +65,8 @@ class RepositoriesProvider(Provider):
     )
     telegram_tokens = provide(
         source=TelegramTokensDatabaseRepository, provides=TelegramTokensRepository
+    )
+    activation_token_repository = provide(
+        source=UserActivationTokenDatabaseRepository,
+        provides=UserActivationTokenRepository,
     )

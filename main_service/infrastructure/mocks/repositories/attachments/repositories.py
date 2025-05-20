@@ -58,3 +58,6 @@ class AttachmentsMemoryRepository(AttachmentsRepository):
 
     async def delete(self, attachment: Attachment) -> Attachment:
         return await self.__repository.delete(attachment)
+
+    async def clear(self):
+        await self.__repository.clear()

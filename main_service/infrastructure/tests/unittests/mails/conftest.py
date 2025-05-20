@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
+import pytest
 import pytest_asyncio
 from application.mails.dtos import UpdateMailDto
 from dishka import AsyncContainer
@@ -17,6 +18,7 @@ async def create_mail_dto() -> CreateMailDto:
         sender="example@example.com",
         raw_content="Example Contend".encode("utf-8"),
         received_date=datetime.now().date(),
+
     )
 
 
@@ -38,7 +40,8 @@ async def read_all_mails_dto() -> ReadAllMailsDto:
 
 @pytest_asyncio.fixture
 async def mails_repository(container: AsyncContainer) -> MailsRepository:
-    yield await container.get(MailsRepository)
+    async with container() as request_container:
+        yield await request_container.get(MailsRepository)
 
 
 @pytest_asyncio.fixture
@@ -47,3 +50,13 @@ async def create_mail(
     mails_repository: MailsRepository,
 ) -> Mail:
     return await mails_repository.create(create_mail_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare(
+    pytestconfig: pytest.Config, mails_repository: MailsRepository
+):
+    if pytestconfig.getoption("--integration", default=False):
+        return
+    await mails_repository.clear()  # noqa
+

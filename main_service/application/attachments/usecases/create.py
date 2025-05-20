@@ -67,6 +67,9 @@ class CreateAttachmentUseCase:
         roles = await self.__read_roles_use_case(actor.id)
         async with self.__transaction:
             for dto in dtos:
+                print(self.__has_perms(
+                    dto.event and dto.event.organization_id or -1, roles
+                ))
                 if self.__has_perms(
                     dto.event and dto.event.organization_id or -1, roles
                 ) and (attachment := await self.__try_create_attachment(dto)):
