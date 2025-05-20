@@ -29,6 +29,9 @@ from ..crud import Entity, Id, MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
+    async def change_user_active_status(self, user_id: int, status: bool):
+        pass
+
     async def update_is_active_statement(self, user_id: int, status: bool):
         pass
 
