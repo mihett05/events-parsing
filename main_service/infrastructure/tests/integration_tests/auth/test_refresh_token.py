@@ -17,6 +17,12 @@ async def test_refresh_token_success(
     user_with_token = await user_with_token_model()
     response = await async_client.post(
         "/v1/auth/login",
+        json=get_authenticate_user1_model_dto.model_dump(
+            by_alias=True, mode="json"
+        ),
+    )
+    response2 = await get_test_client.post(
+        "/v1/auth/refresh", cookies={"refresh": response.cookies.get("refresh")}
         json=authenticate_dto_factory().model_dump(by_alias=True, mode="json"),
     )
     async_client.cookies.set("refresh", response.cookies.get("refresh"))

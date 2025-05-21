@@ -31,21 +31,14 @@ from .models import EventModel, EventUserModel
 
 retort = pydantic_retort.extend(recipe=[])
 
-map_create_dto_from_pydantic = retort.get_converter(CreateEventModelDto, CreateEventDto)
+map_create_dto_from_pydantic = retort.get_converter(
+    CreateEventModelDto, CreateEventDto
+)
+
 map_read_all_dto_from_pydantic = retort.get_converter(
     ReadAllEventsFeedModelDto,
     ReadAllEventsFeedDto,
 )
-"""
-map_read_all_dto_calendar_from_pydantic = retort.get_converter(
-    ReadAllEventsCalendarModelDto,
-    ReadAllEventsDto,
-    recipe=[
-        allow_unlinked_optional(P[ReadAllEventsDto].page),
-        allow_unlinked_optional(P[ReadAllEventsDto].page_size),
-        allow_unlinked_optional(P[ReadAllEventsDto].for_update),
-    ],
-)"""
 
 event_user_map_to_pydantic = retort.get_converter(EventUser, EventUserModel)
 

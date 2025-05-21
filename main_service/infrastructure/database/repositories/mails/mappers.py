@@ -24,7 +24,9 @@ retort = postgres_retort.extend(recipe=[])
 map_from_db = retort.get_converter(
     MailDatabaseModel,
     Mail,
-    recipe=[coercer(AttachmentDatabaseModel, Attachment, attachment_from_db_mapper)],
+    recipe=[
+        coercer(AttachmentDatabaseModel, Attachment, attachment_from_db_mapper)
+    ],
 )
 
 map_to_db = retort.get_converter(

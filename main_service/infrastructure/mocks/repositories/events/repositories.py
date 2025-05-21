@@ -45,7 +45,9 @@ class EventsMemoryRepository(EventsRepository):
                 return entity
         return None
 
-    async def read_for_user(self, dto: dtos.ReadUserEventsDto) -> list[entities.Event]:
+    async def read_for_user(
+        self, dto: dtos.ReadUserEventsDto
+    ) -> list[entities.Event]:
         raise NotImplementedError
 
     async def read_for_organization(
@@ -68,7 +70,11 @@ class EventsMemoryRepository(EventsRepository):
         data = await self.__repository.read_all()
         res = []
         for event in data:
-            if dto.start_date <= event.start_date <= dto.start_date + timedelta(days=1):
+            if (
+                dto.start_date
+                <= event.start_date
+                <= dto.start_date + timedelta(days=1)
+            ):
                 res.append(event)
         return res
 

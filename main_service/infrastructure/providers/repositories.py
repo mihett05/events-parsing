@@ -48,7 +48,9 @@ class RepositoriesProvider(Provider):
     event_users_repository = provide(
         source=EventsUserDatabaseRepository, provides=EventUsersRepository
     )
-    mails_repository = provide(source=MailsDatabaseRepository, provides=MailsRepository)
+    mails_repository = provide(
+        source=MailsDatabaseRepository, provides=MailsRepository
+    )
     organizations_repository = provide(
         source=OrganizationsDatabaseRepository, provides=OrganizationsRepository
     )
@@ -56,7 +58,9 @@ class RepositoriesProvider(Provider):
         source=OrganizationTokensDatabaseRepository,
         provides=OrganizationTokensRepository,
     )
-    users_repository = provide(source=UsersDatabaseRepository, provides=UsersRepository)
+    users_repository = provide(
+        source=UsersDatabaseRepository, provides=UsersRepository
+    )
     notification_repository = provide(
         source=NotificationsDatabaseRepository, provides=NotificationsRepository
     )

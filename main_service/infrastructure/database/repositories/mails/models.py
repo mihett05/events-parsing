@@ -32,4 +32,6 @@ class MailDatabaseModel(Base):
         ENUM(MailStateEnum, name="MailStateEnum")
     )
 
-    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(
+        lazy="joined"
+    )

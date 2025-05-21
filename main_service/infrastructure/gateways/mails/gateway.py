@@ -39,7 +39,9 @@ class ImapEmailsGateway(EmailsGateway):
         for i in range(0, 10, batch_size):
             batch_uids = email_ids[i : i + batch_size]
 
-            raw_collection, failed = await self.__fetch_collection_by_batch(batch_uids)
+            raw_collection, failed = await self.__fetch_collection_by_batch(
+                batch_uids
+            )
             failed_mails.extend(failed)
 
             parsed_mails, failed = await self.__parse_mails(raw_collection)
@@ -182,7 +184,9 @@ class ImapEmailsGateway(EmailsGateway):
     @staticmethod
     def __decode_payload(payload, charset=None):
         encodings_to_try = [charset, "utf-8"]
-        encodings_to_try = list(dict.fromkeys([e for e in encodings_to_try if e]))
+        encodings_to_try = list(
+            dict.fromkeys([e for e in encodings_to_try if e])
+        )
         for encoding in encodings_to_try:
             try:
                 return payload.decode(encoding, errors="replace")
@@ -194,7 +198,9 @@ class ImapEmailsGateway(EmailsGateway):
         decoded_parts = []
         for part, encoding in decode_header(header):
             if isinstance(part, bytes):
-                decoded_parts.append(ImapEmailsGateway.__decode_payload(part, encoding))
+                decoded_parts.append(
+                    ImapEmailsGateway.__decode_payload(part, encoding)
+                )
             else:
                 decoded_parts.append(str(part))
         return "".join(decoded_parts)

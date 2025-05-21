@@ -59,7 +59,9 @@ class EventDatabaseModel(Base):
     )
     start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
-    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(
+        lazy="joined"
+    )
     members: Mapped[list[UserDatabaseModel]] = relationship(
         UserDatabaseModel, lazy="select", secondary="event_users"
     )

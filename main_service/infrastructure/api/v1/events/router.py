@@ -88,7 +88,9 @@ async def read_subscribers(
     return map(
         mappers.event_user_map_to_pydantic,
         await use_case(
-            ReadEventUsersDto(event_id=event_id, page=page, page_size=page_size),
+            ReadEventUsersDto(
+                event_id=event_id, page=page, page_size=page_size
+            ),
             actor,
         ),
     )
@@ -160,7 +162,9 @@ async def update_event(
     actor: Annotated[User, Depends(get_user)],
 ):
     return mappers.map_to_pydantic(
-        await use_case(mappers.map_update_dto_from_pydantic(dto, event_id), actor)
+        await use_case(
+            mappers.map_update_dto_from_pydantic(dto, event_id), actor
+        )
     )
 
 
