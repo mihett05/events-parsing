@@ -1,7 +1,8 @@
-from application.auth.enums import PermissionsEnum
-from application.auth.permissions import PermissionProvider
 from domain.users.entities import UserOrganizationRole
 from domain.users.enums import RoleEnum
+
+from application.auth.enums import PermissionsEnum
+from application.auth.permissions import PermissionProvider
 
 
 class UserPermissionProvider(PermissionProvider):
@@ -33,15 +34,13 @@ class UserPermissionProvider(PermissionProvider):
         self,
         user_roles: list[UserOrganizationRole],
         user_id: int,
-        actor_id: int
+        actor_id: int,
     ) -> set[PermissionsEnum]:
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
         if user_id == actor_id:
-            result |= self.__perms.get(RoleEnum.SUPER_USER).copy()
+            result |= self.__perms.get(RoleEnum.SUPER_USER)
         for role in user_roles:
-            if (
-                role.role.value.startswith("SUPER")
-            ):
+            if role.role.value.startswith("SUPER"):
                 result |= self.__perms.get(role.role)
         return result
 

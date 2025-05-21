@@ -16,7 +16,9 @@ async def test_delete_success(
     read_attachment_usecase: ReadAttachmentUseCase,
 ):
     # TODO: change actor to user
-    deleted_attachment = await delete_attachment_usecase(create_attachment.id, None)
+    deleted_attachment = await delete_attachment_usecase(
+        create_attachment.id, None
+    )
     assert deleted_attachment == create_attachment
 
     # TODO: change actor to user

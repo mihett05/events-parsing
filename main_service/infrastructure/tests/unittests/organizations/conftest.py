@@ -14,7 +14,9 @@ from domain.organizations.repositories import OrganizationsRepository
 @pytest_asyncio.fixture
 async def create_organization_dto() -> CreateOrganizationDto:
     # TODO: Добавить создание токена в моковом репе
-    return CreateOrganizationDto(title="Test Organization", owner_id=1, token=uuid4())
+    return CreateOrganizationDto(
+        title="Test Organization", owner_id=1, token=uuid4()
+    )
 
 
 @pytest_asyncio.fixture

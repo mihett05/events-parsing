@@ -16,7 +16,9 @@ async def test_refresh_token_success(
 ):
     response = await get_test_client.post(
         "/v1/auth/login",
-        json=get_authenticate_user1_model_dto.model_dump(by_alias=True, mode="json"),
+        json=get_authenticate_user1_model_dto.model_dump(
+            by_alias=True, mode="json"
+        ),
     )
     response2 = await get_test_client.post(
         "/v1/auth/refresh", cookies={"refresh": response.cookies.get("refresh")}
@@ -31,4 +33,6 @@ async def test_refresh_token_success(
         "telegram_id",
     )
     for attr in attrs:
-        assert getattr(get_user1_model, attr) == getattr(response_model.user, attr)
+        assert getattr(get_user1_model, attr) == getattr(
+            response_model.user, attr
+        )

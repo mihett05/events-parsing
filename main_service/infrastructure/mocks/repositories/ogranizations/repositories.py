@@ -74,7 +74,9 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     def __init__(self):
         self.__repository = MockRepository(self.Config())
 
-    async def create(self, dto: CreateOrganizationTokenDto) -> OrganizationToken:
+    async def create(
+        self, dto: CreateOrganizationTokenDto
+    ) -> OrganizationToken:
         token = OrganizationToken(id=dto.id, created_by=dto.created_by)
         return await self.__repository.create(token)
 
@@ -87,7 +89,9 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
     async def delete(self, token: OrganizationToken) -> OrganizationToken:
         return await self.__repository.delete(token)
 
-    async def read_all(self, dto: ReadOrganizationTokensDto) -> list[OrganizationToken]:
+    async def read_all(
+        self, dto: ReadOrganizationTokensDto
+    ) -> list[OrganizationToken]:
         data = await self.__repository.read_all()
         result = []
         for token in data:

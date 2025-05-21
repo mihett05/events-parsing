@@ -16,6 +16,11 @@ user_settings_from_db_mapper = retort.get_converter(
     UserSettings,
 )
 
+user_settings_to_db_mapper = retort.get_converter(
+    UserSettings,
+    UserSettingsDatabaseModel,
+)
+
 user_organization_role_map_from_db = retort.get_converter(
     UserOrganizationRoleDatabaseModel,
     UserOrganizationRole,
@@ -50,9 +55,10 @@ map_to_db = retort.get_converter(
             lambda user: user.salt,
             P[UserDatabaseModel].salt,
         ),
-        link_function(
-            lambda user: user.settings,
-            P[UserDatabaseModel].settings,
+        coercer(
+            UserSettingsDatabaseModel,
+            UserSettings,
+            user_settings_to_db_mapper,
         ),
         link_function(
             lambda user: user.created_at,
@@ -61,22 +67,6 @@ map_to_db = retort.get_converter(
         link_function(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
-        ),
-        link_function(
-            lambda user: user.is_active,
-            P[UserDatabaseModel].is_active,
-        ),
-        link_function(
-            lambda user: user.email,
-            P[UserDatabaseModel].email,
-        ),
-        link_function(
-            lambda user: user.full_name,
-            P[UserDatabaseModel].full_name,
-        ),
-        link_function(
-            lambda user: user.settings,
-            P[UserDatabaseModel].settings,
         ),
     ],
 )

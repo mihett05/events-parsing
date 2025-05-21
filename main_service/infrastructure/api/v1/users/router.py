@@ -37,7 +37,9 @@ async def get_me(user: Annotated[User, Depends(get_user)]):
     response_model=models.UserModel,
     responses={404: {"model": ErrorModel}},
 )
-async def read_user(user_id: int, use_case: FromDishka[use_cases.ReadUserUseCase]):
+async def read_user(
+    user_id: int, use_case: FromDishka[use_cases.ReadUserUseCase]
+):
     return mappers.map_to_pydantic(await use_case(user_id))
 
 
@@ -52,9 +54,12 @@ async def update_user(
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.UpdateUserUseCase],
 ):
-    user =  await use_case(mappers.map_update_dto_from_pydantic(dto, user_id), actor)
-    #return mappers.map_to_pydantic()
+    user = await use_case(
+        mappers.map_update_dto_from_pydantic(dto, user_id), actor
+    )
+    # return mappers.map_to_pydantic()
     return user
+
 
 @router.delete(
     "/",

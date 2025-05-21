@@ -18,7 +18,9 @@ class DeleteNotificationUseCase:
         self.__transaction = tx
         self.__read_use_case = read_uc
 
-    async def __call__(self, notification_id: int, actor: User | None) -> Notification:
+    async def __call__(
+        self, notification_id: int, actor: User | None
+    ) -> Notification:
         async with self.__transaction:
             notification = await self.__read_use_case(notification_id)
             return await self.__repository.delete(notification)

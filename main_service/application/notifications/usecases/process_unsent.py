@@ -28,15 +28,23 @@ class ProcessUnsentNotificationsUseCase:
 
     async def __call__(self):
         dto = ReadNotificationsDto(
-            page=0, page_size=50, send_date=datetime.now().date(), for_update=True
+            page=0,
+            page_size=50,
+            send_date=datetime.now().date(),
+            for_update=True,
         )
 
         async with self.__transaction:
             notifications = await self.__read_all_notifications(dto)
             user_ids = list(map(lambda x: x.recipient_id, notifications))
-            users = {user.id: user for user in await self.__read_users_by_ids(user_ids)}
+            users = {
+                user.id: user
+                for user in await self.__read_users_by_ids(user_ids)
+            }
 
-            failed, succeed = await self.__send_notifications(notifications, users)
+            failed, succeed = await self.__send_notifications(
+                notifications, users
+            )
 
             await self.__update_notifications_status(
                 failed, NotificationStatusEnum.FAILED

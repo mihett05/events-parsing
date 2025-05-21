@@ -56,7 +56,9 @@ async def register_user(
     dto: CreateUserModelDto,
     register_use_case: FromDishka[RegisterUseCase],
 ):
-    user, tokens_pair = await register_use_case(map_create_dto_from_pydantic(dto))
+    user, tokens_pair = await register_use_case(
+        map_create_dto_from_pydantic(dto)
+    )
 
     return __make_response(user, tokens_pair)
 

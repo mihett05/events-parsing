@@ -14,6 +14,8 @@ async def test_create_success(
     )
     attrs = ("title", "created_at", "owner_id")
     for attr in attrs:
-        assert getattr(organization, attr) == getattr(create_organization_dto, attr)
+        assert getattr(organization, attr) == getattr(
+            create_organization_dto, attr
+        )
 
     assert organization.id == 1
