@@ -42,10 +42,8 @@ class RegisterUseCase:
             send_date=datetime.date.today(),
         )
 
-    async def __call__(self, dto: RegisterUserDTO) -> tuple[User, TokenPairDto]:
-        password_dto = self.security_gateway.create_hashed_password(
-            dto.password
-        )
+    async def __call__(self, dto: RegisterUserDTO) -> UserActivationToken:
+        password_dto = self.security_gateway.create_hashed_password(dto.password)
         user = User(
             email=dto.email,
             fullname=dto.fullname,

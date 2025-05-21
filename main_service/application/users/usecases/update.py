@@ -6,7 +6,8 @@ from application.auth.permissions import PermissionBuilder
 from application.transactions import TransactionsGateway
 from application.users.dtos import UpdateUserDto
 from application.users.permissions import UserPermissionProvider
-from application.users.usecases import ReadUserRolesUseCase, ReadUserUseCase
+from application.users.usecases.read import ReadUserUseCase
+from application.users.usecases.read_all_roles import ReadUserRolesUseCase
 
 
 class UpdateUserUseCase:

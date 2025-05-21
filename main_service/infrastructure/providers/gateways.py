@@ -46,10 +46,6 @@ class GatewaysProvider(Provider):
         )
 
     @provide
-    def telegram_bot(self, config: Config) -> Bot:
-        return Bot(token=config.telegram_bot_token)
-
-    @provide
     async def emails_gateway(self, config: Config) -> AsyncIterable[EmailsGateway]:
         async with ImapEmailsGateway(
             imap_server=config.imap_server,
@@ -71,18 +67,14 @@ class GatewaysProvider(Provider):
             yield gateway
 
     @provide(scope=Scope.REQUEST)
-    def create_use_case(
-        self, event: StreamMessage
-    ) -> DeduplicateEventUseCase: ...
+    def create_use_case(self, event: StreamMessage) -> DeduplicateEventUseCase: ...
 
     coordinator_publisher = provide(
         source=RabbitMQCoordinatorGateway, provides=CoordinatorGateway
     )
 
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
-    security_gateway = provide(
-        source=BcryptSecurityGateway, provides=SecurityGateway
-    )
+    security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
     files_gateway = provide(source=MinioFilesGateway, provides=FilesGateway)
 
     telegram_notification_gateway = provide(NotificationTelegramGateway)
