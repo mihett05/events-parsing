@@ -12,7 +12,7 @@ from application.organizations.usecases.validate_token import (
     ValidateOrganizationTokenUseCase,
 )
 from application.transactions import TransactionsGateway
-from application.users.usecases import CreateUserOrganizationRoleUseCase
+from application.users.usecases import CreateUserRoleUseCase
 
 
 class CreateOrganizationUseCase:
@@ -21,7 +21,7 @@ class CreateOrganizationUseCase:
         repository: OrganizationsRepository,
         validate_token_use_case: ValidateOrganizationTokenUseCase,
         update_token_use_case: UpdateOrganizationTokenUseCase,
-        create_use_case: CreateUserOrganizationRoleUseCase,
+        create_use_case: CreateUserRoleUseCase,
         transaction: TransactionsGateway,
     ):
         self.__repository = repository

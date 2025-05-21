@@ -1,3 +1,5 @@
+from typing import Any, Callable, Coroutine
+
 import pytest
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
@@ -11,7 +13,9 @@ async def test_authenticate_success(
     authenticate_user1_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
+    create_user1 = await create_user1()
     user = await authenticate_usecase(authenticate_user1_dto)
+    print(type(create_user1))
     assert user.email == create_user1.email
     assert user.fullname == create_user1.fullname
     assert user.id == create_user1.id
@@ -23,6 +27,7 @@ async def test_authenticate_wrong_password(
     authenticate_user1_broken_password_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
+    create_user1 = await create_user1()
     with pytest.raises(InvalidCredentialsError) as ex:
         await authenticate_usecase(authenticate_user1_broken_password_dto)
     assert str(ex.value) == str(InvalidCredentialsError("password"))
@@ -30,7 +35,6 @@ async def test_authenticate_wrong_password(
 
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(
-    create_user2: User,
     authenticate_user1_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):

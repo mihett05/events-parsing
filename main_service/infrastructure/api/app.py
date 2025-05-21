@@ -11,6 +11,7 @@ from domain.exceptions import (
     EntityAccessDenied,
     EntityAlreadyExistsError,
     EntityNotFoundError,
+    InvalidEntityPeriodError,
 )
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -91,6 +92,15 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     ):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"message": str(exc)},
+        )
+
+    @app.exception_handler(InvalidEntityPeriodError)
+    async def invalid_invalid_event_period_handler(
+        _: Request, exc: InvalidEntityPeriodError
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"message": str(exc)},
         )
 

@@ -7,10 +7,13 @@ from domain.notifications.exceptions import NotificationNotFoundError
 @pytest.mark.asyncio
 async def test_read_success(
     read_notification_usecase: ReadNotificationUseCase,
-    create_notification: Notification,
+    create_notification,
+    delete_notification_usecase,
 ):
+    create_notification = await create_notification()
     notification = await read_notification_usecase(create_notification.id)
     assert notification == create_notification
+    await delete_notification_usecase(notification.id, None)
 
 
 @pytest.mark.asyncio

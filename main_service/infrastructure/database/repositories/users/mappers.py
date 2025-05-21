@@ -1,9 +1,18 @@
 from adaptix import P
-from adaptix.conversion import coercer, link_function
-from domain.users.entities import User, UserOrganizationRole, UserSettings
+from adaptix.conversion import allow_unlinked_optional, coercer, link_function
+from domain.users.dtos import CreateActivationTokenDto, CreateTelegramTokenDto
+from domain.users.entities import (
+    TelegramToken,
+    User,
+    UserActivationToken,
+    UserOrganizationRole,
+    UserSettings,
+)
 
 from ...mappers import postgres_retort
 from .models import (
+    TelegramTokenDatabaseModel,
+    UserActivationTokenDatabaseModel,
     UserDatabaseModel,
     UserOrganizationRoleDatabaseModel,
     UserSettingsDatabaseModel,
@@ -68,5 +77,51 @@ map_to_db = retort.get_converter(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
         ),
+    ],
+)
+
+telegram_token_map_to_db = retort.get_converter(
+    TelegramToken,
+    TelegramTokenDatabaseModel,
+    recipe=[
+        link_function(
+            lambda token: token.created_at,
+            P[TelegramTokenDatabaseModel].created_at,
+        ),
+    ],
+)
+
+telegram_token_map_from_db = retort.get_converter(
+    TelegramTokenDatabaseModel, TelegramToken
+)
+
+telegram_token_map_create_to_model = retort.get_converter(
+    CreateTelegramTokenDto,
+    TelegramTokenDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[TelegramTokenDatabaseModel].created_at),
+        allow_unlinked_optional(P[TelegramTokenDatabaseModel].is_used),
+    ],
+)
+
+user_activation_token_map_from_db = retort.get_converter(
+    UserActivationTokenDatabaseModel,
+    UserActivationToken,
+    recipe=[coercer(UserDatabaseModel, User, map_from_db)],
+)
+
+user_activation_token_map_to_db = retort.get_converter(
+    UserActivationToken,
+    UserActivationTokenDatabaseModel,
+    recipe=[coercer(User, UserDatabaseModel, map_to_db)],
+)
+
+create_user_activation_token_map = retort.get_converter(
+    CreateActivationTokenDto,
+    UserActivationTokenDatabaseModel,
+    recipe=[
+        coercer(User, UserDatabaseModel, map_to_db),
+        allow_unlinked_optional(P[UserActivationTokenDatabaseModel].id),
+        allow_unlinked_optional(P[UserActivationTokenDatabaseModel].is_used),
     ],
 )

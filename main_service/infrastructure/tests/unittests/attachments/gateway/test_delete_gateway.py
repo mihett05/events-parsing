@@ -11,12 +11,15 @@ from domain.attachments.repositories import AttachmentsRepository
 @pytest.mark.asyncio
 async def test_delete_success(
     files_gateway: FilesGateway,
-    create_attachment: Attachment,
+    create_attachment,
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
+    create_user1,
 ):
-    # TODO: change actor to user
+    user = await create_user1()
+    create_attachment = await create_attachment()
+
     deleted_attachment = await files_gateway.delete(create_attachment)
     assert deleted_attachment == create_attachment
     with pytest.raises(AttachmentNotFoundError):
-        await read_attachment_usecase(deleted_attachment.id, None)
+        await read_attachment_usecase(deleted_attachment.id, user)

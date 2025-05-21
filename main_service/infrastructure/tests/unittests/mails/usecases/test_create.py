@@ -11,14 +11,17 @@ async def test_create_success(
     mails, _ = await create_mails_usecase(dtos=[create_mail_dto], actor=None)
     mail = mails[0]
 
-    attrs = (
-        "theme",
-        "sender",
-        "raw_content",
-        "received_date",
-        "state",
-        "retry_after",
-    )
+    attrs = [
+        attr
+        for attr in set(dir(create_mail_dto)) & set(dir(mail))
+        if not attr.startswith("__") and not callable(getattr(create_mail_dto, attr))
+    ]
+    print("-------------------")
+    print(attrs)
+    print("-------------------")
+    print(mail)
+    print()
+    print(create_mail_dto)
     for attr in attrs:
         assert getattr(mail, attr) == getattr(create_mail_dto, attr)
 

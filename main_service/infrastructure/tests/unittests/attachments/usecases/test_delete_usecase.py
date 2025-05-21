@@ -11,16 +11,31 @@ from domain.attachments.repositories import AttachmentsRepository
 @pytest.mark.asyncio
 async def test_delete_success(
     delete_attachment_usecase: DeleteAttachmentUseCase,
-    create_attachment: Attachment,
+    create_attachment,
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
+    create_user1,
 ):
-    # TODO: change actor to user
-    deleted_attachment = await delete_attachment_usecase(
-        create_attachment.id, None
-    )
+    user = await create_user1()
+    create_attachment = await create_attachment()
+    deleted_attachment = await delete_attachment_usecase(create_attachment.id, user)
+    attrs = ("id", "filename", "extension", "mail_id", "event_id", "created_at")
+    for attr in attrs:
+        assert getattr(deleted_attachment, attr) == getattr(create_attachment, attr)
+
+
+@pytest.mark.asyncio
+async def test_delete_success(
+    delete_attachment_usecase: DeleteAttachmentUseCase,
+    create_attachment,
+    attachments_repository: AttachmentsRepository,
+    read_attachment_usecase: ReadAttachmentUseCase,
+    create_user1,
+):
+    user = await create_user1()
+    create_attachment = await create_attachment()
+    deleted_attachment = await delete_attachment_usecase(create_attachment.id, user)
     assert deleted_attachment == create_attachment
 
-    # TODO: change actor to user
     with pytest.raises(AttachmentNotFoundError):
-        await read_attachment_usecase(deleted_attachment.id, None)
+        await read_attachment_usecase(deleted_attachment.id, user)

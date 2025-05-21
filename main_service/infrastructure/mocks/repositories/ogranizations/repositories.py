@@ -38,12 +38,14 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
         self.__next_id = 1
         self.__repository = MockRepository(self.Config())
 
-    async def create(
-        self, organization: entities.Organization
-    ) -> entities.Organization:
-        organization.id = self.__next_id
+    async def create(self, dto: dtos.CreateOrganizationDto) -> entities.Organization:
+        organization = entities.Organization(
+            title=dto.title,
+            owner_id=dto.owner_id,
+            id=self.__next_id,
+            created_at=datetime.datetime.now(datetime.UTC),
+        )
         self.__next_id += 1
-        organization.created_at = datetime.datetime.utcnow()
         return await self.__repository.create(organization)
 
     async def read(self, id_: int) -> entities.Organization:
@@ -60,6 +62,9 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
 
     async def delete(self, organization: Organization) -> Organization:
         return await self.__repository.delete(organization)
+
+    async def clear(self):
+        await self.__repository.clear()
 
 
 class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
