@@ -65,8 +65,8 @@ map_to_db = retort.get_converter(
             P[UserDatabaseModel].salt,
         ),
         coercer(
-            UserSettingsDatabaseModel,
             UserSettings,
+            UserSettingsDatabaseModel,
             user_settings_to_db_mapper,
         ),
         link_function(
