@@ -36,7 +36,7 @@ class RegisterUseCase:
         return Notification(
             text=f"Уважаемый, {user.fullname}."
             f"По этой ссылке вы можете активировать ваш аккаунт: "
-            f"http://{self.__config.server_host}:{self.__config.server_port}/activate/{token.id}",
+            f"http://{self.__config.server_host}:{self.__config.server_port}/v1/auth/activate/{token.id}",
             event_id=-1,
             recipient_id=user.id,
             send_date=datetime.date.today(),
