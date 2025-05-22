@@ -115,7 +115,6 @@ class EventsDatabaseRepository(EventsRepository):
             query = self.__add_offset_to_query(query, dto)
             return query
 
-
         def __try_add_period_filter_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadAllEventsDto
         ) -> Select:
