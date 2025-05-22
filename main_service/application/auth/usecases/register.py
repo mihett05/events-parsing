@@ -54,7 +54,7 @@ class RegisterUseCase:
 
         user = await self.create_user_use_case(user)
         token = await self.create_activation_token_use_case(
-            CreateActivationTokenDto(user_id=user.id)
+            CreateActivationTokenDto(user_id=user.id, user=user)
         )
         async with self.send_notification_gateway as gateway:
             await gateway.send(self.__create_notification(user, token), user)

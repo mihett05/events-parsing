@@ -24,6 +24,7 @@ from domain.users.repositories import (
     UsersRepository,
 )
 from sqlalchemy import Select, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import LoaderOption
@@ -216,7 +217,9 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
             )
 
         def get_options(self) -> list[LoaderOption]:
-            return [selectinload(self.model.user)]
+            return [
+                selectinload(self.model.user).selectinload(UserDatabaseModel.settings)
+            ]
 
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
@@ -224,7 +227,14 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: dtos.CreateActivationTokenDto) -> UserActivationToken:
-        return await self.__repository.create_from_dto(dto)
+        query = (
+            insert(self.__config.model)
+            .values(id=dto.id, user_id=dto.user_id)
+            .returning(self.__config.model)
+        )
+        result = await self.__session.scalars(self.__config.add_options(query))
+        model = result.one()
+        return self.__config.entity_mapper(model)
 
     async def read(self, token_id: UUID) -> UserActivationToken:
         return await self.__repository.read(token_id)

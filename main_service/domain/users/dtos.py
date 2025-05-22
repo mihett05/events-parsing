@@ -19,4 +19,5 @@ class CreateTelegramTokenDto:
 @dataclass
 class CreateActivationTokenDto:
     user_id: int
+    user: User
     id: UUID = field(default_factory=uuid4)
