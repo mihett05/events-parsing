@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
 
@@ -7,9 +7,14 @@ from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 
 @dataclass
 class UserSettings:
-    id: int
-    user_id: int
+    # Кринж
+    id: int = None
+    user_id: int = None
     type: UserNotificationSendToEnum = UserNotificationSendToEnum.EMAIL
+
+    @classmethod
+    def get_default(cls) -> "UserSettings":
+        return UserSettings()
 
 
 @dataclass
@@ -21,12 +26,13 @@ class User:
     id: int | None = None
     is_active: bool = True
 
+    # TODO: cock dick blowjob
     salt: str = None
     hashed_password: str = None
 
     telegram_id: int | None = None
     created_at: datetime = None
-    settings: UserSettings = None
+    settings: UserSettings = field(default_factory=UserSettings.get_default)  # Тоже кринж
 
 
 @dataclass

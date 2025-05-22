@@ -10,10 +10,12 @@ from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole, UserSettings
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from domain.users.enums import RoleEnum
+from domain.users.repositories import UsersRepository
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
 
@@ -146,3 +148,15 @@ async def organizations_repository(
 ) -> OrganizationsRepository:
     async with container() as request_container:
         yield await request_container.get(OrganizationsRepository)
+
+
+@pytest_asyncio.fixture
+async def create_user(
+    get_user_entity: User,
+    users_repository: UsersRepository,
+) -> Callable[..., Coroutine[Any, Any, User]]:
+    async def _factory():
+        user = await users_repository.create(get_user_entity)
+        return user
+
+    return _factory

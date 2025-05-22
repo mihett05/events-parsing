@@ -8,12 +8,13 @@ from domain.users.entities import User
 async def test_read_all_one_user(
     read_all_users_usecase: ReadAllUsersUseCase,
     read_all_users_dto: ReadAllUsersDto,
-    create_user: User,
+    create_user,
 ):
+    user = await create_user()
     users = await read_all_users_usecase(read_all_users_dto)
 
     assert len(users) == 1
-    assert users[0] == create_user
+    assert users[0] == user
 
 
 @pytest.mark.asyncio

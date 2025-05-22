@@ -22,7 +22,7 @@ class CreateUserRoleUseCase:
         self, role: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
         async with self.__transaction:
-            roles = await self.__repository.read_all(actor.id)
+            roles = await self.__repository.read(actor.id, role.organization_id)
             self.__builder.providers(
                 UserRolesPermissionProvider(role.organization_id, roles)
             ).add(PermissionsEnum.CAN_CREATE_ROLE).apply()

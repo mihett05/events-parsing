@@ -72,7 +72,7 @@ class TelegramTokenDatabaseModel(Base):
 
 
 class UserActivationTokenDatabaseModel(Base):
-    __tablename__ = "user_activation_tokens"
+    __tablename__ = "user_activation_token"
 
     id: Mapped[UUID] = mapped_column(primary_key=True)
 

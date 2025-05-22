@@ -65,8 +65,8 @@ map_to_db = retort.get_converter(
             P[UserDatabaseModel].salt,
         ),
         coercer(
-            UserSettingsDatabaseModel,
             UserSettings,
+            UserSettingsDatabaseModel,
             user_settings_to_db_mapper,
         ),
         link_function(
@@ -123,5 +123,6 @@ create_user_activation_token_map = retort.get_converter(
         coercer(User, UserDatabaseModel, map_to_db),
         allow_unlinked_optional(P[UserActivationTokenDatabaseModel].id),
         allow_unlinked_optional(P[UserActivationTokenDatabaseModel].is_used),
+        allow_unlinked_optional(P[UserActivationTokenDatabaseModel].user),
     ],
 )

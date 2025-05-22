@@ -23,4 +23,5 @@ class NotificationGatewayFactory(NotificationGatewayAbstractFactory):
         }
 
     async def get(self, user: User) -> NotificationGateway:
+        # TODO: переделать на то, что у User'а settings может быть None
         return self.__gateways[user.settings.type]

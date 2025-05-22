@@ -7,18 +7,11 @@ from domain.users.dtos import (
 )
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
+from domain.users.exceptions import UserRoleNotFoundError, UserRoleAlreadyExistsError
 from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
 )
-
-
-@pytest_asyncio.fixture
-async def update_user_dto() -> UpdateUserDto:
-    return UpdateUserDto(
-        user_id=1,
-        fullname="Romanov Roman Romanovich",
-    )
 
 
 @pytest_asyncio.fixture
@@ -31,15 +24,27 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
     async with container() as nested:
         yield await nested.get(UsersRepository)
 
-
+"""
 @pytest_asyncio.fixture
 async def create_user(
     get_user_entity: User,
     users_repository: UsersRepository,
+    user_organization_roles_repository: UserOrganizationRolesRepository
 ) -> User:
     user = await users_repository.create(get_user_entity)
+    user_role = UserOrganizationRole(
+        user_id=user.id,
+        organization_id=1,
+        role=RoleEnum.SUPER_ADMIN
+    )
+    try:
+        await user_organization_roles_repository.read(
+            user_role.user_id,
+            user_role.organization_id)
+    except UserRoleNotFoundError:
+        await user_organization_roles_repository.create(user_role)
     return user
-
+"""
 
 @pytest_asyncio.fixture
 async def create_users(
@@ -54,40 +59,61 @@ async def create_users(
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
-    pytestconfig: pytest.Config, users_repository: UsersRepository
+    pytestconfig: pytest.Config, users_repository: UsersRepository,
+                                 user_organization_roles_repository: UserOrganizationRolesRepository,
 ):
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa
+    await user_organization_roles_repository.clear() # noqa
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def teardown(
-    pytestconfig: pytest.Config, users_repository: UsersRepository
+    pytestconfig: pytest.Config, users_repository: UsersRepository,
+        user_organization_roles_repository: UserOrganizationRolesRepository,
 ):
     yield
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa
+    await user_organization_roles_repository.clear() # noqa
 
 
 @pytest_asyncio.fixture
-async def get_user_role_entity() -> UserOrganizationRole:
+async def get_user_role_entity(
+    create_user
+) -> UserOrganizationRole:
+    user = await create_user()
+    return UserOrganizationRole(user_id=user.id, organization_id=1, role=RoleEnum.ADMIN)
+
+
+@pytest_asyncio.fixture
+async def create_user_role(
+    get_user_role_entity: UserOrganizationRole,
+    user_organization_roles_repository: UserOrganizationRolesRepository,
+) -> UserOrganizationRole:
+    try:
+        return await user_organization_roles_repository.create(get_user_role_entity)
+    except UserRoleAlreadyExistsError:
+        return get_user_role_entity
+
+
+@pytest_asyncio.fixture
+async def update_user_role_entity(
+    create_user_role
+) -> UserOrganizationRole:
     return UserOrganizationRole(
-        user_id=1, organization_id=1, role=RoleEnum.SUPER_OWNER
+        user_id=create_user_role.user_id, organization_id=1, role=RoleEnum.PUBLIC
     )
 
 
 @pytest_asyncio.fixture
-async def update_user_role_entity() -> UserOrganizationRole:
-    return UserOrganizationRole(
-        user_id=1, organization_id=1, role=RoleEnum.PUBLIC
-    )
-
-
-@pytest_asyncio.fixture
-async def delete_user_role_dto() -> DeleteUserRoleDto:
-    return DeleteUserRoleDto(user_id=1, organization_id=1)
+async def delete_user_role_dto(
+    create_user
+) -> DeleteUserRoleDto:
+    user = await create_user()
+    return DeleteUserRoleDto(user_id=user.id, organization_id=1)
 
 
 @pytest_asyncio.fixture
@@ -99,14 +125,32 @@ async def user_organization_roles_repository(
 
 
 @pytest_asyncio.fixture
-async def create_user_role(
-    get_user_role_entity: UserOrganizationRole,
-    user_organization_roles_repository: UserOrganizationRolesRepository,
-) -> UserOrganizationRole:
-    role = await user_organization_roles_repository.create(get_user_role_entity)
-    return role
+async def update_user_dto(
+    create_user
+) -> tuple[User, UpdateUserDto]:
+    user = await create_user()
+    return user, UpdateUserDto(
+        user_id=user.id,
+        fullname="Romanov Roman Romanovich",
+    )
 
 
-@pytest_asyncio.fixture
-async def get_actor() -> User:
-    return User(id=777, fullname="Ivanov Ivan Ivanovich", email="test@test.com")
+@pytest_asyncio.fixture(scope="function")
+async def get_actor(
+        users_repository: UsersRepository,
+        user_organization_roles_repository: UserOrganizationRolesRepository,) -> User:
+    # TODO: юзера создавать с рабочими логинами паролями из гейтвея
+    user = User(id=777, fullname="Ivanov Ivan Ivanovich", email="test@test.com", salt="salt", hashed_password="oral cum shot")
+    user_p = await users_repository.create(user)
+    actor_role = UserOrganizationRole(
+        user_id=user_p.id,
+        organization_id=1,  # TODO: нужно создать организацию предварительно, чтобы обращаться к её id
+        role=RoleEnum.SUPER_OWNER
+    )
+    try:
+        await user_organization_roles_repository.read(
+            actor_role.user_id,
+            actor_role.organization_id)
+    except UserRoleNotFoundError:
+        await user_organization_roles_repository.create(actor_role)
+    return user_p

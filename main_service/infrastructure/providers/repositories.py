@@ -20,8 +20,6 @@ from infrastructure.database.repositories import (
     MailsDatabaseRepository,
     NotificationsDatabaseRepository,
     UserActivationTokenDatabaseRepository,
-    UserOrganizationRolesDatabaseRepository,
-    UsersDatabaseRepository,
 )
 from infrastructure.database.repositories.events import (
     EventsUserDatabaseRepository,

@@ -1,4 +1,3 @@
-from domain.exceptions import EntityAccessDenied
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.repositories import UserOrganizationRolesRepository
 
@@ -26,12 +25,8 @@ class UpdateUserRoleUseCase:
         self, entity: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
         async with self.__transaction:
-            roles = await self.__repository.read_all(actor.id)
+            role = await self.__read_role_use_case(actor.id, entity.organization_id)
             self.__builder.providers(
-                UserRolesPermissionProvider(entity.organization_id, roles)
+                UserRolesPermissionProvider(entity.organization_id, role)
             ).add(PermissionsEnum.CAN_UPDATE_ROLE).apply()
-            role = await self.__repository.read(
-                entity.user_id, entity.organization_id
-            )
-            role.role = entity.role
-            return await self.__repository.update(role)
+            return await self.__repository.update(entity)

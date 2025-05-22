@@ -1,5 +1,6 @@
 from domain.exceptions import EntityAccessDenied
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.exceptions import UserRoleNotFoundError
 from domain.users.repositories import UserOrganizationRolesRepository
 
 from application.transactions import TransactionsGateway
@@ -28,11 +29,12 @@ class DeleteUserRoleUseCase:
         self, dto: DeleteUserRoleDto, actor: User
     ) -> UserOrganizationRole:
         async with self.__transaction:
-            roles = await self.__repository.read_all(actor.id)
+            roles = await self.__repository.read(actor.id, dto.organization_id)
             self.__builder.providers(
                 UserRolesPermissionProvider(dto.organization_id, roles)
             ).add(PermissionsEnum.CAN_DELETE_ROLE).apply()
-            role = await self.__repository.read(
+            if role := await self.__repository.read(
                 dto.user_id, dto.organization_id
-            )
-            return await self.__repository.delete(role)
+            ):
+                return await self.__repository.delete(role)
+            raise UserRoleNotFoundError

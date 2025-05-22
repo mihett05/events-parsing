@@ -89,6 +89,8 @@ class UsersDatabaseRepository(UsersRepository):
         return await self.__repository.read_by_ids(user_ids)
 
     async def create(self, user: User) -> User:
+        print(User)
+        # TODO: тут тоже фиксить надо, в идеале dto, а не юзера сюда передавать, чтобы не было херни с None полями
         model: UserDatabaseModel = self.__config.model_mapper(user)
         model.settings = UserSettingsDatabaseModel()
         return await self.__repository.create(model)
@@ -108,9 +110,6 @@ class UsersDatabaseRepository(UsersRepository):
 
     async def delete(self, user: entities.User) -> entities.User:
         return await self.__repository.delete(user)
-
-    async def update_is_active_statement(self, user_id: int, status: bool):
-        return await self.update_is_active_statement(user_id, status)
 
     async def change_user_active_status(self, user_id: int, status: bool):
         query = (
@@ -159,6 +158,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
+        # TODO: сделать идемпотентным
         return await self.__repository.create_from_entity(role)
 
     async def read(
@@ -232,7 +232,7 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
     async def read(self, token_id: UUID) -> UserActivationToken:
         return await self.__repository.read(token_id)
 
-    async def update_is_used_statement(self, token_id: UUID):
+    async def change_token_used_statement(self, token_id: UUID):
         query = (
             update(UserActivationTokenDatabaseModel)
             .where(UserActivationTokenDatabaseModel.id == token_id)

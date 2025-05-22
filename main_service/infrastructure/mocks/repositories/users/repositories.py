@@ -2,14 +2,12 @@ from datetime import datetime
 from uuid import UUID
 
 from domain.users import dtos as dtos
-from domain.users import entities as entities
 from domain.users.entities import (
     TelegramToken,
     User,
     UserActivationToken,
     UserOrganizationRole,
 )
-from domain.users.enums import RoleEnum
 from domain.users.exceptions import (
     TelegramTokenAlreadyExistsError,
     TelegramTokenNotFoundError,
@@ -25,12 +23,10 @@ from domain.users.repositories import (
     UsersRepository,
 )
 
-from ..crud import Entity, Id, MockRepository, MockRepositoryConfig
+from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
-    async def update_is_active_statement(self, user_id: int, status: bool):
-        pass
 
     class Config(MockRepositoryConfig):
         def __init__(self):
@@ -76,9 +72,9 @@ class UsersMemoryRepository(UsersRepository):
     async def clear(self):
         await self.__repository.clear()
 
-    async def update_is_active_statement(self, user_id: int, status: bool):
-        # TODO add method
-        pass
+    async def change_user_active_status(self, user: User, status: bool):
+        user.is_active = status
+        return await self.__repository.update(user)
 
 
 class TelegramTokensMemoryRepository(TelegramTokensRepository):
@@ -127,26 +123,21 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create(role)
 
-    async def read(self, user_id: int) -> list[UserOrganizationRole]:
-        return await self.__repository.read(user_id)
+    async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole:
+        return await self.__repository.read((organization_id, user_id))
 
     async def update(
         self, user_role: UserOrganizationRole
     ) -> UserOrganizationRole:
         return await self.__repository.update(user_role)
 
-    async def update_is_active_statement(self, user: User, status: bool):
-        user.is_active = status
-        await self.__repository.update(user)
-
     async def delete(
         self, user_role: UserOrganizationRole
     ) -> UserOrganizationRole:
         return await self.__repository.delete(user_role)
 
-    async def read_all(self, *args) -> list[UserOrganizationRole]:
-        # TODO Добавить аргументы
-        return await self.__repository.read_all()
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
+        return [x for x in await self.__repository.read_all() if x.user_id == user_id]
 
     async def clear(self):
         await self.__repository.clear()
@@ -170,7 +161,7 @@ class UserActivationTokenMemoryRepository(UserActivationTokenRepository):
     async def create(self, token: UserActivationToken) -> UserActivationToken:
         return await self.__repository.create(token)
 
-    async def update_is_used_statement(self, token: UserActivationToken):
+    async def change_token_used_statement(self, token: UserActivationToken):
         token.is_used = True
         await self.__repository.update(token)
 

@@ -47,7 +47,7 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
     ) -> UserOrganizationRole: ...
 
     @abstractmethod
-    async def read(self, user_id: int) -> list[UserOrganizationRole]: ...
+    async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole: ...
 
     @abstractmethod
     async def update(
@@ -59,7 +59,8 @@ class UserOrganizationRolesRepository(metaclass=ABCMeta):
         self, role: UserOrganizationRole
     ) -> UserOrganizationRole: ...
 
-    # TODO add read_all
+    @abstractmethod
+    async def read_all(self, user_id: int) -> list[UserOrganizationRole]: ...
 
 
 class UserActivationTokenRepository(metaclass=ABCMeta):
@@ -72,7 +73,7 @@ class UserActivationTokenRepository(metaclass=ABCMeta):
     async def read(self, token_uuid: UUID) -> UserActivationToken: ...
 
     @abstractmethod
-    async def update_is_used_statement(self, token_id: UUID): ...
+    async def change_token_used_statement(self, token_id: UUID): ...
 
     @abstractmethod
     async def delete(
