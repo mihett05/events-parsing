@@ -215,6 +215,9 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
                 already_exists_exception=EntityAlreadyExistsError,
             )
 
+        def get_options(self) -> list[LoaderOption]:
+            return [selectinload(self.model.user)]
+
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session
