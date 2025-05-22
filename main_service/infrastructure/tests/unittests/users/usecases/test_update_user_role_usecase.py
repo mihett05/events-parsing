@@ -1,7 +1,7 @@
 from copy import copy
 
 import pytest
-from application.users.usecases import UpdateUserRoleUseCase, ReadUserRoleUseCase
+from application.users.usecases import ReadUserRoleUseCase, UpdateUserRoleUseCase
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.exceptions import UserRoleNotFoundError
 
@@ -11,9 +11,11 @@ async def test_update_success(
     update_user_role_usecase: UpdateUserRoleUseCase,
     update_user_role_entity: UserOrganizationRole,
     get_actor: User,
-    read_user_role_usecase: ReadUserRoleUseCase
+    read_user_role_usecase: ReadUserRoleUseCase,
 ):
-    user_role = await read_user_role_usecase(update_user_role_entity.user_id, update_user_role_entity.organization_id)
+    user_role = await read_user_role_usecase(
+        update_user_role_entity.user_id, update_user_role_entity.organization_id
+    )
     user = await update_user_role_usecase(update_user_role_entity, get_actor)
 
     assert user.role != user_role.role

@@ -23,9 +23,7 @@ async def test_delete_success(
 
 
 @pytest.mark.asyncio
-async def test_delete_not_found(
-    delete_event_usecase: DeleteEventUseCase, create_user1
-):
+async def test_delete_not_found(delete_event_usecase: DeleteEventUseCase, create_user1):
     user = await create_user1()
     with pytest.raises(EventNotFoundError):
         await delete_event_usecase(random.randint(100, 200), user)

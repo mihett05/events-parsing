@@ -11,11 +11,11 @@ from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User, UserOrganizationRole, UserSettings
+from domain.users.enums import RoleEnum
+from domain.users.repositories import UsersRepository
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from domain.users.enums import RoleEnum
-from domain.users.repositories import UsersRepository
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
 
@@ -40,9 +40,7 @@ async def container(pytestconfig: pytest.Config):
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def setup_db_tables(
-    pytestconfig: pytest.Config, container: AsyncContainer
-):
+async def setup_db_tables(pytestconfig: pytest.Config, container: AsyncContainer):
     if not pytestconfig.getoption("--integration", default=False):
         return
     engine = await container.get(AsyncEngine)

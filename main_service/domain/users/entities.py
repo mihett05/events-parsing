@@ -32,7 +32,9 @@ class User:
 
     telegram_id: int | None = None
     created_at: datetime = None
-    settings: UserSettings = field(default_factory=UserSettings.get_default)  # Тоже кринж
+    settings: UserSettings = field(
+        default_factory=UserSettings.get_default
+    )  # Тоже кринж
 
 
 @dataclass

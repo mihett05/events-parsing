@@ -14,9 +14,7 @@ async def test_create_success(
     # TODO: Переделать
     return
 
-    notification = await create_notification_usecase(
-        dto=create_notification_dto
-    )
+    notification = await create_notification_usecase(dto=create_notification_dto)
     attrs = (
         "recipient_id",
         "text",
@@ -25,7 +23,5 @@ async def test_create_success(
         "status",
     )
     for attr in attrs:
-        assert getattr(notification, attr) == getattr(
-            create_notification_dto, attr
-        )
+        assert getattr(notification, attr) == getattr(create_notification_dto, attr)
     assert notification.id == 1

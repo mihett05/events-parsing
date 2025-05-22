@@ -18,9 +18,7 @@ async def test_read_success(
 
 
 @pytest.mark.asyncio
-async def test_read_not_found(
-    read_event_usecase: ReadEventUseCase, create_user1
-):
+async def test_read_not_found(read_event_usecase: ReadEventUseCase, create_user1):
     user = await create_user1()
 
     with pytest.raises(EventNotFoundError):

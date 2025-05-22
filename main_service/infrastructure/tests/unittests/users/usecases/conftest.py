@@ -90,4 +90,3 @@ async def delete_user_role_usecase(
 ) -> user_usecases.DeleteUserRoleUseCase:
     async with container() as nested:
         yield await nested.get(user_usecases.DeleteUserRoleUseCase)
-
