@@ -115,13 +115,6 @@ class EventsDatabaseRepository(EventsRepository):
             query = self.__add_offset_to_query(query, dto)
             return query
 
-        # def get_select_for_user_query(self, dto: dtos.ReadUserEventsDto) -> Select:
-        #     # ids = [member.id for member in self.model.members]
-        #     # print(ids)
-        #     query = select(self.model).where(dto.user in self.model.members).order_by(desc(self.model.start_date))
-        #
-        #     query = self.__add_offset_to_query(query, dto)
-        #     return query
 
         def __try_add_period_filter_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadAllEventsDto

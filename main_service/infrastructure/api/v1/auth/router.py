@@ -63,7 +63,7 @@ async def register_user(
     return Response(status_code=status.HTTP_200_OK)
 
 
-@router.post(
+@router.get(
     "/activate/{token_uuid}",
 )
 async def validate_token(

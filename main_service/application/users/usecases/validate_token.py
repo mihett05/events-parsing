@@ -33,8 +33,8 @@ class ValidateActivationTokenUseCase:
     async def __call__(self, token_uuid: UUID) -> tuple[User, TokenPairDto]:
         async with self.__transaction:
             token = await self.__token_repository.read(token_uuid)
-            await self.__token_repository.update_is_used_statement(token.id)
-            await self.__users_repository.update_is_active_statement(
+            await self.__token_repository.change_token_used_statement(token.id)
+            await self.__users_repository.change_user_active_status(
                 token.user.id, True
             )
             return token.user, await self.__create_token_pair_use_case(token.user)

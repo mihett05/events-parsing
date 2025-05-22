@@ -44,8 +44,6 @@ class MockRepository(Generic[Entity, Id]):
         self.__config = config
 
     async def create(self, entity: Entity) -> Entity:
-        print(entity, self.__config.entity)
-        print(self.storage)
         entity_id = self.__config.extract_id(entity)
         if entity_id in self.storage:
             raise self.__config.already_exists_exception()

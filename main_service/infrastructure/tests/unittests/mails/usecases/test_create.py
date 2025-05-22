@@ -16,12 +16,7 @@ async def test_create_success(
         for attr in set(dir(create_mail_dto)) & set(dir(mail))
         if not attr.startswith("__") and not callable(getattr(create_mail_dto, attr))
     ]
-    print("-------------------")
-    print(attrs)
-    print("-------------------")
-    print(mail)
-    print()
-    print(create_mail_dto)
+
     for attr in attrs:
         assert getattr(mail, attr) == getattr(create_mail_dto, attr)
 

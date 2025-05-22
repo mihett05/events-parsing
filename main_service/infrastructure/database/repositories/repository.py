@@ -80,7 +80,6 @@ class PostgresRepository(metaclass=ABCMeta):
             if self.__should_commit():
                 await self.session.commit()
             await self.session.merge(model)
-            print(model.__dict__)
             return await self.read(self.config.extract_id_from_model(model))
         except IntegrityError:
             traceback.print_exc()

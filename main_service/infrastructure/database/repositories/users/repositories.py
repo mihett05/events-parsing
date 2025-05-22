@@ -90,7 +90,6 @@ class UsersDatabaseRepository(UsersRepository):
         return await self.__repository.read_by_ids(user_ids)
 
     async def create(self, user: User) -> User:
-        print(User)
         # TODO: тут тоже фиксить надо, в идеале dto, а не юзера сюда передавать, чтобы не было херни с None полями
         model: UserDatabaseModel = self.__config.model_mapper(user)
         model.settings = UserSettingsDatabaseModel()
