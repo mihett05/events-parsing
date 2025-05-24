@@ -1,7 +1,7 @@
 import asyncio
 from uuid import uuid4
 
-from application.auth.dtos import RegisterUserDTO
+from application.auth.dtos import RegisterUserDto
 from application.auth.usecases import CreateUserWithPasswordUseCase
 from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
@@ -20,7 +20,7 @@ async def _create_admin(
     users_repository: UsersRepository,
     create_user: CreateUserWithPasswordUseCase,
 ):
-    dto = RegisterUserDTO(email=config.admin_username, password=config.admin_password)
+    dto = RegisterUserDto(email=config.admin_username, password=config.admin_password)
     try:
         return await users_repository.read_by_email(dto.email)
     except UserAlreadyExistsError:

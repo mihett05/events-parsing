@@ -2,7 +2,7 @@ from datetime import datetime
 from random import randint
 from uuid import UUID
 
-from application.auth.dtos import RegisterUserWithPasswordDto
+from application.auth.dtos import CreateUserWithPasswordDto
 from domain.users import dtos as dtos
 from domain.users import entities as entities
 from domain.users.entities import (
@@ -56,7 +56,7 @@ class UsersMemoryRepository(UsersRepository):
                 return user
         raise UserNotFoundError()
 
-    async def create(self, dto: RegisterUserWithPasswordDto) -> User:
+    async def create(self, dto: CreateUserWithPasswordDto) -> User:
         user = User(
             email=dto.email,
             fullname=dto.fullname,

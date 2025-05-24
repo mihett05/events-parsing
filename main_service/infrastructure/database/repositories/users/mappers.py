@@ -1,6 +1,6 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, coercer, link_function
-from application.auth.dtos import RegisterUserWithPasswordDto
+from application.auth.dtos import CreateUserWithPasswordDto
 from domain.users.dtos import CreateActivationTokenDto, CreateTelegramTokenDto
 from domain.users.entities import (
     TelegramToken,
@@ -82,7 +82,7 @@ map_to_db = retort.get_converter(
 )
 
 create_user_mapper = retort.get_converter(
-    RegisterUserWithPasswordDto,
+    CreateUserWithPasswordDto,
     UserDatabaseModel,
     recipe=[
         allow_unlinked_optional(P[UserDatabaseModel].id),

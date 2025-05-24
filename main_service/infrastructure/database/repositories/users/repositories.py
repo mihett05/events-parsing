@@ -1,7 +1,7 @@
 from uuid import UUID
 
 import domain.users.dtos as dtos
-from application.auth.dtos import RegisterUserWithPasswordDto
+from application.auth.dtos import CreateUserWithPasswordDto
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import (
@@ -90,7 +90,7 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_by_ids(self, user_ids: list[int]) -> list[entities.User]:
         return await self.__repository.read_by_ids(user_ids)
 
-    async def create(self, dto: RegisterUserWithPasswordDto) -> User:
+    async def create(self, dto: CreateUserWithPasswordDto) -> User:
         model: UserDatabaseModel = self.__config.create_model_mapper(dto)
         model.settings = UserSettingsDatabaseModel()
         return await self.__repository.create(model)

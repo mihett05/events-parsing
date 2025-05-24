@@ -12,7 +12,7 @@ from application.users.usecases.create_user_activation_token import (
     CreateUserActivationTokenUseCase,
 )
 
-from ..dtos import RegisterUserDTO
+from ..dtos import RegisterUserDto
 from ..tokens.gateways import SecurityGateway
 from .create_user_with_password import CreateUserWithPasswordUseCase
 
@@ -42,7 +42,7 @@ class RegisterUseCase:
             send_date=datetime.date.today(),
         )
 
-    async def __call__(self, dto: RegisterUserDTO) -> UserActivationToken:
+    async def __call__(self, dto: RegisterUserDto) -> UserActivationToken:
         user = await self.create_user_use_case(dto)
         token = await self.create_activation_token_use_case(
             CreateActivationTokenDto(user_id=user.id, user=user)

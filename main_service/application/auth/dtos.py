@@ -8,7 +8,7 @@ class AuthenticateUserDto:
 
 
 @dataclass
-class RegisterUserDTO:
+class RegisterUserDto:
     email: str
     password: str
     fullname: str = ""
@@ -16,7 +16,7 @@ class RegisterUserDTO:
 
 
 @dataclass
-class RegisterUserWithPasswordDto:
+class CreateUserWithPasswordDto:
     email: str
     fullname: str
     is_active: bool
