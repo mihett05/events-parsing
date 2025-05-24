@@ -6,7 +6,7 @@ from domain.events.entities import Event
 
 @pytest.mark.asyncio
 async def test_deduplicate_create_new(
-    deduplicate_event_usecase: DeduplicateEventUseCase,
+    deduplicate_event_usecase,
     create_event_dto: CreateEventDto,
 ):
     event, _ = await deduplicate_event_usecase(None, create_event_dto)

@@ -41,7 +41,11 @@ class ReadAttachmentUseCase:
                 event = await self.__read_event_use_case(
                     attachment.event_id, actor
                 )
-
+            print(AttachmentPermissionProvider(
+                    event and event.organization_id or -1,
+                    roles,
+                    event,
+                ).permissions)
             self.__builder.providers(
                 AttachmentPermissionProvider(
                     event and event.organization_id or -1,
@@ -51,6 +55,7 @@ class ReadAttachmentUseCase:
             ).add(
                 PermissionsEnum.CAN_READ_ATTACHMENT,
             ).apply()
+
 
             await self.__gateway.add_link_to_attachment(attachment)
             return attachment
