@@ -13,3 +13,12 @@ class RegisterUserDTO:
     password: str
     fullname: str = ""
     is_active: bool = True
+
+
+@dataclass
+class RegisterUserWithPasswordDto:
+    email: str
+    fullname: str
+    is_active: bool
+    salt: str
+    hashed_password: str

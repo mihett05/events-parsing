@@ -8,19 +8,19 @@ from infrastructure.gateways.notifications.gateways import (
     NotificationEmailGateway,
 )
 
-from application.users.usecases import CreateUserUseCase
 from application.users.usecases.create_user_activation_token import (
     CreateUserActivationTokenUseCase,
 )
 
 from ..dtos import RegisterUserDTO
 from ..tokens.gateways import SecurityGateway
+from .create_user_with_password import CreateUserWithPasswordUseCase
 
 
 class RegisterUseCase:
     def __init__(
         self,
-        create_user_use_case: CreateUserUseCase,
+        create_user_use_case: CreateUserWithPasswordUseCase,
         security_gateway: SecurityGateway,
         send_notification_gateway: NotificationEmailGateway,
         create_activation_token_use_case: CreateUserActivationTokenUseCase,
@@ -43,16 +43,7 @@ class RegisterUseCase:
         )
 
     async def __call__(self, dto: RegisterUserDTO) -> UserActivationToken:
-        password_dto = self.security_gateway.create_hashed_password(dto.password)
-        user = User(
-            email=dto.email,
-            fullname=dto.fullname,
-            salt=password_dto.salt,
-            hashed_password=password_dto.hashed_password,
-            is_active=False,
-        )
-
-        user = await self.create_user_use_case(user)
+        user = await self.create_user_use_case(dto)
         token = await self.create_activation_token_use_case(
             CreateActivationTokenDto(user_id=user.id, user=user)
         )

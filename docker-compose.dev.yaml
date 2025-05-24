@@ -61,6 +61,17 @@ services:
   #     - 8000:8080
   #   restart: always
 
+  main-service-migrations:
+    depends_on:
+      - postgres
+    build:
+      context: main_service
+      dockerfile: ./migrations.dockerfile
+    links:
+      - "postgres:postgres"
+    env_file:
+      - ./main_service/.dev.env
+
   # parser:
   #   depends_on:
   #     - backend

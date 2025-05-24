@@ -51,6 +51,11 @@ class OrganizationsMemoryRepository(OrganizationsRepository):
     async def read(self, id_: int) -> entities.Organization:
         return await self.__repository.read(id_)
 
+    async def find(self, owner_id: int) -> entities.Organization | None:
+        for org in await self.__repository.read_all():
+            if org.owner_id == owner_id:
+                return org
+
     async def read_all(
         self, dto: dtos.ReadOrganizationsDto
     ) -> list[entities.Organization]:

@@ -1,5 +1,6 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, coercer, link_function
+from application.auth.dtos import RegisterUserWithPasswordDto
 from domain.users.dtos import CreateActivationTokenDto, CreateTelegramTokenDto
 from domain.users.entities import (
     TelegramToken,
@@ -65,8 +66,8 @@ map_to_db = retort.get_converter(
             P[UserDatabaseModel].salt,
         ),
         coercer(
-            UserSettingsDatabaseModel,
             UserSettings,
+            UserSettingsDatabaseModel,
             user_settings_to_db_mapper,
         ),
         link_function(
@@ -77,6 +78,17 @@ map_to_db = retort.get_converter(
             lambda user: user.hashed_password,
             P[UserDatabaseModel].hashed_password,
         ),
+    ],
+)
+
+create_user_mapper = retort.get_converter(
+    RegisterUserWithPasswordDto,
+    UserDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[UserDatabaseModel].id),
+        allow_unlinked_optional(P[UserDatabaseModel].settings),
+        allow_unlinked_optional(P[UserDatabaseModel].telegram_id),
+        allow_unlinked_optional(P[UserDatabaseModel].created_at),
     ],
 )
 

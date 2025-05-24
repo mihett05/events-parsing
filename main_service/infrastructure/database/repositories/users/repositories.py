@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import domain.users.dtos as dtos
+from application.auth.dtos import RegisterUserWithPasswordDto
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import (
@@ -31,6 +32,7 @@ from sqlalchemy.orm.interfaces import LoaderOption
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
     create_user_activation_token_map,
+    create_user_mapper,
     map_from_db,
     map_to_db,
     telegram_token_map_create_to_model,
@@ -58,7 +60,7 @@ class UsersDatabaseRepository(UsersRepository):
                 entity=User,
                 entity_mapper=map_from_db,
                 model_mapper=map_to_db,
-                create_model_mapper=None,
+                create_model_mapper=create_user_mapper,
                 not_found_exception=UserNotFoundError,
                 already_exists_exception=UserAlreadyExistsError,
             )
@@ -88,8 +90,8 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_by_ids(self, user_ids: list[int]) -> list[entities.User]:
         return await self.__repository.read_by_ids(user_ids)
 
-    async def create(self, user: User) -> User:
-        model: UserDatabaseModel = self.__config.model_mapper(user)
+    async def create(self, dto: RegisterUserWithPasswordDto) -> User:
+        model: UserDatabaseModel = self.__config.create_model_mapper(dto)
         model.settings = UserSettingsDatabaseModel()
         return await self.__repository.create(model)
 

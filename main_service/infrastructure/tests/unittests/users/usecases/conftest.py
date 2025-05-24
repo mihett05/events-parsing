@@ -13,14 +13,6 @@ async def register_user_usecase(
 
 
 @pytest_asyncio.fixture
-async def create_user_usecase(
-    container: AsyncContainer,
-) -> user_usecases.CreateUserUseCase:
-    async with container() as nested:
-        yield await nested.get(user_usecases.CreateUserUseCase)
-
-
-@pytest_asyncio.fixture
 async def read_user_usecase(
     container: AsyncContainer,
 ) -> user_usecases.ReadUserUseCase:
