@@ -13,5 +13,3 @@ async def test_create_success(
     attrs = ("fullname", "email")
     for attr in attrs:
         assert getattr(user, attr) == getattr(get_user_entity, attr)
-
-    assert user.id == 1

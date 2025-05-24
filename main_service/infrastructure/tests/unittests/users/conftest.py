@@ -71,7 +71,9 @@ async def teardown(
 
 @pytest_asyncio.fixture
 async def get_user_role_entity(create_user) -> UserOrganizationRole:
-    return UserOrganizationRole(user_id=create_user.id, organization_id=1, role=RoleEnum.ADMIN)
+    return UserOrganizationRole(
+        user_id=create_user.id, organization_id=1, role=RoleEnum.ADMIN
+    )
 
 
 @pytest_asyncio.fixture
