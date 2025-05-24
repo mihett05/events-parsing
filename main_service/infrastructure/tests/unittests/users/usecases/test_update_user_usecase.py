@@ -8,8 +8,8 @@ from domain.users.exceptions import UserNotFoundError
 
 
 @pytest.mark.asyncio
-async def test_update_success(update_user_usecase: UpdateUserUseCase, update_user_dto):
-    create_user, dto = update_user_dto
+async def test_update_success(update_user_usecase: UpdateUserUseCase, user_with_update_dto: tuple[User, UpdateUserDto]):
+    create_user, dto = user_with_update_dto
     create_user = copy(create_user)
     user = await update_user_usecase(dto, create_user)
 
@@ -21,9 +21,9 @@ async def test_update_success(update_user_usecase: UpdateUserUseCase, update_use
 @pytest.mark.asyncio
 async def test_update_not_found(
     update_user_usecase: UpdateUserUseCase,
-    update_user_dto: UpdateUserDto,
+    user_with_update_dto: tuple[User, UpdateUserDto],
 ):
-    create_user, dto = update_user_dto
+    create_user, dto = user_with_update_dto
     dto.user_id = 404
     with pytest.raises(UserNotFoundError):
         await update_user_usecase(dto, create_user)

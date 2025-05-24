@@ -71,8 +71,7 @@ async def teardown(
 
 @pytest_asyncio.fixture
 async def get_user_role_entity(create_user) -> UserOrganizationRole:
-    user = await create_user()
-    return UserOrganizationRole(user_id=user.id, organization_id=1, role=RoleEnum.ADMIN)
+    return UserOrganizationRole(user_id=create_user.id, organization_id=1, role=RoleEnum.ADMIN)
 
 
 @pytest_asyncio.fixture
@@ -95,8 +94,7 @@ async def update_user_role_entity(create_user_role) -> UserOrganizationRole:
 
 @pytest_asyncio.fixture
 async def delete_user_role_dto(create_user) -> DeleteUserRoleDto:
-    user = await create_user()
-    return DeleteUserRoleDto(user_id=user.id, organization_id=1)
+    return DeleteUserRoleDto(user_id=create_user.id, organization_id=1)
 
 
 @pytest_asyncio.fixture
@@ -108,11 +106,10 @@ async def user_organization_roles_repository(
 
 
 @pytest_asyncio.fixture
-async def update_user_dto(create_user) -> tuple[User, UpdateUserDto]:
-    user = await create_user()
-    return user, UpdateUserDto(
-        user_id=user.id,
-        fullname="Romanov Roman Romanovich",
+async def user_with_update_dto(create_user) -> tuple[User, UpdateUserDto]:
+    return create_user, UpdateUserDto(
+        user_id=create_user.id,
+        fullname="Romanov Roman Romacnovich",
     )
 
 
