@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 import pytest_asyncio
-from application.auth.dtos import AuthenticateUserDto, RegisterUserDTO
+from application.auth.dtos import AuthenticateUserDto, RegisterUserDto
 from application.auth.tokens.dtos import TokenInfoDto
 from application.auth.tokens.gateways import TokensGateway
 from application.auth.usecases import RegisterUseCase
@@ -14,8 +14,8 @@ from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
-async def register_user1_dto() -> RegisterUserDTO:
-    return RegisterUserDTO(
+async def register_user1_dto() -> RegisterUserDto:
+    return RegisterUserDto(
         email="test@example.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
@@ -57,8 +57,8 @@ async def authenticate_user1_broken_password_dto() -> AuthenticateUserDto:
 
 
 @pytest_asyncio.fixture
-async def register_user2_dto() -> RegisterUserDTO:
-    return RegisterUserDTO(
+async def register_user2_dto() -> RegisterUserDto:
+    return RegisterUserDto(
         email="tset@tset.moc",
         password="87654321",
         fullname="Romanov Roman Romanovich",
@@ -105,7 +105,7 @@ async def users_repository(container: AsyncContainer) -> UsersRepository:
 
 @pytest_asyncio.fixture
 async def create_user1(
-    register_user1_dto: RegisterUserDTO,
+    register_user1_dto: RegisterUserDto,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
 ) -> Callable[..., Coroutine[Any, Any, User]]:
@@ -118,7 +118,7 @@ async def create_user1(
 
 @pytest_asyncio.fixture
 async def create_user2(
-    register_user2_dto: RegisterUserDTO,
+    register_user2_dto: RegisterUserDto,
     register_usecase: RegisterUseCase,
     users_repository: UsersRepository,
 ) -> User:

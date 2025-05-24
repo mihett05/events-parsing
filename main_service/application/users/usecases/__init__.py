@@ -1,5 +1,4 @@
 from .connect_telegram import ConnectTelegramUseCase
-from .create import CreateUserUseCase
 from .create_role import CreateUserRoleUseCase
 from .create_telegram_token import CreateTelegramTokenUseCase
 from .create_user_activation_token import CreateUserActivationTokenUseCase
@@ -16,7 +15,6 @@ from .update_role import UpdateUserRoleUseCase
 from .validate_token import ValidateActivationTokenUseCase
 
 __all__ = [
-    "CreateUserUseCase",
     "ReadUserUseCase",
     "ReadAllUsersUseCase",
     "ReadUserRolesUseCase",

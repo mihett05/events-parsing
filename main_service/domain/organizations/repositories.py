@@ -15,6 +15,9 @@ class OrganizationsRepository(metaclass=ABCMeta):
     async def read(self, id_: int) -> entities.Organization: ...
 
     @abstractmethod
+    async def find(self, owner_id: int) -> entities.Organization | None: ...
+
+    @abstractmethod
     async def read_all(
         self, dto: dtos.ReadOrganizationsDto
     ) -> list[entities.Organization]: ...
