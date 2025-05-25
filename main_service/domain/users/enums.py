@@ -15,3 +15,17 @@ class RoleEnum(Enum):
     ADMIN = "ADMIN"
     REDACTOR = "REDACTOR"
     PUBLIC = "PUBLIC"
+
+
+roles_priorities = [
+    RoleEnum.SUPER_USER,
+    RoleEnum.SUPER_OWNER,
+    RoleEnum.SUPER_ADMIN,
+    RoleEnum.SUPER_REDACTOR,
+    RoleEnum.OWNER,
+    RoleEnum.ADMIN,
+    RoleEnum.REDACTOR,
+    RoleEnum.PUBLIC,
+]
+
+roles_priorities_table = {role: i for i, role in enumerate(roles_priorities)}
