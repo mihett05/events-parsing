@@ -40,7 +40,7 @@ async def test_parse_mails_attachments(
             recipient=user,
             attachments=mail.attachments,
         )
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.256)
     mails = await imap_email_gateway.receive_mails()
     attrs = ("theme", "sender", "raw_content", "received_date", "attachments")
     mails.sort(key=lambda x: x.imap_mail_uid)

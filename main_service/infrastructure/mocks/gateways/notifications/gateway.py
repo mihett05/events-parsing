@@ -31,4 +31,4 @@ class NotificationEmailMemoryGateway(NotificationEmailGateway):
         recipient: User,
         attachments: list[ParsedAttachmentInfoDto] = None,
     ):
-        await asyncio.sleep(1)  # imitation of publishing mails to process
+        await asyncio.sleep(0.256)  # imitation of publishing mails to process
