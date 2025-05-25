@@ -26,5 +26,4 @@ async def test_read_all_empty(
     read_all_notifications_dto.page_size = 1
     read_all_notifications_dto.page = 2
     notifications = await read_all_notifications_usecase(dto=read_all_notifications_dto)
-    print(notifications)
     assert len(notifications) == 0

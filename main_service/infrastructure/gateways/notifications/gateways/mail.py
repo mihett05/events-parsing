@@ -10,9 +10,9 @@ from domain.users.entities import User
 
 
 class NotificationEmailGateway(NotificationGateway):
-    def __init__(self, smtp_server, smtp_host, imap_username, imap_password):
+    def __init__(self, smtp_server, smtp_port, imap_username, imap_password):
         self.smtp_server = smtp_server
-        self.smtp_host = smtp_host
+        self.smtp_host = smtp_port
         self.smtp_username = imap_username
         self.smtp_password = imap_password
 

@@ -25,6 +25,7 @@ from domain.users.repositories import (
     UsersRepository,
 )
 from sqlalchemy import Select, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import LoaderOption
@@ -111,9 +112,6 @@ class UsersDatabaseRepository(UsersRepository):
     async def delete(self, user: entities.User) -> entities.User:
         return await self.__repository.delete(user)
 
-    async def update_is_active_statement(self, user_id: int, status: bool):
-        return await self.update_is_active_statement(user_id, status)
-
     async def change_user_active_status(self, user_id: int, status: bool):
         query = (
             update(UserDatabaseModel)
@@ -159,6 +157,7 @@ class UserOrganizationRolesDatabaseRepository(UserOrganizationRolesRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
+        # TODO: сделать идемпотентным
         return await self.__repository.create_from_entity(role)
 
     async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole:
@@ -217,18 +216,31 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
                 already_exists_exception=EntityAlreadyExistsError,
             )
 
+        def get_options(self) -> list[LoaderOption]:
+            return [
+                selectinload(self.model.user).selectinload(UserDatabaseModel.settings)
+            ]
+
     def __init__(self, session: AsyncSession):
         self.__config = self.Config()
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: dtos.CreateActivationTokenDto) -> UserActivationToken:
-        return await self.__repository.create_from_dto(dto)
+        # TODO: remove this shit
+        query = (
+            insert(self.__config.model)
+            .values(id=dto.id, user_id=dto.user_id)
+            .returning(self.__config.model)
+        )
+        result = await self.__session.scalars(self.__config.add_options(query))
+        model = result.one()
+        return self.__config.entity_mapper(model)
 
     async def read(self, token_id: UUID) -> UserActivationToken:
         return await self.__repository.read(token_id)
 
-    async def update_is_used_statement(self, token_id: UUID):
+    async def change_token_used_statement(self, token_id: UUID):
         query = (
             update(UserActivationTokenDatabaseModel)
             .where(UserActivationTokenDatabaseModel.id == token_id)

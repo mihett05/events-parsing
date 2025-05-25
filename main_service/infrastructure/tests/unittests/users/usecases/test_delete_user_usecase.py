@@ -11,14 +11,14 @@ async def delete_user_success(
     read_user_usecase: ReadUserUseCase,
     delete_user_usecase: DeleteUserUseCase,
     register_user_usecase: RegisterUseCase,
-    register_user_dto: RegisterUserDto,
+    register_user1_dto: RegisterUserDto,
 ):
-    user, _ = await register_user_usecase(dto=register_user_dto)
-    deleted_user = await delete_user_usecase(user)
-    assert deleted_user == user
+    token = await register_user_usecase(dto=register_user1_dto)
+    deleted_user = await delete_user_usecase(token.user)
+    assert deleted_user == token.user
 
     with pytest.raises(UserNotFoundError):
-        await read_user_usecase(user.id)
+        await read_user_usecase(token.user.id)
 
 
 @pytest.mark.asyncio

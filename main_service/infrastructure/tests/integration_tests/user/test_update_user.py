@@ -25,7 +25,6 @@ async def test_update_user_success(
         json=dto.model_dump(by_alias=True, mode="json"),
         headers=headers,
     )
-    print(response.json())
     assert response.status_code == HTTP_200_OK
 
     response2 = await async_client.get(f"/v1/users/{user_with_token.user.id}")

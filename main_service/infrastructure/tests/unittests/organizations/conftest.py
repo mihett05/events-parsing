@@ -50,14 +50,6 @@ async def update_organization_dto() -> UpdateOrganizationDto:
     return UpdateOrganizationDto(id=1, title="Bombordillo crocodillo")
 
 
-@pytest_asyncio.fixture
-async def create_organization(
-    create_organization_dto: CreateOrganizationDto,
-    organizations_repository: OrganizationsRepository,
-) -> Organization:
-    return await organizations_repository.create(create_organization_dto)
-
-
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def prepare(
     pytestconfig: pytest.Config,

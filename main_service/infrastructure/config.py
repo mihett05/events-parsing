@@ -13,7 +13,7 @@ class Config(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173"]
 
     server_host: str = "localhost"
-    server_port: int = 8081
+    server_port: int = 5000
 
     admin_username: str
     admin_password: str

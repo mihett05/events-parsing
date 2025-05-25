@@ -24,19 +24,18 @@ class UserRolesPermissionProvider(PermissionProvider):
         RoleEnum.PUBLIC: {PermissionsEnum.CAN_READ_ROLE},
     }
 
-    def __init__(self, organization_id: int, user_roles: list[UserOrganizationRole]):
-        self.permissions = self.__get_perms(organization_id, user_roles)
+    def __init__(self, organization_id: int, user_role: UserOrganizationRole):
+        self.permissions = self.__get_perms(organization_id, user_role)
 
     def __get_perms(
-        self, organization_id: int, user_roles: list[UserOrganizationRole]
+        self, organization_id: int, user_role: UserOrganizationRole
     ) -> set[PermissionsEnum]:
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
-        for role in user_roles:
-            if (
-                role.role.value.startswith("SUPER")
-                or role.organization_id == organization_id
-            ):
-                result |= self.__perms.get(role.role)
+        if (
+            user_role.role.value.startswith("SUPER")
+            or user_role.organization_id == organization_id
+        ):
+            result |= self.__perms.get(user_role.role)
         return result
 
     def __call__(self) -> set[PermissionsEnum]:

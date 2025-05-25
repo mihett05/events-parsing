@@ -6,15 +6,14 @@ import application.users.usecases as user_usecases
 import pytest
 import pytest_asyncio
 from application.auth.dtos import RegisterUserDto
-from application.auth.usecases import RegisterUseCase
-from application.users.usecases import CreateUserRoleUseCase
+from application.auth.usecases import CreateUserWithPasswordUseCase, RegisterUseCase
 from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
-from domain.users.entities import User, UserOrganizationRole
+from domain.users.entities import User, UserOrganizationRole, UserSettings
 from domain.users.enums import RoleEnum
-from domain.users.repositories import UserOrganizationRolesRepository
+from domain.users.repositories import UserOrganizationRolesRepository, UsersRepository
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -63,125 +62,145 @@ async def setup_data(pytestconfig: pytest.Config, container: AsyncContainer):
 
 
 @pytest_asyncio.fixture
-async def get_user_entity() -> User:
-    return User(
-        email="taaaaaa@example.com",
-        fullname="Ivanov Ivan Ivanovich",
-        salt="morskaya_sol",
-        hashed_password="parol",
-    )
-
-
-@pytest_asyncio.fixture
-async def get_user_entities() -> list[User]:
-    return [
-        User(
-            email=f"test{i}@test.com",
-            fullname=f"Ivan{i}",
-            salt="morskaya_sol",
-            hashed_password="parol",
-        )
-        for i in range(8)
-    ]
-
-
-@pytest_asyncio.fixture
-async def create_user1(
-    register_user1_dto: RegisterUserDto,
-    register_usecase: RegisterUseCase,
-) -> Callable[..., Coroutine[Any, Any, User]]:
-    async def _factory() -> User:
-        token1 = await register_usecase(register_user1_dto)
-        return token1.user
-
-    return _factory
-
-
-@pytest_asyncio.fixture
-async def create_user_role_usecase(
-    container: AsyncContainer,
-) -> user_usecases.CreateUserRoleUseCase:
-    async with container() as nested:
-        yield await nested.get(user_usecases.CreateUserRoleUseCase)
-
-
-@pytest_asyncio.fixture
-async def create_super_user1(
-    register_user1_dto: RegisterUserDto,
-    register_usecase: RegisterUseCase,
-    user_organization_roles_repository: UserOrganizationRolesRepository,
-    create_user1,
-    create_organization,
-    create_user_role_usecase,
-):
-    async def _factory() -> User:
-        user = await create_user1()
-        org = await create_organization()
-        await user_organization_roles_repository.create(
-            UserOrganizationRole(
-                user_id=user.id, organization_id=org.id, role=RoleEnum.SUPER_USER
-            )
-        )
-        return user
-
-    return _factory
-
-
-@pytest_asyncio.fixture
-async def register_user1_dto() -> RegisterUserDto:
-    return RegisterUserDto(
-        email="test@example.com",
-        password="12345678",
-        fullname="Ivanov Ivan Ivanovich",
-    )
-
-
-@pytest_asyncio.fixture
-async def register_usecase(
+async def users_repository(
     container: AsyncContainer,
 ) -> auth_usecases.RegisterUseCase:
     async with container() as nested:
-        yield await nested.get(auth_usecases.RegisterUseCase)
+        yield await nested.get(UsersRepository)
 
 
 @pytest_asyncio.fixture
-async def create_usecase_usecase(
+async def roles_repository(
     container: AsyncContainer,
-) -> user_usecases.CreateUserRoleUseCase:
+) -> auth_usecases.RegisterUseCase:
     async with container() as nested:
-        yield await nested.get(user_usecases.CreateUserRoleUseCase)
-
-
-@pytest_asyncio.fixture
-async def create_organization(
-    create_organization_dto: CreateOrganizationDto,
-    organizations_repository: OrganizationsRepository,
-) -> Callable[..., Coroutine[Any, Any, Organization]]:
-    async def _factory():
-        return await organizations_repository.create(create_organization_dto)
-
-    return _factory
-
-
-@pytest_asyncio.fixture
-async def create_organization_dto(create_user1) -> CreateOrganizationDto:
-    user = await create_user1()
-    return CreateOrganizationDto(
-        title="Test Organization", owner_id=user.id, token=uuid4()
-    )
+        yield await nested.get(UserOrganizationRolesRepository)
 
 
 @pytest_asyncio.fixture
 async def organizations_repository(
     container: AsyncContainer,
-) -> OrganizationsRepository:
-    async with container() as request_container:
-        yield await request_container.get(OrganizationsRepository)
+) -> auth_usecases.RegisterUseCase:
+    async with container() as nested:
+        yield await nested.get(OrganizationsRepository)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def prepare_(
+    pytestconfig: pytest.Config,
+    users_repository: UsersRepository,
+    roles_repository: UserOrganizationRolesRepository,
+    organizations_repository: OrganizationsRepository,
+):
+    if not pytestconfig.getoption("--integration", default=False):
+        await users_repository.clear()  # noqa
+        await roles_repository.clear()  # noqa
+        await organizations_repository.clear()  # noqa
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def teardown_(
+    pytestconfig: pytest.Config,
+    users_repository: UsersRepository,
+    roles_repository: UserOrganizationRolesRepository,
+    organizations_repository: OrganizationsRepository,
+):
+    yield
+    if not pytestconfig.getoption("--integration", default=False):
+        await users_repository.clear()  # noqa
+        await roles_repository.clear()  # noqa
+        await organizations_repository.clear()  # noqa
 
 
 @pytest_asyncio.fixture
-async def user_organization_roles_repository(
+async def create_user_with_password(
     container: AsyncContainer,
-) -> UserOrganizationRolesRepository:
-    async with container() as request_container:
-        yield await request_container.get(UserOrganizationRolesRepository)
+) -> auth_usecases.CreateUserWithPasswordUseCase:
+    async with container() as nested:
+        yield await nested.get(CreateUserWithPasswordUseCase)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def get_admin(
+    setup_data,  # noqa
+    prepare_,  # noqa
+    teardown_,  # noqa
+    create_user_with_password: CreateUserWithPasswordUseCase,
+) -> User:
+    _create_user_dto = RegisterUserDto(
+        email="admin@admin.com", password="admin", is_active=True
+    )
+    return await create_user_with_password(_create_user_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def get_admin_organization(
+    setup_data,  # noqa
+    prepare_,  # noqa
+    teardown_,  # noqa
+    get_admin: User,
+    organizations_repository: OrganizationsRepository,
+) -> Organization:
+    _create_organization_dto = CreateOrganizationDto(
+        token=uuid4(), title="admin organization", owner_id=get_admin.id
+    )
+    return await organizations_repository.create(_create_organization_dto)
+
+
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def get_admin_role(
+    setup_data,  # noqa
+    prepare_,  # noqa
+    teardown_,  # noqa
+    get_admin: User,
+    get_admin_organization: Organization,
+    roles_repository: UserOrganizationRolesRepository,
+) -> UserOrganizationRole:
+    _create_role_dto = UserOrganizationRole(
+        user_id=get_admin.id,
+        organization_id=get_admin_organization.id,
+        role=RoleEnum.SUPER_OWNER,
+    )
+    return await roles_repository.create(_create_role_dto)
+
+
+@pytest_asyncio.fixture(scope="function")
+async def get_user_dto(
+    setup_data,  # noqa
+    prepare_,  # noqa
+    teardown_,  # noqa
+    create_user_with_password: CreateUserWithPasswordUseCase,
+) -> RegisterUserDto:
+    return RegisterUserDto(email="public@public.com", password="public", is_active=True)
+
+
+@pytest_asyncio.fixture(scope="function")
+async def get_user_entity(
+    setup_data,  # noqa
+    prepare_,  # noqa
+    teardown_,  # noqa
+    create_user_with_password: CreateUserWithPasswordUseCase,
+    get_user_dto: RegisterUserDto,
+) -> User:
+    return await create_user_with_password(get_user_dto)
+
+
+@pytest_asyncio.fixture(scope="function")
+async def init_entities(
+    get_admin: User,
+    get_admin_organization: Organization,
+    get_admin_role: UserOrganizationRole,
+) -> tuple[User, Organization, UserOrganizationRole]:
+    return get_admin, get_admin_organization, get_admin_role
+
+
+@pytest_asyncio.fixture(scope="function")
+async def get_user_entities(
+    create_user_with_password: CreateUserWithPasswordUseCase,
+) -> list[User]:
+    return [
+        await create_user_with_password(
+            RegisterUserDto(email=f"test{i}@test.com", password="parol", is_active=True)
+        )
+        for i in range(8)
+    ]

@@ -50,7 +50,3 @@ class GatewaysProvider(Provider):
         provides=NotificationGatewayAbstractFactory,
     )
     telegram_notification_gateway = provide(NotificationTelegramGateway)
-
-    @provide
-    def telegram_bot(self, config: Config) -> Bot:
-        return Bot(token=config.telegram_bot_token)

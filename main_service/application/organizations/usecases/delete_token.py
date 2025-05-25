@@ -3,6 +3,7 @@ from uuid import UUID
 from domain.organizations.entities import OrganizationToken
 from domain.organizations.repositories import OrganizationTokensRepository
 from domain.users.entities import User
+from domain.users.role_getter import RoleGetter
 
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
@@ -13,7 +14,6 @@ from application.organizations.usecases.read_token import (
     ReadOrganizationTokenUseCase,
 )
 from application.transactions import TransactionsGateway
-from application.users.usecases import ReadUserRolesUseCase
 
 
 class DeleteOrganizationTokenUseCase:
@@ -22,20 +22,20 @@ class DeleteOrganizationTokenUseCase:
         repository: OrganizationTokensRepository,
         transaction: TransactionsGateway,
         read_use_case: ReadOrganizationTokenUseCase,
-        read_role_use_case: ReadUserRolesUseCase,
         permission_builder: PermissionBuilder,
+        role_getter: RoleGetter,
     ):
         self.__repository = repository
         self.__transaction = transaction
         self.__read_use_case = read_use_case
         self.__builder = permission_builder
-        self.__read_roles_use_case = read_role_use_case
+        self.__role_getter = role_getter
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
         async with self.__transaction:
-            roles = await self.__read_roles_use_case(actor.id)
-            self.__builder.providers(OrganizationLinkPermissionProvider(roles)).add(
-                PermissionsEnum.CAN_DELETE_ORGANIZATION_LINK
-            ).apply()
+            actor_role = await self.__role_getter(actor)
+            self.__builder.providers(
+                OrganizationLinkPermissionProvider(actor_role)
+            ).add(PermissionsEnum.CAN_DELETE_ORGANIZATION_LINK).apply()
             token = await self.__read_use_case(token_id, actor)
             return await self.__repository.delete(token)

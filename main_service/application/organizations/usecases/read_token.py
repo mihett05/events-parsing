@@ -3,29 +3,29 @@ from uuid import UUID
 from domain.organizations.entities import OrganizationToken
 from domain.organizations.repositories import OrganizationTokensRepository
 from domain.users.entities import User
+from domain.users.role_getter import RoleGetter
 
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.organizations.permissions import (
     OrganizationLinkPermissionProvider,
 )
-from application.users.usecases import ReadUserRolesUseCase
 
 
 class ReadOrganizationTokenUseCase:
     def __init__(
         self,
         repository: OrganizationTokensRepository,
-        read_role_use_case: ReadUserRolesUseCase,
         permission_builder: PermissionBuilder,
+        role_getter: RoleGetter,
     ):
         self.__repository = repository
         self.__builder = permission_builder
-        self.__read_roles_use_case = read_role_use_case
+        self.__role_getter = role_getter
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
-        roles = await self.__read_roles_use_case(actor.id)
-        self.__builder.providers(OrganizationLinkPermissionProvider(roles)).add(
+        actor_role = await self.__role_getter(actor)
+        self.__builder.providers(OrganizationLinkPermissionProvider(actor_role)).add(
             PermissionsEnum.CAN_READ_ORGANIZATION_LINK
         ).apply()
         return await self.__repository.read(token_id)
