@@ -120,7 +120,7 @@ async def create_user_with_password(
         yield await nested.get(CreateUserWithPasswordUseCase)
 
 
-@pytest_asyncio.fixture(scope="function", autouse=True)
+@pytest_asyncio.fixture(scope="function")
 async def get_admin(
     setup_data,  # noqa
     prepare_,  # noqa
@@ -133,7 +133,7 @@ async def get_admin(
     return await create_user_with_password(_create_user_dto)
 
 
-@pytest_asyncio.fixture(scope="function", autouse=True)
+@pytest_asyncio.fixture(scope="function")
 async def get_admin_organization(
     setup_data,  # noqa
     prepare_,  # noqa
@@ -147,7 +147,7 @@ async def get_admin_organization(
     return await organizations_repository.create(_create_organization_dto)
 
 
-@pytest_asyncio.fixture(scope="function", autouse=True)
+@pytest_asyncio.fixture(scope="function")
 async def get_admin_role(
     setup_data,  # noqa
     prepare_,  # noqa

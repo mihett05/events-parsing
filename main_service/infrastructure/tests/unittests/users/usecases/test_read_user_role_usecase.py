@@ -18,4 +18,4 @@ async def test_read_success(
 @pytest.mark.asyncio
 async def test_read_not_found(read_user_role_usecase: ReadUserRoleUseCase):
     with pytest.raises(UserRoleNotFoundError):
-        await read_user_role_usecase(404, 89194985188)
+        await read_user_role_usecase(404, 404)
