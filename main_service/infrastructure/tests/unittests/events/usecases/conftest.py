@@ -60,14 +60,6 @@ async def read_all_event_usecase(
 
 
 @pytest_asyncio.fixture
-async def read_user_events_usecase(
-    container: AsyncContainer,
-) -> usecases.ReadUserEventsUseCase:
-    async with container() as nested:
-        yield await nested.get(usecases.ReadUserEventsUseCase)
-
-
-@pytest_asyncio.fixture
 async def read_feed_events_usecase(
     container: AsyncContainer,
 ) -> usecases.ReadForFeedEventsUseCase:

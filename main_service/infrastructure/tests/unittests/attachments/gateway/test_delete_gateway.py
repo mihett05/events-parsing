@@ -3,11 +3,8 @@ from application.attachments.gateways import FilesGateway
 from application.attachments.usecases import (
     ReadAttachmentUseCase,
 )
-from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import AttachmentNotFoundError
 from domain.attachments.repositories import AttachmentsRepository
-
-from infrastructure.tests.unittests.users.conftest import get_user_role_entity
 
 
 @pytest.mark.asyncio

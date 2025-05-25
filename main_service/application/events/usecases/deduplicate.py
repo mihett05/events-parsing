@@ -1,16 +1,15 @@
 from domain.events.dtos import CreateEventDto
 from domain.events.entities import Event
 from domain.mails.enums import MailStateEnum
-from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 from infrastructure.config import Config
 
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 
+from ...transactions import TransactionsGateway
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
-from ...transactions import TransactionsGateway
 
 
 class DeduplicateEventUseCase:
@@ -39,7 +38,9 @@ class DeduplicateEventUseCase:
                 self.__config.admin_username
             )
             if event is None:
-                event: Event = await self.__event_create_use_case(dto, super_user)
+                event: Event = await self.__event_create_use_case(
+                    dto, super_user
+                )
 
             if mail_id is not None:
                 mail = await self.__mail_update_use_case(

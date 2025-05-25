@@ -10,7 +10,7 @@ from domain.events.exceptions import (
 from domain.events.repositories import EventsRepository, EventUsersRepository
 from sqlalchemy import Select, and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -43,7 +43,9 @@ class EventsUserDatabaseRepository(EventUsersRepository):
             return self.__add_offset_to_query(query, dto)
 
         def get_select_for_event(self, dto: dtos.ReadEventUsersDto) -> Select:
-            query = select(self.model).where(self.model.event_id == dto.event_id)
+            query = select(self.model).where(
+                self.model.event_id == dto.event_id
+            )
             return self.__add_offset_to_query(query, dto)
 
         def extract_id_from_model(self, model: EventUserDatabaseModel):
@@ -105,7 +107,9 @@ class EventsDatabaseRepository(EventsRepository):
 
             return query
 
-        def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
+        def get_select_all_feed_query(
+            self, dto: dtos.ReadAllEventsFeedDto
+        ) -> Select:
             query = select(self.model).order_by(desc(self.model.start_date))
 
             query = self.__try_add_period_filter_to_query(query, dto)
@@ -136,7 +140,9 @@ class EventsDatabaseRepository(EventsRepository):
         ) -> Select:
             if dto.organization_id is None:
                 return query
-            return query.where(self.model.organization_id == dto.organization_id)
+            return query.where(
+                self.model.organization_id == dto.organization_id
+            )
 
         def __try_add_type_filter_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto
@@ -159,8 +165,10 @@ class EventsDatabaseRepository(EventsRepository):
 
         def get_options_with_members(self) -> list[LoaderOption]:
             return [
-                selectinload(self.model.attachments),
-                selectinload(self.model.members).joinedload(UserDatabaseModel.settings),
+                joinedload(self.model.attachments),
+                joinedload(self.model.members).joinedload(
+                    UserDatabaseModel.settings
+                ),
             ]
 
     def __init__(self, session: AsyncSession):
@@ -175,8 +183,10 @@ class EventsDatabaseRepository(EventsRepository):
             EventDatabaseModel.start_date == event_info.start_date,
             EventDatabaseModel.end_registration == event_info.end_registration,
         )
-        model: EventDatabaseModel | None = await self.__repository.get_scalar_or_none(
-            query
+        model = (
+            (await self.__session.execute(self.config.add_options(query)))
+            .unique()
+            .scalar_one_or_none()
         )
         return model and self.config.entity_mapper(model)
 
@@ -194,7 +204,9 @@ class EventsDatabaseRepository(EventsRepository):
         query = self.config.get_select_all_query(dto)
         return await self.__repository.get_entities_from_query(query)
 
-    async def read_for_feed(self, dto: dtos.ReadAllEventsFeedDto) -> list[Event]:
+    async def read_for_feed(
+        self, dto: dtos.ReadAllEventsFeedDto
+    ) -> list[Event]:
         query = self.config.get_select_all_feed_query(dto)
         return await self.__repository.get_entities_from_query(query)
 
