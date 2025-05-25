@@ -7,18 +7,17 @@ import pytest
 import pytest_asyncio
 from application.auth.dtos import RegisterUserDto
 from application.auth.usecases import RegisterUseCase
-from dishka import AsyncContainer
-
 from application.users.usecases import CreateUserRoleUseCase
+from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import RoleEnum
+from domain.users.repositories import UserOrganizationRolesRepository
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from domain.users.enums import RoleEnum
-from domain.users.repositories import UserOrganizationRolesRepository
 from infrastructure.database.postgres import Base
 from infrastructure.tests.configs import get_container
 
@@ -97,12 +96,14 @@ async def create_user1(
 
     return _factory
 
+
 @pytest_asyncio.fixture
 async def create_user_role_usecase(
     container: AsyncContainer,
 ) -> user_usecases.CreateUserRoleUseCase:
     async with container() as nested:
         yield await nested.get(user_usecases.CreateUserRoleUseCase)
+
 
 @pytest_asyncio.fixture
 async def create_super_user1(
@@ -111,14 +112,20 @@ async def create_super_user1(
     user_organization_roles_repository: UserOrganizationRolesRepository,
     create_user1,
     create_organization,
-    create_user_role_usecase
-) :
+    create_user_role_usecase,
+):
     async def _factory() -> User:
         user = await create_user1()
         org = await create_organization()
-        await user_organization_roles_repository.create(UserOrganizationRole(user_id= user.id, organization_id= org.id, role= RoleEnum.SUPER_USER))
+        await user_organization_roles_repository.create(
+            UserOrganizationRole(
+                user_id=user.id, organization_id=org.id, role=RoleEnum.SUPER_USER
+            )
+        )
         return user
+
     return _factory
+
 
 @pytest_asyncio.fixture
 async def register_user1_dto() -> RegisterUserDto:
@@ -128,13 +135,13 @@ async def register_user1_dto() -> RegisterUserDto:
         fullname="Ivanov Ivan Ivanovich",
     )
 
+
 @pytest_asyncio.fixture
 async def register_usecase(
     container: AsyncContainer,
 ) -> auth_usecases.RegisterUseCase:
     async with container() as nested:
         yield await nested.get(auth_usecases.RegisterUseCase)
-
 
 
 @pytest_asyncio.fixture
@@ -160,9 +167,7 @@ async def create_organization(
 async def create_organization_dto(create_user1) -> CreateOrganizationDto:
     user = await create_user1()
     return CreateOrganizationDto(
-        title="Test Organization",
-        owner_id=user.id,
-        token=uuid4()
+        title="Test Organization", owner_id=user.id, token=uuid4()
     )
 
 
@@ -172,6 +177,7 @@ async def organizations_repository(
 ) -> OrganizationsRepository:
     async with container() as request_container:
         yield await request_container.get(OrganizationsRepository)
+
 
 @pytest_asyncio.fixture
 async def user_organization_roles_repository(
