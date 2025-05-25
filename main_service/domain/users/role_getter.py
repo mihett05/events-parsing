@@ -11,7 +11,7 @@ class RoleGetter:
         self.__roles_repository = roles_repository
 
     async def __call__(
-        self, user: User, organization_id: int
+        self, user: User, organization_id: int = 0
     ) -> UserOrganizationRole:
         roles = await self.__roles_repository.read_all(user.id)
         current = UserOrganizationRole(
@@ -20,7 +20,11 @@ class RoleGetter:
             role=RoleEnum.PUBLIC,
         )
         for role in roles:
-            current = min(
-                role, current, lambda x: roles_priorities_table[x.role]
-            )
+            if (
+                role.role.value.startswith("SUPER")
+                or role.organization_id == organization_id
+            ):
+                current = min(
+                    role, current, key=lambda x: roles_priorities_table[x.role]
+                )
         return current

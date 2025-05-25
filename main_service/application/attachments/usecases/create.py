@@ -7,6 +7,7 @@ from domain.attachments.exceptions import (
 from domain.attachments.repositories import AttachmentsRepository
 from domain.exceptions import EntityAccessDenied
 from domain.users.entities import User
+from domain.users.role_getter import RoleGetter
 
 from application.attachments.gateways import FilesGateway
 from application.attachments.permissions.attachment import (
@@ -15,7 +16,6 @@ from application.attachments.permissions.attachment import (
 from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.transactions import TransactionsGateway
-from application.users.usecases import ReadUserRolesUseCase
 
 
 class CreateAttachmentUseCase:
@@ -25,13 +25,13 @@ class CreateAttachmentUseCase:
         tx: TransactionsGateway,
         repository: AttachmentsRepository,
         builder: PermissionBuilder,
-        read_roles_use_case: ReadUserRolesUseCase,
+        role_getter: RoleGetter,
     ):
         self.__gateway = gateway
         self.__transaction = tx
         self.__repository = repository
         self.__builder = builder
-        self.__read_roles_use_case = read_roles_use_case
+        self.__role_getter = role_getter
 
     async def __try_create_attachment(
         self, dto: CreateAttachmentDto
@@ -64,11 +64,11 @@ class CreateAttachmentUseCase:
     ) -> tuple[list[Attachment], list[str]]:
         failed = []
         succeed = []
-        roles = await self.__read_roles_use_case(actor.id)
         async with self.__transaction:
             for dto in dtos:
+                actor_role = await self.__role_getter(actor, dto.event.organization_id)
                 if self.__has_perms(
-                    dto.event and dto.event.organization_id or -1, roles
+                    dto.event and dto.event.organization_id or -1, actor_role
                 ) and (attachment := await self.__try_create_attachment(dto)):
                     succeed.append(attachment)
                 else:
