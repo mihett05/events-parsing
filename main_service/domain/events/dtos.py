@@ -55,3 +55,9 @@ class ReadEventUsersDto:
     event_id: int
     page: int
     page_size: int
+
+
+@dataclass
+class CreateEventUserDto:
+    event_id: int
+    user_id: int

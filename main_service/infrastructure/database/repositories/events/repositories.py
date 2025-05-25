@@ -18,6 +18,7 @@ from ..users import UserDatabaseModel
 from .mappers import (
     event_user_map_from_db,
     event_user_map_to_db,
+    event_user_map_dto,
     map_create_dto_to_model,
     map_from_db,
     map_to_db,
@@ -33,7 +34,7 @@ class EventsUserDatabaseRepository(EventUsersRepository):
                 entity=EventUser,
                 entity_mapper=event_user_map_from_db,
                 model_mapper=event_user_map_to_db,
-                create_model_mapper=None,
+                create_model_mapper=event_user_map_dto,
                 not_found_exception=EventUserNotFoundError,
                 already_exists_exception=EventUserAlreadyExistsError,
             )
@@ -62,8 +63,8 @@ class EventsUserDatabaseRepository(EventUsersRepository):
         self.config = self.Config()
         self.__repository = PostgresRepository(session, self.config)
 
-    async def create(self, event_user: EventUser) -> entities.EventUser:
-        return await self.__repository.create_from_entity(event_user)
+    async def create(self, dto: dtos.CreateEventUserDto) -> entities.EventUser:
+        return await self.__repository.create_from_dto(dto)
 
     async def read_for_user(
         self, dto: dtos.ReadUserEventsDto

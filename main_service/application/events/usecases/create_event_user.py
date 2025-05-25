@@ -1,6 +1,7 @@
 from domain.events.entities import EventUser
 from domain.events.repositories import EventUsersRepository
 from domain.users.entities import User
+from domain.events.dtos import CreateEventUserDto
 
 from application.transactions import TransactionsGateway
 
@@ -16,4 +17,4 @@ class CreateEventUserUseCase:
 
     async def __call__(self, event_id: int, actor: User) -> EventUser:
         async with self.__transaction:
-            return await self.__repository.create(EventUser(event_id, actor.id))
+            return await self.__repository.create(CreateEventUserDto(event_id, actor.id))

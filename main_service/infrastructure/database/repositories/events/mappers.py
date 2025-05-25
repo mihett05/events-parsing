@@ -5,7 +5,7 @@ from adaptix.conversion import (
     link_function,
 )
 from domain.attachments.entities import Attachment
-from domain.events.dtos import CreateEventDto
+from domain.events.dtos import CreateEventDto, CreateEventUserDto
 from domain.events.entities import Event, EventUser
 from domain.users.entities import User
 
@@ -98,5 +98,14 @@ event_user_map_to_db = retort.get_converter(
         # allow_unlinked_optional(P[EventDatabaseModel].event),
         coercer(User, UserDatabaseModel, user_map_to_db),
         coercer(Event, EventDatabaseModel, map_to_db),
+    ]
+)
+
+event_user_map_dto = retort.get_converter(
+    CreateEventUserDto,
+    EventUserDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[EventUserDatabaseModel].user),
+        allow_unlinked_optional(P[EventUserDatabaseModel].event),
     ]
 )
