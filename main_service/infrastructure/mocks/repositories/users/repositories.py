@@ -30,7 +30,6 @@ from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
-
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(

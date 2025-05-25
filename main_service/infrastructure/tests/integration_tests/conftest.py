@@ -88,7 +88,7 @@ def create_user_model_dto_factory(
 @pytest.fixture(scope="function")
 def authenticate_dto_factory() -> Callable[..., AuthenticateUserModelDto]:
     def _factory(
-        email: str = "test@example.com",
+        email: str = "test@gmail.com",
         password: str = "12345678",
     ) -> AuthenticateUserModelDto:
         return AuthenticateUserModelDto(email=email, password=password)
