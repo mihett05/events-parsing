@@ -1,28 +1,27 @@
 from domain.users.entities import User
+from domain.users.repositories import UsersRepository
 
-from application.users.usecases import CreateUserUseCase
-
-from ..dtos import RegisterUserDTO
+from ..dtos import CreateUserWithPasswordDto, RegisterUserDto
 from ..tokens.gateways import SecurityGateway
 
 
 class CreateUserWithPasswordUseCase:
     def __init__(
         self,
-        create_user_use_case: CreateUserUseCase,
+        users_repository: UsersRepository,
         security_gateway: SecurityGateway,
     ):
-        self.create_user_use_case = create_user_use_case
-        self.security_gateway = security_gateway
+        self.__repository = users_repository
+        self.__security_gateway = security_gateway
 
-    async def __call__(self, dto: RegisterUserDTO) -> User:
-        password_dto = self.security_gateway.create_hashed_password(dto.password)
-        user = User(
+    async def __call__(self, dto: RegisterUserDto) -> User:
+        password_dto = self.__security_gateway.create_hashed_password(dto.password)
+        dto = CreateUserWithPasswordDto(
             email=dto.email,
             fullname=dto.fullname,
+            is_active=False,
             salt=password_dto.salt,
             hashed_password=password_dto.hashed_password,
-            is_active=False,
         )
 
-        return await self.create_user_use_case(user)
+        return await self.__repository.create(dto)

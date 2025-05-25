@@ -15,6 +15,10 @@ class Config(BaseSettings):
     server_host: str = "localhost"
     server_port: int = 5000
 
+    admin_username: str
+    admin_password: str
+    base_organization: str
+
     postgres_user: str
     postgres_password: str
     postgres_host: str

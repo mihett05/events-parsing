@@ -7,6 +7,8 @@ from domain.attachments.entities import Attachment
 from domain.attachments.exceptions import AttachmentNotFoundError
 from domain.attachments.repositories import AttachmentsRepository
 
+from infrastructure.tests.unittests.users.conftest import get_user_role_entity
+
 
 @pytest.mark.asyncio
 async def test_delete_success(
@@ -14,9 +16,9 @@ async def test_delete_success(
     create_attachment,
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
-    create_user1,
+    create_super_user1,
 ):
-    user = await create_user1()
+    user = await create_super_user1()
     create_attachment = await create_attachment()
 
     deleted_attachment = await files_gateway.delete(create_attachment)

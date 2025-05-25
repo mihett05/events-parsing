@@ -1,12 +1,15 @@
 from datetime import datetime
+from random import randint
 from uuid import UUID
 
+from application.auth.dtos import CreateUserWithPasswordDto
 from domain.users import dtos as dtos
 from domain.users.entities import (
     TelegramToken,
     User,
     UserActivationToken,
     UserOrganizationRole,
+    UserSettings,
 )
 from domain.users.exceptions import (
     TelegramTokenAlreadyExistsError,
@@ -45,9 +48,18 @@ class UsersMemoryRepository(UsersRepository):
                 return user
         raise UserNotFoundError()
 
-    async def create(self, user: User) -> User:
-        user.id = self.__next_id
-        user.created_at = datetime.now()
+    async def create(self, dto: CreateUserWithPasswordDto) -> User:
+        user = User(
+            email=dto.email,
+            fullname=dto.fullname,
+            hashed_password=dto.hashed_password,
+            salt=dto.salt,
+            created_at=datetime.utcnow(),
+            id=self.__next_id,
+            is_active=dto.is_active,
+            telegram_id=None,
+            settings=UserSettings(user_id=self.__next_id, id=randint(1000, 2000)),
+        )
 
         self.__next_id += 1
         return await self.__repository.create(user)
@@ -120,8 +132,11 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create(role)
 
-    async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole:
-        return await self.__repository.read((organization_id, user_id))
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> list[UserOrganizationRole]:
+        # TODO: Кто насрал ?
+        return await self.__repository.read(user_id)
 
     async def update(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(user_role)

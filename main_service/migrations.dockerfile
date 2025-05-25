@@ -10,4 +10,4 @@ RUN poetry install --no-root
 
 COPY . /app
 
-CMD ["poetry", "run", "alembic", "upgrade", "head"]
+CMD poetry run alembic upgrade head && poetry run python init.py

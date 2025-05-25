@@ -21,6 +21,7 @@ async def test_parse_mails_attachments(
     notification_email_gateway: NotificationEmailGateway,
     get_config: Config,
 ):
+    # TODO: Убери хуйню
     now = datetime.now()
     user = User(
         email=get_config.imap_username,

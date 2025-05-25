@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from uuid import UUID
 
+from application.auth.dtos import CreateUserWithPasswordDto
+
 import domain.users.dtos as dtos
 import domain.users.entities as entities
 from domain.users.dtos import CreateActivationTokenDto, ReadAllUsersDto
@@ -13,7 +15,7 @@ from domain.users.entities import (
 
 class UsersRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, user: User) -> User: ...
+    async def create(self, dto: CreateUserWithPasswordDto) -> User: ...
 
     @abstractmethod
     async def read(self, user_id: int) -> User: ...
