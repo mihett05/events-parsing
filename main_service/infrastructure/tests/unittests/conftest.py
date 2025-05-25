@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 import application.auth.usecases as auth_usecases
@@ -5,7 +6,11 @@ import pytest
 import pytest_asyncio
 from application.auth.dtos import RegisterUserDto
 from application.auth.usecases import CreateUserWithPasswordUseCase
+from application.events.usecases import CreateEventUseCase
 from dishka import AsyncContainer
+from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
+from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
@@ -43,9 +48,7 @@ async def container(pytestconfig: pytest.Config):
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def setup_db_tables(
-    pytestconfig: pytest.Config, container: AsyncContainer
-):
+async def setup_db_tables(pytestconfig: pytest.Config, container: AsyncContainer):
     if not pytestconfig.getoption("--integration", default=False):
         return
     engine = await container.get(AsyncEngine)
@@ -120,9 +123,7 @@ async def get_user_dto(
     prepare,  # noqa
     create_user_with_password: CreateUserWithPasswordUseCase,
 ) -> RegisterUserDto:
-    return RegisterUserDto(
-        email="public@public.com", password="public", is_active=True
-    )
+    return RegisterUserDto(email="public@public.com", password="public", is_active=True)
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -193,9 +194,40 @@ async def get_user_entities(
 ) -> list[User]:
     return [
         await create_user_with_password(
-            RegisterUserDto(
-                email=f"test{i}@test.com", password="parol", is_active=True
-            )
+            RegisterUserDto(email=f"test{i}@test.com", password="parol", is_active=True)
         )
         for i in range(8)
     ]
+
+
+@pytest_asyncio.fixture(scope="function")
+async def create_event_dto() -> CreateEventDto:
+    date = datetime.now().date()
+    return CreateEventDto(
+        title="Example",
+        type=EventTypeEnum.HACKATHON,
+        format=EventFormatEnum.OFFLINE,
+        location=None,
+        description="Example Description",
+        organization_id=None,
+        end_date=date + timedelta(days=1),
+        start_date=date,
+        end_registration=date - timedelta(days=1),
+    )
+
+
+@pytest_asyncio.fixture
+async def create_event_usecase(
+    container: AsyncContainer,
+) -> CreateEventUseCase:
+    async with container() as nested:
+        yield await nested.get(CreateEventUseCase)
+
+
+@pytest_asyncio.fixture
+async def create_event(
+    get_admin: User,
+    create_event_dto: CreateEventDto,
+    create_event_usecase: CreateEventUseCase,
+) -> Event:
+    return await create_event_usecase(create_event_dto, get_admin)

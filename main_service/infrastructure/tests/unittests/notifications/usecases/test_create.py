@@ -7,13 +7,11 @@ from domain.notifications.dtos import CreateNotificationDto
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip
 async def test_create_success(
     create_notification_usecase: CreateNotificationUseCase,
     create_notification_dto: CreateNotificationDto,
 ):
-    # TODO: Переделать
-    return
-
     notification = await create_notification_usecase(dto=create_notification_dto)
     attrs = (
         "recipient_id",

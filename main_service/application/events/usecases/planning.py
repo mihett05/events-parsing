@@ -20,7 +20,7 @@ class PlanningEventsNotificationsUseCase:
 
     async def __call__(self, event_start_date: datetime, notification_send_date: date):
         dto = ReadAllEventsDto(
-            page=0, page_size=50, start_date=event_start_date, for_update=True
+            page=0, page_size=50, start_date=event_start_date.date(), for_update=True
         )
 
         async with self.__transaction:

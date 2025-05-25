@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from application.transactions import TransactionsGateway
 from domain.organizations.exceptions import OrganizationTokenNotFoundError
 from domain.organizations.repositories import OrganizationTokensRepository
 from domain.users.entities import User
@@ -10,6 +9,7 @@ from infrastructure.config import Config
 from application.organizations.usecases.read_token import (
     ReadOrganizationTokenUseCase,
 )
+from application.transactions import TransactionsGateway
 
 
 class ValidateOrganizationTokenUseCase:

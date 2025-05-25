@@ -43,9 +43,7 @@ class EventsUserDatabaseRepository(EventUsersRepository):
             return self.__add_offset_to_query(query, dto)
 
         def get_select_for_event(self, dto: dtos.ReadEventUsersDto) -> Select:
-            query = select(self.model).where(
-                self.model.event_id == dto.event_id
-            )
+            query = select(self.model).where(self.model.event_id == dto.event_id)
             return self.__add_offset_to_query(query, dto)
 
         def extract_id_from_model(self, model: EventUserDatabaseModel):
@@ -107,9 +105,7 @@ class EventsDatabaseRepository(EventsRepository):
 
             return query
 
-        def get_select_all_feed_query(
-            self, dto: dtos.ReadAllEventsFeedDto
-        ) -> Select:
+        def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
             query = select(self.model).order_by(desc(self.model.start_date))
 
             query = self.__try_add_period_filter_to_query(query, dto)
@@ -140,9 +136,7 @@ class EventsDatabaseRepository(EventsRepository):
         ) -> Select:
             if dto.organization_id is None:
                 return query
-            return query.where(
-                self.model.organization_id == dto.organization_id
-            )
+            return query.where(self.model.organization_id == dto.organization_id)
 
         def __try_add_type_filter_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto
@@ -166,9 +160,7 @@ class EventsDatabaseRepository(EventsRepository):
         def get_options_with_members(self) -> list[LoaderOption]:
             return [
                 joinedload(self.model.attachments),
-                joinedload(self.model.members).joinedload(
-                    UserDatabaseModel.settings
-                ),
+                joinedload(self.model.members).joinedload(UserDatabaseModel.settings),
             ]
 
     def __init__(self, session: AsyncSession):
@@ -204,9 +196,7 @@ class EventsDatabaseRepository(EventsRepository):
         query = self.config.get_select_all_query(dto)
         return await self.__repository.get_entities_from_query(query)
 
-    async def read_for_feed(
-        self, dto: dtos.ReadAllEventsFeedDto
-    ) -> list[Event]:
+    async def read_for_feed(self, dto: dtos.ReadAllEventsFeedDto) -> list[Event]:
         query = self.config.get_select_all_feed_query(dto)
         return await self.__repository.get_entities_from_query(query)
 

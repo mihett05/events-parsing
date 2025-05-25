@@ -33,14 +33,13 @@ class DeduplicateEventUseCase:
 
     async def __call__(self, mail_id: int | None, dto: CreateEventDto):
         async with self.__transaction.nested():
+            print(self.__config.admin_username)
             event: Event | None = await self.__event_find_use_case(dto)
             super_user = await self.__users_repository.read_by_email(
                 self.__config.admin_username
             )
             if event is None:
-                event: Event = await self.__event_create_use_case(
-                    dto, super_user
-                )
+                event: Event = await self.__event_create_use_case(dto, super_user)
 
             if mail_id is not None:
                 mail = await self.__mail_update_use_case(

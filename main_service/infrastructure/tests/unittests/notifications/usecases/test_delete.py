@@ -13,7 +13,6 @@ async def test_delete_notification_success(
     delete_notification_usecase: DeleteNotificationUseCase,
     read_notification_usecase: ReadNotificationUseCase,
 ):
-    create_notification = await create_notification()
     notification = await delete_notification_usecase(create_notification.id, None)
     # TODO: add user
     assert notification == create_notification

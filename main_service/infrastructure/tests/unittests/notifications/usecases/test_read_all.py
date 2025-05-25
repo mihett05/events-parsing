@@ -11,7 +11,6 @@ async def test_read_all_success(
     delete_notification_usecase,
     create_notification,
 ):
-    create_notification = await create_notification()
     notifications = await read_all_notifications_usecase(dto=read_all_notifications_dto)
     assert len(notifications) == 1
     assert notifications[0] == create_notification

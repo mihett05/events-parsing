@@ -12,7 +12,6 @@ async def test_find_success(
     create_event_dto: CreateEventDto,
     create_event,
 ):
-    create_event = await create_event()
     event = await find_event_usecase(create_event_dto)
     assert event is not None
     attrs = [

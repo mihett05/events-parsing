@@ -13,12 +13,9 @@ async def test_delete_success(
     create_attachment,
     attachments_repository: AttachmentsRepository,
     read_attachment_usecase: ReadAttachmentUseCase,
-    create_super_user1,
+    get_admin,
 ):
-    user = await create_super_user1()
-    create_attachment = await create_attachment()
-
     deleted_attachment = await files_gateway.delete(create_attachment)
     assert deleted_attachment == create_attachment
     with pytest.raises(AttachmentNotFoundError):
-        await read_attachment_usecase(deleted_attachment.id, user)
+        await read_attachment_usecase(deleted_attachment.id, get_admin)

@@ -1,14 +1,9 @@
 import application.events.usecases as usecases
 import pytest_asyncio
 from dishka import AsyncContainer
-
-
-@pytest_asyncio.fixture
-async def create_event_usecase(
-    container: AsyncContainer,
-) -> usecases.CreateEventUseCase:
-    async with container() as nested:
-        yield await nested.get(usecases.CreateEventUseCase)
+from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
+from domain.users.entities import User
 
 
 @pytest_asyncio.fixture

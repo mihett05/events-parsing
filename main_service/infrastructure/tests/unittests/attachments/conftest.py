@@ -1,42 +1,49 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, BinaryIO, Callable, Coroutine, Iterable
 
-import pytest
 import pytest_asyncio
 from application.attachments.gateways import FilesGateway
+from application.attachments.usecases import CreateAttachmentUseCase
 from dishka import AsyncContainer
 from domain.attachments.dtos import CreateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
-from domain.mails.dtos import CreateMailDto
-from domain.mails.entities import Mail
-from domain.mails.repositories import MailsRepository
+from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
+from domain.events.repositories import EventsRepository
+from domain.organizations.entities import Organization
+from domain.users.entities import User
 
 
 @pytest_asyncio.fixture
-async def create_mail_dto() -> CreateMailDto:
-    return CreateMailDto(
-        imap_mail_uid="example",
-        theme="Example",
-        sender="example@example.com",
-        raw_content="Example Contend".encode("utf-8"),
-        received_date=datetime.now().date(),
+async def create_event_dto(get_admin_organization: Organization) -> CreateEventDto:
+    date = datetime.now(tz=timezone.utc)
+    date -= datetime.combine(date.min, date.time()) - datetime.min
+
+    return CreateEventDto(
+        organization_id=get_admin_organization.id,
+        title="example event",
+        description="example",
+        start_date=date,
+        end_date=date + timedelta(days=1),
+        end_registration=date - timedelta(days=1),
+        location=None,
     )
 
 
 @pytest_asyncio.fixture
-async def mails_repository(container: AsyncContainer) -> MailsRepository:
+async def events_repository(container: AsyncContainer) -> EventsRepository:
     async with container() as request_container:
-        yield await request_container.get(MailsRepository)
+        yield await request_container.get(EventsRepository)
 
 
 @pytest_asyncio.fixture
-async def create_mail(
-    create_mail_dto: CreateMailDto,
-    mails_repository: MailsRepository,
-) -> Mail:
-    return await mails_repository.create(create_mail_dto)
+async def create_event(
+    create_event_dto: CreateEventDto,
+    events_repository: EventsRepository,
+) -> Event:
+    return await events_repository.create(create_event_dto)
 
 
 @pytest_asyncio.fixture
@@ -52,14 +59,14 @@ async def create_attachment_content() -> Iterable[BinaryIO]:
 @pytest_asyncio.fixture
 async def create_attachment_dtos(
     create_attachment_content: BinaryIO,
-    create_mail: Mail,
+    create_event: Event,
 ) -> list[CreateAttachmentDto]:
     return [
         CreateAttachmentDto(
             filename=f"лето-2012-анапа({i})",
             extension=".txt",
             content=create_attachment_content,
-            mail=create_mail,
+            event=create_event,
         )
         for i in range(1, 10)
     ]
@@ -79,16 +86,19 @@ async def files_gateway(container: AsyncContainer) -> FilesGateway:
         yield await nested.get(FilesGateway)
 
 
+@pytest_asyncio.fixture
+async def create_attachment_usecase(
+    container: AsyncContainer,
+) -> CreateAttachmentDto:
+    async with container() as nested:
+        yield await nested.get(CreateAttachmentUseCase)
+
+
 @pytest_asyncio.fixture(scope="function")
 async def create_attachment(
-    attachments_repository: AttachmentsRepository,
+    get_admin: User,
     create_attachment_dtos: list[CreateAttachmentDto],
-    files_gateway: FilesGateway,
-    create_attachment_content: BinaryIO,
-) -> Callable[..., Coroutine[Any, Any, Attachment]]:
-    async def _factory():
-        attachment = await attachments_repository.create(create_attachment_dtos[0])
-        await files_gateway.create(attachment, create_attachment_content)
-        return attachment
-
-    return _factory
+    create_attachment_usecase: CreateAttachmentUseCase,
+) -> Attachment:
+    succeed, _ = await create_attachment_usecase([create_attachment_dtos[0]], get_admin)
+    return succeed[0]

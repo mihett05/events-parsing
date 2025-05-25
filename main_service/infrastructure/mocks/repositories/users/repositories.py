@@ -43,6 +43,7 @@ class UsersMemoryRepository(UsersRepository):
         self.__repository = MockRepository(self.Config())
 
     async def read_by_email(self, email: str) -> User:
+        print(email, self.__repository.storage)
         for user in await self.__repository.read_all():
             if user.email == email:
                 return user
@@ -58,9 +59,7 @@ class UsersMemoryRepository(UsersRepository):
             id=self.__next_id,
             is_active=dto.is_active,
             telegram_id=None,
-            settings=UserSettings(
-                user_id=self.__next_id, id=randint(1000, 2000)
-            ),
+            settings=UserSettings(user_id=self.__next_id, id=randint(1000, 2000)),
         )
 
         self.__next_id += 1
@@ -103,9 +102,7 @@ class TelegramTokensMemoryRepository(TelegramTokensRepository):
         self.__repository = MockRepository(self.Config())
 
     async def create(self, dto: dtos.CreateTelegramTokenDto) -> TelegramToken:
-        token = TelegramToken(
-            id=dto.id, user_id=dto.user_id, created_at=datetime.now()
-        )
+        token = TelegramToken(id=dto.id, user_id=dto.user_id, created_at=datetime.now())
         return await self.__repository.create(token)
 
     async def read(self, token_id: UUID) -> TelegramToken:
@@ -136,31 +133,21 @@ class UserOrganizationsRolesMemoryRepository(UserOrganizationRolesRepository):
     async def create(self, role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.create(role)
 
-    async def read(
-        self, user_id: int, organization_id: int
-    ) -> UserOrganizationRole:
+    async def read(self, user_id: int, organization_id: int) -> UserOrganizationRole:
         return await self.__repository.read((organization_id, user_id))
 
-    async def update(
-        self, user_role: UserOrganizationRole
-    ) -> UserOrganizationRole:
+    async def update(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.update(user_role)
 
     async def update_is_active_statement(self, user: User, status: bool):
         user.is_active = status
         await self.__repository.update(user)
 
-    async def delete(
-        self, user_role: UserOrganizationRole
-    ) -> UserOrganizationRole:
+    async def delete(self, user_role: UserOrganizationRole) -> UserOrganizationRole:
         return await self.__repository.delete(user_role)
 
     async def read_all(self, user_id: int) -> list[UserOrganizationRole]:
-        return [
-            x
-            for x in await self.__repository.read_all()
-            if x.user_id == user_id
-        ]
+        return [x for x in await self.__repository.read_all() if x.user_id == user_id]
 
     async def clear(self):
         await self.__repository.clear()

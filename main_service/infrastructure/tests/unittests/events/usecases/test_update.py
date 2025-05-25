@@ -5,20 +5,18 @@ from application.events.dtos import UpdateEventDto
 from application.events.usecases import UpdateEventUseCase
 from domain.events.entities import Event
 from domain.events.exceptions import EventNotFoundError
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
 async def test_update_success(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_event,
-    create_user1,
+    create_event: Event,
+    get_admin: User,
 ):
-    create_event = await create_event()
-    user = await create_user1()
-
     create_event = copy(create_event)
-    event = await update_event_usecase(update_event_dto, user)
+    event = await update_event_usecase(update_event_dto, get_admin)
 
     assert event.title != create_event.title
     assert event.description != create_event.description
@@ -31,10 +29,8 @@ async def test_update_success(
 async def test_update_not_found(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_user1,
+    get_admin: User,
 ):
     update_event_dto.event_id = 42
-    user = await create_user1()
-
     with pytest.raises(EventNotFoundError):
-        _ = await update_event_usecase(update_event_dto, user)
+        _ = await update_event_usecase(update_event_dto, get_admin)

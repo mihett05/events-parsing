@@ -41,10 +41,13 @@ class CreateAttachmentUseCase:
             try:
                 await self.__gateway.create(attachment, dto.content)
             except AttachmentNotFoundError:
+                print("exception1")
                 await nested.rollback()
             except AttachmentAlreadyExistsError:
+                print("exception2")
                 await nested.rollback()
             else:
+                print("commit")
                 await nested.commit()
                 return attachment
 
