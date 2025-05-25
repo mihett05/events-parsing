@@ -27,7 +27,7 @@ class ReadEventUseCase:
             event = await self.__repository.read(event_id)
             actor_role = await self.__role_getter(actor, event.organization_id)
             self.__builder.providers(
-                EventPermissionProvider(event.organization_id, actor_role)
+                EventPermissionProvider(event.organization_id, actor_role, event)
             ).add(
                 PermissionsEnum.CAN_READ_EVENT,
             ).apply()

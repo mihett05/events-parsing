@@ -1,4 +1,6 @@
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import roles_delete_priorities_table
+from domain.users.exceptions import UserAccessDenied
 from domain.users.repositories import UserOrganizationRolesRepository
 from domain.users.role_getter import RoleGetter
 
@@ -29,4 +31,9 @@ class UpdateUserRoleUseCase:
             self.__builder.providers(
                 UserRolesPermissionProvider(entity.organization_id, actor_role)
             ).add(PermissionsEnum.CAN_UPDATE_ROLE).apply()
-            return await self.__repository.update(entity)
+            if (
+                roles_delete_priorities_table[actor_role.role]
+                > roles_delete_priorities_table[actor_role.role]
+            ):
+                return await self.__repository.update(entity)
+            raise UserAccessDenied

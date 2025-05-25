@@ -29,7 +29,7 @@ class UpdateOrganizationUseCase:
     async def __call__(self, dto: UpdateOrganizationDto, actor: User) -> Organization:
         async with self.__transaction:
             organization = await self.__read_organization_use_case(dto.id)
-            actor_role = await self.__role_getter(actor)
+            actor_role = await self.__role_getter(actor, organization.id)
             self.__builder.providers(
                 OrganizationPermissionProvider(actor_role, dto.id)
             ).add(PermissionsEnum.CAN_UPDATE_ORGANIZATION).apply()
