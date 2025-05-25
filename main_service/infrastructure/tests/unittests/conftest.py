@@ -106,7 +106,7 @@ async def create_user_role_usecase(
 
 @pytest_asyncio.fixture
 async def create_super_user1(
-    register_user1_dto: RegisterUserDTO,
+    register_user1_dto: RegisterUserDto,
     register_usecase: RegisterUseCase,
     user_organization_roles_repository: UserOrganizationRolesRepository,
     create_user1,
