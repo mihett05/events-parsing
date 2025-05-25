@@ -39,7 +39,7 @@ class DeleteUserRoleUseCase:
             if role := await self.__repository.read(dto.user_id, dto.organization_id):
                 if (
                     roles_delete_priorities_table[actor_role.role]
-                    > roles_delete_priorities_table[role.role]
+                    < roles_delete_priorities_table[role.role]
                 ):
                     return await self.__repository.delete(role)
                 raise UserAccessDenied

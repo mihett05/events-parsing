@@ -33,7 +33,7 @@ class CreateUserRoleUseCase:
             ).add(PermissionsEnum.CAN_CREATE_ROLE).apply()
             if (
                 roles_delete_priorities_table[actor_role.role]
-                > roles_delete_priorities_table[role.role]
+                < roles_delete_priorities_table[role.role]
             ):
                 return await self.__repository.create(role)
             raise UserAccessDenied

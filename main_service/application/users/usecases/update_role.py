@@ -33,7 +33,7 @@ class UpdateUserRoleUseCase:
             ).add(PermissionsEnum.CAN_UPDATE_ROLE).apply()
             if (
                 roles_delete_priorities_table[actor_role.role]
-                > roles_delete_priorities_table[actor_role.role]
+                < roles_delete_priorities_table[actor_role.role]
             ):
                 return await self.__repository.update(entity)
             raise UserAccessDenied
