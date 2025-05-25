@@ -10,9 +10,7 @@ class RoleGetter:
     ):
         self.__roles_repository = roles_repository
 
-    async def __call__(
-        self, user: User, organization_id: int
-    ) -> UserOrganizationRole:
+    async def __call__(self, user: User, organization_id: int) -> UserOrganizationRole:
         roles = await self.__roles_repository.read_all(user.id)
         current = UserOrganizationRole(
             organization_id=organization_id,
@@ -20,7 +18,5 @@ class RoleGetter:
             role=RoleEnum.PUBLIC,
         )
         for role in roles:
-            current = min(
-                role, current, lambda x: roles_priorities_table[x.role]
-            )
+            current = min(role, current, lambda x: roles_priorities_table[x.role])
         return current

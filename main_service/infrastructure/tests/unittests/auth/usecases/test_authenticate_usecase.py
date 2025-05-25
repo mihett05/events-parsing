@@ -22,7 +22,7 @@ async def test_authenticate_success(
 
 @pytest.mark.asyncio
 async def test_authenticate_wrong_password(
-    get_user_entity: User, # noqa
+    get_user_entity: User,  # noqa
     get_user_authenticate_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
@@ -35,7 +35,7 @@ async def test_authenticate_wrong_password(
 
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(
-    get_user_entity: User, # noqa
+    get_user_entity: User,  # noqa
     get_user_authenticate_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):

@@ -194,7 +194,7 @@ async def init_entities(
     return get_admin, get_admin_organization, get_admin_role
 
 
-@pytest_asyncio.fixture(scope='function')
+@pytest_asyncio.fixture(scope="function")
 async def get_user_entities(
     create_user_with_password: CreateUserWithPasswordUseCase,
 ) -> list[User]:
