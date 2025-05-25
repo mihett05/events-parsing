@@ -16,9 +16,9 @@ from sqlalchemy.orm.interfaces import LoaderOption
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from ..users import UserDatabaseModel
 from .mappers import (
+    event_user_map_dto,
     event_user_map_from_db,
     event_user_map_to_db,
-    event_user_map_dto,
     map_create_dto_to_model,
     map_from_db,
     map_to_db,
@@ -58,6 +58,12 @@ class EventsUserDatabaseRepository(EventUsersRepository):
         ) -> Select:
             return query.offset(dto.page * dto.page_size).limit(dto.page_size)
 
+        def get_options(self) -> list[LoaderOption]:
+            return [
+                selectinload(self.model.user).joinedload(UserDatabaseModel.settings),
+                selectinload(self.model.event),
+            ]
+
     def __init__(self, session: AsyncSession):
         self.session = session
         self.config = self.Config()
@@ -80,6 +86,14 @@ class EventsUserDatabaseRepository(EventUsersRepository):
 
     async def delete(self, event_user: EventUser) -> entities.EventUser:
         return await self.__repository.delete(event_user)
+
+    async def read(self, event_id: int, user_id: int) -> entities.EventUser:
+        return await self.__repository.read(
+            (
+                event_id,
+                user_id,
+            )
+        )
 
 
 class EventsDatabaseRepository(EventsRepository):

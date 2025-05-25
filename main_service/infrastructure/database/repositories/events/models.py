@@ -14,6 +14,7 @@ from infrastructure.database.repositories.attachments import (
 )
 from infrastructure.database.repositories.users import UserDatabaseModel
 
+
 class EventDatabaseModel(Base):
     __tablename__ = "events"
 
@@ -62,9 +63,5 @@ class EventUserDatabaseModel(Base):
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
-    user: Mapped[list[UserDatabaseModel]] = relationship(
-        cascade="all", uselist=False
-    )
-    event: Mapped[list[EventDatabaseModel]] = relationship(
-        cascade="all", uselist=False
-    )
+    user: Mapped[UserDatabaseModel] = relationship(uselist=False)
+    event: Mapped[EventDatabaseModel] = relationship(uselist=False)

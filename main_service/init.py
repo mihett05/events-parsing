@@ -9,7 +9,11 @@ from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
-from domain.users.exceptions import UserAlreadyExistsError, UserRoleNotFoundError, UserNotFoundError
+from domain.users.exceptions import (
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    UserRoleNotFoundError,
+)
 from domain.users.repositories import UserOrganizationRolesRepository, UsersRepository
 from infrastructure.config import Config
 from infrastructure.providers.container import create_container

@@ -32,5 +32,5 @@ class Event:
 class EventUser:
     event_id: int
     user_id: int
-    event: list[Event]
-    user: list[User]
+    event: Event
+    user: User

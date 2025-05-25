@@ -55,6 +55,24 @@ async def get_filter_values(
 
 
 @router.get(
+    "subscribe/ical/{uid}",
+    responses={404: {"model": ErrorModel}},
+)
+async def read_ical(
+    use_case: FromDishka[use_cases.ReadForUserEventUserUseCase],
+    actor: Annotated[User, Depends(get_user)],
+    page: int = 0,
+    page_size: int = 50,
+):
+    return mappers.map_to_ics(
+        await use_case(
+            ReadUserEventsDto(user_id=actor.id, page=page, page_size=page_size),
+            actor,
+        )
+    )
+
+
+@router.get(
     "/subscribe/my",
     response_model=list[models.EventUserModel],
 )

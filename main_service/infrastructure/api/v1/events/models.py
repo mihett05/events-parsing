@@ -8,11 +8,6 @@ from infrastructure.api.v1.organizations.models import OrganizationModel
 from infrastructure.api.v1.users.models import UserModel
 
 
-class EventUserModel(CamelModel):
-    event_id: int
-    user_id: int
-
-
 class EventModel(CamelModel):
     id: int
     title: str
@@ -31,10 +26,16 @@ class EventModel(CamelModel):
     start_date: datetime
     end_date: datetime | None
     end_registration: datetime | None = None
-    organization_id: int | None = None
 
 
 class FilterModel(CamelModel):
     type: list[EventTypeEnum]
     format: list[EventFormatEnum]
     organization: list[OrganizationModel]
+
+
+class EventUserModel(CamelModel):
+    event_id: int
+    user_id: int
+    user: UserModel
+    event: EventModel

@@ -1,5 +1,4 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
 from adaptix.conversion import coercer, link_function
 from application.events.dtos import UpdateEventDto
 from domain.attachments.entities import Attachment
@@ -10,6 +9,8 @@ from domain.events.dtos import (
 )
 from domain.events.entities import Event, EventUser
 from domain.users.entities import User
+from icalendar import Calendar
+from icalendar import Event as ICalEvent
 
 from infrastructure.api.retort import pydantic_retort
 from infrastructure.api.v1.attachments.mappers import (
@@ -47,8 +48,6 @@ map_read_all_dto_calendar_from_pydantic = retort.get_converter(
     ],
 )"""
 
-event_user_map_to_pydantic = retort.get_converter(EventUser, EventUserModel)
-
 map_to_pydantic = retort.get_converter(
     Event,
     EventModel,
@@ -83,3 +82,43 @@ def map_update_dto_from_pydantic(
     dto: UpdateEventModelDto,  # noqa
     event_id: int,  # noqa
 ) -> UpdateEventDto: ...
+
+
+event_user_map_to_pydantic = retort.get_converter(
+    EventUser,
+    EventUserModel,
+    recipe=[
+        coercer(Event, EventModel, map_to_pydantic),
+        coercer(User, UserModel, user_map_to_pydantic),
+    ],
+)
+
+
+def map_to_ics(event_users: list[EventUser]) -> bytes:
+    cal = Calendar()
+    cal.add("version", "2.0")
+
+    for e in event_users:
+        ical_event = ICalEvent()
+
+        ical_event.add("summary", e.event.title)
+        ical_event.add("dtstart", e.event.start_date)
+        if e.event.location:
+            ical_event.add("location", e.event.location)
+
+        if e.event.end_date:
+            ical_event.add("dtend", e.event.end_date)
+
+        if e.event.description:
+            ical_event.add("description", e.event.description)
+
+        uid = (
+            f"event-{e.event.id}@example.com"
+            if e.event.id
+            else f"event-{hash(e.event)}@example.com"
+        )
+        ical_event.add("uid", uid)
+
+        cal.add_component(ical_event)
+
+    return cal.to_ical()
