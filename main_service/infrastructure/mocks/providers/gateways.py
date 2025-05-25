@@ -34,23 +34,13 @@ class GatewaysProvider(Provider):
     coordinator_publisher = provide(
         source=MemoryCoordinatorGateway, provides=CoordinatorGateway
     )
-    notification_email_gateway = provide(
-        source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway
-    )
-    notification_gateway_factory = provide(
-        source=NotificationGatewayFactory,
-        provides=NotificationGatewayAbstractFactory,
-    )
-    telegram_notification_gateway = provide(NotificationTelegramGateway)
 
     @provide
     def telegram_bot(self, config: Config) -> Bot:
         return Bot(token=config.telegram_bot_token)
 
     tokens_gateway = provide(source=JwtTokensGateway, provides=TokensGateway)
-    security_gateway = provide(
-        source=BcryptSecurityGateway, provides=SecurityGateway
-    )
+    security_gateway = provide(source=BcryptSecurityGateway, provides=SecurityGateway)
     # TODO сделать гетевеи с заглушками
     notification_email_gateway = provide(
         source=NotificationEmailMemoryGateway, provides=NotificationEmailGateway

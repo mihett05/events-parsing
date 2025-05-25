@@ -31,7 +31,5 @@ class DatabaseProvider(Provider):
         await asyncio.shield(session.close())
 
     @provide(scope=Scope.REQUEST)
-    async def get_transaction(
-        self, session: AsyncSession
-    ) -> TransactionsGateway:
+    async def get_transaction(self, session: AsyncSession) -> TransactionsGateway:
         return TransactionsDatabaseGateway(session)

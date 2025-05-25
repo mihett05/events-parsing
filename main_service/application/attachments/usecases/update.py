@@ -42,9 +42,7 @@ class UpdateAttachmentUseCase:
             event = None
 
             if attachment.event_id is not None:
-                event = await self.__read_event_use_case(
-                    attachment.event_id, actor
-                )
+                event = await self.__read_event_use_case(attachment.event_id, actor)
 
             self.__builder.providers(
                 AttachmentPermissionProvider(

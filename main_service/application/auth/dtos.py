@@ -8,8 +8,17 @@ class AuthenticateUserDto:
 
 
 @dataclass
-class RegisterUserDTO:
+class RegisterUserDto:
     email: str
     password: str
     fullname: str = ""
     is_active: bool = True
+
+
+@dataclass
+class CreateUserWithPasswordDto:
+    email: str
+    fullname: str
+    is_active: bool
+    salt: str
+    hashed_password: str

@@ -58,7 +58,5 @@ map_update_role_entity_from_pydantic = retort.get_converter(
 )
 
 
-def map_delete_role_to_dto(
-    user_id: int, organization_id: int
-) -> DeleteUserRoleDto:
+def map_delete_role_to_dto(user_id: int, organization_id: int) -> DeleteUserRoleDto:
     return DeleteUserRoleDto(user_id, organization_id)

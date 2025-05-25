@@ -4,12 +4,12 @@ import pytest
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
 from application.auth.usecases import AuthenticateUseCase
-from domain.users.entities import UserActivationToken
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
 async def test_authenticate_success(
-    create_user1: UserActivationToken,
+    create_user1: User,
     authenticate_user1_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
@@ -23,7 +23,7 @@ async def test_authenticate_success(
 
 @pytest.mark.asyncio
 async def test_authenticate_wrong_password(
-    create_user1: UserActivationToken,
+    create_user1: User,
     authenticate_user1_broken_password_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):

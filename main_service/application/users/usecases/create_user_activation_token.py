@@ -7,7 +7,5 @@ class CreateUserActivationTokenUseCase:
     def __init__(self, repository: UserActivationTokenRepository):
         self.__repository = repository
 
-    async def __call__(
-        self, dto: CreateActivationTokenDto
-    ) -> UserActivationToken:
+    async def __call__(self, dto: CreateActivationTokenDto) -> UserActivationToken:
         return await self.__repository.create(dto)

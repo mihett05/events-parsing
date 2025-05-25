@@ -8,7 +8,5 @@ async def test_read_organization(
     read_organization_usecase: ReadOrganizationUseCase,
     create_organization: Organization,
 ):
-    return_organization = await read_organization_usecase(
-        create_organization.id
-    )
+    return_organization = await read_organization_usecase(create_organization.id)
     assert return_organization == create_organization

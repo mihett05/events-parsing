@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from uuid import UUID
 
+from application.auth.dtos import CreateUserWithPasswordDto
+
 import domain.users.dtos as dtos
 import domain.users.entities as entities
 from domain.users.dtos import CreateActivationTokenDto, ReadAllUsersDto
@@ -13,7 +15,7 @@ from domain.users.entities import (
 
 class UsersRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, user: User) -> User: ...
+    async def create(self, dto: CreateUserWithPasswordDto) -> User: ...
 
     @abstractmethod
     async def read(self, user_id: int) -> User: ...
@@ -37,36 +39,30 @@ class UsersRepository(metaclass=ABCMeta):
     async def delete(self, user: User) -> User: ...
 
     @abstractmethod
-    async def update_is_active_statement(self, user_id: int, status: bool): ...
+    async def change_user_active_status(self, user_id: int, status: bool): ...
 
 
 class UserOrganizationRolesRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(
-        self, role: UserOrganizationRole
-    ) -> UserOrganizationRole: ...
+    async def create(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
 
     @abstractmethod
-    async def read(self, user_id: int) -> list[UserOrganizationRole]: ...
+    async def read(
+        self, user_id: int, organization_id: int
+    ) -> list[UserOrganizationRole]: ...
 
     @abstractmethod
-    async def update(
-        self, role: UserOrganizationRole
-    ) -> UserOrganizationRole: ...
+    async def update(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
 
     @abstractmethod
-    async def delete(
-        self, role: UserOrganizationRole
-    ) -> UserOrganizationRole: ...
+    async def delete(self, role: UserOrganizationRole) -> UserOrganizationRole: ...
 
     # TODO add read_all
 
 
 class UserActivationTokenRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(
-        self, dto: CreateActivationTokenDto
-    ) -> UserActivationToken: ...
+    async def create(self, dto: CreateActivationTokenDto) -> UserActivationToken: ...
 
     @abstractmethod
     async def read(self, token_uuid: UUID) -> UserActivationToken: ...
@@ -75,9 +71,7 @@ class UserActivationTokenRepository(metaclass=ABCMeta):
     async def update_is_used_statement(self, token_id: UUID): ...
 
     @abstractmethod
-    async def delete(
-        self, token: UserActivationToken
-    ) -> UserActivationToken: ...
+    async def delete(self, token: UserActivationToken) -> UserActivationToken: ...
 
 
 class TelegramTokensRepository(metaclass=ABCMeta):
@@ -90,6 +84,4 @@ class TelegramTokensRepository(metaclass=ABCMeta):
     async def read(self, token_id: UUID) -> entities.TelegramToken: ...
 
     @abstractmethod
-    async def update(
-        self, token: entities.TelegramToken
-    ) -> entities.TelegramToken: ...
+    async def update(self, token: entities.TelegramToken) -> entities.TelegramToken: ...

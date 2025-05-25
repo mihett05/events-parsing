@@ -47,24 +47,19 @@ async def create_users(
     users_repository: UsersRepository,
 ) -> list[User]:
     return [
-        await users_repository.create(user_entity)
-        for user_entity in get_user_entities
+        await users_repository.create(user_entity) for user_entity in get_user_entities
     ]
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config, users_repository: UsersRepository
-):
+async def prepare(pytestconfig: pytest.Config, users_repository: UsersRepository):
     if pytestconfig.getoption("--integration", default=False):
         return
     await users_repository.clear()  # noqa
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def teardown(
-    pytestconfig: pytest.Config, users_repository: UsersRepository
-):
+async def teardown(pytestconfig: pytest.Config, users_repository: UsersRepository):
     yield
     if pytestconfig.getoption("--integration", default=False):
         return
@@ -73,16 +68,12 @@ async def teardown(
 
 @pytest_asyncio.fixture
 async def get_user_role_entity() -> UserOrganizationRole:
-    return UserOrganizationRole(
-        user_id=1, organization_id=1, role=RoleEnum.SUPER_OWNER
-    )
+    return UserOrganizationRole(user_id=1, organization_id=1, role=RoleEnum.SUPER_OWNER)
 
 
 @pytest_asyncio.fixture
 async def update_user_role_entity() -> UserOrganizationRole:
-    return UserOrganizationRole(
-        user_id=1, organization_id=1, role=RoleEnum.PUBLIC
-    )
+    return UserOrganizationRole(user_id=1, organization_id=1, role=RoleEnum.PUBLIC)
 
 
 @pytest_asyncio.fixture

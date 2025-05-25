@@ -37,6 +37,4 @@ class ValidateActivationTokenUseCase:
             await self.__users_repository.update_is_active_statement(
                 token.user.id, True
             )
-            return token.user, await self.__create_token_pair_use_case(
-                token.user
-            )
+            return token.user, await self.__create_token_pair_use_case(token.user)

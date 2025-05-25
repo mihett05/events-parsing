@@ -32,7 +32,5 @@ class DeleteUserRoleUseCase:
             self.__builder.providers(
                 UserRolesPermissionProvider(dto.organization_id, roles)
             ).add(PermissionsEnum.CAN_DELETE_ROLE).apply()
-            role = await self.__repository.read(
-                dto.user_id, dto.organization_id
-            )
+            role = await self.__repository.read(dto.user_id, dto.organization_id)
             return await self.__repository.delete(role)

@@ -18,15 +18,15 @@ class User:
 
     fullname: str
 
-    id: int | None = None
-    is_active: bool = True
+    id: int | None
+    is_active: bool
 
-    salt: str = None
-    hashed_password: str = None
+    salt: str
+    hashed_password: str
 
-    telegram_id: int | None = None
-    created_at: datetime = None
-    settings: UserSettings = None
+    telegram_id: int | None
+    created_at: datetime
+    settings: UserSettings
 
 
 @dataclass
