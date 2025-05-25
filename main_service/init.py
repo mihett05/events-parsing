@@ -9,7 +9,7 @@ from domain.organizations.entities import Organization
 from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
-from domain.users.exceptions import UserAlreadyExistsError, UserRoleNotFoundError
+from domain.users.exceptions import UserAlreadyExistsError, UserRoleNotFoundError, UserNotFoundError
 from domain.users.repositories import UserOrganizationRolesRepository, UsersRepository
 from infrastructure.config import Config
 from infrastructure.providers.container import create_container
@@ -23,7 +23,7 @@ async def _create_admin(
     dto = RegisterUserDto(email=config.admin_username, password=config.admin_password)
     try:
         return await users_repository.read_by_email(dto.email)
-    except UserAlreadyExistsError:
+    except UserNotFoundError:
         return await create_user(dto)
 
 
