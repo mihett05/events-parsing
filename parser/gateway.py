@@ -3,7 +3,6 @@ import logging
 from dataclasses import asdict
 
 from config import get_config
-from events import EventInfo
 from faststream import FastStream
 from faststream.rabbit import (
     ExchangeType,
@@ -12,6 +11,7 @@ from faststream.rabbit import (
     RabbitQueue,
 )
 from hackathonrf_parser import parser as parse_data
+from models import MailModel
 from pipeline import pipeline
 
 config = get_config()
@@ -50,8 +50,8 @@ async def fill_data():
 
 
 @broker.subscriber(subscribe_queue)
-async def handle(message: str):
-    result: EventInfo = pipeline(message)
+async def handle(message: MailModel):
+    result = pipeline(message)
     if result is None:
         return
 

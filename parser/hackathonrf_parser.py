@@ -4,8 +4,8 @@ from typing import Iterator
 
 import requests
 from bs4 import BeautifulSoup
-from events import EventInfo
-from extraction import extract_list
+from models import EventInfo
+from pipeline import extract_list
 
 URL = "https://www.хакатоны.рф/"
 

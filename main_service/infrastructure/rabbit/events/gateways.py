@@ -1,5 +1,4 @@
-import json
-from dataclasses import asdict
+import asyncio
 
 from application.events.coordinator.gateway import CoordinatorGateway
 from domain.mails.entities import Mail
@@ -9,6 +8,8 @@ from faststream.rabbit import (
     RabbitExchange,
     RabbitQueue,
 )
+
+from .mappers import map_mail_to_pydantic
 
 exchange = RabbitExchange(
     "main",
@@ -29,9 +30,11 @@ class RabbitMQCoordinatorGateway(CoordinatorGateway):
         self.__broker = broker
 
     async def run(self, mails: list[Mail]):
-        message = json.dumps(
-            map(lambda x: asdict(x), mails),
-            ensure_ascii=False,
+        await asyncio.gather(
+            *[
+                self.__broker.publish(
+                    map_mail_to_pydantic(mail), queue=queue, exchange=exchange
+                )
+                for mail in mails
+            ]
         )
-
-        await self.__broker.publish(message, queue=queue, exchange=exchange)

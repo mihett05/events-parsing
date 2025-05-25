@@ -2,14 +2,16 @@ import json
 import re
 
 from config import get_config
-from events import DatesInfo, EventInfo
+from models import DatesInfo, EventInfo
 from openai import OpenAI
 
 config = get_config()
 
 
 class OpenAiExtraction:
-    def __init__(self, init_prompt: dict[str, str], url: str, model: str, key: str):
+    def __init__(
+        self, init_prompt: dict[str, str], url: str, model: str, key: str
+    ):
         self.client = OpenAI(
             base_url=url,
             api_key=key,
@@ -53,12 +55,16 @@ class OpenAiExtraction:
             print("Tokens")
             return result
         try:
-            response_dict = json.loads(r.replace("```", "").replace("json", "").strip())
-        except:
+            response_dict = json.loads(
+                r.replace("```", "").replace("json", "").strip()
+            )
+        except Exception:
             return result
         for item in response_dict:
             try:
-                event = EventInfo(**{**item, "dates": DatesInfo(**item["dates"])})
+                event = EventInfo(
+                    **{**item, "dates": DatesInfo(**item["dates"])}
+                )
                 if event.location == "null":
                     event.location = None
                 pattern = re.compile(r"^\d{2}-\d{2}-\d{4}$")
