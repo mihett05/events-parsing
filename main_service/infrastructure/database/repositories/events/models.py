@@ -49,7 +49,7 @@ class EventDatabaseModel(Base):
 
     attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
     members: Mapped[list[UserDatabaseModel]] = relationship(
-        UserDatabaseModel, lazy="select", secondary="event_users"
+        UserDatabaseModel, lazy="noload", secondary="event_users", viewonly=True
     )
 
 
