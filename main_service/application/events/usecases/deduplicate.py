@@ -8,9 +8,9 @@ from infrastructure.config import Config
 from application.mails.dtos import UpdateMailDto
 from application.mails.usecases import ReadMailUseCase, UpdateMailUseCase
 
+from ...transactions import TransactionsGateway
 from .create import CreateEventUseCase
 from .find import FindEventUseCase
-from ...transactions import TransactionsGateway
 
 
 class DeduplicateEventUseCase:
