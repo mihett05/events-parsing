@@ -56,6 +56,9 @@ class AttachmentsMemoryRepository(AttachmentsRepository):
     async def read(self, attachment_id: UUID) -> Attachment:
         return await self.__repository.read(attachment_id)
 
+    async def update(self, attachment: Attachment) -> Attachment:
+        return await self.__repository.update(attachment)
+
     async def delete(self, attachment: Attachment) -> Attachment:
         return await self.__repository.delete(attachment)
 

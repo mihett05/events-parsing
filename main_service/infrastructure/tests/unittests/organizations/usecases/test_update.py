@@ -5,22 +5,22 @@ from application.organizations.dtos import UpdateOrganizationDto
 from application.organizations.usecases import UpdateOrganizationUseCase
 from domain.organizations.entities import Organization
 from domain.organizations.exceptions import OrganizationNotFoundError
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
 async def test_update_organization(
     update_organization_usecase: UpdateOrganizationUseCase,
     update_organization_dto: UpdateOrganizationDto,
-    create_organization: Organization,
-    create_user1,
+    get_admin_organization: Organization,
+    get_admin: User,
 ):
-    create_user1 = await create_user1()
-    create_organization = copy(create_organization)
+    get_admin_organization = copy(get_admin_organization)
     # TODO: change actor to userreturn await self.__repository.read(user_id)
     return_organization = await update_organization_usecase(
-        update_organization_dto, create_user1
+        update_organization_dto, get_admin
     )
-    assert return_organization.title != create_organization.title
+    assert return_organization.title != get_admin_organization.title
     assert return_organization.title == update_organization_dto.title
 
 

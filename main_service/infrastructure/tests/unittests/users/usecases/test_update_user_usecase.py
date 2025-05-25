@@ -10,15 +10,14 @@ from domain.users.exceptions import UserNotFoundError
 @pytest.mark.asyncio
 async def test_update_success(
     update_user_usecase: UpdateUserUseCase,
-
     get_admin: User,
     get_user_entity: User,
     update_user_dto: UpdateUserDto,
 ):
     old_user = copy(get_user_entity)
-    user = await update_user_usecase(update_user_dto, get_admin)
+    user = await update_user_usecase(update_user_dto, get_user_entity)
 
-    assert user.fullname == get_user_entity.fullname
+    assert user.fullname == update_user_dto.fullname
     assert user.fullname != old_user.fullname
 
 

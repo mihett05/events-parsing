@@ -8,11 +8,13 @@ from domain.organizations.entities import Organization
 async def test_readall(
     readall_organization_usecase: ReadAllOrganizationUseCase,
     readall_organizations_dto: ReadOrganizationsDto,
-    create_organization: Organization,
+    get_admin_organization: Organization,
 ):
-    organizations = await readall_organization_usecase(readall_organizations_dto)
+    organizations = await readall_organization_usecase(
+        readall_organizations_dto
+    )
     assert len(organizations) == 1
-    assert organizations[0] == create_organization
+    assert organizations[0] == get_admin_organization
 
 
 @pytest.mark.asyncio
@@ -21,6 +23,8 @@ async def test_read_all_empty(
     readall_organizations_dto: ReadOrganizationsDto,
 ):
     readall_organizations_dto.page = 100
-    organizations = await readall_organization_usecase(readall_organizations_dto)
+    organizations = await readall_organization_usecase(
+        readall_organizations_dto
+    )
 
     assert len(organizations) == 0
