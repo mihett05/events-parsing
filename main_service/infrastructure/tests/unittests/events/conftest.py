@@ -95,28 +95,3 @@ async def create_event(
         return await events_repository.create(create_event_dto)
 
     return _factory
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(pytestconfig: pytest.Config, events_repository: EventsRepository):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await events_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def teardown(pytestconfig: pytest.Config, events_repository: EventsRepository):
-    yield
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await events_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    users_repository: UsersRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await users_repository.clear()  # noqa

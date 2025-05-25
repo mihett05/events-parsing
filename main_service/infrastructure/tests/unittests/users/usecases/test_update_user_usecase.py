@@ -15,10 +15,11 @@ async def test_update_success(
     get_user_entity: User,
     update_user_dto: UpdateUserDto,
 ):
+    old_user = copy(get_user_entity)
     user = await update_user_usecase(update_user_dto, get_admin)
 
     assert user.fullname == get_user_entity.fullname
-    assert user.fullname != get_user_entity.fullname
+    assert user.fullname != old_user.fullname
 
 
 @pytest.mark.asyncio

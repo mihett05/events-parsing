@@ -16,10 +16,11 @@ async def test_update_success(
     read_user_role_usecase: ReadUserRoleUseCase,
 ):
     admin, *_ = init_entities
+
     old_role = await read_user_role_usecase(
         update_user_role_dto.user_id, update_user_role_dto.organization_id
     )
-    new_role = await update_user_role_usecase(update_user_role_dto, get_admin)
+    new_role = await update_user_role_usecase(update_user_role_dto, admin)
 
     assert new_role.role != old_role.role
     assert new_role.role == update_user_role_dto.role

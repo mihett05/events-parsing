@@ -92,15 +92,3 @@ async def create_attachment(
         return attachment
 
     return _factory
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    attachments_repository: AttachmentsRepository,
-    mails_repository: MailsRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await attachments_repository.clear()  # noqa
-    await mails_repository.clear()  # noqa

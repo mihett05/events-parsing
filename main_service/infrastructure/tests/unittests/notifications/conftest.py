@@ -70,33 +70,3 @@ async def create_notification(
         return await notification_repository.create(create_notification_dto)
 
     return _factory
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    orgatizations_repository: OrganizationsRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await orgatizations_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    notification_repository: NotificationsRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await notification_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    users_repository: UsersRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await users_repository.clear()  # noqa

@@ -18,6 +18,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from infrastructure.database.postgres import Base
+from infrastructure.mocks.repositories.crud import get_storage
 from infrastructure.tests.configs import get_container
 
 
@@ -86,30 +87,20 @@ async def organizations_repository(
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare_(
-    pytestconfig: pytest.Config,
-    users_repository: UsersRepository,
-    roles_repository: UserOrganizationRolesRepository,
-    organizations_repository: OrganizationsRepository,
+async def prepare(
+    pytestconfig: pytest.Config
 ):
     if not pytestconfig.getoption("--integration", default=False):
-        await users_repository.clear()  # noqa
-        await roles_repository.clear()  # noqa
-        await organizations_repository.clear()  # noqa
+        get_storage(None, reset=True)
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
-async def teardown_(
+async def teardown(
     pytestconfig: pytest.Config,
-    users_repository: UsersRepository,
-    roles_repository: UserOrganizationRolesRepository,
-    organizations_repository: OrganizationsRepository,
 ):
     yield
     if not pytestconfig.getoption("--integration", default=False):
-        await users_repository.clear()  # noqa
-        await roles_repository.clear()  # noqa
-        await organizations_repository.clear()  # noqa
+        get_storage(None, reset=True)
 
 
 @pytest_asyncio.fixture
@@ -123,8 +114,8 @@ async def create_user_with_password(
 @pytest_asyncio.fixture(scope="function")
 async def get_admin(
     setup_data,  # noqa
-    prepare_,  # noqa
-    teardown_,  # noqa
+    prepare,  # noqa
+    teardown,  # noqa
     create_user_with_password: CreateUserWithPasswordUseCase,
 ) -> User:
     _create_user_dto = RegisterUserDto(
@@ -136,8 +127,8 @@ async def get_admin(
 @pytest_asyncio.fixture(scope="function")
 async def get_admin_organization(
     setup_data,  # noqa
-    prepare_,  # noqa
-    teardown_,  # noqa
+    prepare,  # noqa
+    teardown,  # noqa
     get_admin: User,
     organizations_repository: OrganizationsRepository,
 ) -> Organization:
@@ -150,8 +141,8 @@ async def get_admin_organization(
 @pytest_asyncio.fixture(scope="function")
 async def get_admin_role(
     setup_data,  # noqa
-    prepare_,  # noqa
-    teardown_,  # noqa
+    prepare,  # noqa
+    teardown,  # noqa
     get_admin: User,
     get_admin_organization: Organization,
     roles_repository: UserOrganizationRolesRepository,
@@ -167,8 +158,8 @@ async def get_admin_role(
 @pytest_asyncio.fixture(scope="function")
 async def get_user_dto(
     setup_data,  # noqa
-    prepare_,  # noqa
-    teardown_,  # noqa
+    prepare,  # noqa
+    teardown,  # noqa
     create_user_with_password: CreateUserWithPasswordUseCase,
 ) -> RegisterUserDto:
     return RegisterUserDto(email="public@public.com", password="public", is_active=True)
@@ -177,8 +168,8 @@ async def get_user_dto(
 @pytest_asyncio.fixture(scope="function")
 async def get_user_entity(
     setup_data,  # noqa
-    prepare_,  # noqa
-    teardown_,  # noqa
+    prepare,  # noqa
+    teardown,  # noqa
     create_user_with_password: CreateUserWithPasswordUseCase,
     get_user_dto: RegisterUserDto,
 ) -> User:

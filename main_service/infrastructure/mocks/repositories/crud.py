@@ -24,7 +24,11 @@ class MockRepositoryConfig(metaclass=ABCMeta):
 def _storage_factory():
     storage = dict()
 
-    def _factory(entity_type: Type):
+    def _factory(entity_type: Type, reset=False):
+        if reset:
+            storage.clear()
+            return
+
         if storage.get(entity_type) is None:
             storage[entity_type] = dict()
         return storage[entity_type]

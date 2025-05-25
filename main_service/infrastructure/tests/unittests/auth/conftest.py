@@ -54,18 +54,3 @@ async def token_gateway(container: AsyncContainer) -> TokensGateway:
 async def users_repository(container: AsyncContainer) -> UsersRepository:
     async with container() as nested:
         yield await nested.get(UsersRepository)
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(pytestconfig: pytest.Config, users_repository: UsersRepository):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await users_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def teardown(pytestconfig: pytest.Config, users_repository: UsersRepository):
-    yield
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await users_repository.clear()  # noqa
