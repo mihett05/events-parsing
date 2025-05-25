@@ -7,14 +7,9 @@ from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 
 @dataclass
 class UserSettings:
-    # Кринж
-    id: int = None
-    user_id: int = None
+    id: int
+    user_id: int
     type: UserNotificationSendToEnum = UserNotificationSendToEnum.EMAIL
-
-    @classmethod
-    def get_default(cls) -> "UserSettings":
-        return UserSettings()
 
 
 @dataclass
@@ -23,18 +18,15 @@ class User:
 
     fullname: str
 
-    id: int | None = None
-    is_active: bool = True
+    id: int | None
+    is_active: bool
 
-    # TODO: cock dick blowjob
-    salt: str = None
-    hashed_password: str = None
+    salt: str
+    hashed_password: str
 
-    telegram_id: int | None = None
-    created_at: datetime = None
-    settings: UserSettings = field(
-        default_factory=UserSettings.get_default
-    )  # Тоже кринж
+    telegram_id: int | None
+    created_at: datetime
+    settings: UserSettings
 
 
 @dataclass

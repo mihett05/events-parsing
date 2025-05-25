@@ -67,6 +67,12 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
     async def read(self, organization_id: int) -> Organization:
         return await self.__repository.read(organization_id)
 
+    async def find(self, owner_id: int) -> Organization | None:
+        query = select(self.__config.model).where(
+            self.__config.model.owner_id == owner_id
+        )
+        return await self.__repository.get_scalar_or_none(query)
+
     async def read_all(self, dto: dtos.ReadOrganizationsDto) -> list[Organization]:
         return await self.__repository.read_all(dto)
 

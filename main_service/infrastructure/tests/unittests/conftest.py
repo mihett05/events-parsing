@@ -5,8 +5,9 @@ import application.auth.usecases as auth_usecases
 import application.users.usecases as user_usecases
 import pytest
 import pytest_asyncio
-from application.auth.dtos import RegisterUserDTO
+from application.auth.dtos import RegisterUserDto
 from application.auth.usecases import CreateUserWithPasswordUseCase, RegisterUseCase
+from application.auth.usecases import RegisterUseCase
 from dishka import AsyncContainer
 from domain.organizations.dtos import CreateOrganizationDto
 from domain.organizations.entities import Organization
@@ -186,7 +187,7 @@ async def get_user_entities() -> list[User]:
 
 @pytest_asyncio.fixture
 async def create_user1(
-    register_user1_dto: RegisterUserDTO,
+    register_user1_dto: RegisterUserDto,
     register_usecase: RegisterUseCase,
 ) -> Callable[..., Coroutine[Any, Any, User]]:
     async def _factory() -> User:
@@ -197,8 +198,8 @@ async def create_user1(
 
 
 @pytest_asyncio.fixture
-async def register_user1_dto() -> RegisterUserDTO:
-    return RegisterUserDTO(
+async def register_user1_dto() -> RegisterUserDto:
+    return RegisterUserDto(
         email="test@example.com",
         password="12345678",
         fullname="Ivanov Ivan Ivanovich",
