@@ -29,11 +29,6 @@ from .models import EventDatabaseModel, EventUserDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])
 
-event_user_map_from_db = retort.get_converter(EventUserDatabaseModel, EventUser)
-
-event_user_map_to_db = retort.get_converter(EventUser, EventUserDatabaseModel)
-
-
 @retort.impl_converter(
     recipe=[
         coercer(AttachmentDatabaseModel, Attachment, attachment_map_from_db),
@@ -84,4 +79,24 @@ map_create_dto_to_model = retort.get_converter(
             P[EventDatabaseModel].organization_id,
         ),
     ],
+)
+
+event_user_map_from_db = retort.get_converter(
+    EventUserDatabaseModel,
+    EventUser,
+    recipe=[
+        coercer(UserDatabaseModel, User, user_map_from_db),
+        coercer(EventDatabaseModel, Event, map_from_db),
+    ]
+)
+
+event_user_map_to_db = retort.get_converter(
+    EventUser,
+    EventUserDatabaseModel,
+    recipe=[
+        # allow_unlinked_optional(P[EventDatabaseModel].user),
+        # allow_unlinked_optional(P[EventDatabaseModel].event),
+        coercer(User, UserDatabaseModel, user_map_to_db),
+        coercer(Event, EventDatabaseModel, map_to_db),
+    ]
 )
