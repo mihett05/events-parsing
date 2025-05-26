@@ -100,10 +100,13 @@ services:
       - ./main-service.env
   main-service-migrations:
     image: ${MAIN_SERVICE_MIGRATIONS_IMAGE}
+    restart: on-failure:3
     networks:
       - postgres
     env_file:
       - ./main-service.env
+    depends_on:
+      - postgres
 
   parser:
     image: ${PARSER_IMAGE}

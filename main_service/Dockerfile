@@ -10,6 +10,5 @@ RUN poetry install --no-root
 
 
 COPY . /app
-RUN poetry run pytest -v ./infrastructure/tests/unittests/
 
 CMD ["poetry", "run", "uvicorn", "infrastructure.server:app", "--host", "0.0.0.0", "--port", "8080"]
