@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from domain.users.enums import RoleEnum, UserNotificationSendToEnum
 
@@ -9,6 +10,7 @@ class UserSettingsModel(CamelModel):
     id: int
     user_id: int
     type: UserNotificationSendToEnum
+    calendar_uuid: UUID | None
 
 
 class UserModel(CamelModel):

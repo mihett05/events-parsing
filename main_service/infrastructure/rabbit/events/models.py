@@ -1,6 +1,19 @@
+from datetime import date
+
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 
 from infrastructure.api.models import CamelModel
+
+
+class MailModel(CamelModel):
+    id: int
+    theme: str
+    sender: str
+    received_date: date
+
+    raw_content: bytes
+
+    attachments: list[str]
 
 
 class DatesInfoModel(CamelModel):

@@ -20,6 +20,10 @@ aio-pika = "^9.5.5"
 beautifulsoup4 = "^4.13.3"
 requests = "^2.32.3"
 hf-xet = "^1.0.2"
+opencv-python = "^4.11.0.86"
+pymupdf = "^1.26.0"
+pytesseract = "^0.3.13"
+python-docx = "^1.1.2"
 
 
 [[tool.poetry.source]]

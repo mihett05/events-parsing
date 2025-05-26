@@ -21,8 +21,8 @@ class CreateEventDto:
 @dataclass
 class ReadUserEventsDto:
     user_id: int
-    page: int
-    page_size: int
+    page: int | None = None
+    page_size: int | None = None
 
 
 @dataclass
@@ -54,5 +54,11 @@ class ReadAllEventsFeedDto:
 @dataclass
 class ReadEventUsersDto:
     event_id: int
-    page: int
-    page_size: int
+    page: int | None = None
+    page_size: int | None = None
+
+
+@dataclass
+class CreateEventUserDto:
+    event_id: int
+    user_id: int

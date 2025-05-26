@@ -10,11 +10,13 @@ from domain.organizations.repositories import OrganizationsRepository
 from domain.users.entities import User, UserOrganizationRole
 from domain.users.enums import RoleEnum
 from domain.users.exceptions import (
-    UserAlreadyExistsError,
     UserNotFoundError,
     UserRoleNotFoundError,
 )
-from domain.users.repositories import UserOrganizationRolesRepository, UsersRepository
+from domain.users.repositories import (
+    UserOrganizationRolesRepository,
+    UsersRepository,
+)
 from infrastructure.config import Config
 from infrastructure.providers.container import create_container
 
@@ -24,7 +26,9 @@ async def _create_admin(
     users_repository: UsersRepository,
     create_user: CreateUserWithPasswordUseCase,
 ):
-    dto = RegisterUserDto(email=config.admin_username, password=config.admin_password)
+    dto = RegisterUserDto(
+        email=config.admin_username, password=config.admin_password
+    )
     try:
         return await users_repository.read_by_email(dto.email)
     except UserNotFoundError:
@@ -32,7 +36,9 @@ async def _create_admin(
 
 
 async def _create_organization(
-    config: Config, organizations_repository: OrganizationsRepository, admin: User
+    config: Config,
+    organizations_repository: OrganizationsRepository,
+    admin: User,
 ):
     dto = CreateOrganizationDto(admin.id, config.base_organization, uuid4())
     return await organizations_repository.find(
@@ -46,7 +52,9 @@ async def _create_role(
     organization: Organization,
 ):
     dto = UserOrganizationRole(
-        user_id=admin.id, organization_id=organization.id, role=RoleEnum.SUPER_OWNER
+        user_id=admin.id,
+        organization_id=organization.id,
+        role=RoleEnum.SUPER_OWNER,
     )
     try:
         return await roles_repository.read(admin.id, organization.id)

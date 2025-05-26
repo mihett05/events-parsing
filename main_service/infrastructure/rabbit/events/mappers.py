@@ -4,11 +4,13 @@ from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, coercer, link_function
 from application.events.dtos import DatesInfo, EventInfo
 from domain.events.dtos import CreateEventDto
+from domain.mails.entities import Mail
 
 from infrastructure.api.retort import pydantic_retort
 from infrastructure.rabbit.events.models import (
     DatesInfoModel,
     EventInfoModel,
+    MailModel,
 )
 
 retort = pydantic_retort.extend(recipe=[])
@@ -16,7 +18,9 @@ retort = pydantic_retort.extend(recipe=[])
 map_event_info_dates_from_pydantic = retort.get_converter(
     DatesInfoModel,
     DatesInfo,
-    recipe=[coercer(str, datetime, lambda dt: datetime.strptime(dt, "%d-%m-%Y"))],
+    recipe=[
+        coercer(str, datetime, lambda dt: datetime.strptime(dt, "%d-%m-%Y"))
+    ],
 )
 map_event_info_from_pydantic = retort.get_converter(
     EventInfoModel,
@@ -43,5 +47,20 @@ map_event_info_to_create_dto = retort.get_converter(
             P[CreateEventDto].end_registration,
         ),
         allow_unlinked_optional(P[CreateEventDto].organization_id),
+    ],
+)
+
+map_mail_to_pydantic = retort.get_converter(
+    Mail,
+    MailModel,
+    recipe=[
+        link_function(
+            lambda entity: [
+                attachment.file_link
+                for attachment in entity.attachments
+                if attachment.file_link
+            ],
+            P[MailModel].attachments,
+        )
     ],
 )

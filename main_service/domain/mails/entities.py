@@ -7,6 +7,7 @@ from .enums import MailStateEnum
 
 @dataclass
 class Mail:
+    id: int
     theme: str
     sender: str
     received_date: date
@@ -15,8 +16,7 @@ class Mail:
     retry_after: datetime
     state: MailStateEnum
 
-    created_at: datetime = None
-    id: int | None = None
+    created_at: datetime
     event_id: int | None = None
 
     attachments: list[Attachment] = field(default_factory=list)
