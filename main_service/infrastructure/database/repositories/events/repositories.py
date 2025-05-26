@@ -16,6 +16,7 @@ from sqlalchemy.orm.interfaces import LoaderOption
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from ..users import UserDatabaseModel
 from .mappers import (
+    event_user_map_dto,
     event_user_map_from_db,
     event_user_map_to_db,
     map_create_dto_to_model,
@@ -33,14 +34,10 @@ class EventsUserDatabaseRepository(EventUsersRepository):
                 entity=EventUser,
                 entity_mapper=event_user_map_from_db,
                 model_mapper=event_user_map_to_db,
-                create_model_mapper=None,
+                create_model_mapper=event_user_map_dto,
                 not_found_exception=EventUserNotFoundError,
                 already_exists_exception=EventUserAlreadyExistsError,
             )
-
-        def get_select_for_user(self, dto: dtos.ReadUserEventsDto) -> Select:
-            query = select(self.model).where(self.model.user_id == dto.user_id)
-            return self.__add_offset_to_query(query, dto)
 
         def get_select_for_event(self, dto: dtos.ReadEventUsersDto) -> Select:
             query = select(self.model).where(self.model.event_id == dto.event_id)
@@ -52,24 +49,24 @@ class EventsUserDatabaseRepository(EventUsersRepository):
         def extract_id_from_entity(self, event_user: EventUser):
             return event_user.event_id, event_user.user_id
 
-        def __add_offset_to_query(
-            self, query, dto: dtos.ReadEventUsersDto | dtos.ReadUserEventsDto
-        ) -> Select:
+        def __add_offset_to_query(self, query, dto: dtos.ReadEventUsersDto) -> Select:
+            if dto.page is None or dto.page_size is None:
+                return query
             return query.offset(dto.page * dto.page_size).limit(dto.page_size)
+
+        def get_options(self) -> list[LoaderOption]:
+            return [
+                joinedload(self.model.user).joinedload(UserDatabaseModel.settings),
+                joinedload(self.model.event),
+            ]
 
     def __init__(self, session: AsyncSession):
         self.session = session
         self.config = self.Config()
         self.__repository = PostgresRepository(session, self.config)
 
-    async def create(self, event_user: EventUser) -> entities.EventUser:
-        return await self.__repository.create_from_entity(event_user)
-
-    async def read_for_user(
-        self, dto: dtos.ReadUserEventsDto
-    ) -> list[entities.EventUser]:
-        query = self.config.get_select_for_user(dto)
-        return await self.__repository.get_entities_from_query(query)
+    async def create(self, dto: dtos.CreateEventUserDto) -> entities.EventUser:
+        return await self.__repository.create_from_dto(dto)
 
     async def read_for_event(
         self, dto: dtos.ReadEventUsersDto
@@ -79,6 +76,9 @@ class EventsUserDatabaseRepository(EventUsersRepository):
 
     async def delete(self, event_user: EventUser) -> entities.EventUser:
         return await self.__repository.delete(event_user)
+
+    async def read(self, event_id: int, user_id: int) -> entities.EventUser:
+        return await self.__repository.read((event_id, user_id))
 
 
 class EventsDatabaseRepository(EventsRepository):
@@ -112,6 +112,16 @@ class EventsDatabaseRepository(EventsRepository):
             query = self.__try_add_organization_filter_to_query(query, dto)
             query = self.__try_add_type_filter_to_query(query, dto)
             query = self.__try_add_format_filter_to_query(query, dto)
+            query = self.__add_offset_to_query(query, dto)
+            return query
+
+        def get_select_for_user_query(self, dto: dtos.ReadUserEventsDto) -> Select:
+            query = (
+                select(self.model)
+                .join(self.model.members)
+                .where(dto.user_id == UserDatabaseModel.id)
+                .order_by(desc(self.model.start_date))
+            )
             query = self.__add_offset_to_query(query, dto)
             return query
 
@@ -155,6 +165,8 @@ class EventsDatabaseRepository(EventsRepository):
         def __add_offset_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadUserEventsDto
         ) -> Select:
+            if dto.page is None or dto.page_size is None:
+                return query
             return query.offset(dto.page * dto.page_size).limit(dto.page_size)
 
         def get_options_with_members(self) -> list[LoaderOption]:
@@ -201,9 +213,8 @@ class EventsDatabaseRepository(EventsRepository):
         return await self.__repository.get_entities_from_query(query)
 
     async def read_for_user(self, dto: dtos.ReadUserEventsDto) -> list[Event]:
-        raise NotImplementedError("Method is unavailable for now")
-        # query = self.config.get_select_for_user_query(dto)
-        # return await self.__repository.get_entities_from_query(query)
+        query = self.config.get_select_for_user_query(dto)
+        return await self.__repository.get_entities_from_query(query)
 
     async def read_for_organization(
         self, dto: dtos.ReadOrganizationEventsDto

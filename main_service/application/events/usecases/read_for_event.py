@@ -1,12 +1,12 @@
-from domain.events.dtos import CreateEventUserDto
+from domain.events.dtos import ReadEventUsersDto
 from domain.events.entities import EventUser
 from domain.events.repositories import EventUsersRepository
 from domain.users.entities import User
 
 
-class CreateEventUserUseCase:
+class ReadEventUsersUseCase:
     def __init__(self, repository: EventUsersRepository):
         self.__repository = repository
 
-    async def __call__(self, event_id: int, actor: User) -> EventUser:
-        return await self.__repository.create(CreateEventUserDto(event_id, actor.id))
+    async def __call__(self, dto: ReadEventUsersDto, actor: User) -> list[EventUser]:
+        return await self.__repository.read_for_event(dto)

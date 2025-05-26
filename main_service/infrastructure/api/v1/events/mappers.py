@@ -1,5 +1,4 @@
 from adaptix import P
-from adaptix._internal.conversion.facade.provider import allow_unlinked_optional
 from adaptix.conversion import coercer, link_function
 from application.events.dtos import UpdateEventDto
 from domain.attachments.entities import Attachment
@@ -10,6 +9,8 @@ from domain.events.dtos import (
 )
 from domain.events.entities import Event, EventUser
 from domain.users.entities import User
+from icalendar import Calendar
+from icalendar import Event as ICalEvent
 
 from infrastructure.api.retort import pydantic_retort
 from infrastructure.api.v1.attachments.mappers import (
@@ -46,8 +47,6 @@ map_read_all_dto_calendar_from_pydantic = retort.get_converter(
         allow_unlinked_optional(P[ReadAllEventsDto].for_update),
     ],
 )"""
-
-event_user_map_to_pydantic = retort.get_converter(EventUser, EventUserModel)
 
 map_to_pydantic = retort.get_converter(
     Event,
@@ -87,3 +86,47 @@ def map_update_dto_from_pydantic(
     dto: UpdateEventModelDto,  # noqa
     event_id: int,  # noqa
 ) -> UpdateEventDto: ...
+
+
+event_user_map_to_pydantic = retort.get_converter(
+    EventUser,
+    EventUserModel,
+    recipe=[
+        coercer(Event, EventModel, map_to_pydantic),
+        coercer(User, UserModel, user_map_to_pydantic),
+    ],
+)
+
+
+def map_to_user(event_user: EventUser) -> UserModel:
+    return user_map_to_pydantic(event_user.user)
+
+
+def map_to_ics(events: list[Event]) -> bytes:
+    cal = Calendar()
+    cal.add("version", "2.0")
+
+    for event in events:
+        ical_event = ICalEvent()
+
+        ical_event.add("summary", event.title)
+        ical_event.add("dtstart", event.start_date)
+        if event.location:
+            ical_event.add("location", event.location)
+
+        if event.end_date:
+            ical_event.add("dtend", event.end_date)
+
+        if event.description:
+            ical_event.add("description", event.description)
+
+        uid = (
+            f"event-{event.id}@example.com"
+            if event.id
+            else f"event-{hash(event)}@example.com"
+        )
+        ical_event.add("uid", uid)
+
+        cal.add_component(ical_event)
+
+    return cal.to_ical()

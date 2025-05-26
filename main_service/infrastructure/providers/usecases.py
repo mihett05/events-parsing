@@ -22,9 +22,11 @@ class UseCasesProvider(Provider):
         event_use_cases.ParseEventsUseCase,
         event_use_cases.UpdateEventUseCase,
         event_use_cases.CreateEventUserUseCase,
-        event_use_cases.ReadForEventEventUserUseCase,
-        event_use_cases.ReadForUserEventUserUseCase,
+        event_use_cases.ReadEventUsersUseCase,
+        event_use_cases.ReadUserEventsUseCase,
         event_use_cases.DeleteEventUserUseCase,
+        event_use_cases.ReadEventUserUseCase,
+        event_use_cases.ReadICSUseCase,
     )
 
     organizations = provide_all(
@@ -64,6 +66,9 @@ class UseCasesProvider(Provider):
         users_use_cases.UpdateUserRoleUseCase,
         users_use_cases.CreateUserActivationTokenUseCase,
         users_use_cases.ValidateActivationTokenUseCase,
+        users_use_cases.ReadByCalendarUUIDUseCase,
+        users_use_cases.CreateCalendarLinkUseCase,
+        users_use_cases.DeleteCalendarLinkUseCase,
     )
 
     auth = provide_all(

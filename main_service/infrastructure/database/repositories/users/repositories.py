@@ -82,6 +82,13 @@ class UsersDatabaseRepository(UsersRepository):
         def get_options(self) -> list[LoaderOption]:
             return [selectinload(self.model.settings)]
 
+        def get_select_by_calendar_uuid(self, uuid: UUID) -> Select:
+            return (
+                select(self.model)
+                .join(self.model.settings)
+                .where(UserSettingsDatabaseModel.calendar_uuid == uuid)
+            )
+          
     def __init__(self, session: AsyncSession, config: Config):
         self.__config = self.RepositoryConfig()
         self.__session = session
@@ -105,6 +112,13 @@ class UsersDatabaseRepository(UsersRepository):
     async def read_by_email(self, email: str) -> entities.User:
         if model := await self.__repository.get_scalar_or_none(
             self.__config.get_select_by_email_query(email)
+        ):
+            return self.__config.model_mapper(model)
+        raise self.__config.not_found_exception
+
+    async def read_by_calendar_uuid(self, uuid: UUID) -> entities.User:
+        if model := await self.__repository.get_scalar_or_none(
+            self.__config.get_select_by_calendar_uuid(uuid)
         ):
             return self.__config.model_mapper(model)
         raise self.__config.not_found_exception

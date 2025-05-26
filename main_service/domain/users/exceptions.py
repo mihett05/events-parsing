@@ -45,3 +45,8 @@ class UserRoleAlreadyExistsError(EntityAlreadyExistsError):
 class UserRoleNotFoundError(EntityNotFoundError):
     def __init__(self):
         super().__init__(UserOrganizationRole)
+
+
+class CalendarUUIDNotFoundError(EntityNotFoundError):
+    def __init__(self):
+        super().__init__(User)

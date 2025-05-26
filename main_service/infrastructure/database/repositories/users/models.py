@@ -19,6 +19,7 @@ class UserSettingsDatabaseModel(Base):
         ENUM(UserNotificationSendToEnum, name="UserNotificationSendToEnum"),
         default=UserNotificationSendToEnum.EMAIL,
     )
+    calendar_uuid: Mapped[UUID | None] = mapped_column(nullable=True, default=None)
 
 
 class UserDatabaseModel(Base):

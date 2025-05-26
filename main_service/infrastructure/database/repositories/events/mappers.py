@@ -5,7 +5,7 @@ from adaptix.conversion import (
     link_function,
 )
 from domain.attachments.entities import Attachment
-from domain.events.dtos import CreateEventDto
+from domain.events.dtos import CreateEventDto, CreateEventUserDto
 from domain.events.entities import Event, EventUser
 from domain.users.entities import User
 
@@ -28,10 +28,6 @@ from ..users import UserDatabaseModel
 from .models import EventDatabaseModel, EventUserDatabaseModel
 
 retort = postgres_retort.extend(recipe=[])
-
-event_user_map_from_db = retort.get_converter(EventUserDatabaseModel, EventUser)
-
-event_user_map_to_db = retort.get_converter(EventUser, EventUserDatabaseModel)
 
 
 @retort.impl_converter(
@@ -83,5 +79,32 @@ map_create_dto_to_model = retort.get_converter(
             lambda dto: dto.organization_id,
             P[EventDatabaseModel].organization_id,
         ),
+    ],
+)
+
+event_user_map_from_db = retort.get_converter(
+    EventUserDatabaseModel,
+    EventUser,
+    recipe=[
+        coercer(UserDatabaseModel, User, user_map_from_db),
+        coercer(EventDatabaseModel, Event, map_from_db),
+    ],
+)
+
+event_user_map_to_db = retort.get_converter(
+    EventUser,
+    EventUserDatabaseModel,
+    recipe=[
+        coercer(User, UserDatabaseModel, user_map_to_db),
+        coercer(Event, EventDatabaseModel, map_to_db),
+    ],
+)
+
+event_user_map_dto = retort.get_converter(
+    CreateEventUserDto,
+    EventUserDatabaseModel,
+    recipe=[
+        allow_unlinked_optional(P[EventUserDatabaseModel].user),
+        allow_unlinked_optional(P[EventUserDatabaseModel].event),
     ],
 )

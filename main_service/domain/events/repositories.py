@@ -42,12 +42,10 @@ class EventsRepository(metaclass=ABCMeta):
 
 class EventUsersRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, event_user: entities.EventUser) -> entities.EventUser: ...
+    async def create(self, dto: dtos.CreateEventUserDto) -> entities.EventUser: ...
 
     @abstractmethod
-    async def read_for_user(
-        self, dto: dtos.ReadUserEventsDto
-    ) -> list[entities.EventUser]: ...
+    async def read(self, event_id: int, user_id: int) -> entities.EventUser: ...
 
     @abstractmethod
     async def read_for_event(

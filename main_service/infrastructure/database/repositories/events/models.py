@@ -15,17 +15,6 @@ from infrastructure.database.repositories.attachments import (
 from infrastructure.database.repositories.users import UserDatabaseModel
 
 
-class EventUserDatabaseModel(Base):
-    __tablename__ = "event_users"
-
-    event_id: Mapped[int] = mapped_column(
-        ForeignKey("events.id", ondelete="CASCADE"), primary_key=True
-    )
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
-    )
-
-
 class EventDatabaseModel(Base):
     __tablename__ = "events"
 
@@ -57,5 +46,18 @@ class EventDatabaseModel(Base):
 
     attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
     members: Mapped[list[UserDatabaseModel]] = relationship(
-        UserDatabaseModel, lazy="select", secondary="event_users"
+        UserDatabaseModel, lazy="noload", secondary="event_users", viewonly=True
     )
+
+
+class EventUserDatabaseModel(Base):
+    __tablename__ = "event_users"
+
+    event_id: Mapped[int] = mapped_column(
+        ForeignKey("events.id", ondelete="CASCADE"), primary_key=True
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    user: Mapped[UserDatabaseModel] = relationship(uselist=False)
+    event: Mapped[EventDatabaseModel] = relationship(uselist=False)
