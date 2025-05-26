@@ -8,12 +8,12 @@ from domain.events.entities import Event
 async def test_read_all_success(
     read_feed_events_usecase: ReadForFeedEventsUseCase,
     read_feed_events_dto: ReadAllEventsFeedDto,
-    create_event,
+    get_admin_event,
 ):
     events = await read_feed_events_usecase(read_feed_events_dto)
 
     assert len(events) == 1
-    assert events[0] == create_event
+    assert events[0] == get_admin_event
 
 
 @pytest.mark.asyncio

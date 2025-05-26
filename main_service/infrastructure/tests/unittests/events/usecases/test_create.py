@@ -24,9 +24,6 @@ async def test_create_success(
         "start_date",
         "end_registration",
     )
-    print(event)
-    print(create_event_dto)
+
     for attr in attrs:
         assert getattr(event, attr) == getattr(create_event_dto, attr)
-
-    assert event.id == 1

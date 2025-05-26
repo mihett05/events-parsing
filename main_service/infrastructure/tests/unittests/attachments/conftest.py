@@ -17,33 +17,9 @@ from domain.users.entities import User
 
 
 @pytest_asyncio.fixture
-async def create_event_dto(get_admin_organization: Organization) -> CreateEventDto:
-    date = datetime.now(tz=timezone.utc)
-    date -= datetime.combine(date.min, date.time()) - datetime.min
-
-    return CreateEventDto(
-        organization_id=get_admin_organization.id,
-        title="example event",
-        description="example",
-        start_date=date,
-        end_date=date + timedelta(days=1),
-        end_registration=date - timedelta(days=1),
-        location=None,
-    )
-
-
-@pytest_asyncio.fixture
 async def events_repository(container: AsyncContainer) -> EventsRepository:
     async with container() as request_container:
         yield await request_container.get(EventsRepository)
-
-
-@pytest_asyncio.fixture
-async def create_event(
-    create_event_dto: CreateEventDto,
-    events_repository: EventsRepository,
-) -> Event:
-    return await events_repository.create(create_event_dto)
 
 
 @pytest_asyncio.fixture
@@ -59,14 +35,14 @@ async def create_attachment_content() -> Iterable[BinaryIO]:
 @pytest_asyncio.fixture
 async def create_attachment_dtos(
     create_attachment_content: BinaryIO,
-    create_event: Event,
+    get_admin_event: Event,
 ) -> list[CreateAttachmentDto]:
     return [
         CreateAttachmentDto(
             filename=f"лето-2012-анапа({i})",
             extension=".txt",
             content=create_attachment_content,
-            event=create_event,
+            event=get_admin_event,
         )
         for i in range(1, 10)
     ]

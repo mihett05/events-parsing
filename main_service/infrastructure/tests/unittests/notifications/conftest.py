@@ -23,14 +23,14 @@ from domain.users.repositories import UsersRepository
 
 @pytest_asyncio.fixture
 async def create_notification_dto(
-    get_user_entity: User, create_event: Event
+    get_user_entity: User, get_admin_event: Event
 ) -> CreateNotificationDto:
     return CreateNotificationDto(
         recipient_id=get_user_entity.id,
         text="Example",
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
-        event_id=create_event.id,
+        event_id=get_admin_event.id,
         send_date=datetime.now().date(),
     )
 

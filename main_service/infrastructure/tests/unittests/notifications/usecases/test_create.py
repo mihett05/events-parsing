@@ -14,11 +14,11 @@ from domain.notifications.dtos import CreateNotificationDto
 async def test_create_success(
     create_notification_usecase: CreateNotificationUseCase,
     create_notification_dto: CreateNotificationDto,
-    create_event: Event,
+    get_admin_event: Event,
 ):
     # TODO: сделать мемберов для ивента
     notification = await create_notification_usecase(
-        create_event, create_notification_dto.send_date
+        get_admin_event, create_notification_dto.send_date
     )
     attrs = (
         "recipient_id",
