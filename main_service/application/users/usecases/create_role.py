@@ -1,4 +1,6 @@
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import roles_delete_priorities_table
+from domain.users.exceptions import UserAccessDenied
 from domain.users.repositories import UserOrganizationRolesRepository
 from domain.users.role_getter import RoleGetter
 
@@ -6,6 +8,8 @@ from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.transactions import TransactionsGateway
 from application.users.permissions.user import UserRolesPermissionProvider
+
+from domain.users.enums import RoleEnum
 
 
 class CreateUserRoleUseCase:
@@ -29,4 +33,10 @@ class CreateUserRoleUseCase:
             self.__builder.providers(
                 UserRolesPermissionProvider(role.organization_id, actor_role)
             ).add(PermissionsEnum.CAN_CREATE_ROLE).apply()
-            return await self.__repository.create(role)
+            if role.role != RoleEnum.OWNER:
+                if (
+                    roles_delete_priorities_table[actor_role.role]
+                    < roles_delete_priorities_table[role.role]
+                ):
+                    return await self.__repository.create(role)
+            raise UserAccessDenied

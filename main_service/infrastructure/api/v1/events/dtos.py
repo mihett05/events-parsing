@@ -35,6 +35,7 @@ class CreateEventModelDto(CamelModel):
 class UpdateEventModelDto(CamelModel):
     title: str
     description: str
+    is_visible_status: bool
 
 
 class ReadAllEventsFeedModelDto(BaseModel):
