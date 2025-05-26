@@ -5,9 +5,7 @@ from domain.users.exceptions import UserNotFoundError
 
 
 @pytest.mark.asyncio
-async def test_read_success(
-    read_user_usecase: ReadUserUseCase, get_user_entity: User
-):
+async def test_read_success(read_user_usecase: ReadUserUseCase, get_user_entity: User):
     user = await read_user_usecase(get_user_entity.id)
     assert user == get_user_entity
 

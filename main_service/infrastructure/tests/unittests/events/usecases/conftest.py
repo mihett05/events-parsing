@@ -1,6 +1,9 @@
 import application.events.usecases as usecases
 import pytest_asyncio
 from dishka import AsyncContainer
+from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
+from domain.users.entities import User
 
 
 @pytest_asyncio.fixture

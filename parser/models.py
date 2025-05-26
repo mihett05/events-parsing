@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
@@ -53,7 +53,18 @@ class EventInfoModel(CamelModel):
 
 
 @dataclass
-class DatesInfo:
-    start_date: str | None
-    end_date: str | None
-    end_registration: str | None
+class Event:
+    title: str
+    location: str | None
+    start_date: datetime
+
+    type: EventTypeEnum = EventTypeEnum.OTHER
+    format: EventFormatEnum = EventFormatEnum.OTHER
+
+    id: int | None = None
+    is_visible: bool = True
+    description: str | None = None
+
+    end_date: datetime | None = None
+    created_at: datetime | None = None
+    end_registration: datetime | None = None

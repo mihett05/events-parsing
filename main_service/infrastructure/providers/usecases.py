@@ -89,4 +89,5 @@ class UseCasesProvider(Provider):
         attachments_use_cases.CreateAttachmentUseCase,
         attachments_use_cases.ReadAttachmentUseCase,
         attachments_use_cases.DeleteAttachmentUseCase,
+        attachments_use_cases.UpdateAttachmentUseCase,
     )

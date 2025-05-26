@@ -8,10 +8,11 @@ from domain.events.enums import EventFormatEnum, EventTypeEnum
 class CreateEventDto:
     title: str
     description: str | None
-    start_date: datetime
-    end_date: datetime
-    end_registration: datetime
+    start_date: date
+    end_date: date
+    end_registration: date
     location: str | None
+    is_visible: bool
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
     organization_id: int | None = None
@@ -35,7 +36,7 @@ class ReadOrganizationEventsDto:
 class ReadAllEventsDto:
     page: int
     page_size: int
-    start_date: datetime
+    start_date: date
     for_update: bool
 
 

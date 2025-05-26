@@ -1,11 +1,11 @@
 from uuid import UUID
 
-from application.transactions import TransactionsGateway
 from domain.users.entities import User
 from domain.users.exceptions import TelegramTokenNotFoundError, UserAccessDenied
 from domain.users.repositories import TelegramTokensRepository, UsersRepository
 from infrastructure.config import Config
 
+from application.transactions import TransactionsGateway
 from application.users.dtos import UpdateUserDto
 from application.users.usecases.read_telegram_token import (
     ReadTelegramTokenUseCase,

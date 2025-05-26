@@ -1,6 +1,6 @@
-from domain.exceptions import EntityAccessDenied
 from domain.users.entities import User, UserOrganizationRole
-from domain.users.exceptions import UserRoleNotFoundError
+from domain.users.enums import roles_delete_priorities_table
+from domain.users.exceptions import UserAccessDenied, UserRoleNotFoundError
 from domain.users.repositories import UserOrganizationRolesRepository
 from domain.users.role_getter import RoleGetter
 
@@ -37,5 +37,10 @@ class DeleteUserRoleUseCase:
                 UserRolesPermissionProvider(dto.organization_id, actor_role)
             ).add(PermissionsEnum.CAN_DELETE_ROLE).apply()
             if role := await self.__repository.read(dto.user_id, dto.organization_id):
-                return await self.__repository.delete(role)
+                if (
+                    roles_delete_priorities_table[actor_role.role]
+                    < roles_delete_priorities_table[role.role]
+                ):
+                    return await self.__repository.delete(role)
+                raise UserAccessDenied
             raise UserRoleNotFoundError

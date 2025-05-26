@@ -38,7 +38,7 @@ def pdf_to_text_with_ocr(content: bytes) -> str:
     extracted_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        pix = page.get_pixmap(dpi=600)
+        pix = page.get_pixmap(dpi=400)
         img_bytes = pix.tobytes("ppm")
         img = Image.open(io.BytesIO(img_bytes))
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)

@@ -9,6 +9,7 @@ class UpdateEventDto:
     event_id: int
     title: str
     description: str
+    is_visible_status: bool | None = None
     # members: list[int] = field(default_factory=list[int])
 
 
@@ -35,3 +36,4 @@ class EventInfo:
     format: EventFormatEnum
     location: str | None
     organization_name: str | None
+    is_visible: bool = True

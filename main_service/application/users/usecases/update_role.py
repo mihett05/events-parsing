@@ -1,4 +1,6 @@
 from domain.users.entities import User, UserOrganizationRole
+from domain.users.enums import RoleEnum, roles_delete_priorities_table
+from domain.users.exceptions import UserAccessDenied
 from domain.users.repositories import UserOrganizationRolesRepository
 from domain.users.role_getter import RoleGetter
 
@@ -21,6 +23,13 @@ class UpdateUserRoleUseCase:
         self.__builder = permission_builder
         self.__role_getter = role_getter
 
+    def __has_perms(self, role, actor_role):
+        return (
+            role.role != RoleEnum.OWNER or actor_role.role == RoleEnum.SUPER_USER
+        ) and roles_delete_priorities_table[
+            actor_role.role
+        ] < roles_delete_priorities_table[role.role]
+
     async def __call__(
         self, entity: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
@@ -29,4 +38,6 @@ class UpdateUserRoleUseCase:
             self.__builder.providers(
                 UserRolesPermissionProvider(entity.organization_id, actor_role)
             ).add(PermissionsEnum.CAN_UPDATE_ROLE).apply()
-            return await self.__repository.update(entity)
+            if self.__has_perms(entity, actor_role):
+                return await self.__repository.update(entity)
+            raise UserAccessDenied

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.attachments.entities import Attachment
 from domain.events.enums import EventFormatEnum, EventTypeEnum
@@ -16,7 +16,7 @@ class EventUser:
 class Event:
     title: str
     location: str | None
-    start_date: datetime
+    start_date: date
 
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
@@ -27,8 +27,8 @@ class Event:
     description: str | None = None
 
     created_at: datetime | None = None
-    end_date: datetime | None = None
-    end_registration: datetime | None = None
+    end_date: date | None = None
+    end_registration: date | None = None
 
     attachments: list[Attachment] = field(default_factory=list)
     members: list[User] = field(default_factory=list)

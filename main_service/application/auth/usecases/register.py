@@ -5,9 +5,6 @@ from domain.users.dtos import CreateActivationTokenDto
 from domain.users.entities import User, UserActivationToken
 from domain.users.enums import UserNotificationSendToEnum
 from infrastructure.config import Config
-from infrastructure.gateways.notifications.gateways import (
-    NotificationEmailGateway,
-)
 
 from application.users.usecases.create_user_activation_token import (
     CreateUserActivationTokenUseCase,

@@ -1,119 +1,120 @@
-import { useMemo, useState, useCallback } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Popover from '@mui/material/Popover';
-import { CalendarEvent } from '@entities/Event';
-import { getDayNames, useCalendarNavigation, generateCalendarDays } from '../lib';
 import { CalendarHeader } from './CalendarHeader';
 import { DayNamesHeader } from './DayNamesHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { DayEventsPopoverContent } from './DayEventsPopoverContent';
-import { EventDetailsModal } from './EventDetailsModal';
-import { ModalProvider } from '../lib/context/ModalContext';
-import { ToggleEventsView } from '@features/events/toggle-view';
 import { isValid } from 'date-fns';
-interface MonthCalendarProps {
-  events?: CalendarEvent[];
-  initialDate?: Date;
-}
+import { Box, Paper, Popover, Typography } from '@mui/material';
+import { generateCalendarDays, useDayEventsPopover, useLocalizedDayNames } from '../lib';
+import { useCalendarViewData } from '@/features/events/hooks/useCalendarViewData';
+import LoadingIndicator from '@/shared/ui/LoadingIndicator';
+import { ErrorMessage } from '@/shared/ui/ErrorMessage';
+import { CalendarControlProps } from '@/widgets/CalendarCommon/types';
+import { FilterState } from '@/features/events/slice';
+import { useTranslation } from 'react-i18next';
 
-export const MonthCalendar: React.FC<MonthCalendarProps> = ({ events = [], initialDate }) => {
-  const { currentDate, handlePrevMonth, handleNextMonth, handleToday } = useCalendarNavigation({
-    initialDate,
-  });
+export const MonthCalendar: React.FC<CalendarControlProps> = ({
+  currentCalendarView,
+  currentDate,
+  activeFilters,
+  onNavigate,
+}) => {
+  const { t } = useTranslation();
+  const { events, isLoading, error, handlePrev, handleNext, handleToday, handleViewChange } =
+    useCalendarViewData(currentCalendarView, currentDate, activeFilters, onNavigate);
 
-  const [dayPopoverAnchorEl, setDayPopoverAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedDateForPopover, setSelectedDateForPopover] = useState<null | Date>(null);
+  const {
+    popoverId,
+    isPopoverOpen,
+    popoverAnchorEl,
+    selectedDateForPopover,
+    openPopover,
+    closePopover,
+  } = useDayEventsPopover();
 
-  const safeCurrentDate = useMemo(
-    () => (isValid(currentDate) ? currentDate : new Date()),
-    [currentDate],
-  );
+  const dayNames = useLocalizedDayNames(1);
+  const calendarDays = generateCalendarDays(currentDate, 1);
 
-  const calendarDays = useMemo(() => {
-    return generateCalendarDays(safeCurrentDate);
-  }, [safeCurrentDate]);
+  const handleFilterChangeInHeader = (newFilters: Partial<FilterState>) => {
+    onNavigate({ filters: newFilters });
+  };
 
-  const dayNames = useMemo(() => getDayNames(0), []);
+  if (isLoading && events.length === 0) {
+    return <LoadingIndicator />;
+  }
 
-  const handleDayClick = useCallback((event: React.MouseEvent<HTMLElement>, date: Date) => {
-    if (isValid(date)) {
-      setSelectedDateForPopover(date);
-      setDayPopoverAnchorEl(event.currentTarget);
-    } else {
-      console.warn('Attempted to open popover for invalid date:', date);
-    }
-  }, []);
-
-  const handleDayPopoverClose = useCallback(() => {
-    setDayPopoverAnchorEl(null);
-  }, []);
-
-  const isDayPopoverOpen = Boolean(dayPopoverAnchorEl);
-  const dayPopoverId = isDayPopoverOpen ? 'day-events-popover' : undefined;
+  if (error && events.length === 0) {
+    return <ErrorMessage defaultMessage={t(error, 'Ошибка загрузки календаря')} />;
+  }
 
   return (
-    <ModalProvider>
-      <Box display="flex" justifyContent="flex-end">
-        <ToggleEventsView />
-      </Box>
-      <Paper
-        elevation={0}
+    <Paper
+      elevation={0}
+      sx={{
+        p: { xs: 0.5, sm: 1 },
+        maxWidth: '100%',
+        border: '1px solid #eee',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        minHeight: { xs: '70vh', sm: '75vh' },
+        position: 'relative',
+      }}
+    >
+      {error && (
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, p: 1 }}>
+          <Paper elevation={2} sx={{ p: 1, bgcolor: 'error.light', color: 'error.contrastText' }}>
+            <Typography variant="caption">{t(error, 'Ошибка при обновлении')}</Typography>
+          </Paper>
+        </Box>
+      )}
+      <CalendarHeader
+        currentDate={currentDate}
+        currentView={currentCalendarView}
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onToday={handleToday}
+        onViewChange={handleViewChange}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChangeInHeader}
+      />
+      <Box
         sx={{
-          p: { xs: 0.5, sm: 1 },
-          maxWidth: '100%',
-          border: '1px solid #eee',
+          position: 'relative',
+          flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          minHeight: '70vh',
         }}
       >
-        <CalendarHeader
-          currentDate={safeCurrentDate}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-          onToday={handleToday}
-        />
-        <Box
-          sx={{
-            position: 'relative',
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
-          <DayNamesHeader dayNames={dayNames} />
-
-          <CalendarGrid calendarDays={calendarDays} events={events} onDayClick={handleDayClick} />
-        </Box>
-
-        <Popover
-          id={dayPopoverId}
-          open={isDayPopoverOpen}
-          anchorEl={dayPopoverAnchorEl}
-          onClose={handleDayPopoverClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-          slotProps={{
-            paper: {
-              sx: {
-                boxShadow: '0px 4px 12px rgba(0,0,0,0.15)',
-                borderRadius: '8px',
-              },
+        <DayNamesHeader dayNames={dayNames} />
+        <CalendarGrid calendarDays={calendarDays} events={events} onDayClick={openPopover} />
+      </Box>
+      <Popover
+        id={popoverId}
+        open={isPopoverOpen}
+        anchorEl={popoverAnchorEl}
+        onClose={closePopover}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{
+          paper: {
+            sx: {
+              boxShadow: '0px 5px 15px rgba(0,0,0,0.2)',
+              borderRadius: '8px',
+              mt: 0.5,
             },
-          }}
-          aria-modal="true"
-        >
+          },
+        }}
+        disableRestoreFocus
+      >
+        {isPopoverOpen && selectedDateForPopover && isValid(selectedDateForPopover) && (
           <DayEventsPopoverContent
             date={selectedDateForPopover}
             events={events}
-            onClose={handleDayPopoverClose}
+            onClose={closePopover}
           />
-        </Popover>
-        <EventDetailsModal />
-      </Paper>
-    </ModalProvider>
+        )}
+      </Popover>
+    </Paper>
   );
 };
