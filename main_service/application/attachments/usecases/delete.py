@@ -35,9 +35,11 @@ class DeleteAttachmentUseCase:
     async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
+
             event = None
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id, actor)
+
             organization_id = event and event.organization_id or -1
             actor_role = await self.__role_getter(actor, organization_id)
             self.__builder.providers(

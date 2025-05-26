@@ -5,7 +5,7 @@ import pytest
 from domain.events.entities import Event
 from domain.mails.dtos import ParsedMailInfoDto
 from domain.notifications.entities import Notification
-from domain.users.entities import User, UserSettings
+from domain.users.entities import User
 
 from infrastructure.config import Config
 from infrastructure.gateways.mails.gateway import ImapEmailsGateway
@@ -20,25 +20,19 @@ async def test_parse_mails_attachments(
     create_mails: list[ParsedMailInfoDto],
     notification_email_gateway: NotificationEmailGateway,
     get_config: Config,
+    get_user_entity: User,
 ):
-    # TODO: Убери хуйню
     now = datetime.now()
-    user = User(
-        email=get_config.imap_username,
-        fullname="Nick",
-        id=-1,
-        settings=UserSettings(id=-1, user_id=-1),
-    )
     event = Event(title="Example", start_date=now, location=None, id=-1)
     for mail in create_mails:
         await notification_email_gateway.send(
             notification=Notification(
                 text=mail.raw_content.decode("utf-8"),
-                recipient_id=user.id,
+                recipient_id=get_user_entity.id,
                 event_id=event.id,
                 send_date=now.date(),
             ),
-            recipient=user,
+            recipient=get_user_entity,
             attachments=mail.attachments,
         )
     await asyncio.sleep(0.1)

@@ -1,6 +1,6 @@
 import pytest
 from application.users.usecases import CreateUserRoleUseCase
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole
 
 
 @pytest.mark.asyncio
@@ -8,6 +8,7 @@ async def test_create_success(
     create_user_role_usecase: CreateUserRoleUseCase,
     create_user_role_dto,
     get_admin: User,
+    get_admin_role: UserOrganizationRole,
 ):
     role = await create_user_role_usecase(create_user_role_dto, get_admin)
 

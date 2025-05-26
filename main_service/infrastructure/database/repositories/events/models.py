@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.events.enums import (
     EventFormatEnum,
@@ -51,13 +51,9 @@ class EventDatabaseModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    end_date: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), default=None
-    )
-    end_registration: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), default=None
-    )
-    start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    end_date: Mapped[date | None] = mapped_column(default=None)
+    end_registration: Mapped[date | None] = mapped_column(default=None)
+    start_date: Mapped[date]
 
     attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
     members: Mapped[list[UserDatabaseModel]] = relationship(

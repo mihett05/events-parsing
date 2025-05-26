@@ -49,11 +49,11 @@ class MailsMemoryRepository(MailsRepository):
 
     async def read_unprocessed(self, dto: dtos.ReadAllMailsDto) -> list[entities.Mail]:
         data: list[entities.Mail] = await self.__repository.read_all()
+        date = datetime.now(tz=timezone.utc)
         return [
             mail
             for mail in data
-            if mail.state == MailStateEnum.UNPROCESSED
-            and mail.retry_after >= datetime.now(tz=timezone.utc)
+            if mail.state == MailStateEnum.UNPROCESSED and mail.retry_after <= date
         ]
 
     async def update(self, mail: Mail) -> Mail:

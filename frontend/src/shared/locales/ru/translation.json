@@ -1,0 +1,98 @@
+{
+  "appName": "ИКНТ События",
+  "navigation": {
+    "calendar": "Календарь",
+    "eventsFeed": "Лента событий",
+    "profile": "Профиль",
+    "login": "Войти",
+    "logout": "Выйти",
+    "loginRegister": "Войти / Регистрация"
+  },
+  "calendar": {
+    "today": "Сегодня",
+    "previousMonth": "Предыдущий месяц",
+    "nextMonth": "Следующий месяц",
+    "previousDay": "Предыдущий день",
+    "nextDay": "Следующий день",
+    "previousYear": "Предыдущий год",
+    "nextYear": "Следующий год",
+    "loading": "Загрузка...",
+    "noEvents": "Нет событий на этот день.",
+    "moreEvents": "+{{count}} еще",
+    "closePopover": "Закрыть",
+    "popoverTitle": "События на {{date}}",
+    "eventDetailsTitle": "Детали события",
+    "closeModal": "Закрыть детали события",
+    "dayNames": ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+    "dayNamesFull": [
+      "Воскресенье",
+      "Понедельник",
+      "Вторник",
+      "Среда",
+      "Четверг",
+      "Пятница",
+      "Суббота"
+    ],
+    "monthNames": [
+      "Январь",
+      "Февраль",
+      "Март",
+      "Апрель",
+      "Май",
+      "Июнь",
+      "Июль",
+      "Август",
+      "Сентябрь",
+      "Октябрь",
+      "Ноябрь",
+      "Декабрь"
+    ],
+    "errorLoading": "Ошибка загрузки календаря",
+    "invalidDate": "Неверные данные даты",
+    "view": {
+      "view": "Вид",
+      "day": "День",
+      "month": "Месяц",
+      "year": "Год"
+    },
+    "loadingFilters": "Загрузка фильтров...",
+    "errorLoadingFilters": "Ошибка загрузки вариантов фильтров.",
+    "noAvailableFilters": "Нет доступных фильтров."
+  },
+  "dayView": {
+    "title": "События на {{date}}",
+    "noEvents": "Нет запланированных событий на эту дату."
+  },
+  "yearView": {
+    "title": "{{year}} год",
+    "noEventsIndicator": "Нет событий"
+  },
+  "event": {
+    "registrationUntil": "Регистрация до {{date}}",
+    "start": "Начало",
+    "end": "Конец",
+    "format": "Формат",
+    "type": "Тип",
+    "description": "Описание",
+    "loadingDetails": "Загрузка деталей события..."
+  },
+  "feed": {
+    "errorLoading": "Ошибка загрузки ленты.",
+    "loadMore": "Загрузить еще",
+    "noEventsFound": "Событий по заданным фильтрам не найдено.",
+    "allItemsLoaded": "Все события загружены.",
+    "loadingInitial": "Загрузка событий..."
+  },
+  "errors": {
+    "generic": "Произошла ошибка. Попробуйте позже.",
+    "loading": "Ошибка загрузки."
+  },
+  "filter": {
+    "typeLabel": "Тип события",
+    "allTypes": "Все типы",
+    "formatLabel": "Формат события",
+    "allFormats": "Все форматы",
+    "organizationLabel": "Организация",
+    "allOrganizations": "Все организации"
+  }
+}

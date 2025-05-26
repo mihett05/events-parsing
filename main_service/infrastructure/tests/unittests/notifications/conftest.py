@@ -4,6 +4,7 @@ from typing import Any, Callable, Coroutine
 import pytest
 import pytest_asyncio
 from dishka import AsyncContainer
+from domain.events.entities import Event
 from domain.notifications.dtos import (
     CreateNotificationDto,
     ReadNotificationsDto,
@@ -16,18 +17,20 @@ from domain.notifications.enums import (
 )
 from domain.notifications.repositories import NotificationsRepository
 from domain.organizations.repositories import OrganizationsRepository
+from domain.users.entities import User
 from domain.users.repositories import UsersRepository
 
 
 @pytest_asyncio.fixture
-async def create_notification_dto(create_user1) -> CreateNotificationDto:
-    user = await create_user1()
+async def create_notification_dto(
+    get_user_entity: User, get_admin_event: Event
+) -> CreateNotificationDto:
     return CreateNotificationDto(
-        recipient_id=user.id,
+        recipient_id=get_user_entity.id,
         text="Example",
         format=NotificationFormatEnum.RAW_TEXT,
         status=NotificationStatusEnum.UNSENT,
-        event_id=1,
+        event_id=get_admin_event.id,
         send_date=datetime.now().date(),
     )
 
@@ -65,38 +68,5 @@ async def orgatizations_repository(
 async def create_notification(
     create_notification_dto: CreateNotificationDto,
     notification_repository: NotificationsRepository,
-) -> Callable[..., Coroutine[Any, Any, Notification]]:
-    async def _factory():
-        return await notification_repository.create(create_notification_dto)
-
-    return _factory
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    orgatizations_repository: OrganizationsRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await orgatizations_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    notification_repository: NotificationsRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await notification_repository.clear()  # noqa
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    users_repository: UsersRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await users_repository.clear()  # noqa
+) -> Notification:
+    return await notification_repository.create(create_notification_dto)

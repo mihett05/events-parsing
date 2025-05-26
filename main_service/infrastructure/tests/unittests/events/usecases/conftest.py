@@ -1,6 +1,9 @@
 import application.events.usecases as usecases
 import pytest_asyncio
 from dishka import AsyncContainer
+from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
+from domain.users.entities import User
 
 
 @pytest_asyncio.fixture
@@ -57,14 +60,6 @@ async def read_all_event_usecase(
 ) -> usecases.ReadAllEventUseCase:
     async with container() as nested:
         yield await nested.get(usecases.ReadAllEventUseCase)
-
-
-@pytest_asyncio.fixture
-async def read_user_events_usecase(
-    container: AsyncContainer,
-) -> usecases.ReadUserEventsUseCase:
-    async with container() as nested:
-        yield await nested.get(usecases.ReadUserEventsUseCase)
 
 
 @pytest_asyncio.fixture

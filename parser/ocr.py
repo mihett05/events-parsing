@@ -42,7 +42,7 @@ def pdf_to_text_with_ocr(pdf_url, output_dir="output"):
     extracted_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        pix = page.get_pixmap(dpi=600)
+        pix = page.get_pixmap(dpi=400)
         img_bytes = pix.tobytes("ppm")
         img = Image.open(io.BytesIO(img_bytes))
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
@@ -100,7 +100,6 @@ def process_files(file_list, output_dir="output_texts"):
     for file_path in file_list:
         if not os.path.exists(file_path):
             continue
-
         text = process_file(file_path)
         filename = os.path.splitext(os.path.basename(file_path))[0] + ".txt"
         output_path = os.path.join(output_dir, filename)

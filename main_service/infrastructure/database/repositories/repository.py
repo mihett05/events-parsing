@@ -10,8 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
 
-from infrastructure.database.transactions import transaction_var
-
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
 ModelType = TypeVar("ModelType")
@@ -149,9 +147,8 @@ class PostgresRepository(metaclass=ABCMeta):
             return entity
         raise self.config.not_found_exception()
 
-    @staticmethod
-    def __should_commit() -> bool:
-        return transaction_var.get() is None
+    def __should_commit(self) -> bool:
+        return not self.session.in_nested_transaction()
 
     @staticmethod
     def __model_to_dict(model: ModelType) -> dict:
