@@ -1,8 +1,12 @@
 from typing import Annotated
+from uuid import UUID
 
 import application.organizations.usecases as use_cases
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from domain.organizations.dtos import ReadOrganizationsDto
+from domain.organizations.dtos import (
+    ReadOrganizationsDto,
+    ReadOrganizationTokensDto,
+)
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
 
@@ -18,6 +22,60 @@ router = APIRouter(route_class=DishkaRoute, tags=["Organizations"])
 
 
 @router.post(
+    "/token",
+    response_model=models.OrganizationTokenModel,
+)
+async def create_token(
+    use_case: FromDishka[use_cases.CreateOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.organization_token_map_to_pydantic(await use_case(actor))
+
+
+@router.get("/token", response_model=list[models.OrganizationTokenModel])
+async def read_all_tokens(
+    use_case: FromDishka[use_cases.ReadAllOrganizationTokensUseCase],
+    actor: Annotated[User, Depends(get_user)],
+    page: int = 0,
+    page_size: int = 50,
+):
+    return map(
+        mappers.organization_token_map_to_pydantic,
+        await use_case(
+            ReadOrganizationTokensDto(
+                page=page, page_size=page_size, created_by=actor.id
+            )
+        ),
+    )
+
+
+@router.get(
+    "/token/{token_id}",
+    response_model=models.OrganizationTokenModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def read_token(
+    token_id: UUID,
+    use_case: FromDishka[use_cases.ReadOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.organization_token_map_to_pydantic(await use_case(token_id, actor))
+
+
+@router.delete(
+    "/token/{token_id}",
+    response_model=models.OrganizationTokenModel,
+    responses={404: {"model": ErrorModel}},
+)
+async def delete_token(
+    token_id: UUID,
+    use_case: FromDishka[use_cases.DeleteOrganizationTokenUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return mappers.organization_token_map_to_pydantic(await use_case(token_id, actor))
+
+
+@router.post(
     "/",
     response_model=models.OrganizationModel,
     responses={404: {"model": ErrorModel}},
@@ -27,9 +85,7 @@ async def create_organization(
     use_case: FromDishka[use_cases.CreateOrganizationUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
-    return await use_case(
-        mappers.map_create_dto_from_pydantic(dto, actor), actor
-    )
+    return await use_case(mappers.map_create_dto_from_pydantic(dto, actor), actor)
 
 
 @router.get("/", response_model=list[models.OrganizationModel])

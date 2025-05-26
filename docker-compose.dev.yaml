@@ -40,42 +40,53 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  # backend:
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - minio
+  #   links:
+  #     - "postgres:postgres"
+  #     - "rabbitmq:rabbitmq"
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     endpoint_mode: vip
+  #   build:
+  #     context: main_service
+  #     dockerfile: ./Dockerfile
+  #   env_file:
+  #     - main_service/.dev.env
+  #   ports:
+  #     - 8000:8080
+  #   restart: always
+
+  main-service-migrations:
     depends_on:
       - postgres
-      - rabbitmq
-      - minio
-    links:
-      - "postgres:postgres"
-      - "rabbitmq:rabbitmq"
-    deploy:
-      mode: replicated
-      replicas: 1
-      endpoint_mode: vip
     build:
       context: main_service
-      dockerfile: ./Dockerfile
-    env_file:
-      - main_service/.dev.env
-    ports:
-      - 8000:8080
-    restart: always
-
-  parser:
-    depends_on:
-      - backend
-      - rabbitmq
+      dockerfile: ./migrations.dockerfile
     links:
-      - "rabbitmq:rabbitmq"
-    deploy:
-      mode: replicated
-      replicas: 1
-      endpoint_mode: vip
-    build:
-      context: parser
-      dockerfile: ./Dockerfile
+      - "postgres:postgres"
     env_file:
-      - main_service/.dev.env
+      - ./main_service/.dev.env
+
+  # parser:
+  #   depends_on:
+  #     - backend
+  #     - rabbitmq
+  #   links:
+  #     - "rabbitmq:rabbitmq"
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     endpoint_mode: vip
+  #   build:
+  #     context: parser
+  #     dockerfile: ./Dockerfile
+  #   env_file:
+  #     - main_service/.dev.env
 
 volumes:
   postgres-data:

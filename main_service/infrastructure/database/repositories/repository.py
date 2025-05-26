@@ -1,15 +1,14 @@
+import traceback
 from abc import ABCMeta
 from dataclasses import dataclass
 from typing import Any, Callable, Generic, TypeVar
 
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
-from sqlalchemy import Delete, Select, Update, insert, select
+from sqlalchemy import Delete, Insert, Select, Update, insert, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import LoaderOption
 from sqlalchemy.sql.base import Executable
-
-from infrastructure.database.transactions import transaction_var
 
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
@@ -25,19 +24,13 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     model_mapper: Callable[[Entity], ModelType]
     create_model_mapper: Callable[[CreateModelType], ModelType]
     not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
-    already_exists_exception: type[EntityAlreadyExistsError] = (
-        EntityAlreadyExistsError
-    )
+    already_exists_exception: type[EntityAlreadyExistsError] = EntityAlreadyExistsError
 
     def get_select_query(self, model_id: Id) -> Select:
         return self._add_where_id(select(self.model), model_id)
 
     def get_default_select_all_query(self, ids: list[Id]) -> Select:
-        return (
-            select(self.model)
-            .where(self.model.id.in_(ids))
-            .order_by(self.model.id)
-        )
+        return select(self.model).where(self.model.id.in_(ids)).order_by(self.model.id)
 
     def get_select_all_query(self, _: Any) -> Select:
         return select(self.model).order_by(self.model.id)
@@ -69,25 +62,25 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def __create_models(self, models: list[ModelType]) -> list[Entity]:
         try:
-            values = [self.__model_to_dict(model) for model in models]
             query = (
                 insert(self.config.model)
-                .values(values)
+                .values(list(map(self.__model_to_dict, models)))
                 .returning(self.config.model)
             )
-            result = await self.session.scalars(self.config.add_options(query))
-            return [self.config.entity_mapper(model) for model in result.all()]
+            return await self.get_entities_from_query(query)
         except IntegrityError:
+            traceback.print_exc()
             raise self.config.already_exists_exception()
 
-    async def __create(self, model: ModelType) -> Entity:
+    async def create(self, model: ModelType) -> Entity:
         try:
             self.session.add(model)
             if self.__should_commit():
                 await self.session.commit()
-            await self.session.refresh(model)
+            await self.session.merge(model)
             return await self.read(self.config.extract_id_from_model(model))
         except IntegrityError:
+            traceback.print_exc()
             raise self.config.already_exists_exception()
 
     async def get_scalar_or_none(self, query: Select) -> ModelType | None:
@@ -95,9 +88,11 @@ class PostgresRepository(metaclass=ABCMeta):
             await self.session.execute(self.config.add_options(query))
         ).scalar_one_or_none()
 
-    async def get_entities_from_query(self, query: Select) -> list[Entity]:
+    async def get_entities_from_query(
+        self, query: Select | Update | Insert
+    ) -> list[Entity]:
         result = await self.session.scalars(self.config.add_options(query))
-        return [self.config.entity_mapper(model) for model in result.all()]
+        return [self.config.entity_mapper(model) for model in result.unique().all()]
 
     async def read(self, model_id: Id) -> Entity:
         if model := await self.session.get(
@@ -110,9 +105,7 @@ class PostgresRepository(metaclass=ABCMeta):
         raise self.config.not_found_exception()
 
     async def read_all(self, dto: Any = None) -> list[Entity]:
-        return await self.get_entities_from_query(
-            self.config.get_select_all_query(dto)
-        )
+        return await self.get_entities_from_query(self.config.get_select_all_query(dto))
 
     async def read_by_ids(self, model_ids: list[Id]) -> list[Entity]:
         return await self.get_entities_from_query(
@@ -120,13 +113,19 @@ class PostgresRepository(metaclass=ABCMeta):
         )
 
     async def create_from_dto(self, dto: CreateModelType) -> Entity:
-        return await self.__create(self.config.create_model_mapper(dto))
+        return await self.create(self.config.create_model_mapper(dto))
 
     async def create_from_entity(self, entity: Entity) -> Entity:
-        return await self.__create(self.config.model_mapper(entity))
+        return await self.create(self.config.model_mapper(entity))
 
-    async def create_many(self, dtos: list[CreateModelType]) -> list[Entity]:
+    async def create_many_from_dto(self, dtos: list[CreateModelType]) -> list[Entity]:
         models = [self.config.create_model_mapper(dto) for dto in dtos]
+        return await self.__create_models(models)
+
+    async def create_many_from_entity(
+        self, dtos: list[CreateModelType]
+    ) -> list[Entity]:
+        models = [self.config.model_mapper(dto) for dto in dtos]
         return await self.__create_models(models)
 
     async def update(self, entity: Entity) -> Entity:
@@ -148,9 +147,8 @@ class PostgresRepository(metaclass=ABCMeta):
             return entity
         raise self.config.not_found_exception()
 
-    @staticmethod
-    def __should_commit() -> bool:
-        return transaction_var.get() is None
+    def __should_commit(self) -> bool:
+        return not self.session.in_nested_transaction()
 
     @staticmethod
     def __model_to_dict(model: ModelType) -> dict:

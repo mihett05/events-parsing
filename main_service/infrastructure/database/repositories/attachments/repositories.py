@@ -34,20 +34,18 @@ class AttachmentsDatabaseRepository(AttachmentsRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: CreateAttachmentDto) -> Attachment:
-        model = self.__config.create_model_mapper(dto)
-        try:
-            self.__session.add(model)
-            return await self.read(self.__config.extract_id_from_model(model))
-        except IntegrityError:
-            raise self.__config.already_exists_exception()
+        return await self.__repository.create_from_dto(dto)
 
     async def create_many(
         self, create_dtos: list[CreateAttachmentDto]
     ) -> list[Attachment]:
-        return await self.__repository.create_many(create_dtos)
+        return await self.__repository.create_many_from_dto(create_dtos)
 
     async def read(self, attachment_id: UUID) -> Attachment:
         return await self.__repository.read(attachment_id)
 
     async def delete(self, attachment: Attachment) -> Attachment:
         return await self.__repository.delete(attachment)
+
+    async def update(self, attachment: Attachment) -> Attachment:
+        return await self.__repository.update(attachment)

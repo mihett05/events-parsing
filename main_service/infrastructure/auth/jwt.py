@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import jwt
 from application.auth.exceptions import InvalidCredentialsError
@@ -9,27 +9,23 @@ from application.auth.tokens.gateways import TokensGateway
 
 class JwtTokensGateway(TokensGateway):
     def __init__(self, config: TokenConfig):
-        self.config = config
+        self.__config = config
+
+    def __encode(self, subject: str, expires_time: timedelta | None = None) -> str:
+        payload = {"sub": subject} | (
+            {"exp": datetime.now(tz=timezone.utc) + expires_time}
+            if expires_time
+            else dict()
+        )
+        return jwt.encode(
+            payload,
+            key=self.__config.secret_key,
+            algorithm=self.__config.algorithm,
+        )
 
     async def create_token_pair(self, subject: str) -> TokenPairDto:
-        access_token = jwt.encode(
-            {
-                "exp": datetime.now(tz=timezone.utc)
-                + self.config.access_token_expires_time,
-                "sub": subject,
-            },
-            key=self.config.secret_key,
-            algorithm=self.config.algorithm,
-        )
-        refresh_token = jwt.encode(
-            {
-                "exp": datetime.now(tz=timezone.utc)
-                + self.config.refresh_token_expires_time,
-                "sub": subject,
-            },
-            key=self.config.secret_key,
-            algorithm=self.config.algorithm,
-        )
+        access_token = self.__encode(subject, self.__config.access_token_expires_time)
+        refresh_token = self.__encode(subject, self.__config.refresh_token_expires_time)
         return TokenPairDto(
             access_token=access_token,
             refresh_token=refresh_token,
@@ -41,11 +37,13 @@ class JwtTokensGateway(TokensGateway):
         try:
             payload = jwt.decode(
                 token,
-                key=self.config.secret_key,
-                algorithms=[self.config.algorithm],
+                key=self.__config.secret_key,
+                algorithms=[self.__config.algorithm],
                 options={"verify_signature": check_expires},
             )
         except jwt.ExpiredSignatureError:
+            raise InvalidCredentialsError()
+        except jwt.DecodeError:
             raise InvalidCredentialsError()
 
         return TokenInfoDto(

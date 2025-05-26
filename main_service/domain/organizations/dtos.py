@@ -1,21 +1,12 @@
-from dataclasses import dataclass
-from datetime import datetime
-
-from domain.organizations.enums import RoleEnum
+from dataclasses import dataclass, field
+from uuid import UUID, uuid4
 
 
 @dataclass
 class CreateOrganizationDto:
     owner_id: int
     title: str
-    created_at: datetime
-
-
-@dataclass
-class CreateUserOrganizationRoleDto:
-    role: RoleEnum
-    owner_id: int
-    organization_id: int
+    token: UUID
 
 
 @dataclass
@@ -25,7 +16,13 @@ class ReadOrganizationsDto:
 
 
 @dataclass
-class ReadUserOrganizationRolesDto:
-    organization_id: int
+class CreateOrganizationTokenDto:
+    created_by: int
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
+class ReadOrganizationTokensDto:
+    created_by: int
     page: int
     page_size: int

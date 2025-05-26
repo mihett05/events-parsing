@@ -15,7 +15,7 @@ def extract_text_from_image(image_path):
         img = Image.open(image_path)
         text = pytesseract.image_to_string(img, lang="rus")
         return text
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -42,14 +42,12 @@ def pdf_to_text_with_ocr(pdf_url, output_dir="output"):
     extracted_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        pix = page.get_pixmap(dpi=600)
+        pix = page.get_pixmap(dpi=400)
         img_bytes = pix.tobytes("ppm")
         img = Image.open(io.BytesIO(img_bytes))
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(
-            gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-        )[1]
+        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         custom_config = r"--oem 3 --psm 6"
         page_text = pytesseract.image_to_string(
             thresh, config=custom_config, lang="eng+rus"
@@ -68,7 +66,7 @@ def extract_text_from_docx(docx_url):
         docx_file = io.BytesIO(response.content)
         doc = Document(docx_file)
         return "\n".join([para.text for para in doc.paragraphs])
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -102,7 +100,6 @@ def process_files(file_list, output_dir="output_texts"):
     for file_path in file_list:
         if not os.path.exists(file_path):
             continue
-
         text = process_file(file_path)
         filename = os.path.splitext(os.path.basename(file_path))[0] + ".txt"
         output_path = os.path.join(output_dir, filename)

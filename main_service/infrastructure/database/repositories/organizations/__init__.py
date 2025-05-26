@@ -1,8 +1,12 @@
-from .models import OrganizationDatabaseModel, association_table
-from .repositories import OrganizationsDatabaseRepository
+from .models import OrganizationDatabaseModel, OrganizationTokenDatabaseModel
+from .repositories import (
+    OrganizationsDatabaseRepository,
+    OrganizationTokensDatabaseRepository,
+)
 
 __all__ = [
     "OrganizationDatabaseModel",
     "OrganizationsDatabaseRepository",
-    "association_table",
+    "OrganizationTokenDatabaseModel",
+    "OrganizationTokensDatabaseRepository",
 ]

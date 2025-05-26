@@ -8,9 +8,9 @@ from domain.events.enums import EventFormatEnum, EventTypeEnum
 class CreateEventDto:
     title: str
     description: str | None
-    start_date: datetime
-    end_date: datetime
-    end_registration: datetime
+    start_date: date
+    end_date: date
+    end_registration: date
     location: str | None
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
@@ -33,8 +33,10 @@ class ReadOrganizationEventsDto:
 
 @dataclass
 class ReadAllEventsDto:
-    start_date: date | None
-    end_date: date | None
+    page: int
+    page_size: int
+    start_date: date
+    for_update: bool
 
 
 @dataclass
@@ -46,3 +48,10 @@ class ReadAllEventsFeedDto:
     organization_id: int | None
     type: EventTypeEnum | None
     format: EventFormatEnum | None
+
+
+@dataclass
+class ReadEventUsersDto:
+    event_id: int
+    page: int
+    page_size: int

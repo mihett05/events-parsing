@@ -19,3 +19,6 @@ class AttachmentsRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def delete(self, attachment: Attachment) -> Attachment: ...
+
+    @abstractmethod
+    async def update(self, attachment: Attachment) -> Attachment: ...

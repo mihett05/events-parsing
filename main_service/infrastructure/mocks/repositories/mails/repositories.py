@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from domain.mails import dtos as dtos
 from domain.mails import entities as entities
@@ -47,15 +47,13 @@ class MailsMemoryRepository(MailsRepository):
     async def read(self, mail_id: int) -> Mail:
         return await self.__repository.read(mail_id)
 
-    async def read_unprocessed(
-        self, dto: dtos.ReadAllMailsDto
-    ) -> list[entities.Mail]:
+    async def read_unprocessed(self, dto: dtos.ReadAllMailsDto) -> list[entities.Mail]:
         data: list[entities.Mail] = await self.__repository.read_all()
+        date = datetime.now(tz=timezone.utc)
         return [
             mail
             for mail in data
-            if mail.state == MailStateEnum.UNPROCESSED
-            and mail.retry_after >= datetime.now()
+            if mail.state == MailStateEnum.UNPROCESSED and mail.retry_after <= date
         ]
 
     async def update(self, mail: Mail) -> Mail:
@@ -63,3 +61,6 @@ class MailsMemoryRepository(MailsRepository):
 
     async def delete(self, mail: Mail) -> Mail:
         return await self.__repository.delete(mail)
+
+    async def clear(self):
+        await self.__repository.clear()

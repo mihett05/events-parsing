@@ -1,13 +1,14 @@
 import pytest
 from application.events.usecases import DeduplicateEventUseCase
 from domain.events.dtos import CreateEventDto
-from domain.events.entities import Event
+from domain.users.entities import User
 
 
 @pytest.mark.asyncio
 async def test_deduplicate_create_new(
     deduplicate_event_usecase: DeduplicateEventUseCase,
     create_event_dto: CreateEventDto,
+    get_admin: User,  # noqa
 ):
     event, _ = await deduplicate_event_usecase(None, create_event_dto)
 
@@ -29,7 +30,8 @@ async def test_deduplicate_create_new(
 async def test_deduplicate_found_one(
     deduplicate_event_usecase: DeduplicateEventUseCase,
     create_event_dto: CreateEventDto,
-    create_event: Event,
+    create_event,
+    get_admin: User,  # noqa
 ):
     event, _ = await deduplicate_event_usecase(None, create_event_dto)
     assert event == create_event

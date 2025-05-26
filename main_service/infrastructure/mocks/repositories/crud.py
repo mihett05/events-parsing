@@ -1,8 +1,11 @@
 from abc import ABCMeta
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, Type, TypeVar
 
-from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
+from domain.exceptions import (
+    EntityAlreadyExistsError,
+    EntityNotFoundError,
+)
 
 Id = TypeVar("Id")
 Entity = TypeVar("Entity")
@@ -12,12 +15,28 @@ Entity = TypeVar("Entity")
 class MockRepositoryConfig(metaclass=ABCMeta):
     entity: type[Entity]
     not_found_exception: type[EntityNotFoundError] = EntityNotFoundError
-    already_exists_exception: type[EntityAlreadyExistsError] = (
-        EntityAlreadyExistsError
-    )
+    already_exists_exception: type[EntityAlreadyExistsError] = EntityAlreadyExistsError
 
     def extract_id(self, entity: Entity) -> Id:
         return entity.id
+
+
+def _storage_factory():
+    storage = dict()
+
+    def _factory(entity_type: Type, reset=False):
+        if reset:
+            storage.clear()
+            return
+
+        if storage.get(entity_type) is None:
+            storage[entity_type] = dict()
+        return storage[entity_type]
+
+    return _factory
+
+
+get_storage = _storage_factory()
 
 
 class MockRepository(Generic[Entity, Id]):
@@ -25,7 +44,7 @@ class MockRepository(Generic[Entity, Id]):
     __config: MockRepositoryConfig
 
     def __init__(self, config: MockRepositoryConfig):
-        self.storage = {}
+        self.storage = get_storage(config.entity)
         self.__config = config
 
     async def create(self, entity: Entity) -> Entity:
@@ -56,3 +75,6 @@ class MockRepository(Generic[Entity, Id]):
             raise self.__config.not_found_exception()
         self.storage.pop(entity_id)
         return entity
+
+    async def clear(self):
+        self.storage.clear()

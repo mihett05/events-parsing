@@ -13,7 +13,11 @@ class Config(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173"]
 
     server_host: str = "localhost"
-    server_port: int = 8081
+    server_port: int = 5000
+
+    admin_username: str
+    admin_password: str
+    base_organization: str
 
     postgres_user: str
     postgres_password: str
@@ -22,7 +26,7 @@ class Config(BaseSettings):
     postgres_db: str
 
     rabbitmq_host: str
-    rabbitmq_port: str
+    rabbitmq_port: int
     rabbitmq_user: str
     rabbitmq_password: str
 
@@ -31,12 +35,15 @@ class Config(BaseSettings):
     imap_username: str
     imap_password: str
 
+    telegram_bot_token: str
+
     minio_root_host: str
-    minio_root_port: str
+    minio_root_port: int
     minio_root_user: str
     minio_root_password: str
     minio_bucket_name: str = "attachments"
-
+    smtp_server: str
+    smtp_port: int
     static_folder: Path = Path("static/")
 
     @computed_field
@@ -69,3 +76,8 @@ def get_config() -> Config:
 @lru_cache
 def get_mock_config() -> Config:
     return Config(_env_file=".dev.env", _env_file_encoding="utf-8")
+
+
+@lru_cache
+def get_tests_config() -> Config:
+    return Config(_env_file=".tests.env", _env_file_encoding="utf-8")

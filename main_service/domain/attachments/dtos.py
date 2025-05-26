@@ -12,6 +12,10 @@ class ParsedAttachmentInfoDto:
     extension: str
     content: BinaryIO
 
+    @property
+    def file_path(self) -> str:
+        return self.filename + self.extension
+
 
 @dataclass
 class CreateAttachmentDto:
@@ -21,3 +25,9 @@ class CreateAttachmentDto:
     mail: Mail | None = None
     event: Event | None = None
     id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
+class UpdateAttachmentDto:
+    filename: str
+    attachment_id: UUID

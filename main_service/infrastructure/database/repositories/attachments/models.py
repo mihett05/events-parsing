@@ -20,11 +20,11 @@ class AttachmentDatabaseModel(Base):
     extension: Mapped[str]
 
     mail_id: Mapped[int | None] = mapped_column(
-        ForeignKey("mails.id"),
+        ForeignKey("mails.id", ondelete="SET NULL"),
         nullable=True,
     )
     event_id: Mapped[int | None] = mapped_column(
-        ForeignKey("events.id"), nullable=True
+        ForeignKey("events.id", ondelete="SET NULL"), nullable=True
     )
 
     created_at: Mapped[datetime] = mapped_column(

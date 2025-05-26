@@ -9,14 +9,6 @@ from domain.attachments.dtos import CreateAttachmentDto
 
 
 @pytest_asyncio.fixture
-async def create_attachment_usecase(
-    container: AsyncContainer,
-) -> CreateAttachmentDto:
-    async with container() as nested:
-        yield await nested.get(CreateAttachmentUseCase)
-
-
-@pytest_asyncio.fixture
 async def delete_attachment_usecase(
     container: AsyncContainer,
 ) -> DeleteAttachmentUseCase:

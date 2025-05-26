@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from uuid import UUID
 
 import domain.organizations.dtos as dtos
 import domain.organizations.entities as entities
@@ -12,6 +13,9 @@ class OrganizationsRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def read(self, id_: int) -> entities.Organization: ...
+
+    @abstractmethod
+    async def find(self, owner_id: int) -> entities.Organization | None: ...
 
     @abstractmethod
     async def read_all(
@@ -29,26 +33,26 @@ class OrganizationsRepository(metaclass=ABCMeta):
     ) -> entities.Organization: ...
 
 
-class UserOrganizationRolesRepository(metaclass=ABCMeta):
+class OrganizationTokensRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(
-        self, dto: dtos.CreateUserOrganizationRoleDto
-    ) -> entities.UserOrganizationRole: ...
+        self, dto: dtos.CreateOrganizationTokenDto
+    ) -> entities.OrganizationToken: ...
 
     @abstractmethod
-    async def read(self, id_: int) -> entities.UserOrganizationRole: ...
-
-    @abstractmethod
-    async def read_all(
-        self, dto: dtos.ReadUserOrganizationRolesDto
-    ) -> list[entities.UserOrganizationRole]: ...
+    async def read(self, token_id: UUID) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def update(
-        self, role: entities.UserOrganizationRole
-    ) -> entities.UserOrganizationRole: ...
+        self, token: entities.OrganizationToken
+    ) -> entities.OrganizationToken: ...
 
     @abstractmethod
     async def delete(
-        self, role: entities.UserOrganizationRole
-    ) -> entities.UserOrganizationRole: ...
+        self, token: entities.OrganizationToken
+    ) -> entities.OrganizationToken: ...
+
+    @abstractmethod
+    async def read_all(
+        self, dto: dtos.ReadOrganizationTokensDto
+    ) -> list[entities.OrganizationToken]: ...

@@ -1,3 +1,5 @@
+from typing import Any, Callable, Coroutine
+
 import pytest
 from application.auth.dtos import AuthenticateUserDto
 from application.auth.exceptions import InvalidCredentialsError
@@ -7,33 +9,37 @@ from domain.users.entities import User
 
 @pytest.mark.asyncio
 async def test_authenticate_success(
-    create_user1: User,
-    authenticate_user1_dto: AuthenticateUserDto,
+    get_user_entity: User,
+    get_user_authenticate_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
-    user = await authenticate_usecase(authenticate_user1_dto)
-    assert user.email == create_user1.email
-    assert user.fullname == create_user1.fullname
-    assert user.id == create_user1.id
+    user = await authenticate_usecase(get_user_authenticate_dto)
+
+    assert user.id == get_user_entity.id
+    assert user.email == get_user_entity.email
+    assert user.fullname == get_user_entity.fullname
 
 
 @pytest.mark.asyncio
 async def test_authenticate_wrong_password(
-    create_user1: User,
-    authenticate_user1_broken_password_dto: AuthenticateUserDto,
+    get_user_entity: User,  # noqa
+    get_user_authenticate_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
     with pytest.raises(InvalidCredentialsError) as ex:
-        await authenticate_usecase(authenticate_user1_broken_password_dto)
+        get_user_authenticate_dto.password = "Aliboba"
+        await authenticate_usecase(get_user_authenticate_dto)
+
     assert str(ex.value) == str(InvalidCredentialsError("password"))
 
 
 @pytest.mark.asyncio
 async def test_authenticate_user_not_found(
-    create_user2: User,
-    authenticate_user1_dto: AuthenticateUserDto,
+    get_user_entity: User,  # noqa
+    get_user_authenticate_dto: AuthenticateUserDto,
     authenticate_usecase: AuthenticateUseCase,
 ):
     with pytest.raises(InvalidCredentialsError) as ex:
-        await authenticate_usecase(authenticate_user1_dto)
+        get_user_authenticate_dto.email = "example@example.com"
+        await authenticate_usecase(get_user_authenticate_dto)
     assert str(ex.value) == str(InvalidCredentialsError("email"))
