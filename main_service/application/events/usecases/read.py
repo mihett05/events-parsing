@@ -23,12 +23,11 @@ class ReadEventUseCase:
         self.__role_getter = role_getter
 
     async def __call__(self, event_id: int, actor: User) -> Event:
-        async with self.__transaction:
-            event = await self.__repository.read(event_id)
-            actor_role = await self.__role_getter(actor, event.organization_id)
-            self.__builder.providers(
-                EventPermissionProvider(event.organization_id, actor_role, event)
-            ).add(
-                PermissionsEnum.CAN_READ_EVENT,
-            ).apply()
-            return event
+        event = await self.__repository.read(event_id)
+        actor_role = await self.__role_getter(actor, event.organization_id)
+        self.__builder.providers(
+            EventPermissionProvider(event.organization_id, actor_role, event)
+        ).add(
+            PermissionsEnum.CAN_READ_EVENT,
+        ).apply()
+        return event
