@@ -18,7 +18,6 @@ class UseCasesProvider(Provider):
         event_use_cases.FindEventUseCase,
         event_use_cases.ReadEventUseCase,
         event_use_cases.ReadForFeedEventsUseCase,
-        event_use_cases.ReadUserEventsUseCase,
         event_use_cases.ReadAllEventUseCase,
         event_use_cases.ParseEventsUseCase,
         event_use_cases.UpdateEventUseCase,
@@ -91,4 +90,5 @@ class UseCasesProvider(Provider):
         attachments_use_cases.CreateAttachmentUseCase,
         attachments_use_cases.ReadAttachmentUseCase,
         attachments_use_cases.DeleteAttachmentUseCase,
+        attachments_use_cases.UpdateAttachmentUseCase,
     )

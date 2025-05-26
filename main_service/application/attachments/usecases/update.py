@@ -2,6 +2,7 @@ from domain.attachments.dtos import UpdateAttachmentDto
 from domain.attachments.entities import Attachment
 from domain.attachments.repositories import AttachmentsRepository
 from domain.users.entities import User
+from domain.users.role_getter import RoleGetter
 
 from application.attachments.gateways import FilesGateway
 from application.attachments.permissions.attachment import (
@@ -11,7 +12,6 @@ from application.auth.enums import PermissionsEnum
 from application.auth.permissions import PermissionBuilder
 from application.events.usecases.read import ReadEventUseCase
 from application.transactions import TransactionsGateway
-from application.users.usecases import ReadUserRolesUseCase
 
 
 class UpdateAttachmentUseCase:
@@ -21,14 +21,14 @@ class UpdateAttachmentUseCase:
         repository: AttachmentsRepository,
         tx: TransactionsGateway,
         builder: PermissionBuilder,
-        read_roles_use_case: ReadUserRolesUseCase,
+        role_getter: RoleGetter,
         read_event_use_case: ReadEventUseCase,
     ):
         self.__gateway = gateway
         self.__repository = repository
         self.__transaction = tx
         self.__builder = builder
-        self.__read_roles_use_case = read_roles_use_case
+        self.__role_getter = role_getter
         self.__read_event_use_case = read_event_use_case
 
     async def __call__(
@@ -38,16 +38,16 @@ class UpdateAttachmentUseCase:
             attachment = await self.__repository.read(
                 attachment_update_dto.attachment_id
             )
-            roles = await self.__read_roles_use_case(actor.id)
             event = None
 
             if attachment.event_id is not None:
                 event = await self.__read_event_use_case(attachment.event_id, actor)
-
+            organization_id = event and event.organization_id or -1
+            actor_role = await self.__role_getter(actor, organization_id)
             self.__builder.providers(
                 AttachmentPermissionProvider(
-                    event and event.organization_id or -1,
-                    roles,
+                    organization_id,
+                    actor_role,
                     event,
                 )
             ).add(

@@ -17,12 +17,6 @@ async def test_login_success(
 ):
     user_with_token = await user_with_token_model()
     dto = authenticate_dto_factory(email=f"{user_with_token.user.email}")
-
-    print(
-        dto,
-    )
-    print()
-    print(user_with_token)
     response = await async_client.post(
         "/v1/auth/login",
         json=dto.model_dump(by_alias=True, mode="json"),

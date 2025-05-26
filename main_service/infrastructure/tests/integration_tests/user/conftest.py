@@ -17,7 +17,7 @@ from infrastructure.api.v1.users.models import UserModel
 def user_model_factory() -> Callable[[], UserModel]:
     def _factory(
         id: int = 1,
-        email: str = "test@example.com",
+        email: str = "test@gmail.com",
         fullname: str = "Test User",
         is_active: bool = True,
         telegram_id: int | None = None,

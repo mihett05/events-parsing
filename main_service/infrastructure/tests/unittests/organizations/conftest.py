@@ -48,23 +48,3 @@ async def readall_organizations_dto() -> ReadOrganizationsDto:
 @pytest_asyncio.fixture
 async def update_organization_dto() -> UpdateOrganizationDto:
     return UpdateOrganizationDto(id=1, title="Bombordillo crocodillo")
-
-
-@pytest_asyncio.fixture
-async def create_organization(
-    create_organization_dto: CreateOrganizationDto,
-    organizations_repository: OrganizationsRepository,
-) -> Organization:
-    return await organizations_repository.create(create_organization_dto)
-
-
-@pytest_asyncio.fixture(scope="function", autouse=True)
-async def prepare(
-    pytestconfig: pytest.Config,
-    organizations_repository: OrganizationsRepository,
-    users_repository: UsersRepository,
-):
-    if pytestconfig.getoption("--integration", default=False):
-        return
-    await organizations_repository.clear()  # noqa
-    await users_repository.clear()  # noqa

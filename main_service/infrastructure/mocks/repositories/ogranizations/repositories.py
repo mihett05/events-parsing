@@ -104,3 +104,6 @@ class OrganizationTokensMemoryRepository(OrganizationTokensRepository):
             if token.created_by == dto.created_by:
                 result.append(token)
         return result[dto.page * dto.page_size : (dto.page + 1) * dto.page_size]
+
+    async def clear(self):
+        await self.__repository.clear()

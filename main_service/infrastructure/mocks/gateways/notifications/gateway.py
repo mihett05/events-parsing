@@ -13,7 +13,7 @@ class NotificationEmailMemoryGateway(NotificationEmailGateway):
     def __init__(self):
         super().__init__(
             smtp_server="avtobot",
-            smtp_host=123,
+            smtp_port=123,
             imap_username="misha",
             imap_password="spit po 25 chasov v den'",
         )
@@ -31,4 +31,4 @@ class NotificationEmailMemoryGateway(NotificationEmailGateway):
         recipient: User,
         attachments: list[ParsedAttachmentInfoDto] = None,
     ):
-        await asyncio.sleep(0.256)  # imitation of publishing mails to process
+        await asyncio.sleep(0.1)  # imitation of publishing mails to process

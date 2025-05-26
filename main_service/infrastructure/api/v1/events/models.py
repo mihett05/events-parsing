@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 
@@ -23,9 +23,9 @@ class EventModel(CamelModel):
     attachments: list[AttachmentModel]
     members: list[UserModel]
 
-    start_date: datetime
-    end_date: datetime | None
-    end_registration: datetime | None = None
+    start_date: date
+    end_date: date | None
+    end_registration: date | None = None
 
 
 class FilterModel(CamelModel):

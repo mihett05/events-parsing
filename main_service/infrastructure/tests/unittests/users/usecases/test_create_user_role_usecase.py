@@ -1,16 +1,17 @@
 import pytest
 from application.users.usecases import CreateUserRoleUseCase
 from domain.users.entities import User, UserOrganizationRole
-from domain.users.enums import RoleEnum
 
 
 @pytest.mark.asyncio
 async def test_create_success(
     create_user_role_usecase: CreateUserRoleUseCase,
-    get_user_role_entity: UserOrganizationRole,
-    get_actor: User,
+    create_user_role_dto,
+    get_admin: User,
+    get_admin_role: UserOrganizationRole,
 ):
-    role = await create_user_role_usecase(get_user_role_entity, get_actor)
-    assert role.organization_id == 1
-    assert role.user_id == 1
-    assert role.role == RoleEnum.SUPER_OWNER
+    role = await create_user_role_usecase(create_user_role_dto, get_admin)
+
+    assert role.organization_id == create_user_role_dto.organization_id
+    assert role.user_id == create_user_role_dto.user_id
+    assert role.role == create_user_role_dto.role

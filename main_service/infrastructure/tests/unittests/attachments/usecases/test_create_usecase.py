@@ -8,14 +8,11 @@ from domain.attachments.exceptions import AttachmentAlreadyExistsError
 async def test_create_success(
     create_attachment_usecase: CreateAttachmentUseCase,
     create_attachment_dtos: list[CreateAttachmentDto],
-    create_user1,
+    get_admin,
 ):
-    user = await create_user1()
-
-    succeed, failed = await create_attachment_usecase(create_attachment_dtos, user)
-    print(failed)
+    succeed, failed = await create_attachment_usecase(create_attachment_dtos, get_admin)
     assert len(failed) == 0
     assert len(succeed) == len(create_attachment_dtos)
 
     with pytest.raises(AttachmentAlreadyExistsError):
-        await create_attachment_usecase([create_attachment_dtos[0]], user)
+        await create_attachment_usecase([create_attachment_dtos[0]], get_admin)

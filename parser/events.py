@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 
 
@@ -40,7 +40,7 @@ class EventInfo:
 class Event:
     title: str
     location: str | None
-    start_date: datetime
+    start_date: date
 
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
@@ -49,6 +49,6 @@ class Event:
     is_visible: bool = True
     description: str | None = None
 
-    end_date: datetime | None = None
-    created_at: datetime | None = None
+    end_date: date | None = None
+    created_at: date | None = None
     end_registration: datetime | None = None

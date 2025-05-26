@@ -8,6 +8,12 @@ from domain.users.entities import User
 
 
 class NotificationTelegramGateway(NotificationGateway):
+    async def __aenter__(self) -> "NotificationGateway":
+        pass
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        pass
+
     def __init__(self, bot: Bot):
         self.__bot = bot
         self.__mapper = {
@@ -16,17 +22,15 @@ class NotificationTelegramGateway(NotificationGateway):
             NotificationFormatEnum.MARKDOWN: ParseMode.MARKDOWN,
         }
 
-    def __map_parse_mode(self, format_: NotificationFormatEnum) -> ParseMode | None:
-        return self.__mapper[format_]
-
     async def send(self, notification: Notification, recipient: User) -> Notification:
         if recipient.telegram_id is None:
             raise FailedSendNotificationError
+
         try:
             await self.__bot.send_message(
                 chat_id=recipient.telegram_id,
                 text=notification.text,
-                parse_mode=self.__map_parse_mode(notification.format),
+                parse_mode=self.__mapper[notification.format],
             )
             return notification
         except Exception:

@@ -1,24 +1,30 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { format, isValid, isSameDay } from 'date-fns';
 import { useModalContext } from '../lib/hooks/useModalContext';
+import { useTranslation } from 'react-i18next';
+import { EventArticle } from '@/entities/Event';
+import LoadingIndicator from '@/shared/ui/LoadingIndicator';
 
-export const EventDetailsModal: React.FC = () => {
-  const { selectedEvent, setSelectedEvent } = useModalContext()!;
+export const EventDetailsModal = () => {
+  const { t } = useTranslation();
+  const modalContext = useModalContext();
+  const selectedEvent = modalContext?.selectedEvent;
+  const setSelectedEvent = modalContext?.setSelectedEvent;
 
   const handleClose = () => {
-    setSelectedEvent(null);
+    setSelectedEvent?.(null);
   };
 
   const isOpen = !!selectedEvent;
 
+  const eventColor = selectedEvent?.color ?? 'transparent';
+
   return (
-    <Modal open={isOpen} onClose={handleClose}>
+    <Modal open={isOpen} onClose={handleClose} aria-labelledby="event-details-modal-title">
       <Box
         sx={{
           position: 'absolute',
@@ -28,78 +34,47 @@ export const EventDetailsModal: React.FC = () => {
           bgcolor: 'background.paper',
           boxShadow: 24,
           borderRadius: 2,
-          p: { xs: 2, sm: 3 },
-          width: { xs: '90%', sm: 400, md: 500 },
-          maxWidth: '95vw',
-          maxHeight: '85vh',
-          overflowY: 'auto',
+          width: { xs: '90%', sm: '70%', md: '60%', lg: '50%' },
+          maxWidth: { sm: 700, md: 850 },
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           outline: 'none',
+          borderTop: `4px solid ${eventColor}`,
         }}
       >
-        {selectedEvent && (
-          <>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography
-                id="event-details-title"
-                variant="h6"
-                component="h2"
-                sx={{ wordBreak: 'break-word' }}
-              >
-                {selectedEvent.title}
-              </Typography>
-              <IconButton
-                aria-label="close event details"
-                onClick={handleClose}
-                size="small"
-                title="Close"
-              >
-                <CloseIcon />
-              </IconButton>
-            </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{
+            p: { xs: 1.5, sm: 2 },
+            flexShrink: 0,
+          }}
+        >
+          <Typography
+            id="event-details-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ fontWeight: 500, pl: 1 }}
+          >
+            {t('calendar.eventDetailsTitle')}
+          </Typography>
+          <IconButton onClick={handleClose} size="medium" title={t('calendar.closeModal')}>
+            <CloseIcon />
+          </IconButton>
+        </Stack>
 
-            <Divider sx={{ mb: 2 }} />
-
-            <Stack spacing={1.5}>
-              {' '}
-              <Typography variant="body1">
-                <strong>Start:</strong> {format(selectedEvent.startDate, 'PPp')}
-              </Typography>
-              {selectedEvent.endDate &&
-                isValid(selectedEvent.endDate) &&
-                !isSameDay(selectedEvent.startDate, selectedEvent.endDate) && (
-                  <Typography variant="body1">
-                    <strong>End:</strong> {format(selectedEvent.endDate, 'PPp')}
-                  </Typography>
-                )}
-              <Typography variant="body1">
-                <strong>Format:</strong> {selectedEvent.format}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Type:</strong> {selectedEvent.type}
-              </Typography>
-              {selectedEvent.description && String(selectedEvent.description).trim() && (
-                <>
-                  <Typography variant="subtitle1" sx={{ mt: 2, fontWeight: 'bold' }}>
-                    Description:
-                  </Typography>
-                  <Box
-                    sx={{
-                      maxHeight: '25vh',
-                      overflowY: 'auto',
-                      pl: 1,
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                    }}
-                    id="event-details-description"
-                  >
-                    <Typography variant="body2">{selectedEvent.description}</Typography>
-                  </Box>
-                </>
-              )}
-            </Stack>
-          </>
-        )}
-        {!selectedEvent && isOpen && <Typography>Loading event details...</Typography>}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            p: { xs: 2, sm: 3 },
+          }}
+        >
+          {selectedEvent ? <EventArticle event={selectedEvent} /> : isOpen && <LoadingIndicator />}
+        </Box>
       </Box>
     </Modal>
   );

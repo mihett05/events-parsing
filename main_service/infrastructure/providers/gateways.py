@@ -60,7 +60,7 @@ class GatewaysProvider(Provider):
     ) -> AsyncIterable[NotificationEmailGateway]:
         async with NotificationEmailGateway(
             smtp_server=config.smtp_server,
-            smtp_host=config.smtp_port,
+            smtp_port=config.smtp_port,
             imap_username=config.imap_username,
             imap_password=config.imap_password,
         ) as gateway:

@@ -22,5 +22,7 @@ class NotificationGatewayFactory(NotificationGatewayAbstractFactory):
             UserNotificationSendToEnum.TELEGRAM: telegram,
         }
 
-    async def get(self, user: User) -> NotificationGateway:
-        return self.__gateways[user.settings.type]
+    def get(
+        self, user: User, *, override: UserNotificationSendToEnum = None
+    ) -> NotificationGateway:
+        return self.__gateways[override or user.settings.type]

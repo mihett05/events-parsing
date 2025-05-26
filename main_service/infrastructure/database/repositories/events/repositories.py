@@ -10,7 +10,7 @@ from domain.events.exceptions import (
 from domain.events.repositories import EventsRepository, EventUsersRepository
 from sqlalchemy import Select, and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.interfaces import LoaderOption
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
@@ -130,14 +130,6 @@ class EventsDatabaseRepository(EventsRepository):
             query = self.__add_offset_to_query(query, dto)
             return query
 
-        # def get_select_for_user_query(self, dto: dtos.ReadUserEventsDto) -> Select:
-        #     # ids = [member.id for member in self.model.members]
-        #     # print(ids)
-        #     query = select(self.model).where(dto.user in self.model.members).order_by(desc(self.model.start_date))
-        #
-        #     query = self.__add_offset_to_query(query, dto)
-        #     return query
-
         def __try_add_period_filter_to_query(
             self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadAllEventsDto
         ) -> Select:
@@ -182,8 +174,8 @@ class EventsDatabaseRepository(EventsRepository):
 
         def get_options_with_members(self) -> list[LoaderOption]:
             return [
-                selectinload(self.model.attachments),
-                selectinload(self.model.members).joinedload(UserDatabaseModel.settings),
+                joinedload(self.model.attachments),
+                joinedload(self.model.members).joinedload(UserDatabaseModel.settings),
             ]
 
     def __init__(self, session: AsyncSession):
@@ -198,8 +190,10 @@ class EventsDatabaseRepository(EventsRepository):
             EventDatabaseModel.start_date == event_info.start_date,
             EventDatabaseModel.end_registration == event_info.end_registration,
         )
-        model: EventDatabaseModel | None = await self.__repository.get_scalar_or_none(
-            query
+        model = (
+            (await self.__session.execute(self.config.add_options(query)))
+            .unique()
+            .scalar_one_or_none()
         )
         return model and self.config.entity_mapper(model)
 

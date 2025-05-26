@@ -75,7 +75,11 @@ map_to_pydantic = retort.get_converter(
         link_function(
             lambda dto, event_id: event_id,
             P[UpdateEventDto].event_id,
-        )
+        ),
+        link_function(
+            lambda dto, is_visible_status: is_visible_status,
+            P[UpdateEventDto].is_visible,
+        ),
     ]
 )
 def map_update_dto_from_pydantic(
