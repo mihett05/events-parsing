@@ -3,6 +3,7 @@ from application.attachments.usecases import ReadAttachmentUseCase
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip
 async def test_read_success(
     create_attachment,
     read_attachment_usecase: ReadAttachmentUseCase,

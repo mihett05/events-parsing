@@ -41,6 +41,9 @@ class UsersRepository(metaclass=ABCMeta):
     @abstractmethod
     async def change_user_active_status(self, user_id: int, status: bool): ...
 
+    @abstractmethod
+    async def get_super_user(self) -> User: ...
+
 
 class UserOrganizationRolesRepository(metaclass=ABCMeta):
     @abstractmethod

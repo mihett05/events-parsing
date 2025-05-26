@@ -1,12 +1,15 @@
 import pytest
-from application.events.usecases import DeduplicateEventUseCase
+from application.events.usecases import DeduplicateEventUseCase, ReadEventUseCase
+from application.transactions import TransactionsGateway
 from domain.events.dtos import CreateEventDto
+from domain.events.entities import Event
 from domain.users.entities import User
 
 
 @pytest.mark.asyncio
 async def test_deduplicate_create_new(
     deduplicate_event_usecase: DeduplicateEventUseCase,
+    read_event_usecase: ReadEventUseCase,
     create_event_dto: CreateEventDto,
     get_admin: User,  # noqa
 ):
@@ -30,8 +33,8 @@ async def test_deduplicate_create_new(
 async def test_deduplicate_found_one(
     deduplicate_event_usecase: DeduplicateEventUseCase,
     create_event_dto: CreateEventDto,
-    create_event,
     get_admin: User,  # noqa
+    get_admin_event: Event,
 ):
     event, _ = await deduplicate_event_usecase(None, create_event_dto)
-    assert event == create_event
+    assert event == get_admin_event

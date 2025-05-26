@@ -9,10 +9,10 @@ from domain.users.entities import User
 
 @pytest.mark.asyncio
 async def test_read_success(
-    read_event_usecase: ReadEventUseCase, create_event: Event, get_admin: User
+    read_event_usecase: ReadEventUseCase, get_admin_event: Event, get_admin: User
 ):
-    event = await read_event_usecase(create_event.id, get_admin)
-    assert event == create_event
+    event = await read_event_usecase(get_admin_event.id, get_admin)
+    assert event == get_admin_event
 
 
 @pytest.mark.asyncio
