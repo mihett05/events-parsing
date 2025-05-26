@@ -13,6 +13,7 @@ from domain.exceptions import (
     EntityNotFoundError,
     InvalidEntityPeriodError,
 )
+from domain.users.exceptions import UserNotValidated
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -100,6 +101,12 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"message": str(exc)},
+        )
+
+    @app.exception_handler(UserNotValidated)
+    async def not_activated_user(_: Request, exc: UserNotValidated):
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN, content={"message": str(exc)}
         )
 
     if not os.path.exists("static"):

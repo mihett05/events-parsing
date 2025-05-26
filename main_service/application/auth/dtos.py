@@ -12,7 +12,6 @@ class RegisterUserDto:
     email: str
     password: str
     fullname: str = ""
-    is_active: bool = True
 
 
 @dataclass
