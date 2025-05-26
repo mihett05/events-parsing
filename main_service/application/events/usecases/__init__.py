@@ -9,9 +9,10 @@ from .planning import PlanningEventsNotificationsUseCase
 from .read import ReadEventUseCase
 from .read_all import ReadAllEventUseCase
 from .read_event_user import ReadEventUserUseCase
-from .read_event_user_for_event import ReadForEventEventUserUseCase
-from .read_event_user_for_user import ReadForUserEventUserUseCase
+from .read_for_event import ReadEventUsersUseCase
 from .read_for_feed import ReadForFeedEventsUseCase
+from .read_for_user import ReadUserEventsUseCase
+from .read_ics import ReadICSUseCase
 from .update import UpdateEventUseCase
 
 __all__ = [
@@ -24,10 +25,11 @@ __all__ = [
     "ReadEventUseCase",
     "ReadAllEventUseCase",
     "ReadForFeedEventsUseCase",
+    "ReadUserEventsUseCase",
     "UpdateEventUseCase",
     "CreateEventUserUseCase",
-    "ReadForUserEventUserUseCase",
-    "ReadForEventEventUserUseCase",
+    "ReadEventUsersUseCase",
     "DeleteEventUserUseCase",
     "ReadEventUserUseCase",
+    "ReadICSUseCase",
 ]

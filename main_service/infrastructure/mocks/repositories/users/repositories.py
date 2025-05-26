@@ -75,6 +75,12 @@ class UsersMemoryRepository(UsersRepository):
     async def read_by_ids(self, user_ids: list[int]) -> list[User]:
         return [await self.read(user_id) for user_id in user_ids]
 
+    async def read_by_calendar_uuid(self, uuid: UUID) -> User:
+        for user in await self.__repository.read_all():
+            if user.settings.calendar_uuid == uuid:
+                return user
+        raise UserNotFoundError()
+
     async def update(self, user: User) -> User:
         return await self.__repository.update(user)
 

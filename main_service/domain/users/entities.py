@@ -10,7 +10,7 @@ class UserSettings:
     id: int
     user_id: int
     type: UserNotificationSendToEnum = UserNotificationSendToEnum.EMAIL
-    # calendar_uuid: UUID | None = None
+    calendar_uuid: UUID | None = None
 
 
 @dataclass

@@ -33,6 +33,9 @@ class UsersRepository(metaclass=ABCMeta):
     ) -> list[User]: ...
 
     @abstractmethod
+    async def read_by_calendar_uuid(self, uuid: UUID) -> User: ...
+
+    @abstractmethod
     async def update(self, user: User) -> User: ...
 
     @abstractmethod

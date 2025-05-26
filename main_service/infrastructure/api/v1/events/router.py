@@ -1,9 +1,13 @@
-from datetime import date
 from typing import Annotated
+from uuid import UUID
 
 import application.events.usecases as use_cases
 from application.auth.usecases import AuthorizeUseCase
 from application.organizations.usecases import ReadAllOrganizationUseCase
+from application.users.usecases import (
+    CreateCalendarLinkUseCase,
+    DeleteCalendarLinkUseCase,
+)
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.events.dtos import (
     ReadAllEventsFeedDto,
@@ -13,7 +17,7 @@ from domain.events.dtos import (
 from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
@@ -23,6 +27,7 @@ from infrastructure.api.v1.auth.deps import get_user
 from infrastructure.api.v1.organizations.mappers import (
     map_to_pydantic as map_organization,
 )
+from infrastructure.config import Config
 
 router = APIRouter(route_class=DishkaRoute, tags=["Events"])
 
@@ -54,57 +59,63 @@ async def get_filter_values(
     )
 
 
+@router.post("/subscribe/ical")
+async def create_ical(
+    use_case: FromDishka[CreateCalendarLinkUseCase],
+    config: FromDishka[Config],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return await use_case(config.base_url, actor)
+
+
+@router.delete("/subscribe/ical")
+async def delete_ical(
+    use_case: FromDishka[DeleteCalendarLinkUseCase],
+    actor: Annotated[User, Depends(get_user)],
+):
+    return await use_case(actor)
+
+
 @router.get(
-    "subscribe/ical/{uid}",
+    "/subscribe/ical/{uuid}",
     responses={404: {"model": ErrorModel}},
 )
 async def read_ical(
-    use_case: FromDishka[use_cases.ReadForUserEventUserUseCase],
-    actor: Annotated[User, Depends(get_user)],
-    page: int = 0,
-    page_size: int = 50,
+    use_case: FromDishka[use_cases.ReadICSUseCase],
+    uuid: UUID,
 ):
-    return mappers.map_to_ics(
-        await use_case(
-            ReadUserEventsDto(user_id=actor.id, page=page, page_size=page_size),
-            actor,
-        )
-    )
+    return mappers.map_to_ics(await use_case(uuid))
 
 
-@router.get(
-    "/subscribe/my",
-    response_model=list[models.EventUserModel],
-)
-async def read_my_subscribes(
-    use_case: FromDishka[use_cases.ReadForUserEventUserUseCase],
+@router.get("/subscribe/my", response_model=list[models.EventModel])
+async def read_for_user(
+    use_case: FromDishka[use_cases.ReadUserEventsUseCase],
     actor: Annotated[User, Depends(get_user)],
     page: int = 0,
     page_size: int = 50,
 ):
     return map(
-        mappers.event_user_map_to_pydantic,
+        mappers.map_to_pydantic,
         await use_case(
-            ReadUserEventsDto(user_id=actor.id, page=page, page_size=page_size),
-            actor,
+            ReadUserEventsDto(user_id=actor.id, page=page, page_size=page_size)
         ),
     )
 
 
 @router.get(
     "/subscribe/{event_id}",
-    response_model=list[models.EventUserModel],
+    response_model=list[models.UserModel],
     responses={404: {"model": ErrorModel}},
 )
 async def read_subscribers(
     event_id: int,
-    use_case: FromDishka[use_cases.ReadForEventEventUserUseCase],
+    use_case: FromDishka[use_cases.ReadEventUsersUseCase],
     actor: Annotated[User, Depends(get_user)],
     page: int = 0,
     page_size: int = 50,
 ):
     return map(
-        mappers.event_user_map_to_pydantic,
+        mappers.map_to_user,
         await use_case(
             ReadEventUsersDto(event_id=event_id, page=page, page_size=page_size),
             actor,

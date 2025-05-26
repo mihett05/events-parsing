@@ -35,7 +35,5 @@ class FilterModel(CamelModel):
 
 
 class EventUserModel(CamelModel):
-    event_id: int
-    user_id: int
     user: UserModel
     event: EventModel

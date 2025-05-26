@@ -98,28 +98,32 @@ event_user_map_to_pydantic = retort.get_converter(
 )
 
 
-def map_to_ics(event_users: list[EventUser]) -> bytes:
+def map_to_user(event_user: EventUser) -> UserModel:
+    return user_map_to_pydantic(event_user.user)
+
+
+def map_to_ics(events: list[Event]) -> bytes:
     cal = Calendar()
     cal.add("version", "2.0")
 
-    for e in event_users:
+    for event in events:
         ical_event = ICalEvent()
 
-        ical_event.add("summary", e.event.title)
-        ical_event.add("dtstart", e.event.start_date)
-        if e.event.location:
-            ical_event.add("location", e.event.location)
+        ical_event.add("summary", event.title)
+        ical_event.add("dtstart", event.start_date)
+        if event.location:
+            ical_event.add("location", event.location)
 
-        if e.event.end_date:
-            ical_event.add("dtend", e.event.end_date)
+        if event.end_date:
+            ical_event.add("dtend", event.end_date)
 
-        if e.event.description:
-            ical_event.add("description", e.event.description)
+        if event.description:
+            ical_event.add("description", event.description)
 
         uid = (
-            f"event-{e.event.id}@example.com"
-            if e.event.id
-            else f"event-{hash(e.event)}@example.com"
+            f"event-{event.id}@example.com"
+            if event.id
+            else f"event-{hash(event)}@example.com"
         )
         ical_event.add("uid", uid)
 
