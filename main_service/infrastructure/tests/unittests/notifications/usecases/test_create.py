@@ -17,7 +17,9 @@ async def test_create_success(
     create_event: Event,
 ):
     # TODO: сделать мемберов для ивента
-    notification = await create_notification_usecase(create_event, create_notification_dto.send_date)
+    notification = await create_notification_usecase(
+        create_event, create_notification_dto.send_date
+    )
     attrs = (
         "recipient_id",
         "text",
