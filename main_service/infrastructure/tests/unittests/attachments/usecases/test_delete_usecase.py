@@ -9,7 +9,6 @@ from domain.attachments.repositories import AttachmentsRepository
 
 
 @pytest.mark.asyncio
-@pytest.mark.skip
 async def test_delete_success(
     delete_attachment_usecase: DeleteAttachmentUseCase,
     create_attachment,
