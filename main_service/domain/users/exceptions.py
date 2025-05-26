@@ -1,6 +1,7 @@
 from domain.exceptions import (
     EntityAccessDenied,
     EntityAlreadyExistsError,
+    EntityException,
     EntityNotFoundError,
 )
 from domain.users.entities import TelegramToken, User, UserOrganizationRole
@@ -19,6 +20,11 @@ class UserAlreadyExistsError(EntityAlreadyExistsError):
 class UserAccessDenied(EntityAccessDenied):
     def __init__(self):
         super().__init__()
+
+
+class UserNotValidated(EntityException):
+    def __init__(self):
+        super().__init__(f"Пользователь не активирован!")
 
 
 class TelegramTokenNotFoundError(EntityNotFoundError):

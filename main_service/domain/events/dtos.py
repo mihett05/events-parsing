@@ -12,6 +12,7 @@ class CreateEventDto:
     end_date: date
     end_registration: date
     location: str | None
+    is_visible: bool
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
     organization_id: int | None = None
