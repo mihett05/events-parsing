@@ -1,5 +1,5 @@
 from domain.users.entities import User
-from domain.users.exceptions import UserNotFoundError
+from domain.users.exceptions import UserNotFoundError, UserNotValidated
 from domain.users.repositories import UsersRepository
 
 from application.auth.exceptions import InvalidCredentialsError
@@ -12,6 +12,9 @@ class AuthorizeUseCase:
 
     async def __call__(self, dto: TokenInfoDto) -> User:
         try:
-            return await self.users_repository.read_by_email(dto.subject)
+            if user := await self.users_repository.read_by_email(dto.subject):
+                if user.is_active:
+                    return user
+                raise UserNotValidated
         except UserNotFoundError:
             raise InvalidCredentialsError("email")

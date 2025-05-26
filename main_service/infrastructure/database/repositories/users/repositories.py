@@ -30,6 +30,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import LoaderOption
 
+from infrastructure.config import Config
+
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
     create_user_activation_token_map,
@@ -54,7 +56,7 @@ from .models import (
 
 
 class UsersDatabaseRepository(UsersRepository):
-    class Config(PostgresRepositoryConfig):
+    class RepositoryConfig(PostgresRepositoryConfig):
         def __init__(self):
             super().__init__(
                 model=UserDatabaseModel,
@@ -80,10 +82,11 @@ class UsersDatabaseRepository(UsersRepository):
         def get_options(self) -> list[LoaderOption]:
             return [selectinload(self.model.settings)]
 
-    def __init__(self, session: AsyncSession):
-        self.__config = self.Config()
+    def __init__(self, session: AsyncSession, config: Config):
+        self.__config = self.RepositoryConfig()
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
+        self.__const = config
 
     async def read_all(self, dto: dtos.ReadAllUsersDto) -> list[entities.User]:
         return await self.__repository.read_all(dto)
@@ -105,6 +108,9 @@ class UsersDatabaseRepository(UsersRepository):
         ):
             return self.__config.model_mapper(model)
         raise self.__config.not_found_exception
+
+    async def get_super_user(self) -> User:
+        return await self.read_by_email(self.__const.admin_username)
 
     async def update(self, user: User) -> User:
         return await self.__repository.update(user)

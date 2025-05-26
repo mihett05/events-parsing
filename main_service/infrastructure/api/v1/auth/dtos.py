@@ -7,7 +7,6 @@ class CreateUserModelDto(CamelModel):
     email: EmailStr
     password: str
     fullname: str = ""
-    is_active: bool = True
 
 
 class AuthenticateUserModelDto(CamelModel):

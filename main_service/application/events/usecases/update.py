@@ -38,6 +38,6 @@ class UpdateEventUseCase:
 
             event.title = dto.title
             event.description = dto.description
-            if dto.is_visible_status:
+            if dto.is_visible_status is not None:
                 event.is_visible = dto.is_visible_status
             return await self.__repository.update(event)

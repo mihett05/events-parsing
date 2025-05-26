@@ -36,3 +36,4 @@ class EventInfo:
     format: EventFormatEnum
     location: str | None
     organization_name: str | None
+    is_visible: bool = True
