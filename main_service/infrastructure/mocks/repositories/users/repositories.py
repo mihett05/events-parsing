@@ -25,11 +25,12 @@ from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
 )
-
+from infrastructure import config
 from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
+
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(
@@ -38,8 +39,9 @@ class UsersMemoryRepository(UsersRepository):
                 already_exists_exception=UserAlreadyExistsError,
             )
 
-    def __init__(self):
+    def __init__(self, cnfg: config.Config):
         self.__next_id = 1
+        self.__config = cnfg
         self.__repository = MockRepository(self.Config())
 
     async def read_by_email(self, email: str) -> User:
@@ -48,6 +50,9 @@ class UsersMemoryRepository(UsersRepository):
             if user.email == email:
                 return user
         raise UserNotFoundError()
+
+    async def get_super_user(self) -> User:
+        return await self.read_by_email(self.__config.admin_username)
 
     async def create(self, dto: CreateUserWithPasswordDto) -> User:
         user = User(

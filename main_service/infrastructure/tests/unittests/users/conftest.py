@@ -51,7 +51,7 @@ async def update_user_role_dto(
     return UserOrganizationRole(
         user_id=get_user_entity.id,
         organization_id=get_admin_organization.id,
-        role=RoleEnum.OWNER,
+        role=RoleEnum.REDACTOR,
     )
 
 

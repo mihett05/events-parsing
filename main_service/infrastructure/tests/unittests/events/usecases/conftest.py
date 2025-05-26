@@ -7,6 +7,14 @@ from domain.users.entities import User
 
 
 @pytest_asyncio.fixture
+async def create_event_usecase(
+    container: AsyncContainer,
+) -> usecases.CreateEventUseCase:
+    async with container() as nested:
+        yield await nested.get(usecases.CreateEventUseCase)
+
+
+@pytest_asyncio.fixture
 async def read_event_usecase(
     container: AsyncContainer,
 ) -> usecases.ReadEventUseCase:

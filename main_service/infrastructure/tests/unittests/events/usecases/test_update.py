@@ -12,10 +12,10 @@ from domain.users.entities import User
 async def test_update_success(
     update_event_usecase: UpdateEventUseCase,
     update_event_dto: UpdateEventDto,
-    create_event: Event,
+    get_admin_event: Event,
     get_admin: User,
 ):
-    create_event = copy(create_event)
+    create_event = copy(get_admin_event)
     event = await update_event_usecase(update_event_dto, get_admin)
 
     assert event.title != create_event.title

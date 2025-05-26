@@ -26,6 +26,7 @@ class CreateEventModelDto(CamelModel):
     start_date: datetime
     end_registration: datetime
     organization_id: int | None
+    is_visible: bool = True
 
     @model_validator(mode="after")
     def _check_dates_period(self):
