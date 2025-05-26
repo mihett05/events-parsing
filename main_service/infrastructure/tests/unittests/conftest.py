@@ -103,9 +103,9 @@ async def roles_repository(
 
 @pytest_asyncio.fixture(scope="function")
 async def organizations_repository(
-        setup_data,
-        prepare,
-        container: AsyncContainer,
+    setup_data,
+    prepare,
+    container: AsyncContainer,
 ) -> auth_usecases.RegisterUseCase:
     async with container() as nested:
         yield await nested.get(OrganizationsRepository)

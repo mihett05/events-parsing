@@ -1,6 +1,13 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import datetime
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
+
+
+class CamelModel(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
 
 class EventTypeEnum(Enum):
@@ -17,19 +24,28 @@ class EventFormatEnum(Enum):
     OTHER = "Другое"
 
 
-@dataclass
-class DatesInfo:
-    start_date: str | None
+class MailModel(CamelModel):
+    id: int
+    theme: str
+    sender: str
+    received_date: date
+
+    raw_content: bytes
+
+    attachments: list[str]
+
+
+class DatesInfoModel(CamelModel):
+    start_date: str
     end_date: str | None
     end_registration: str | None
 
 
-@dataclass
-class EventInfo:
+class EventInfoModel(CamelModel):
     mail_id: int | None
     title: str
     description: str | None
-    dates: DatesInfo
+    dates: DatesInfoModel
     type: EventTypeEnum
     format: EventFormatEnum
     location: str | None
@@ -40,7 +56,7 @@ class EventInfo:
 class Event:
     title: str
     location: str | None
-    start_date: date
+    start_date: datetime
 
     type: EventTypeEnum = EventTypeEnum.OTHER
     format: EventFormatEnum = EventFormatEnum.OTHER
@@ -49,6 +65,6 @@ class Event:
     is_visible: bool = True
     description: str | None = None
 
-    end_date: date | None = None
-    created_at: date | None = None
+    end_date: datetime | None = None
+    created_at: datetime | None = None
     end_registration: datetime | None = None
