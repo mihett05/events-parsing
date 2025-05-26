@@ -4,13 +4,13 @@ from typing import Iterator
 
 import requests
 from bs4 import BeautifulSoup
-from models import EventInfo
+from models import EventInfoModel
 from pipeline import extract_list
 
 URL = "https://www.хакатоны.рф/"
 
 
-def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfo]:
+def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfoModel]:
     response = requests.get(url)
     response.raise_for_status()
 
@@ -44,7 +44,7 @@ def parser(url: str = URL, stop_year: int = 2020) -> Iterator[EventInfo]:
                     text += add_part
 
 
-def write(data: list[EventInfo]):
+def write(data: list[EventInfoModel]):
     with open("output.json", "w", encoding="utf8") as file:
         events = list(map(asdict, data))
         json.dump(events, file, ensure_ascii=False, indent=4)

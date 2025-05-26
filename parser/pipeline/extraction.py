@@ -2,7 +2,7 @@ import json
 import re
 
 from config import get_config
-from models import DatesInfo, EventInfo
+from models import DatesInfo, DatesInfoModel, EventInfoModel
 from openai import OpenAI
 
 config = get_config()
@@ -19,7 +19,7 @@ class OpenAiExtraction:
         self.model = model
         self.init_prompt = init_prompt
 
-    def extract(self, text: str) -> EventInfo:
+    def extract(self, text: str) -> EventInfoModel:
         completion = self.client.chat.completions.create(
             extra_body={},
             model=self.model,
@@ -32,15 +32,18 @@ class OpenAiExtraction:
 
         return self.parse_response(response)
 
-    def parse_response(self, response: str) -> EventInfo:  # noqa
+    def parse_response(self, response: str) -> EventInfoModel:  # noqa
         response_dict = json.loads(
             response.replace("```", "").replace("json", "").strip()
         )
-        return EventInfo(
-            **{**response_dict, "dates": DatesInfo(**response_dict["dates"])}
+        return EventInfoModel(
+            **{
+                **response_dict,
+                "dates": DatesInfoModel(**response_dict["dates"]),
+            }
         )
 
-    def extract_list(self, text: str) -> list[EventInfo]:
+    def extract_list(self, text: str) -> list[EventInfoModel]:
         result = []
         completion = self.client.chat.completions.create(
             extra_body={},
@@ -62,7 +65,7 @@ class OpenAiExtraction:
             return result
         for item in response_dict:
             try:
-                event = EventInfo(
+                event = EventInfoModel(
                     **{**item, "dates": DatesInfo(**item["dates"])}
                 )
                 if event.location == "null":
@@ -104,9 +107,9 @@ api = OpenAiExtraction(
 )
 
 
-def extract_features(text: str) -> EventInfo:
+def extract_features(text: str) -> EventInfoModel:
     return api.extract(text)
 
 
-def extract_list(text: str) -> list[EventInfo]:
+def extract_list(text: str) -> list[EventInfoModel]:
     return api.extract_list(text)

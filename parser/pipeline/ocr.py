@@ -1,5 +1,6 @@
 import io
 import os
+import sys
 
 import cv2
 import fitz
@@ -35,8 +36,8 @@ def pdf_to_text_with_ocr(pdf_url, output_dir="output"):
     base_name = os.path.splitext(os.path.basename(pdf_url))[0]
     output_txt_path = os.path.join(output_dir, f"{base_name}_ocr.txt")
 
-    response = requests.get(pdf_url)
-    pdf_data = io.BytesIO(response.content)
+    with open(pdf_url, "rb") as f:
+        pdf_data = io.BytesIO(f.read())
     pdf_document = fitz.open(stream=pdf_data, filetype="pdf")
 
     extracted_text = ""
@@ -47,7 +48,9 @@ def pdf_to_text_with_ocr(pdf_url, output_dir="output"):
         img = Image.open(io.BytesIO(img_bytes))
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        thresh = cv2.threshold(
+            gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+        )[1]
         custom_config = r"--oem 3 --psm 6"
         page_text = pytesseract.image_to_string(
             thresh, config=custom_config, lang="eng+rus"
@@ -106,3 +109,8 @@ def process_files(file_list, output_dir="output_texts"):
         output_path = os.path.join(output_dir, filename)
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(text)
+
+
+if __name__ == "__main__":
+    file_list = sys.argv[1:]
+    process_files(file_list)
