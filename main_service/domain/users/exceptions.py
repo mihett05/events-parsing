@@ -50,3 +50,8 @@ class UserRoleNotFoundError(EntityNotFoundError):
 class CalendarUUIDNotFoundError(EntityNotFoundError):
     def __init__(self):
         super().__init__(User)
+
+
+class TelegramNotConnectedError(EntityException):
+    def __init__(self):
+        super().__init__("Telegram not connected")

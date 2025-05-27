@@ -35,6 +35,13 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     def get_select_all_query(self, _: Any) -> Select:
         return select(self.model).order_by(self.model.id)
 
+    def get_insert_many_query(self, models: list[ModelType]) -> Insert:
+        return (
+            insert(self.model)
+            .values(list(map(self._model_to_dict, models)))
+            .returning(self.model)
+        )
+
     def _add_where_id(
         self, statement: Select | Update | Delete, model_id: Id
     ) -> Select | Update | Delete:
@@ -52,6 +59,14 @@ class PostgresRepositoryConfig(Generic[ModelType, Entity, Id]):
     def get_options(self) -> list[LoaderOption]:
         return []
 
+    @staticmethod
+    def _model_to_dict(model: ModelType) -> dict:
+        return {
+            column.key: getattr(model, column.key)
+            for column in model.__table__.columns
+            if getattr(model, column.key) is not None
+        }
+
 
 class PostgresRepository(metaclass=ABCMeta):
     config: PostgresRepositoryConfig
@@ -62,11 +77,7 @@ class PostgresRepository(metaclass=ABCMeta):
 
     async def __create_models(self, models: list[ModelType]) -> list[Entity]:
         try:
-            query = (
-                insert(self.config.model)
-                .values(list(map(self.__model_to_dict, models)))
-                .returning(self.config.model)
-            )
+            query = self.config.get_insert_many_query(models)
             return await self.get_entities_from_query(query)
         except IntegrityError:
             traceback.print_exc()
@@ -149,11 +160,3 @@ class PostgresRepository(metaclass=ABCMeta):
 
     def __should_commit(self) -> bool:
         return not self.session.in_nested_transaction()
-
-    @staticmethod
-    def __model_to_dict(model: ModelType) -> dict:
-        return {
-            column.key: getattr(model, column.key)
-            for column in model.__table__.columns
-            if getattr(model, column.key) is not None
-        }

@@ -13,7 +13,7 @@ from domain.exceptions import (
     EntityNotFoundError,
     InvalidEntityPeriodError,
 )
-from domain.users.exceptions import UserNotValidated
+from domain.users.exceptions import TelegramNotConnectedError, UserNotValidated
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -151,6 +151,12 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"message": str(exc)}
+        )
+
+    @app.exception_handler(TelegramNotConnectedError)
+    async def telegram_not_connected(_: Request, exc: TelegramNotConnectedError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)}
         )
 
     if not os.path.exists("static"):

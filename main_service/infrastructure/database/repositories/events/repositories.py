@@ -132,9 +132,10 @@ class EventsDatabaseRepository(EventsRepository):
                 .where(self.model.start_date == dto.start_date)
             )
             if dto.for_update:
-                query = query.with_for_update(skip_locked=True)
-
-            return query
+                query = query.with_for_update(of=self.model, skip_locked=True)
+            if dto.add_members:
+                query = query.options(*self.get_options_with_members())
+            return self.__add_offset_to_query(query, dto)
 
         def get_select_all_feed_query(self, dto: dtos.ReadAllEventsFeedDto) -> Select:
             """Формирует запрос для ленты событий с расширенными фильтрами."""
@@ -206,7 +207,11 @@ class EventsDatabaseRepository(EventsRepository):
             return query.where(self.model.format == dto.format)
 
         def __add_offset_to_query(
-            self, query, dto: dtos.ReadAllEventsFeedDto | dtos.ReadUserEventsDto
+            self,
+            query,
+            dto: dtos.ReadAllEventsFeedDto
+            | dtos.ReadUserEventsDto
+            | dtos.ReadAllEventsDto,
         ) -> Select:
             """Добавляет пагинацию к SQL-запросу."""
 
@@ -259,7 +264,11 @@ class EventsDatabaseRepository(EventsRepository):
         """Возвращает список событий с базовой фильтрацией."""
 
         query = self.config.get_select_all_query(dto)
-        return await self.__repository.get_entities_from_query(query)
+        result = await self.__repository.session.scalars(self.config.add_options(query))
+        return [
+            self.config.entity_mapper(model, dto.add_members)
+            for model in result.unique().all()
+        ]  # noqa
 
     async def read_for_feed(self, dto: dtos.ReadAllEventsFeedDto) -> list[Event]:
         """Возвращает список событий для ленты с расширенными фильтрами."""

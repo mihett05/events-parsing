@@ -6,10 +6,11 @@ from domain.notifications.exceptions import (
     NotificationNotFoundError,
 )
 from domain.notifications.repositories import NotificationsRepository
-from sqlalchemy import Select, select, update
+from sqlalchemy import Insert, Select, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..repository import PostgresRepository, PostgresRepositoryConfig
+from ..repository import ModelType, PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import NotificationDatabaseModel
 
@@ -56,6 +57,16 @@ class NotificationsDatabaseRepository(NotificationsRepository):
                 query = query.with_for_update(skip_locked=True)
 
             return query
+
+        def get_insert_many_query(self, models: list[ModelType]) -> Insert:
+            return (
+                insert(self.model)
+                .values(list(map(self._model_to_dict, models)))
+                .on_conflict_do_nothing(
+                    index_elements=["event_id", "recipient_id", "send_date"]
+                )
+                .returning(self.model)
+            )
 
     def __init__(self, session: AsyncSession):
         self.__session = session
