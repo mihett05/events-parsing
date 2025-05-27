@@ -41,7 +41,7 @@ subscribe_queue = RabbitQueue(
 
 async def start_parsing():
     for event in parse_data():
-        await broker.publish(asdict(event), publish_queue, exchange=exchange)
+        await broker.publish(event, publish_queue, exchange=exchange)
 
 
 @app.after_startup
@@ -55,4 +55,4 @@ async def handle(message: MailModel):
     if result is None:
         return
 
-    await broker.publish(asdict(result), publish_queue)
+    await broker.publish(result, publish_queue)
