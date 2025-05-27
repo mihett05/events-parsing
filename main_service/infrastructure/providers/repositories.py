@@ -36,6 +36,14 @@ from infrastructure.database.repositories.users import (
 
 
 class RepositoriesProvider(Provider):
+    """
+    Провайдер зависимостей для всех репозиториев приложения.
+
+    Обеспечивает доступ к репозиториям базы данных с областью видимости
+    на уровне запроса (REQUEST). Каждый репозиторий предоставляется
+    как реализация соответствующего интерфейса.
+    """
+
     scope = Scope.REQUEST
     attachments_repository = provide(
         source=AttachmentsDatabaseRepository, provides=AttachmentsRepository

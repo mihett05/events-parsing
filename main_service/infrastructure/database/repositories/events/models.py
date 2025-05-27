@@ -16,6 +16,12 @@ from infrastructure.database.repositories.users import UserDatabaseModel
 
 
 class EventDatabaseModel(Base):
+    """Модель базы данных для хранения информации о событиях.
+
+    Содержит основные атрибуты события, включая даты, формат, тип,
+    организацию и связанные сущности.
+    """
+
     __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -51,6 +57,11 @@ class EventDatabaseModel(Base):
 
 
 class EventUserDatabaseModel(Base):
+    """Модель базы данных для связи между событиями и пользователями.
+
+    Реализует отношение многие-ко-многим между событиями и участниками.
+    """
+
     __tablename__ = "event_users"
 
     event_id: Mapped[int] = mapped_column(

@@ -26,10 +26,16 @@ queue = RabbitQueue(
 
 
 class RabbitMQCoordinatorGateway(CoordinatorGateway):
+    """Шлюз для координации событий через RabbitMQ."""
+
     def __init__(self, broker: RabbitBroker):
+        """Инициализирует шлюз с подключением к брокеру сообщений."""
+
         self.__broker = broker
 
     async def run(self, mails: list[Mail]):
+        """Асинхронно публикует список писем в очередь обработки."""
+
         await asyncio.gather(
             *[
                 self.__broker.publish(

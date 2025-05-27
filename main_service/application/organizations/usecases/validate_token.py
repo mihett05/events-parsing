@@ -13,6 +13,13 @@ from application.transactions import TransactionsGateway
 
 
 class ValidateOrganizationTokenUseCase:
+    """
+    Реализует бизнес-логику валидации токена организации.
+
+    Обеспечивает проверку токена на возможность использования,
+    включая проверку его существования и статуса активности.
+    """
+
     def __init__(
         self,
         transaction: TransactionsGateway,
@@ -20,12 +27,20 @@ class ValidateOrganizationTokenUseCase:
         read_use_case: ReadOrganizationTokenUseCase,
         users_repository: UsersRepository,
     ):
+        """
+        Инициализирует сценарий валидации токена.
+        """
+
         self.__transaction = transaction
         self.__repository = repository
         self.__read_use_case = read_use_case
         self.__users_repository = users_repository
 
     async def __call__(self, token_id: UUID, actor: User) -> bool:
+        """
+        Выполняет проверку валидности токена организации.
+        """
+
         async with self.__transaction.nested():
             try:
                 super_user = await self.__users_repository.get_super_user()

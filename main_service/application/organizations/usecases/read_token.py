@@ -13,17 +13,32 @@ from application.organizations.permissions import (
 
 
 class ReadOrganizationTokenUseCase:
+    """
+    Сценарий получения конкретного токена организации.
+
+    Обеспечивает доступ к токену с проверкой прав доступа
+    на чтение организационных ссылок.
+    """
+
     def __init__(
         self,
         repository: OrganizationTokensRepository,
         permission_builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """
+        Инициализирует сценарий работы с организацией.
+        """
+
         self.__repository = repository
         self.__builder = permission_builder
         self.__role_getter = role_getter
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
+        """
+        Основная точка входа для выполнения сценария.
+        """
+
         actor_role = await self.__role_getter(actor)
         self.__builder.providers(OrganizationLinkPermissionProvider(actor_role)).add(
             PermissionsEnum.CAN_READ_ORGANIZATION_LINK

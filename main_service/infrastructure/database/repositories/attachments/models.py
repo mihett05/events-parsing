@@ -8,6 +8,8 @@ from infrastructure.database.postgres import Base
 
 
 class AttachmentDatabaseModel(Base):
+    """Модель базы данных для хранения вложений."""
+
     __tablename__ = "attachments"
     __table_args__ = (
         CheckConstraint(

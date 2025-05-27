@@ -10,6 +10,11 @@ from infrastructure.database.postgres import Base
 
 
 class UserSettingsDatabaseModel(Base):
+    """
+    Модель базы данных для хранения настроек пользователя.
+    Включает предпочтительный способ получения уведомлений и идентификатор календаря.
+    """
+
     __tablename__ = "user_settings"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -23,6 +28,11 @@ class UserSettingsDatabaseModel(Base):
 
 
 class UserDatabaseModel(Base):
+    """
+    Основная модель пользователя в базе данных.
+    Содержит учетные данные, контактные данные и настройки пользователя.
+    """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -46,6 +56,11 @@ class UserDatabaseModel(Base):
 
 
 class UserOrganizationRoleDatabaseModel(Base):
+    """
+    Модель для хранения ролей пользователей в организациях.
+    Реализует связь многие-ко-многим между пользователями и организациями.
+    """
+
     __tablename__ = "user_organization_role"
 
     organization_id: Mapped[int] = mapped_column(
@@ -60,6 +75,11 @@ class UserOrganizationRoleDatabaseModel(Base):
 
 
 class TelegramTokenDatabaseModel(Base):
+    """
+    Модель для хранения токенов привязки Telegram-аккаунтов.
+    Содержит информацию о использовании и времени создания токена.
+    """
+
     __tablename__ = "telegram_tokens"
 
     id: Mapped[UUID] = mapped_column(primary_key=True)
@@ -73,6 +93,11 @@ class TelegramTokenDatabaseModel(Base):
 
 
 class UserActivationTokenDatabaseModel(Base):
+    """
+    Модель для хранения токенов активации пользователей.
+    Связана с пользователем и содержит статус использования токена.
+    """
+
     __tablename__ = "user_activation_tokens"
 
     id: Mapped[UUID] = mapped_column(primary_key=True)

@@ -30,14 +30,19 @@ from infrastructure.rabbit.events import (
 
 
 class GatewaysProvider(Provider):
+    """Провайдер зависимостей для всех шлюзов приложения."""
+
     scope = Scope.APP
 
     @provide
     def broker(self, config: Config) -> RabbitBroker:
+        """Предоставляет брокер RabbitMQ для работы с очередями сообщений."""
         return RabbitBroker(config.rabbitmq_url, log_level=logging.DEBUG)
 
     @provide
     def minio(self, config: Config) -> Minio:
+        """Предоставляет клиент MinIO для работы с объектным хранилищем."""
+
         return Minio(
             endpoint=config.minio_url,
             access_key=config.minio_root_user,
@@ -47,6 +52,8 @@ class GatewaysProvider(Provider):
 
     @provide
     async def emails_gateway(self, config: Config) -> AsyncIterable[EmailsGateway]:
+        """Предоставляет шлюз для работы с входящими email через IMAP."""
+
         async with ImapEmailsGateway(
             imap_server=config.imap_server,
             imap_username=config.imap_username,
@@ -58,6 +65,8 @@ class GatewaysProvider(Provider):
     async def notification_email_gateway(
         self, config: Config
     ) -> AsyncIterable[NotificationEmailGateway]:
+        """Предоставляет шлюз для отправки email-уведомлений через SMTP."""
+
         async with NotificationEmailGateway(
             smtp_server=config.smtp_server,
             smtp_port=config.smtp_port,

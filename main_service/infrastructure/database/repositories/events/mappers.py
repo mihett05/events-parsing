@@ -49,6 +49,12 @@ def map_from_db(
 ) -> Event: ...
 
 
+"""Преобразует модель события из базы данных в доменную сущность.
+
+При is_greed=True дополнительно загружает связанных пользователей.
+"""
+
+
 map_to_db = retort.get_converter(
     Event,
     EventDatabaseModel,
@@ -65,6 +71,8 @@ map_to_db = retort.get_converter(
         coercer(User, UserDatabaseModel, user_map_to_db),
     ],
 )
+"""Конвертер для преобразования доменной сущности события в модель базы данных."""
+
 
 map_create_dto_to_model = retort.get_converter(
     CreateEventDto,
@@ -81,6 +89,7 @@ map_create_dto_to_model = retort.get_converter(
         ),
     ],
 )
+"""Конвертер для преобразования DTO создания события в модель базы данных."""
 
 event_user_map_from_db = retort.get_converter(
     EventUserDatabaseModel,
@@ -90,6 +99,7 @@ event_user_map_from_db = retort.get_converter(
         coercer(EventDatabaseModel, Event, map_from_db),
     ],
 )
+"""Конвертер для преобразования модели связи пользователя и события из базы данных в доменную сущность."""
 
 event_user_map_to_db = retort.get_converter(
     EventUser,
@@ -99,6 +109,7 @@ event_user_map_to_db = retort.get_converter(
         coercer(Event, EventDatabaseModel, map_to_db),
     ],
 )
+"""Конвертер для преобразования доменной сущности связи пользователя и события в модель базы данных."""
 
 event_user_map_dto = retort.get_converter(
     CreateEventUserDto,
@@ -108,3 +119,4 @@ event_user_map_dto = retort.get_converter(
         allow_unlinked_optional(P[EventUserDatabaseModel].event),
     ],
 )
+"""Конвертер для преобразования DTO создания связи пользователя и события в модель базы данных."""

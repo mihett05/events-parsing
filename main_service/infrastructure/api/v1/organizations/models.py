@@ -5,6 +5,10 @@ from infrastructure.api.models import CamelModel
 
 
 class OrganizationModel(CamelModel):
+    """
+    Модель организации для API.
+    """
+
     id: int
     created_at: datetime
     title: str
@@ -12,6 +16,10 @@ class OrganizationModel(CamelModel):
 
 
 class OrganizationTokenModel(CamelModel):
+    """
+    Модель токена организации для API.
+    """
+
     id: UUID
     created_by: int
     used_by: int | None = None

@@ -13,6 +13,14 @@ from application.transactions import TransactionsGateway
 
 
 class UpdateOrganizationTokenUseCase:
+    """
+    Реализует бизнес-логику активации токена организации.
+
+    Инкапсулирует процесс пометки токена как использованного
+    и связывания его с конкретным пользователем,
+    обеспечивая атомарность операций через вложенные транзакции.
+    """
+
     def __init__(
         self,
         transaction: TransactionsGateway,
@@ -21,6 +29,10 @@ class UpdateOrganizationTokenUseCase:
         users_repository: UsersRepository,
         config: Config,
     ):
+        """
+        Инициализирует сценарий обновления токена организации.
+        """
+
         self.__transaction = transaction
         self.__repository = repository
         self.__read_use_case = read_use_case
@@ -28,6 +40,10 @@ class UpdateOrganizationTokenUseCase:
         self.__config = config
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
+        """
+        Выполняет сценарий активации токена организации.
+        """
+
         async with self.__transaction.nested():
             super_user = await self.__users_repository.read_by_email(
                 self.__config.admin_username

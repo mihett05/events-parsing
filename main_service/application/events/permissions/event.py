@@ -7,6 +7,14 @@ from application.auth.permissions import PermissionProvider
 
 
 class EventPermissionProvider(PermissionProvider):
+    """Провайдер прав доступа для работы с событиями.
+
+    Определяет набор разрешений для различных ролей пользователей,
+    учитывая видимость события и принадлежность к организации.
+    Реализует логику предоставления прав для публичных событий
+    и расширенных прав для административных ролей.
+    """
+
     __maximum_perms = {
         PermissionsEnum.CAN_CREATE_EVENT,
         PermissionsEnum.CAN_DELETE_EVENT,
@@ -33,6 +41,10 @@ class EventPermissionProvider(PermissionProvider):
         user_role: UserOrganizationRole,
         event: Event | None = None,
     ):
+        """Инициализирует провайдер с указанием организации, роли пользователя
+        и опционального события.
+        """
+
         self.permissions = self.__get_perms(organization_id, user_role, event)
 
     def __get_perms(
@@ -41,6 +53,8 @@ class EventPermissionProvider(PermissionProvider):
         user_role: UserOrganizationRole,
         event: Event | None = None,
     ) -> set[PermissionsEnum]:
+        """Определяет набор разрешений на основе роли пользователя и контекста события."""
+
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
         if event and event.is_visible:
             result |= self.__public_event_permissions
@@ -52,4 +66,6 @@ class EventPermissionProvider(PermissionProvider):
         return result
 
     def __call__(self) -> set[PermissionsEnum]:
+        """Возвращает набор разрешений для текущего контекста доступа."""
+
         return self.permissions
