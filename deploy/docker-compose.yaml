@@ -8,6 +8,19 @@ services:
       - registry
     volumes:
       - registry-data:/var/lib/registry
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+  
+  registry_cleanup:
+    image: docker:cli
+    volumes:
+      - ./cleanup.sh:/cleanup.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: sh -c "chmod +x /cleanup.sh && /cleanup.sh"
+    networks:
+      - registry
+    depends_on:
+      - registry
 
   postgres:
     image: postgres:17

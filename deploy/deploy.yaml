@@ -60,6 +60,13 @@
         owner: web
         group: web
         mode: "0777"
+    - name: Copy cleanup script
+      ansible.builtin.copy:
+        src: ./cleanup.sh
+        dest: /var/www/events/cleanup.sh
+        owner: web
+        group: web
+        mode: "0777"
     - name: Run compose
       community.docker.docker_compose_v2:
         project_src: /var/www/events
