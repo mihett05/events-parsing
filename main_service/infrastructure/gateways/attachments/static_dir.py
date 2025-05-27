@@ -11,6 +11,13 @@ from domain.attachments.exceptions import (
 
 
 class StaticDirFilesGateway(FilesGateway):
+    """
+    Реализация шлюза для работы с файлами в локальной файловой системе.
+
+    Обеспечивает хранение файлов вложений в указанной директории,
+    включая операции создания, удаления и получения ссылок на файлы.
+    """
+
     def __init__(self, base_path: Path, prefix: str = "attachments"):
         self.base_path = base_path / prefix
         if not self.base_path.exists():

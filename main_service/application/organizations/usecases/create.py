@@ -17,6 +17,10 @@ from application.users.usecases import CreateUserRoleUseCase
 
 
 class CreateOrganizationUseCase:
+    """
+    Сценарий создания новой организации.
+    """
+
     def __init__(
         self,
         repository: OrganizationsRepository,
@@ -25,6 +29,9 @@ class CreateOrganizationUseCase:
         roles_repository: UserOrganizationRolesRepository,
         transaction: TransactionsGateway,
     ):
+        """
+        Инициализация сценария создания организации.
+        """
         self.__repository = repository
         self.__validate_token_use_case = validate_token_use_case
         self.__update_token_use_case = update_token_use_case
@@ -32,6 +39,10 @@ class CreateOrganizationUseCase:
         self.__transaction = transaction
 
     async def __call__(self, dto: CreateOrganizationDto, actor: User) -> Organization:
+        """
+        Выполняет процесс создания организации.
+        """
+
         async with self.__transaction:
             if not await self.__validate_token_use_case(dto.token, actor):
                 raise OrganizationAccessDenied

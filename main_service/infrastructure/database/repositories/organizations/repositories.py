@@ -36,7 +36,11 @@ from .mappers import (
 
 
 class OrganizationsDatabaseRepository(OrganizationsRepository):
+    """Репозиторий для работы с организациями в базе данных."""
+
     class Config(PostgresRepositoryConfig):
+        """Конфигурация репозитория организаций."""
+
         def __init__(self):
             super().__init__(
                 model=OrganizationDatabaseModel,
@@ -49,45 +53,67 @@ class OrganizationsDatabaseRepository(OrganizationsRepository):
             )
 
         def get_select_all_query(self, dto: dtos.ReadOrganizationsDto) -> Select:
+            """Формирует базовый запрос для получения списка организаций."""
+
             query = select(self.model).order_by(self.model.id)
             return self.__try_add_pagination(query, dto)
 
         def __try_add_pagination(
             self, query: Select, dto: dtos.ReadOrganizationsDto
         ) -> Select:
+            """Добавляет пагинацию к запросу, если указаны параметры страницы."""
+
             if dto.page is None or dto.page_size is None:
                 return query
             return query.offset(dto.page * dto.page_size).limit(dto.page_size)
 
     def __init__(self, session: AsyncSession):
+        """Инициализирует репозиторий с асинхронной сессией БД."""
+
         self.__session = session
         self.__config = self.Config()
         self.__repository = PostgresRepository(session, self.__config)
 
     async def read(self, organization_id: int) -> Organization:
+        """Получает организацию по ID."""
+
         return await self.__repository.read(organization_id)
 
     async def find(self, owner_id: int) -> Organization | None:
+        """Находит организацию по ID владельца."""
+
         query = select(self.__config.model).where(
             self.__config.model.owner_id == owner_id
         )
         return await self.__repository.get_scalar_or_none(query)
 
     async def read_all(self, dto: dtos.ReadOrganizationsDto) -> list[Organization]:
+        """Возвращает список организаций с возможностью пагинации."""
+
         return await self.__repository.read_all(dto)
 
     async def create(self, dto: dtos.CreateOrganizationDto) -> Organization:
+        """Создает новую организацию в БД."""
+
         return await self.__repository.create_from_dto(dto)
 
     async def update(self, organization: Organization) -> Organization:
+        """Обновляет данные организации в БД."""
+
         return await self.__repository.update(organization)
 
     async def delete(self, organization: Organization) -> Organization:
+        """Удаляет организацию из БД."""
+
         return await self.__repository.delete(organization)
 
 
 class OrganizationTokensDatabaseRepository(OrganizationTokensRepository):
+    """Репозиторий для работы с токенами организаций в базе данных."""
+
     class Config(PostgresRepositoryConfig):
+        """Конфигурация репозитория токенов организаций."""
+
         def __init__(self):
             super().__init__(
                 model=OrganizationTokenDatabaseModel,

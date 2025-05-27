@@ -9,6 +9,13 @@ from infrastructure.config import Config
 
 
 class MinioFilesGateway(FilesGateway):
+    """
+    Реализация шлюза для работы с файлами в хранилище MinIO.
+
+    Обеспечивает операции загрузки, удаления и генерации ссылок для файлов,
+    используя MinIO в качестве бэкенд-хранилища.
+    """
+
     def __init__(self, minio: Minio, config: Config):
         self.minio = minio
         self.config = config

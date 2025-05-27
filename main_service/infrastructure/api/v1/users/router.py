@@ -23,6 +23,10 @@ async def read_all_users(
     page: int = 0,
     page_size: int = 50,
 ):
+    """Получает список пользователей с пагинацией.
+
+    По умолчанию возвращает первые 50 пользователей.
+    """
     return map(
         mappers.map_to_pydantic,
         await use_case(ReadAllUsersDto(page=page, page_size=page_size)),
@@ -31,6 +35,8 @@ async def read_all_users(
 
 @router.get("/me", response_model=models.UserModel)
 async def get_me(user: Annotated[User, Depends(get_user)]):
+    """Возвращает данные текущего аутентифицированного пользователя."""
+
     return mappers.map_to_pydantic(user)
 
 
@@ -40,6 +46,8 @@ async def get_me(user: Annotated[User, Depends(get_user)]):
     responses={404: {"model": ErrorModel}},
 )
 async def read_user(user_id: int, use_case: FromDishka[use_cases.ReadUserUseCase]):
+    """Получает данные пользователя по его ID."""
+
     return mappers.map_to_pydantic(await use_case(user_id))
 
 
@@ -53,6 +61,8 @@ async def update_user(
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.UpdateUserUseCase],
 ):
+    """Обновляет данные текущего пользователя."""
+
     return mappers.map_to_pydantic(
         await use_case(mappers.map_update_dto_from_pydantic(dto, actor.id), actor)
     )
@@ -67,6 +77,8 @@ async def delete_user(
     use_case: FromDishka[use_cases.DeleteUserUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаляет текущего пользователя."""
+
     return mappers.map_to_pydantic(await use_case(actor))
 
 
@@ -76,6 +88,8 @@ async def create_telegram_link(
     use_case: FromDishka[use_cases.CreateTelegramTokenUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Создает ссылку для привязки Telegram аккаунта."""
+
     return await use_case((await bot.get_me()).username, actor)
 
 
@@ -89,6 +103,8 @@ async def read_user_role(
     organization_id: int,
     use_case: FromDishka[use_cases.ReadUserRoleUseCase],
 ):
+    """Получает роль пользователя в конкретной организации."""
+
     return mappers.map_role_to_pydantic(await use_case(user_id, organization_id))
 
 
@@ -101,6 +117,8 @@ async def read_user_roles(
     user_id: int,
     use_case: FromDishka[use_cases.ReadUserRolesUseCase],
 ):
+    """Получает все роли пользователя во всех организациях."""
+
     return map(mappers.map_role_to_pydantic, await use_case(user_id))
 
 
@@ -114,6 +132,8 @@ async def create_user_role(
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.CreateUserRoleUseCase],
 ):
+    """Создает новую роль пользователя в организации."""
+
     return mappers.map_role_to_pydantic(
         await use_case(mappers.map_create_role_dto_to_entity(dto), actor)
     )
@@ -129,6 +149,8 @@ async def update_user_role(
     actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.UpdateUserRoleUseCase],
 ):
+    """Обновляет роль пользователя в организации."""
+
     return mappers.map_role_to_pydantic(
         await use_case(mappers.map_update_role_entity_from_pydantic(dto), actor)
     )
@@ -145,6 +167,8 @@ async def delete_user_role(
     use_case: FromDishka[use_cases.DeleteUserRoleUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаляет роль пользователя в организации."""
+
     return mappers.map_role_to_pydantic(
         await use_case(
             mappers.map_delete_role_to_dto(user_id, organization_id),

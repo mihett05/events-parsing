@@ -12,6 +12,12 @@ from application.transactions import TransactionsGateway
 
 
 class UpdateEventUseCase:
+    """Кейс для обновления данных события.
+
+    Инкапсулирует логику изменения параметров события с проверкой прав доступа.
+    Обеспечивает атомарность операции и согласованность данных при обновлении.
+    """
+
     def __init__(
         self,
         repository: EventsRepository,
@@ -20,6 +26,10 @@ class UpdateEventUseCase:
         builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """Инициализирует кейс с зависимостями для работы с событиями,
+        проверки прав доступа и управления транзакциями.
+        """
+
         self.__repository = repository
         self.__transaction = tx
         self.__read_event_use_case = read_event_use_case
@@ -27,6 +37,8 @@ class UpdateEventUseCase:
         self.__role_getter = role_getter
 
     async def __call__(self, dto: UpdateEventDto, actor: User) -> Event:
+        """Выполняет обновление данных события."""
+
         async with self.__transaction:
             event = await self.__read_event_use_case(dto.event_id, actor)
             actor_roles = await self.__role_getter(actor, event.organization_id)

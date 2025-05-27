@@ -10,6 +10,12 @@ from application.transactions import TransactionsGateway
 
 
 class ReadEventUseCase:
+    """Кейс использования для чтения информации о событии.
+
+    Обеспечивает получение данных о событии с проверкой прав доступа.
+    Реализует механизм контроля разрешений через PermissionBuilder.
+    """
+
     def __init__(
         self,
         transaction: TransactionsGateway,
@@ -17,12 +23,20 @@ class ReadEventUseCase:
         builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """Инициализирует зависимости"""
+
         self.__transaction = transaction
         self.__repository = repository
         self.__builder = builder
         self.__role_getter = role_getter
 
     async def __call__(self, event_id: int, actor: User) -> Event:
+        """Основной метод получения события.
+
+        Получает событие из репозитория, определяет роль пользователя
+        в организации события и проверяет наличие прав на чтение.
+        """
+
         event = await self.__repository.read(event_id)
         actor_role = await self.__role_getter(actor, event.organization_id)
         self.__builder.providers(

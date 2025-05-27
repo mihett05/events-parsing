@@ -12,6 +12,13 @@ from infrastructure.gateways.notifications.gateways.telegram import (
 
 
 class NotificationGatewayFactory(NotificationGatewayAbstractFactory):
+    """
+    Фабрика для получения шлюза уведомлений в зависимости от предпочтений пользователя.
+
+    Предоставляет соответствующий шлюз (email или telegram) на основе настроек пользователя
+    или переопределенного типа доставки.
+    """
+
     def __init__(
         self,
         telegram: NotificationTelegramGateway,
@@ -25,4 +32,6 @@ class NotificationGatewayFactory(NotificationGatewayAbstractFactory):
     def get(
         self, user: User, *, override: UserNotificationSendToEnum = None
     ) -> NotificationGateway:
+        """Возвращает шлюз уведомлений для указанного пользователя."""
+
         return self.__gateways[override or user.settings.type]
