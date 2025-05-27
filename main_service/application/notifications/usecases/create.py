@@ -7,6 +7,12 @@ from domain.notifications.repositories import NotificationsRepository
 
 
 class CreateNotificationUseCase:
+    """
+    Юзкейс создания уведомлений о событии.
+
+    Инкапсулирует логику формирования и сохранения уведомлений для участников события.
+    Использует шаблоны для генерации текста уведомлений в разных форматах.
+    """
     # TODO: Надо вынести шаблончик в сущность (с юзкейсами, инфрой и прочей херней)
     #  Чтобы у нас это можно было редактировать в админке
     __templates: dict[NotificationFormatEnum, str] = {
@@ -20,14 +26,26 @@ class CreateNotificationUseCase:
     }
 
     def __init__(self, repository: NotificationsRepository):
+        """
+        Инициализирует юзкейс с репозиторием для работы с уведомлениями.
+        """
+
         self.__repository = repository
 
     async def __call__(self, event: Event, send_date: date) -> Notification:
+        """
+        Основной метод юзкейса, запускающий процесс создания уведомлений.
+        """
+
         return await self.__repository.create_many(
             await self.__create(event, send_date)
         )
 
     async def __create(self, event: Event, send_date: date) -> list[Notification]:
+        """
+        Формирует список уведомлений для всех участников события.
+        """
+
         return [
             Notification(
                 text=self.__templates[NotificationFormatEnum.RAW_TEXT].format(

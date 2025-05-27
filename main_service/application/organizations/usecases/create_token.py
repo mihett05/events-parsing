@@ -13,6 +13,12 @@ from application.transactions import TransactionsGateway
 
 
 class CreateOrganizationTokenUseCase:
+    """Сценарий создания токена организации.
+
+    Обеспечивает процесс генерации токена для организации с проверкой прав доступа.
+    Используется для создания уникальной ссылки-приглашения.
+    """
+
     def __init__(
         self,
         repository: OrganizationTokensRepository,
@@ -20,12 +26,17 @@ class CreateOrganizationTokenUseCase:
         transaction: TransactionsGateway,
         role_getter: RoleGetter,
     ):
+        """
+        Инициализация сценария.
+        """
         self.__repository = repository
         self.__builder = permission_builder
         self.__transaction = transaction
         self.__role_getter = role_getter
 
     async def __call__(self, actor: User) -> OrganizationToken:
+        """Выполнение сценария.
+        """
         async with self.__transaction:
             role = await self.__role_getter(actor)
             self.__builder.providers(OrganizationLinkPermissionProvider(role)).add(

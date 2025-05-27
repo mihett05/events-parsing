@@ -17,6 +17,10 @@ from application.transactions import TransactionsGateway
 
 
 class DeleteOrganizationTokenUseCase:
+    """Сценарий удаления токена организации.
+    Обеспечивает безопасное удаление токена-приглашения в организацию
+    с проверкой прав доступа инициатора операции.
+    """
     def __init__(
         self,
         repository: OrganizationTokensRepository,
@@ -25,6 +29,9 @@ class DeleteOrganizationTokenUseCase:
         permission_builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """
+        Инициализация зависимостей сценария.
+        """
         self.__repository = repository
         self.__transaction = transaction
         self.__read_use_case = read_use_case
@@ -32,6 +39,9 @@ class DeleteOrganizationTokenUseCase:
         self.__role_getter = role_getter
 
     async def __call__(self, token_id: UUID, actor: User) -> OrganizationToken:
+        """
+        Выполнение операции удаления токена.
+        """
         async with self.__transaction:
             actor_role = await self.__role_getter(actor)
             self.__builder.providers(
