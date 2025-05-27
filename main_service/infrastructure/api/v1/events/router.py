@@ -18,6 +18,7 @@ from domain.events.enums import EventFormatEnum, EventTypeEnum
 from domain.organizations.dtos import ReadOrganizationsDto
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
+from fastapi.responses import Response
 
 import infrastructure.api.v1.events.dtos as dtos
 import infrastructure.api.v1.events.mappers as mappers
@@ -106,7 +107,9 @@ async def read_ical(
 ):
     """Получение событий в формате iCalendar по UUID подписки."""
 
-    return mappers.map_to_ics(await use_case(uuid))
+    return Response(
+        content=mappers.map_to_ics(await use_case(uuid)), media_type="text/calendar"
+    )
 
 
 @router.get("/subscribe/my", response_model=list[models.EventModel])
