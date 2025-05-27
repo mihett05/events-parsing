@@ -8,6 +8,7 @@ class ReadOrganizationUseCase:
 
     Обеспечивает получение данных организации по идентификатору.
     """
+
     def __init__(self, repository: OrganizationsRepository):
         """
         Инициализирует сценарий работы с организацией.

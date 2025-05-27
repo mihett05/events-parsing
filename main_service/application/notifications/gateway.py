@@ -23,6 +23,7 @@ class NotificationGateway(metaclass=ABCMeta):
 
     @abstractmethod
     async def __aenter__(self) -> "NotificationGateway": ...
+
     """
     Вход в асинхронный контекстный менеджер.
     """

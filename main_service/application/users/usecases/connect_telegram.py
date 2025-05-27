@@ -14,6 +14,13 @@ from application.users.usecases.update import UpdateUserUseCase
 
 
 class ConnectTelegramUseCase:
+    """Кейс для привязки Telegram-аккаунта к пользователю.
+
+    Обеспечивает процесс связывания учетной записи пользователя
+    с Telegram-аккаунтом через верификационный токен.
+    Выполняется с повышенными правами администратора.
+    """
+
     def __init__(
         self,
         repository: TelegramTokensRepository,
@@ -23,6 +30,10 @@ class ConnectTelegramUseCase:
         users_repository: UsersRepository,
         config: Config,
     ):
+        """Инициализирует зависимости для работы с токенами,
+        пользователями и выполнения операций в транзакции.
+        """
+
         self.__transaction = transaction
         self.__repository = repository
         self.__update_user_use_case = update_user_use_case
@@ -31,6 +42,13 @@ class ConnectTelegramUseCase:
         self.__config = config
 
     async def __call__(self, token_id: UUID, telegram_id: int):
+        """Выполняет привязку Telegram-аккаунта к пользователю.
+
+        Проверяет валидность токена, обновляет данные пользователя
+        через администратора и помечает токен как использованный.
+        Вся операция выполняется в транзакции для обеспечения целостности.
+        """
+
         async with self.__transaction.nested():
             try:
                 token = await self.__read_token_use_case(token_id)

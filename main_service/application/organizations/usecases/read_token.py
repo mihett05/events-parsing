@@ -19,6 +19,7 @@ class ReadOrganizationTokenUseCase:
     Обеспечивает доступ к токену с проверкой прав доступа
     на чтение организационных ссылок.
     """
+
     def __init__(
         self,
         repository: OrganizationTokensRepository,

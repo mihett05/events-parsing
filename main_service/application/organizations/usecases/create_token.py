@@ -35,8 +35,7 @@ class CreateOrganizationTokenUseCase:
         self.__role_getter = role_getter
 
     async def __call__(self, actor: User) -> OrganizationToken:
-        """Выполнение сценария.
-        """
+        """Выполнение сценария."""
         async with self.__transaction:
             role = await self.__role_getter(actor)
             self.__builder.providers(OrganizationLinkPermissionProvider(role)).add(

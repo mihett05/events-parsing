@@ -11,6 +11,7 @@ class CreateTokenPairUseCase:
     Генерирует новую пару access и refresh токенов
     для аутентификации и обновления сессии.
     """
+
     def __init__(self, tokens_gateway: TokensGateway):
         """Инициализирует шлюз для работы с токенами."""
 

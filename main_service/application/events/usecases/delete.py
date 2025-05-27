@@ -11,6 +11,12 @@ from application.transactions import TransactionsGateway
 
 
 class DeleteEventUseCase:
+    """UseCase для удаления события.
+
+    Реализует безопасное удаление события с проверкой прав доступа
+    и транзакционным выполнением операции.
+    """
+
     def __init__(
         self,
         repository: EventsRepository,
@@ -19,14 +25,16 @@ class DeleteEventUseCase:
         builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """Инициализирует зависимости"""
+
         self.__repository = repository
         self.__transaction = tx
-
         self.__read_use_case = read_uc
         self.__role_getter = role_getter
         self.__builder = builder
 
     async def __call__(self, event_id: int, actor: User) -> Event:
+        """Удаляет событие с проверкой прав."""
         async with self.__transaction:
             event = await self.__read_use_case(event_id, actor)
             actor_role = await self.__role_getter(actor, event.organization_id)

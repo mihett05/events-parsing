@@ -23,6 +23,7 @@ class RegisterUseCase:
     Обеспечивает полный цикл регистрации: создание пользователя,
     генерацию токена активации и отправку уведомления с подтверждением.
     """
+
     def __init__(
         self,
         create_user_use_case: CreateUserWithPasswordUseCase,

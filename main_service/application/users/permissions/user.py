@@ -6,6 +6,13 @@ from application.auth.permissions import PermissionProvider
 
 
 class UserRolesPermissionProvider(PermissionProvider):
+    """Провайдер прав доступа для работы с ролями пользователей.
+
+    Определяет набор разрешений для различных ролей в системе.
+    Обеспечивает проверку прав при операциях с ролями пользователей
+    в рамках организационной структуры.
+    """
+
     __maximum_perms = {
         PermissionsEnum.CAN_CREATE_ROLE,
         PermissionsEnum.CAN_DELETE_ROLE,
@@ -25,11 +32,15 @@ class UserRolesPermissionProvider(PermissionProvider):
     }
 
     def __init__(self, organization_id: int, user_role: UserOrganizationRole):
+        """Инициализирует провайдер с проверкой прав для конкретной организации и роли."""
+
         self.permissions = self.__get_perms(organization_id, user_role)
 
     def __get_perms(
         self, organization_id: int, user_role: UserOrganizationRole
     ) -> set[PermissionsEnum]:
+        """Определяет набор разрешений на основе роли пользователя и принадлежности к организации."""
+
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
         if (
             user_role.role.value.startswith("SUPER")

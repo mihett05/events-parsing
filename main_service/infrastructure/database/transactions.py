@@ -3,17 +3,34 @@ from sqlalchemy.ext.asyncio import AsyncSession, AsyncSessionTransaction
 
 
 class DatabaseTransaction(Transaction):
+    """
+    Реализация интерфейса Transaction для работы с транзакциями SQLAlchemy.
+
+    Обеспечивает базовые операции commit и rollback для управления транзакциями.
+    """
+
     def __init__(self, transaction: AsyncSessionTransaction):
         self.__transaction = transaction
 
     async def commit(self):
+        """Фиксирует текущую транзакцию в базе данных."""
+
         await self.__transaction.commit()
 
     async def rollback(self):
+        """Откатывает текущую транзакцию."""
+
         await self.__transaction.rollback()
 
 
 class TransactionsDatabaseGateway(TransactionsGateway):
+    """
+    Шлюз для управления транзакциями в базе данных.
+
+    Поддерживает вложенные транзакции и автоматическое управление
+    жизненным циклом транзакций через контекстный менеджер.
+    """
+
     __transaction: AsyncSessionTransaction | None = None
 
     def __init__(
@@ -30,11 +47,15 @@ class TransactionsDatabaseGateway(TransactionsGateway):
         return DatabaseTransaction(self.__transaction)
 
     def nested(self) -> "TransactionsDatabaseGateway":
+        """Создает новый шлюз для вложенной транзакции."""
+
         return TransactionsDatabaseGateway(
             self.__session, self.__session.begin_nested()
         )
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Обрабатывает завершение транзакции при выходе из контекста."""
+
         if self.__transaction and self.__transaction.is_active:
             if exc_type is None:
                 await self.__transaction.commit()

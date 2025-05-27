@@ -15,6 +15,12 @@ from application.transactions import TransactionsGateway
 
 
 class UpdateAttachmentUseCase:
+    """UseCase для обновления метаданных вложения.
+
+    Обеспечивает изменение информации о вложении (например, имени файла)
+    с обязательной проверкой прав доступа пользователя.
+    """
+
     def __init__(
         self,
         gateway: FilesGateway,
@@ -24,6 +30,8 @@ class UpdateAttachmentUseCase:
         role_getter: RoleGetter,
         read_event_use_case: ReadEventUseCase,
     ):
+        """Инициализирует зависимости UseCase."""
+
         self.__gateway = gateway
         self.__repository = repository
         self.__transaction = tx
@@ -34,6 +42,12 @@ class UpdateAttachmentUseCase:
     async def __call__(
         self, attachment_update_dto: UpdateAttachmentDto, actor: User
     ) -> Attachment:
+        """Выполняет обновление метаданных вложения.
+
+        Проверяет права пользователя, обновляет информацию о вложении
+        и возвращает обновленный объект.
+        """
+
         async with self.__transaction:
             attachment = await self.__repository.read(
                 attachment_update_dto.attachment_id

@@ -69,9 +69,7 @@ class OpenAiExtraction:
             print("Tokens")
             return result
         try:
-            response_dict = json.loads(
-                r.replace("```", "").replace("json", "").strip()
-            )
+            response_dict = json.loads(r.replace("```", "").replace("json", "").strip())
         except Exception:
             return result
         for item in response_dict:

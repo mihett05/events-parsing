@@ -10,6 +10,7 @@ class ReadAllOrganizationTokensUseCase:
     Обеспечивает выборку токенов организации с возможностью фильтрации
     по различным параметрам.
     """
+
     def __init__(self, repository: OrganizationTokensRepository):
         """
         Инициализирует сценарий работы с организацией.

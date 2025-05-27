@@ -101,7 +101,7 @@ class UsersDatabaseRepository(UsersRepository):
                 .join(self.model.settings)
                 .where(UserSettingsDatabaseModel.calendar_uuid == uuid)
             )
-          
+
     def __init__(self, session: AsyncSession, config: Config):
         """Инициализирует репозиторий пользователей."""
 

@@ -31,7 +31,11 @@ from infrastructure.rabbit import router
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
-    """Создает и настраивает приложение для работы с RabbitMQ."""
+    """
+    Создает и настраивает приложение для работы с RabbitMQ.
+
+    Инициализирует брокер, подключает роутер и возвращает экземпляр FastStream.
+    """
 
     broker = await container.get(RabbitBroker)
     broker.include_router(router)
@@ -40,18 +44,20 @@ async def create_rabbit_app(container: AsyncContainer) -> FastStream:
 
 
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
-    """Фабрика для создания основного FastAPI приложения.
+    """
+    Фабрика для создания основного FastAPI-приложения.
 
-    Инициализирует жизненный цикл приложения, middleware, обработчики ошибок
-    и маршрутизацию API.
+    Настраивает жизненный цикл приложения (lifespan), CORS, обработчики ошибок,
+    статические файлы и маршруты API. Также интегрирует DI-контейнер.
     """
 
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
-        """Управляет жизненным циклом приложения.
+        """
+        Контекстный менеджер для управления жизненным циклом приложения.
 
-        Запускает фоновые задачи, инициализирует RabbitMQ и обеспечивает
-        корректное завершение работы.
+        Запускает фоновые задачи, инициализирует RabbitMQ-приложение,
+        а также корректно завершает работу при остановке.
         """
 
         tasks = await run_background_tasks(container)
@@ -78,7 +84,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):
-        """Обрабатывает ошибки поиска сущностей."""
+        """
+        Обрабатывает ошибки отсутствия сущности (404 Not Found).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
@@ -88,7 +97,9 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def entity_already_exists_exception_handler(
         _: Request, exc: EntityAlreadyExistsError
     ):
-        """Обрабатывает ошибки дублирования сущностей."""
+        """
+        Обрабатывает ошибки дублирования сущности (400 Bad Request).
+        """
 
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +108,9 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityAccessDenied)
     async def entity_access_denied_handler(_: Request, exc: EntityAccessDenied):
-        """Обрабатывает ошибки доступа к сущностям."""
+        """
+        Обрабатывает ошибки доступа к сущности (403 Forbidden).
+        """
 
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -108,7 +121,9 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_credentials_exception_handler(
         _: Request, exc: InvalidCredentialsError
     ):
-        """Обрабатывает ошибки аутентификации."""
+        """
+        Обрабатывает ошибки аутентификации (401 Unauthorized).
+        """
 
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -119,7 +134,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_invalid_event_period_handler(
         _: Request, exc: InvalidEntityPeriodError
     ):
-        """Обрабатывает ошибки валидации временных периодов сущностей."""
+        """
+        Обрабатывает ошибки невалидного периода сущности (422 Unprocessable Entity).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"message": str(exc)},
@@ -127,7 +145,9 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(UserNotValidated)
     async def not_activated_user(_: Request, exc: UserNotValidated):
-        """Обрабатывает ошибки доступа для неподтвержденных пользователей."""
+        """
+        Обрабатывает ошибки неподтвержденного пользователя (403 Forbidden).
+        """
 
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"message": str(exc)}

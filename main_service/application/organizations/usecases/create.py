@@ -20,6 +20,7 @@ class CreateOrganizationUseCase:
     """
     Сценарий создания новой организации.
     """
+
     def __init__(
         self,
         repository: OrganizationsRepository,

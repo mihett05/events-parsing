@@ -13,6 +13,7 @@ class CreateUserWithPasswordUseCase:
     и сохранением в системе. Создает неактивного пользователя,
     требующего подтверждения.
     """
+
     def __init__(
         self,
         users_repository: UsersRepository,

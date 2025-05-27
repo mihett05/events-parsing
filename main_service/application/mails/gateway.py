@@ -18,7 +18,6 @@ class EmailsGateway(metaclass=ABCMeta):
     Получает и парсит новые письма из почтовой системы.
     """
 
-
     @abstractmethod
     async def mark_mails_as_failed(self, mail_ids: list[str]): ...
 

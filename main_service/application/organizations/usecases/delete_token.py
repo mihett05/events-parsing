@@ -21,6 +21,7 @@ class DeleteOrganizationTokenUseCase:
     Обеспечивает безопасное удаление токена-приглашения в организацию
     с проверкой прав доступа инициатора операции.
     """
+
     def __init__(
         self,
         repository: OrganizationTokensRepository,
