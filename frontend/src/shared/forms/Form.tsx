@@ -1,8 +1,15 @@
 import React, { ReactNode } from 'react';
-import { useForm, UseFormReturn, FieldValues, SubmitHandler, UseFormProps } from 'react-hook-form';
-import { z, ZodType } from 'zod';
+import {
+  useForm,
+  UseFormReturn,
+  FieldValues,
+  SubmitHandler,
+  UseFormProps,
+  FormProvider,
+} from 'react-hook-form';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 type MutationTrigger<I, R> = (data: I) => {
   unwrap: () => Promise<R>;
@@ -19,22 +26,31 @@ interface BaseFormConfig<T extends FieldValues, I, R> {
 interface BaseFormProps<T extends FieldValues, I, R> {
   config: BaseFormConfig<T, I, R>;
   title?: string;
+  onSuccess?: (response: R) => any;
   children?: React.ReactNode;
 }
 
 export function BaseForm<T extends FieldValues, I, R>({
   config: { form, formMapper, trigger, mutation, errorMappers },
   title,
+  onSuccess,
   children,
 }: BaseFormProps<T, I, R>) {
-  const onSubmit: SubmitHandler<T> = (data) => {
-    trigger(formMapper(data));
+  const onSubmit: SubmitHandler<T> = async (data) => {
+    const response = await trigger(formMapper(data)).unwrap();
+    onSuccess?.(response);
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Typography>{title}</Typography>
-      {children}
+      <FormProvider {...form}>
+        <Box display="flex" flexDirection="column" gap={2.5}>
+          <Typography variant="h6" align="center">
+            {title}
+          </Typography>
+          {children}
+        </Box>
+      </FormProvider>
     </form>
   );
 }

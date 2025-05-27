@@ -5,5 +5,9 @@ type SubmitFieldProps = {
 };
 
 export function SubmitField({ children = 'Отправить' }: SubmitFieldProps) {
-  return <Button type="submit">{children}</Button>;
+  return (
+    <Button type="submit" variant="contained">
+      {children}
+    </Button>
+  );
 }

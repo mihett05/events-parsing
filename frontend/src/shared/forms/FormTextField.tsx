@@ -5,8 +5,8 @@ export type FormTextFieldProps<T extends FieldValues> = TextFieldProps & {
   name: FieldPath<T>;
 };
 
-export const FormTextField: React.FC<FormTextFieldProps<FieldValues>> = ({ name, ...props }) => {
-  const { control } = useFormContext();
+export function FormTextField<F extends FieldValues>({ name, ...props }: FormTextFieldProps<F>) {
+  const { control } = useFormContext<F>();
 
   return (
     <Controller
@@ -17,4 +17,4 @@ export const FormTextField: React.FC<FormTextFieldProps<FieldValues>> = ({ name,
       )}
     />
   );
-};
+}

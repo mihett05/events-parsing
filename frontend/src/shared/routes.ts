@@ -36,15 +36,11 @@ const getCalendarPath = (
   return path;
 };
 
-const getEventsFeedPath = () => '/feed';
-const getLoginPath = () => '/login';
-const getProfilePath = () => '/profile';
-
 export const AppPaths = {
   calendarBase: () => '/',
   calendar: getCalendarPath,
-  eventsFeed: getEventsFeedPath,
-  login: getLoginPath,
-  profile: getProfilePath,
+  eventsFeed: () => '/feed',
+  profile: () => '/profile',
+  login: () => '/auth/login',
   register: () => '/auth/register',
 };
