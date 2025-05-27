@@ -19,7 +19,7 @@ import {
 import {
   EventFormatEnum,
   EventTypeEnum,
-  useGetTypesAndFormatsV1EventsFeedFiltersGetQuery,
+  useGetFilterValuesV1EventsFiltersGetQuery,
 } from '@/shared/api/api';
 import { useTranslation } from 'react-i18next';
 
@@ -41,7 +41,7 @@ export const CalendarFilters: React.FC<CalendarFiltersProps> = ({
   const areVariantsLoaded = useSelector(selectAreFilterVariantsLoaded);
 
   const { isLoading: isLoadingVariants, isError: isErrorVariants } =
-    useGetTypesAndFormatsV1EventsFeedFiltersGetQuery(undefined, {
+    useGetFilterValuesV1EventsFiltersGetQuery(undefined, {
       skip: areVariantsLoaded,
     });
 
