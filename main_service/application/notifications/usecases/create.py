@@ -12,8 +12,8 @@ class CreateNotificationUseCase:
     __templates: dict[NotificationFormatEnum, str] = {
         NotificationFormatEnum.RAW_TEXT: (
             "Доброго времени суток {username}!\n\n"
-            'Уведомляем вас о событии "{event.title}", '
-            "которое произойдет {event.start_date} в формате {event.format}\n"
+            'Уведомляем вас о событии "{event.title}",\n'
+            'которое произойдет {date} в формате "{event.format.value}"\n'
             "Вы можете отключить эту рассылку в своих настройках в личном кабинете.\n"
             "Хорошего Вам дня и удачного мероприятия!"
         )
@@ -31,7 +31,9 @@ class CreateNotificationUseCase:
         return [
             Notification(
                 text=self.__templates[NotificationFormatEnum.RAW_TEXT].format(
-                    username=user.fullname or user.email, event=event
+                    username=user.fullname or user.email,
+                    event=event,
+                    date=event.start_date.strftime("%d.%m.%Y"),
                 ),
                 event_id=event.id,
                 recipient_id=user.id,

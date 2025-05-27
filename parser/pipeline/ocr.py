@@ -43,9 +43,7 @@ def pdf_to_text_with_ocr(content: bytes) -> str:
         img = Image.open(io.BytesIO(img_bytes))
         img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(
-            gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-        )[1]
+        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         custom_config = r"--oem 3 --psm 6"
         page_text = pytesseract.image_to_string(
             thresh, config=custom_config, lang="eng+rus"

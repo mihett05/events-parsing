@@ -38,6 +38,8 @@ class ReadAllEventsDto:
     page_size: int
     start_date: date
     for_update: bool
+    # TODO: переделать
+    add_members: bool = False
 
 
 @dataclass

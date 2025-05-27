@@ -40,18 +40,18 @@ async def __notifications_sender(container: AsyncContainer):
 
 @background_task_runner(delay=timedelta(days=1))
 async def __notifications_list_planning(container: AsyncContainer):
-    async def _task(event_start_date: datetime, notification_send_date: date):
+    async def _task(event_start_date: date, notification_send_date: date):
         async with container() as request_container:
             use_case = await request_container.get(PlanningEventsNotificationsUseCase)
             await use_case(event_start_date, notification_send_date)
 
     # Планирование рассылки за один день до, поэтому сдвиг на timedelta(days=1)
-    now = datetime.combine(datetime.now().date(), datetime.min.time())
+    now = datetime.now().date()
     send_offset = timedelta(days=1)
     deltas = (timedelta(days=0), timedelta(days=1), timedelta(days=5))
     await asyncio.gather(
         *map(
-            lambda delta: _task(now + delta + send_offset, now.date() + send_offset),
+            lambda delta: _task(now + delta + send_offset, now + send_offset),
             deltas,
         )
     )
@@ -91,7 +91,7 @@ async def cancel_background_task(tasks: list[asyncio.Task]):
             task.cancel()
             await task
         except asyncio.CancelledError:
-            pass
+            continue
 
 
 __all__ = [

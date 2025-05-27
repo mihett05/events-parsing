@@ -21,7 +21,7 @@ class SendNotificationsUseCase:
         succeed = []
         for notification in notifications:
             recipient = users[notification.recipient_id]
-            gateway = await self.__gateways.get(recipient)
+            gateway = self.__gateways.get(recipient)
             try:
                 await gateway.send(notification, recipient)
                 notification.status = NotificationStatusEnum.SENT
