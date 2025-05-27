@@ -9,15 +9,32 @@ from application.auth.tokens.gateways import SecurityGateway
 
 
 class AuthenticateUseCase:
+    """
+    Сценарий аутентификации пользователя.
+
+    Осуществляет проверку учетных данных пользователя и возвращает
+    аутентифицированную сущность пользователя при успешной проверке.
+    """
+
     def __init__(
         self,
         security_gateway: SecurityGateway,
         users_repository: UsersRepository,
     ):
+        """Инициализирует зависимости для аутентификации."""
+
         self.security_gateway = security_gateway
         self.users_repository = users_repository
 
     async def __call__(self, dto: AuthenticateUserDto) -> User:
+        """
+        Выполняет процесс аутентификации пользователя.
+
+        Проверяет соответствие email и пароля учетным данным,
+        хранящимся в системе. В случае несоответствия вызывает
+        исключение InvalidCredentialsError.
+        """
+
         try:
             user = await self.users_repository.read_by_email(dto.email)
             is_password_valid = self.security_gateway.verify_passwords(

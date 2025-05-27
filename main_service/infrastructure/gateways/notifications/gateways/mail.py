@@ -10,6 +10,13 @@ from domain.users.entities import User
 
 
 class NotificationEmailGateway(NotificationGateway):
+    """
+    Реализация шлюза для отправки email-уведомлений через SMTP.
+
+    Обеспечивает отправку текстовых уведомлений с возможностью прикрепления файлов.
+    Автоматически управляет подключением к SMTP-серверу через контекстный менеджер.
+    """
+
     def __init__(self, smtp_server, smtp_port, imap_username, imap_password):
         self.smtp_server = smtp_server
         self.smtp_host = smtp_port
@@ -17,12 +24,15 @@ class NotificationEmailGateway(NotificationGateway):
         self.smtp_password = imap_password
 
     async def __aenter__(self):
+        """Устанавливает соединение с SMTP-сервером при входе в контекст."""
+
         self.smtp_client = SMTP(hostname=self.smtp_server, port=self.smtp_host)
         await self.smtp_client.connect()
         await self.smtp_client.login(self.smtp_username, self.smtp_password)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Корректно завершает соединение с SMTP-сервером при выходе из контекста."""
         await self.smtp_client.quit()
 
     async def send(
@@ -31,6 +41,7 @@ class NotificationEmailGateway(NotificationGateway):
         recipient: User,
         attachments: list[ParsedAttachmentInfoDto] = None,
     ):
+        """Отправляет email-уведомление указанному получателю."""
         try:
             msg = MIMEMultipart()
             msg["From"] = self.smtp_username
@@ -44,6 +55,7 @@ class NotificationEmailGateway(NotificationGateway):
             print(f"Ошибка отправки сообщения: {str(e)}")
 
     def __add_attachments(self, msg, attachments):
+        """Добавляет вложения к email-сообщению."""
         for attachment in attachments:
             file_content = attachment.content.read()
             part = MIMEApplication(file_content, Name=attachment.file_path)

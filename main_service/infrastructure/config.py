@@ -6,6 +6,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Config(BaseSettings):
+    """
+    Конфигурация приложения, включающая настройки для различных сервисов и компонентов системы.
+
+    Настройки загружаются из переменных окружения или файла `.env`. Класс предоставляет
+    вычисляемые свойства для формирования URL-адресов подключения к внешним сервисам.
+    """
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="allow"
     )
@@ -18,6 +25,7 @@ class Config(BaseSettings):
     admin_username: str
     admin_password: str
     base_organization: str
+    base_url: str
 
     postgres_user: str
     postgres_password: str

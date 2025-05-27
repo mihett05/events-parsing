@@ -17,6 +17,13 @@ from .create_user_with_password import CreateUserWithPasswordUseCase
 
 
 class RegisterUseCase:
+    """
+    Сценарий регистрации нового пользователя.
+
+    Обеспечивает полный цикл регистрации: создание пользователя,
+    генерацию токена активации и отправку уведомления с подтверждением.
+    """
+
     def __init__(
         self,
         create_user_use_case: CreateUserWithPasswordUseCase,
@@ -25,6 +32,8 @@ class RegisterUseCase:
         create_activation_token_use_case: CreateUserActivationTokenUseCase,
         config: Config,
     ):
+        """Инициализирует зависимости для процесса регистрации."""
+
         self.gateway_factory = send_notification_gateway_factory
         self.create_user_use_case = create_user_use_case
         self.security_gateway = security_gateway
@@ -32,6 +41,12 @@ class RegisterUseCase:
         self.__config = config
 
     def __create_notification(self, user: User, token: UserActivationToken):
+        """
+        Формирует уведомление для активации аккаунта.
+
+        Создает сообщение с уникальной ссылкой для подтверждения регистрации.
+        """
+
         return Notification(
             text=f"Уважаемый, {user.fullname}."
             f"По этой ссылке вы можете активировать ваш аккаунт: "
@@ -42,6 +57,13 @@ class RegisterUseCase:
         )
 
     async def __call__(self, dto: RegisterUserDto) -> UserActivationToken:
+        """
+        Выполняет процесс регистрации нового пользователя.
+
+        Создает учетную запись, генерирует токен активации
+        и отправляет письмо с подтверждением на email пользователя.
+        """
+
         user = await self.create_user_use_case(dto)
         token = await self.create_activation_token_use_case(
             CreateActivationTokenDto(user_id=user.id, user=user)

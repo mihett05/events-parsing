@@ -13,6 +13,7 @@ map_from_db = retort.get_converter(
     NotificationDatabaseModel,
     Notification,
 )
+"""Конвертирует модель базы данных уведомления в доменную сущность."""
 
 map_to_db = retort.get_converter(
     Notification,
@@ -28,6 +29,11 @@ map_to_db = retort.get_converter(
         ),
     ],
 )
+"""Преобразует доменную сущность уведомления в модель базы данных.
+
+Учитывает специальные правила маппинга для полей id и created_at.
+"""
+
 
 map_create_dto_to_model = retort.get_converter(
     CreateNotificationDto,
@@ -41,3 +47,7 @@ map_create_dto_to_model = retort.get_converter(
         ),
     ],
 )
+"""Конвертирует DTO для создания уведомления в модель базы данных.
+
+Обрабатывает опциональные поля и связывает получателя уведомления.
+"""

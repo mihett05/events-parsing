@@ -7,10 +7,27 @@ from ..factory import NotificationGatewayAbstractFactory
 
 
 class SendNotificationsUseCase:
+    """
+    Сценарий отправки уведомлений пользователям.
+
+    Обеспечивает отправку списка уведомлений через соответствующие шлюзы
+    и обработку результатов (успешных и неудачных отправок).
+    """
+
     def __init__(self, gateways: NotificationGatewayAbstractFactory):
+        """
+        Инициализация сценария отправки уведомлений.
+        """
         self.__gateways = gateways
 
     async def __call__(self, notifications: list[Notification], users: dict[int, User]):
+        """
+        Выполняет отправку уведомлений.
+
+        Обрабатывает каждое уведомление, определяет подходящий шлюз для получателя,
+        фиксирует статус отправки и разделяет уведомления по результатам.
+        """
+
         # TODO: тут потом можно продумать механизм ролбека,
         #  то есть что делать с notification если мы отправили, но не смогли обновить базу
         #  как вариант, на стороне гетевея собирать бакет того, что надо отправить
@@ -21,7 +38,7 @@ class SendNotificationsUseCase:
         succeed = []
         for notification in notifications:
             recipient = users[notification.recipient_id]
-            gateway = await self.__gateways.get(recipient)
+            gateway = self.__gateways.get(recipient)
             try:
                 await gateway.send(notification, recipient)
                 notification.status = NotificationStatusEnum.SENT

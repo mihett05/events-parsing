@@ -16,6 +16,12 @@ from application.transactions import TransactionsGateway
 
 
 class ReadAttachmentUseCase:
+    """UseCase для получения информации о вложении.
+
+    Предоставляет функционал чтения данных вложения с проверкой прав доступа
+    и обогащением информации ссылкой на файл.
+    """
+
     def __init__(
         self,
         gateway: FilesGateway,
@@ -25,6 +31,8 @@ class ReadAttachmentUseCase:
         role_getter: RoleGetter,
         read_event_use_case: ReadEventUseCase,
     ):
+        """Инициализирует зависимости UseCase."""
+
         self.__gateway = gateway
         self.__repository = repository
         self.__transaction = tx
@@ -33,6 +41,12 @@ class ReadAttachmentUseCase:
         self.__read_event_use_case = read_event_use_case
 
     async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
+        """Выполняет чтение информации о вложении.
+
+        Проверяет права доступа пользователя, добавляет ссылку на файл
+        и возвращает объект вложения.
+        """
+
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
             event = None

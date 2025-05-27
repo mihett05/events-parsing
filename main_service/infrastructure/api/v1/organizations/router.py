@@ -29,6 +29,11 @@ async def create_token(
     use_case: FromDishka[use_cases.CreateOrganizationTokenUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Создает новый токен доступа для организации.
+
+    Возвращает сгенерированный токен с информацией о создателе.
+    """
+
     return mappers.organization_token_map_to_pydantic(await use_case(actor))
 
 
@@ -39,6 +44,11 @@ async def read_all_tokens(
     page: int = 0,
     page_size: int = 50,
 ):
+    """Возвращает список токенов организации с пагинацией.
+
+    По умолчанию возвращает первые 50 токенов.
+    """
+
     return map(
         mappers.organization_token_map_to_pydantic,
         await use_case(
@@ -59,6 +69,8 @@ async def read_token(
     use_case: FromDishka[use_cases.ReadOrganizationTokenUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Возвращает информацию о конкретном токене по его UUID."""
+
     return mappers.organization_token_map_to_pydantic(await use_case(token_id, actor))
 
 
@@ -72,6 +84,11 @@ async def delete_token(
     use_case: FromDishka[use_cases.DeleteOrganizationTokenUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаляет токен организации по его UUID.
+
+    Возвращает информацию об удаленном токене.
+    """
+
     return mappers.organization_token_map_to_pydantic(await use_case(token_id, actor))
 
 
@@ -85,6 +102,11 @@ async def create_organization(
     use_case: FromDishka[use_cases.CreateOrganizationUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Создает новую организацию.
+
+    Принимает данные организации и возвращает созданную запись.
+    """
+
     return await use_case(mappers.map_create_dto_from_pydantic(dto, actor), actor)
 
 
@@ -94,6 +116,11 @@ async def read_all_organizations(
     page: int | None = None,
     page_size: int | None = None,
 ):
+    """Возвращает список организаций с возможностью пагинации.
+
+    Без параметров возвращает все организации.
+    """
+
     return map(
         mappers.map_to_pydantic,
         await use_case(ReadOrganizationsDto(page=page, page_size=page_size)),
@@ -109,6 +136,8 @@ async def read_organization(
     organization_id: int,
     use_case: FromDishka[use_cases.ReadOrganizationUseCase],
 ):
+    """Возвращает информацию об организации по её ID."""
+
     return mappers.map_to_pydantic(await use_case(organization_id))
 
 
@@ -123,6 +152,11 @@ async def update_organization(
     use_case: FromDishka[use_cases.UpdateOrganizationUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Обновляет информацию об организации.
+
+    Принимает новые данные и возвращает обновленную запись.
+    """
+
     return mappers.map_to_pydantic(
         await use_case(
             mappers.map_update_dto_from_pydantic(dto, organization_id), actor
@@ -140,4 +174,9 @@ async def delete_organization(
     use_case: FromDishka[use_cases.DeleteOrganizationUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаляет организацию по её ID.
+
+    Возвращает информацию об удаленной организации.
+    """
+
     return mappers.map_to_pydantic(await use_case(organization_id, actor))

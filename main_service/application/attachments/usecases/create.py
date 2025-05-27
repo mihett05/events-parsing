@@ -19,6 +19,12 @@ from application.transactions import TransactionsGateway
 
 
 class CreateAttachmentUseCase:
+    """UseCase для создания вложений.
+
+    Обеспечивает процесс создания вложений, включая проверку прав доступа,
+    транзакционное выполнение операций и обработку ошибок.
+    """
+
     def __init__(
         self,
         gateway: FilesGateway,
@@ -27,6 +33,8 @@ class CreateAttachmentUseCase:
         builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """Инициализирует зависимости UseCase."""
+
         self.__gateway = gateway
         self.__transaction = tx
         self.__repository = repository
@@ -36,6 +44,12 @@ class CreateAttachmentUseCase:
     async def __try_create_attachment(
         self, dto: CreateAttachmentDto
     ) -> Attachment | None:
+        """Пытается создать вложение в транзакционном контексте.
+
+        В случае ошибок при создании файла откатывает транзакцию.
+        Возвращает созданное вложение при успехе или None при ошибке.
+        """
+
         async with self.__transaction.nested() as nested:
             attachment = await self.__repository.create(dto)
             try:
@@ -52,6 +66,8 @@ class CreateAttachmentUseCase:
                 return attachment
 
     def __has_perms(self, organization_id, roles):
+        """Проверяет наличие прав на создание вложения в организации."""
+
         try:
             self.__builder.providers(
                 AttachmentPermissionProvider(organization_id, roles)
@@ -65,6 +81,12 @@ class CreateAttachmentUseCase:
     async def __call__(
         self, dtos: list[CreateAttachmentDto], actor: User
     ) -> tuple[list[Attachment], list[str]]:
+        """Выполняет создание нескольких вложений.
+
+        Возвращает кортеж из списка успешно созданных вложений
+        и списка имен файлов, которые не удалось создать.
+        """
+
         failed = []
         succeed = []
         async with self.__transaction:

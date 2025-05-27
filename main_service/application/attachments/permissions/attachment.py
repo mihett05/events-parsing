@@ -7,6 +7,12 @@ from application.auth.permissions import PermissionProvider
 
 
 class AttachmentPermissionProvider(PermissionProvider):
+    """Провайдер прав доступа для работы с вложениями.
+
+    Определяет набор разрешений для различных ролей пользователей
+    с учетом видимости связанного события и принадлежности к организации.
+    """
+
     __maximum_perms = {
         PermissionsEnum.CAN_READ_ATTACHMENT,
         PermissionsEnum.CAN_CREATE_ATTACHMENT,
@@ -33,6 +39,8 @@ class AttachmentPermissionProvider(PermissionProvider):
         user_role: UserOrganizationRole,
         event: Event | None = None,
     ):
+        """Инициализирует провайдер с учетом организации, роли пользователя и события."""
+
         self.permissions = self.__get_perms(organization_id, user_role, event)
 
     def __get_perms(
@@ -41,6 +49,8 @@ class AttachmentPermissionProvider(PermissionProvider):
         user_role: UserOrganizationRole,
         event: Event | None = None,
     ) -> set[PermissionsEnum]:
+        """Возвращает набор разрешений для текущего контекста."""
+
         result = self.__perms.get(RoleEnum.PUBLIC).copy()
         if event and event.is_visible:
             result |= self.__public_event_permissions

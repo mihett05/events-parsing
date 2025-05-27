@@ -6,6 +6,8 @@ from domain.events.enums import EventFormatEnum, EventTypeEnum
 
 @dataclass
 class UpdateEventDto:
+    """DTO для обновления параметров события."""
+
     event_id: int
     title: str
     description: str
@@ -15,12 +17,16 @@ class UpdateEventDto:
 
 @dataclass
 class SetEventPermissionsDto:
+    """DTO для установки прав доступа к событию."""
+
     owner_id: int
     admins: list[int]
 
 
 @dataclass
 class DatesInfo:
+    """DTO с информацией о временных параметрах события."""
+
     start_date: datetime
     end_date: datetime | None
     end_registration: datetime | None
@@ -28,6 +34,8 @@ class DatesInfo:
 
 @dataclass
 class EventInfo:
+    """DTO с основной информацией о событии."""
+
     mail_id: int | None
     title: str
     description: str | None

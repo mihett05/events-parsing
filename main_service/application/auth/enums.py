@@ -2,6 +2,11 @@ from enum import Enum
 
 
 class PermissionsEnum(Enum):
+    """
+    Перечисление доступных разрешений в системе.
+    Определяет права доступа для различных сущностей и операций.
+    """
+
     # Event region
     CAN_READ_EVENT = "CAN_READ_EVENT"
     CAN_UPDATE_EVENT = "CAN_UPDATE_EVENT"

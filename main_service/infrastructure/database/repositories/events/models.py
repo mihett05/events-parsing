@@ -16,6 +16,12 @@ from infrastructure.database.repositories.users import UserDatabaseModel
 
 
 class EventDatabaseModel(Base):
+    """Модель базы данных для хранения информации о событиях.
+
+    Содержит основные атрибуты события, включая даты, формат, тип,
+    организацию и связанные сущности.
+    """
+
     __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -44,13 +50,18 @@ class EventDatabaseModel(Base):
     end_registration: Mapped[date | None] = mapped_column(default=None)
     start_date: Mapped[date]
 
-    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="noload")
     members: Mapped[list[UserDatabaseModel]] = relationship(
         UserDatabaseModel, lazy="noload", secondary="event_users", viewonly=True
     )
 
 
 class EventUserDatabaseModel(Base):
+    """Модель базы данных для связи между событиями и пользователями.
+
+    Реализует отношение многие-ко-многим между событиями и участниками.
+    """
+
     __tablename__ = "event_users"
 
     event_id: Mapped[int] = mapped_column(

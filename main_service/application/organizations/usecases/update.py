@@ -12,6 +12,14 @@ from application.transactions import TransactionsGateway
 
 
 class UpdateOrganizationUseCase:
+    """
+    Реализует бизнес-логику обновления данных организации.
+
+    Инкапсулирует процесс изменения информации об организации,
+    включая проверку прав доступа и обеспечение целостности данных
+    в рамках транзакции.
+    """
+
     def __init__(
         self,
         repository: OrganizationsRepository,
@@ -20,6 +28,10 @@ class UpdateOrganizationUseCase:
         role_getter: RoleGetter,
         read_organization_use_case: ReadOrganizationUseCase,
     ):
+        """
+        Инициализирует сценарий обновления организации.
+        """
+
         self.__repository = repository
         self.__transaction = transaction
         self.__builder = permission_builder
@@ -27,6 +39,10 @@ class UpdateOrganizationUseCase:
         self.__read_organization_use_case = read_organization_use_case
 
     async def __call__(self, dto: UpdateOrganizationDto, actor: User) -> Organization:
+        """
+        Выполняет сценарий обновления организации.
+        """
+
         async with self.__transaction:
             organization = await self.__read_organization_use_case(dto.id)
             actor_role = await self.__role_getter(actor, organization.id)

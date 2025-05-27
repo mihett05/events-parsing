@@ -7,6 +7,10 @@ from infrastructure.api.models import CamelModel
 
 
 class UserSettingsModel(CamelModel):
+    """
+    Модель настроек пользователя для API.
+    """
+
     id: int
     user_id: int
     type: UserNotificationSendToEnum
@@ -14,6 +18,10 @@ class UserSettingsModel(CamelModel):
 
 
 class UserModel(CamelModel):
+    """
+    Модель пользователя для API.
+    """
+
     id: int
     email: str
 
@@ -26,6 +34,10 @@ class UserModel(CamelModel):
 
 
 class UserRoleModel(CamelModel):
+    """
+    Модель роли пользователя в организации для API.
+    """
+
     user_id: int
     organization_id: int
 

@@ -11,6 +11,13 @@ from application.users.permissions.user import UserRolesPermissionProvider
 
 
 class UpdateUserRoleUseCase:
+    """Кейс для обновления роли пользователя в организации.
+
+    Обеспечивает изменение организационных ролей с проверкой прав доступа
+    и соблюдением иерархии привилегий. Все операции выполняются атомарно
+    в рамках транзакции.
+    """
+
     def __init__(
         self,
         repository: UserOrganizationRolesRepository,
@@ -18,12 +25,23 @@ class UpdateUserRoleUseCase:
         permission_builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        """Инициализирует зависимости для работы с ролями,
+        управления транзакциями и проверки прав доступа.
+        """
+
         self.__repository = repository
         self.__transaction = transaction
         self.__builder = permission_builder
         self.__role_getter = role_getter
 
     def __has_perms(self, role, actor_role):
+        """Проверяет наличие прав на изменение роли.
+
+        Учитывает иерархию ролей и специальные права супер-пользователя.
+        Возвращает True, если текущий пользователь имеет достаточно прав
+        для изменения указанной роли.
+        """
+
         return (
             role.role != RoleEnum.OWNER or actor_role.role == RoleEnum.SUPER_USER
         ) and roles_delete_priorities_table[
@@ -33,6 +51,13 @@ class UpdateUserRoleUseCase:
     async def __call__(
         self, entity: UserOrganizationRole, actor: User
     ) -> UserOrganizationRole:
+        """Обновляет роль пользователя в организации.
+
+        Проверяет права инициатора на изменение роли, валидирует
+        соответствие иерархии привилегий и выполняет обновление.
+        В случае отсутствия прав выбрасывает исключение UserAccessDenied.
+        """
+
         async with self.__transaction:
             actor_role = await self.__role_getter(actor, entity.organization_id)
             self.__builder.providers(

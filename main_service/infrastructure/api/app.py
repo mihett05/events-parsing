@@ -1,6 +1,8 @@
 import contextlib
 import os.path
+import subprocess
 
+from aiogram import Bot, Dispatcher
 from application.auth.exceptions import InvalidCredentialsError
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
@@ -13,7 +15,7 @@ from domain.exceptions import (
     EntityNotFoundError,
     InvalidEntityPeriodError,
 )
-from domain.users.exceptions import UserNotValidated
+from domain.users.exceptions import TelegramNotConnectedError, UserNotValidated
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -28,30 +30,66 @@ from infrastructure.api.background_tasks import (
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
+from infrastructure.telegram.bot import create_bot
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
+    """
+    Создает и настраивает приложение для работы с RabbitMQ.
+
+    Инициализирует брокер, подключает роутер и возвращает экземпляр FastStream.
+    """
+
     broker = await container.get(RabbitBroker)
     broker.include_router(router)
     app = FastStream(broker)
     return app
 
 
+async def create_aiogram_app(container: AsyncContainer) -> Dispatcher:
+    telegram_bot, dp = await create_bot(container)
+    return telegram_bot, dp
+
+
+def start_bot_subprocess():
+    # Запускаем файл bot/bot.py как подпроцесс
+    return subprocess.Popen(["poetry", "run", "python", "bot.py"])
+
+
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
+    """
+    Фабрика для создания основного FastAPI-приложения.
+
+    Настраивает жизненный цикл приложения (lifespan), CORS, обработчики ошибок,
+    статические файлы и маршруты API. Также интегрирует DI-контейнер.
+    """
+
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
+        """
+        Контекстный менеджер для управления жизненным циклом приложения.
+
+        Запускает фоновые задачи, инициализирует RabbitMQ-приложение,
+        а также корректно завершает работу при остановке.
+        """
+
         tasks = await run_background_tasks(container)
 
         rabbit_app = await create_rabbit_app(container)
         faststream_setup_dishka(container, rabbit_app, auto_inject=True)
 
         await rabbit_app.broker.start()
-        yield
 
-        # cancel background task
-        await cancel_background_task(tasks)
+        bot_process = start_bot_subprocess()
 
-        await rabbit_app.broker.close()
+        try:
+            yield
+        finally:
+            await cancel_background_task(tasks)
+            await rabbit_app.broker.close()
+
+            bot_process.terminate()
+            bot_process.wait()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(
@@ -64,6 +102,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):
+        """
+        Обрабатывает ошибки отсутствия сущности (404 Not Found).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
@@ -73,6 +115,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def entity_already_exists_exception_handler(
         _: Request, exc: EntityAlreadyExistsError
     ):
+        """
+        Обрабатывает ошибки дублирования сущности (400 Bad Request).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"message": str(exc)},
@@ -80,6 +126,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityAccessDenied)
     async def entity_access_denied_handler(_: Request, exc: EntityAccessDenied):
+        """
+        Обрабатывает ошибки доступа к сущности (403 Forbidden).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"message": str(exc)},
@@ -89,6 +139,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_credentials_exception_handler(
         _: Request, exc: InvalidCredentialsError
     ):
+        """
+        Обрабатывает ошибки аутентификации (401 Unauthorized).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": str(exc)},
@@ -98,6 +152,10 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_invalid_event_period_handler(
         _: Request, exc: InvalidEntityPeriodError
     ):
+        """
+        Обрабатывает ошибки невалидного периода сущности (422 Unprocessable Entity).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"message": str(exc)},
@@ -105,8 +163,18 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(UserNotValidated)
     async def not_activated_user(_: Request, exc: UserNotValidated):
+        """
+        Обрабатывает ошибки неподтвержденного пользователя (403 Forbidden).
+        """
+
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"message": str(exc)}
+        )
+
+    @app.exception_handler(TelegramNotConnectedError)
+    async def telegram_not_connected(_: Request, exc: TelegramNotConnectedError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)}
         )
 
     if not os.path.exists("static"):

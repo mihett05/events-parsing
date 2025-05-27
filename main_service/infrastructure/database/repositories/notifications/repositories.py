@@ -6,16 +6,30 @@ from domain.notifications.exceptions import (
     NotificationNotFoundError,
 )
 from domain.notifications.repositories import NotificationsRepository
-from sqlalchemy import Select, select, update
+from sqlalchemy import Insert, Select, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..repository import PostgresRepository, PostgresRepositoryConfig
+from ..repository import ModelType, PostgresRepository, PostgresRepositoryConfig
 from .mappers import map_create_dto_to_model, map_from_db, map_to_db
 from .models import NotificationDatabaseModel
 
 
 class NotificationsDatabaseRepository(NotificationsRepository):
+    """Репозиторий для работы с уведомлениями в базе данных.
+
+    Обеспечивает основные CRUD операции для работы с уведомлениями,
+    используя Postgres в качестве хранилища. Наследует базовую реализацию
+    PostgresRepository, добавляя специфичную для уведомлений логику.
+    """
+
     class Config(PostgresRepositoryConfig):
+        """Конфигурация репозитория уведомлений.
+
+        Определяет маппинги между моделями и специфичные для домена
+        исключения, а также настраивает базовые запросы.
+        """
+
         def __init__(self):
             super().__init__(
                 model=NotificationDatabaseModel,
@@ -28,6 +42,12 @@ class NotificationsDatabaseRepository(NotificationsRepository):
             )
 
         def get_select_all_query(self, dto: dtos.ReadNotificationsDto) -> Select:
+            """Формирует запрос для чтения списка уведомлений.
+
+            Учитывает необходимость блокировки записей для обновления
+            и фильтрует по статусу 'не отправлено'.
+            """
+
             query = (
                 select(self.model)
                 .where(self.model.status == NotificationStatusEnum.UNSENT)
@@ -38,20 +58,34 @@ class NotificationsDatabaseRepository(NotificationsRepository):
 
             return query
 
+        def get_insert_many_query(self, models: list[ModelType]) -> Insert:
+            return (
+                insert(self.model)
+                .values(list(map(self._model_to_dict, models)))
+                .on_conflict_do_nothing(
+                    index_elements=["event_id", "recipient_id", "send_date"]
+                )
+                .returning(self.model)
+            )
+
     def __init__(self, session: AsyncSession):
         self.__session = session
         self.__config = self.Config()
         self.__repository = PostgresRepository(session, self.__config)
 
     async def read(self, notification_id: int) -> Notification:
+        """Получает уведомление по идентификатору."""
         return await self.__repository.read(notification_id)
 
     async def read_all(self, dto: dtos.ReadNotificationsDto) -> list[Notification]:
+        """Возвращает список уведомлений согласно параметрам фильтрации."""
         return await self.__repository.read_all(dto)
 
     async def change_notifications_statuses(
         self, notifications: list[Notification], status: NotificationStatusEnum
     ):
+        """Изменяет статус группы уведомлений на указанный."""
+
         ids = list(map(self.__config.extract_id_from_entity, notifications))
         query = (
             update(NotificationDatabaseModel)
@@ -63,10 +97,16 @@ class NotificationsDatabaseRepository(NotificationsRepository):
         await self.__session.execute(query)
 
     async def create(self, dto: dtos.CreateNotificationDto) -> Notification:
+        """Создает новое уведомление на основе DTO."""
+
         return await self.__repository.create_from_dto(dto)
 
     async def create_many(self, entities: list[Notification]) -> list[Notification]:
+        """Создает несколько уведомлений за одну операцию."""
+
         return await self.__repository.create_many_from_entity(entities)
 
     async def delete(self, notification: Notification) -> Notification:
+        """Удаляет указанное уведомление."""
+
         return await self.__repository.delete(notification)
