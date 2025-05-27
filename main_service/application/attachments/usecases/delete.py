@@ -16,6 +16,12 @@ from application.transactions import TransactionsGateway
 
 
 class DeleteAttachmentUseCase:
+    """UseCase для удаления вложения.
+
+    Обеспечивает безопасное удаление вложения с проверкой прав доступа
+    и транзакционным выполнением операций.
+    """
+
     def __init__(
         self,
         gateway: FilesGateway,
@@ -25,6 +31,8 @@ class DeleteAttachmentUseCase:
         role_getter: RoleGetter,
         read_event_use_case: ReadEventUseCase,
     ):
+        """Инициализирует зависимости UseCase."""
+
         self.__gateway = gateway
         self.__transaction = tx
         self.__repository = repository
@@ -33,6 +41,12 @@ class DeleteAttachmentUseCase:
         self.__read_event_use_case = read_event_use_case
 
     async def __call__(self, attachment_id: UUID, actor: User) -> Attachment:
+        """Выполняет удаление вложения.
+
+        Проверяет права пользователя, удаляет запись о вложении и связанный файл.
+        Возвращает удаленное вложение.
+        """
+
         async with self.__transaction:
             attachment = await self.__repository.read(attachment_id)
 

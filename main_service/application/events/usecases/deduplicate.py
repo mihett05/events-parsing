@@ -13,6 +13,12 @@ from .find import FindEventUseCase
 
 
 class DeduplicateEventUseCase:
+    """UseCase для дедупликации событий.
+
+    Обеспечивает предотвращение дублирования событий при обработке почтовых уведомлений.
+    Связывает письмо с существующим или созданным событием.
+    """
+
     def __init__(
         self,
         transaction: TransactionsGateway,
@@ -23,6 +29,8 @@ class DeduplicateEventUseCase:
         users_repository: UsersRepository,
         config: Config,
     ):
+        """Инициализирует зависимости для работы с событиями и письмами."""
+
         self.__transaction = transaction
         self.__mail_read_use_case = mail_read_use_case
         self.__mail_update_use_case = mail_update_use_case
@@ -32,6 +40,12 @@ class DeduplicateEventUseCase:
         self.__config = config
 
     async def __call__(self, mail_id: int | None, dto: CreateEventDto):
+        """Выполняет дедупликацию события.
+
+        Ищет существующее событие или создает новое,
+        обновляет статус связанного письма (если указано).
+        """
+
         async with self.__transaction:
             print(self.__config.admin_username)
             event: Event | None = await self.__event_find_use_case(dto)

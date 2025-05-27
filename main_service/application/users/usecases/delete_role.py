@@ -14,6 +14,13 @@ from .read_role import ReadUserRoleUseCase
 
 
 class DeleteUserRoleUseCase:
+    """Кейс для удаления роли пользователя в организации.
+
+    Обеспечивает безопасное удаление ролей с проверкой прав доступа
+    и соблюдением иерархии привилегий. Выполняется в транзакции
+    для сохранения целостности данных.
+    """
+
     def __init__(
         self,
         repository: UserOrganizationRolesRepository,
@@ -22,6 +29,10 @@ class DeleteUserRoleUseCase:
         transaction: TransactionsGateway,
         role_getter: RoleGetter,
     ):
+        """Инициализирует зависимости для работы с ролями,
+        проверки прав и управления транзакциями.
+        """
+
         self.__repository = repository
         self.__read_role_use_case = read_role_use_case
         self.__transaction = transaction
@@ -31,6 +42,13 @@ class DeleteUserRoleUseCase:
     async def __call__(
         self, dto: DeleteUserRoleDto, actor: User
     ) -> UserOrganizationRole:
+        """Удаляет роль пользователя в организации.
+
+        Проверяет права инициатора на удаление роли, валидирует
+        соответствие иерархии привилегий и выполняет удаление.
+        В случае отсутствия прав или роли выбрасывает соответствующее исключение.
+        """
+
         async with self.__transaction:
             actor_role = await self.__role_getter(actor, dto.organization_id)
             self.__builder.providers(
