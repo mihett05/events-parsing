@@ -2,7 +2,7 @@ import json
 import re
 
 from config import get_config
-from models import DatesInfo, DatesInfoModel, EventInfoModel
+from models import DatesInfoModel, EventInfoModel
 from openai import OpenAI
 
 config = get_config()
@@ -66,7 +66,7 @@ class OpenAiExtraction:
         for item in response_dict:
             try:
                 event = EventInfoModel(
-                    **{**item, "dates": DatesInfo(**item["dates"])}
+                    **{**item, "dates": DatesInfoModel(**item["dates"])}
                 )
                 if event.location == "null":
                     event.location = None
@@ -84,8 +84,7 @@ class OpenAiExtraction:
                     )
                 ):
                     result.append(event)
-                    # print(result[-1])
-            except:
+            except Exception:
                 continue
         return result
 

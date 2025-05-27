@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from datetime import datetime, date
+from datetime import date
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
