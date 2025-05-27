@@ -11,12 +11,11 @@ config = get_config()
 class OpenAiExtraction:
     """Класс для извлечения структурированной информации о событиях из текста с помощью OpenAI.
 
-        Инкапсулирует логику взаимодействия с OpenAI API, включая парсинг ответов
-        и валидацию извлеченных данных.
-        """
-    def __init__(
-        self, init_prompt: dict[str, str], url: str, model: str, key: str
-    ):
+    Инкапсулирует логику взаимодействия с OpenAI API, включая парсинг ответов
+    и валидацию извлеченных данных.
+    """
+
+    def __init__(self, init_prompt: dict[str, str], url: str, model: str, key: str):
         """Инициализация клиента OpenAI с настройками для обработки текстовых запросов."""
         self.client = OpenAI(
             base_url=url,

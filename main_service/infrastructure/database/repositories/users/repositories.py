@@ -57,6 +57,7 @@ from .models import (
 
 class UsersDatabaseRepository(UsersRepository):
     """Репозиторий для работы с пользователями в базе данных."""
+
     class RepositoryConfig(PostgresRepositoryConfig):
         """Конфигурация репозитория пользователей."""
 

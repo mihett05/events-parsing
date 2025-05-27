@@ -55,7 +55,6 @@ map_event_info_to_create_dto = retort.get_converter(
 """Преобразует информацию о событии в DTO для создания события."""
 
 
-
 map_mail_to_pydantic = retort.get_converter(
     Mail,
     MailModel,
@@ -71,5 +70,3 @@ map_mail_to_pydantic = retort.get_converter(
     ],
 )
 """Конвертирует сущность письма в Pydantic модель для RabbitMQ."""
-
-

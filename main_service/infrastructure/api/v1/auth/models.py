@@ -7,5 +7,6 @@ class UserWithTokenModel(CamelModel):
 
     Используется для возврата данных после успешной аутентификации или регистрации.
     """
+
     access_token: str
     user: UserModel

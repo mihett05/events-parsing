@@ -36,16 +36,15 @@ queue = RabbitQueue(
 """Очередь для обработки событий, полученных из писем."""
 
 
-
 @router.subscriber(queue, exchange)
 async def consume(
     model: EventInfoModel, deduplicate: FromDishka[DeduplicateEventUseCase]
 ):
     """
-        Обрабатывает входящие сообщения о событиях.
+    Обрабатывает входящие сообщения о событиях.
 
-        Преобразует модель в DTO, выполняет дедупликацию и обработку события.
-        """
+    Преобразует модель в DTO, выполняет дедупликацию и обработку события.
+    """
     event_info: EventInfo = map_event_info_from_pydantic(model)
     dto = map_event_info_to_create_dto(event_info)
     return await deduplicate(event_info.mail_id, dto)

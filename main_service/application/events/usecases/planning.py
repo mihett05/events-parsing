@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from domain.events.dtos import ReadAllEventsDto
 
@@ -21,11 +21,9 @@ class PlanningEventsNotificationsUseCase:
         create_notifications: CreateNotificationUseCase,
     ):
         """Инициализирует зависимости"""
-
         self.__transaction = transaction
         self.__read_events = read_events
         self.__create_notifications = create_notifications
-
 
     async def __call__(self, event_start_date: datetime, notification_send_date: date):
         """Основной метод планирования уведомлений.

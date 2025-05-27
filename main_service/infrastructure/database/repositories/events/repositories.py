@@ -31,6 +31,7 @@ class EventsUserDatabaseRepository(EventUsersRepository):
 
     Реализует CRUD операции и специализированные запросы для связи пользователей и событий.
     """
+
     class Config(PostgresRepositoryConfig):
         """Конфигурация репозитория участников событий."""
 
@@ -110,8 +111,10 @@ class EventsDatabaseRepository(EventsRepository):
 
     Обеспечивает полный цикл работы с событиями включая сложные выборки.
     """
+
     class Config(PostgresRepositoryConfig):
         """Конфигурация репозитория событий."""
+
         def __init__(self):
             super().__init__(
                 model=EventDatabaseModel,

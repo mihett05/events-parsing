@@ -52,7 +52,6 @@ map_to_pydantic = retort.get_converter(
 """Конвертер для преобразования сущности организации в модель API."""
 
 
-
 @retort.impl_converter(
     recipe=[
         link_function(
@@ -77,4 +76,3 @@ organization_token_map_to_pydantic = retort.get_converter(
     OrganizationTokenModel,
 )
 """Конвертер для преобразования сущности токена организации в модель API."""
-

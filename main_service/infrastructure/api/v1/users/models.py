@@ -37,6 +37,7 @@ class UserRoleModel(CamelModel):
     """
     Модель роли пользователя в организации для API.
     """
+
     user_id: int
     organization_id: int
 

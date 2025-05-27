@@ -47,11 +47,12 @@ def map_from_db(
     model: EventDatabaseModel,
     is_greed: bool = False,
 ) -> Event: ...
+
+
 """Преобразует модель события из базы данных в доменную сущность.
 
 При is_greed=True дополнительно загружает связанных пользователей.
 """
-
 
 
 map_to_db = retort.get_converter(

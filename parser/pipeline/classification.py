@@ -27,16 +27,16 @@ def is_text_relates_to_topics(
     text: str, descriptions: dict[str, str], threshhold: float = 0.3
 ) -> bool:
     """
-        Определяет, относится ли текст к одной из заданных тематик.
+    Определяет, относится ли текст к одной из заданных тематик.
 
-        Args:
-            text: Анализируемый текст
-            descriptions: Словарь с описаниями тематик
-            threshhold: Порог косинусной схожести для определения соответствия
+    Args:
+        text: Анализируемый текст
+        descriptions: Словарь с описаниями тематик
+        threshhold: Порог косинусной схожести для определения соответствия
 
-        Returns:
-            bool: True если текст соответствует хотя бы одной тематике, иначе False
-        """
+    Returns:
+        bool: True если текст соответствует хотя бы одной тематике, иначе False
+    """
     text = preprocess_text(text)
     text_emb = model.encode([text])
 
@@ -73,8 +73,8 @@ def is_text_relates_to_topics(
 
 def preprocess_text(text: str):
     """
-        Предварительно обрабатывает текст перед анализом.
-        """
+    Предварительно обрабатывает текст перед анализом.
+    """
     tokens = nltk.word_tokenize(text)
     tokens = [token.lower() for token in tokens]
 

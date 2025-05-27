@@ -48,6 +48,8 @@ def map_update_dto_from_pydantic(
     dto: UpdateUserModelDto,
     user_id: int,  # noqa
 ) -> UpdateUserDto: ...
+
+
 """Конвертер для преобразования модели обновления пользователя в DTO.
 Добавляет ID пользователя для идентификации обновляемой записи."""
 
