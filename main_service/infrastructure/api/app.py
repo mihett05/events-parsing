@@ -1,6 +1,8 @@
 import contextlib
 import os.path
+import subprocess
 
+from aiogram import Bot, Dispatcher
 from application.auth.exceptions import InvalidCredentialsError
 from dishka import AsyncContainer
 from dishka.integrations.fastapi import setup_dishka
@@ -28,6 +30,7 @@ from infrastructure.api.background_tasks import (
 from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
+from infrastructure.telegram.bot import create_bot
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
@@ -35,6 +38,16 @@ async def create_rabbit_app(container: AsyncContainer) -> FastStream:
     broker.include_router(router)
     app = FastStream(broker)
     return app
+
+
+async def create_aiogram_app(container: AsyncContainer) -> Dispatcher:
+    telegram_bot, dp = await create_bot(container)
+    return telegram_bot, dp
+
+
+def start_bot_subprocess():
+    # Запускаем файл bot/bot.py как подпроцесс
+    return subprocess.Popen(["poetry", "run", "python", "bot.py"])
 
 
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
@@ -46,12 +59,17 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         faststream_setup_dishka(container, rabbit_app, auto_inject=True)
 
         await rabbit_app.broker.start()
-        yield
 
-        # cancel background task
-        await cancel_background_task(tasks)
+        bot_process = start_bot_subprocess()
 
-        await rabbit_app.broker.close()
+        try:
+            yield
+        finally:
+            await cancel_background_task(tasks)
+            await rabbit_app.broker.close()
+
+            bot_process.terminate()
+            bot_process.wait()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(
