@@ -30,6 +30,8 @@ def map_update_dto_from_pydantic(
 ) -> UpdateAttachmentDto: ...
 
 
+"""Конвертирует Pydantic DTO в доменный DTO для обновления вложения."""
+
 map_to_pydantic = retort.get_converter(
     Attachment,
     AttachmentModel,
@@ -44,9 +46,16 @@ map_to_pydantic = retort.get_converter(
         ),
     ],
 )
+"""Конвертер для трансформации доменной модели Attachment в Pydantic модель.
+Преобразует поля created_at и file_link в подходящий формат."""
 
 
 def map_file_to_dto(file: UploadFile, event: Event) -> CreateAttachmentDto:
+    """Преобразует загруженный файл в DTO для создания вложения.
+
+    Извлекает имя и расширение файла, сохраняет содержимое
+    и связывает с соответствующим событием.
+    """
     return CreateAttachmentDto(
         filename=Path(file.filename).stem,
         extension=Path(file.filename).suffix.lower(),

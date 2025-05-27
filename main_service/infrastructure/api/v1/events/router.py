@@ -37,6 +37,11 @@ async def read_all_events(
     use_case: FromDishka[use_cases.ReadForFeedEventsUseCase],
     dto: dtos.ReadAllEventsFeedModelDto = Depends(),
 ):
+    """Получение списка событий для ленты с фильтрацией и пагинацией.
+
+    Возвращает список событий, отфильтрованных по параметрам DTO.
+    """
+
     return map(
         mappers.map_to_pydantic,
         await use_case(mappers.map_read_all_dto_from_pydantic(dto)),
@@ -47,6 +52,11 @@ async def read_all_events(
 async def get_filter_values(
     use_case: FromDishka[ReadAllOrganizationUseCase],
 ):
+    """Получение доступных значений для фильтрации событий.
+
+    Возвращает списки возможных типов, форматов и организаций.
+    """
+
     return models.FilterModel(
         type=list(map(lambda x: x.value, EventTypeEnum)),
         format=list(map(lambda x: x.value, EventFormatEnum)),
@@ -65,6 +75,11 @@ async def create_ical(
     config: FromDishka[Config],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Создание ссылки для подписки на календарь событий в формате iCal.
+
+    Генерирует уникальную ссылку для текущего пользователя.
+    """
+
     return await use_case(config.base_url, actor)
 
 
@@ -73,6 +88,11 @@ async def delete_ical(
     use_case: FromDishka[DeleteCalendarLinkUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаление ссылки на подписку календаря.
+
+    Отменяет ранее сгенерированную подписку для текущего пользователя.
+    """
+
     return await use_case(actor)
 
 
@@ -84,6 +104,8 @@ async def read_ical(
     use_case: FromDishka[use_cases.ReadICSUseCase],
     uuid: UUID,
 ):
+    """Получение событий в формате iCalendar по UUID подписки."""
+
     return mappers.map_to_ics(await use_case(uuid))
 
 
@@ -94,6 +116,8 @@ async def read_for_user(
     page: int = 0,
     page_size: int = 50,
 ):
+    """Получение событий текущего пользователя с пагинацией."""
+
     return map(
         mappers.map_to_pydantic,
         await use_case(
@@ -114,6 +138,8 @@ async def read_subscribers(
     page: int = 0,
     page_size: int = 50,
 ):
+    """Получение списка подписчиков события с пагинацией."""
+
     return map(
         mappers.map_to_user,
         await use_case(
@@ -133,6 +159,8 @@ async def subscribe(
     use_case: FromDishka[use_cases.CreateEventUserUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Подписка текущего пользователя на указанное событие."""
+
     return mappers.event_user_map_to_pydantic(await use_case(event_id, actor))
 
 
@@ -146,6 +174,8 @@ async def unsubscribe(
     use_case: FromDishka[use_cases.DeleteEventUserUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Отписка текущего пользователя от указанного события."""
+
     return mappers.event_user_map_to_pydantic(await use_case(event_id, actor))
 
 
@@ -159,6 +189,8 @@ async def create_event(
     use_case: FromDishka[use_cases.CreateEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Создание нового события."""
+
     return mappers.map_to_pydantic(
         await use_case(mappers.map_create_dto_from_pydantic(dto), actor)
     )
@@ -174,6 +206,8 @@ async def read_event(
     use_case: FromDishka[use_cases.ReadEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Получение информации о конкретном событии."""
+
     return mappers.map_to_pydantic(await use_case(event_id, actor))
 
 
@@ -188,6 +222,8 @@ async def update_event(
     use_case: FromDishka[use_cases.UpdateEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Обновление информации о событии."""
+
     return mappers.map_to_pydantic(
         await use_case(mappers.map_update_dto_from_pydantic(dto, event_id), actor)
     )
@@ -203,4 +239,6 @@ async def delete_event(
     use_case: FromDishka[use_cases.DeleteEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Удаление события."""
+
     return mappers.map_to_pydantic(await use_case(event_id, actor))

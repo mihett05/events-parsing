@@ -12,6 +12,13 @@ from infrastructure.database.repositories.attachments import (
 
 
 class MailDatabaseModel(Base):
+    """
+    Модель для представления электронных писем в базе данных.
+
+    Содержит метаданные письма, его содержимое и состояние обработки.
+    Поддерживает связь с событиями через event_id и может содержать вложения.
+    """
+
     __tablename__ = "mails"
 
     id: Mapped[int] = mapped_column(primary_key=True)

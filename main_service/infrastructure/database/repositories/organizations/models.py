@@ -8,6 +8,8 @@ from infrastructure.database.postgres import Base
 
 
 class OrganizationDatabaseModel(Base):
+    """Модель организации в базе данных."""
+
     __tablename__ = "organizations"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -25,6 +27,8 @@ class OrganizationDatabaseModel(Base):
 
 
 class OrganizationTokenDatabaseModel(Base):
+    """Модель токена для доступа к организации."""
+
     __tablename__ = "organization_tokens"
 
     id: Mapped[UUID] = mapped_column(primary_key=True)

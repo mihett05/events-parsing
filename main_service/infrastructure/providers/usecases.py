@@ -9,6 +9,14 @@ from dishka import Provider, Scope, provide_all
 
 
 class UseCasesProvider(Provider):
+    """
+    Провайдер для всех Use Cases (сценариев использования) приложения.
+
+    Группирует и предоставляет все use cases по функциональным областям
+    с областью видимости на уровне запроса (REQUEST).
+    Каждый запрос получает новые экземпляры use cases.
+    """
+
     scope = Scope.REQUEST
 
     events = provide_all(

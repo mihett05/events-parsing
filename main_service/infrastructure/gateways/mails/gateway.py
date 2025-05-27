@@ -15,12 +15,22 @@ from domain.mails.exceptions import FailedFetchMailError, FailedParseMailError
 
 
 class ImapEmailsGateway(EmailsGateway):
+    """
+    Реализация шлюза для работы с электронной почтой через IMAP.
+
+    Обеспечивает подключение к IMAP-серверу, получение непрочитанных писем
+    и их парсинг в структурированный формат. Поддерживает пакетную обработку
+    писем для оптимизации производительности.
+    """
+
     def __init__(self, imap_server, imap_username, imap_password):
         self.imap_server = imap_server
         self.imap_username = imap_username
         self.imap_password = imap_password
 
     async def __aenter__(self):
+        """Устанавливает соединение с IMAP-сервером при входе в контекст."""
+
         self.client = aioimaplib.IMAP4_SSL(host=self.imap_server)
         await self.client.wait_hello_from_server()
         await self.client.login(self.imap_username, self.imap_password)
@@ -28,9 +38,18 @@ class ImapEmailsGateway(EmailsGateway):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Закрывает соединение с IMAP-сервером при выходе из контекста."""
+
         await self.client.logout()
 
     async def receive_mails(self) -> list[ParsedMailInfoDto]:
+        """
+        Получает и парсит непрочитанные письма из INBOX.
+
+        Обрабатывает письма пакетами для оптимизации производительности.
+        Письма, которые не удалось обработать, помечаются как непрочитанные.
+        """
+
         response = await self.client.search("UNSEEN")
         emails = []
         email_ids = response.lines[0].split()

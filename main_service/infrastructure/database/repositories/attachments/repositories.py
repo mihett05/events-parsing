@@ -16,7 +16,11 @@ from .models import AttachmentDatabaseModel
 
 
 class AttachmentsDatabaseRepository(AttachmentsRepository):
+    """Репозиторий для работы с вложениями в базе данных."""
+
     class Config(PostgresRepositoryConfig):
+        """Конфигурация репозитория вложений."""
+
         def __init__(self):
             super().__init__(
                 model=AttachmentDatabaseModel,
@@ -29,23 +33,34 @@ class AttachmentsDatabaseRepository(AttachmentsRepository):
             )
 
     def __init__(self, session: AsyncSession):
+        """Инициализирует репозиторий с указанной асинхронной сессией."""
+
         self.__config = self.Config()
         self.__session = session
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: CreateAttachmentDto) -> Attachment:
+        """Создает новое вложение на основе DTO."""
+
         return await self.__repository.create_from_dto(dto)
 
     async def create_many(
         self, create_dtos: list[CreateAttachmentDto]
     ) -> list[Attachment]:
+        """Создает несколько вложений на основе списка DTO."""
         return await self.__repository.create_many_from_dto(create_dtos)
 
     async def read(self, attachment_id: UUID) -> Attachment:
+        """Получает вложение по идентификатору."""
+
         return await self.__repository.read(attachment_id)
 
     async def delete(self, attachment: Attachment) -> Attachment:
+        """Удаляет указанное вложение."""
+
         return await self.__repository.delete(attachment)
 
     async def update(self, attachment: Attachment) -> Attachment:
+        """Обновляет данные вложения."""
+
         return await self.__repository.update(attachment)

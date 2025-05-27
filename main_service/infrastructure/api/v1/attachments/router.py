@@ -28,6 +28,12 @@ async def create_attachments(
     read_event_use_case: FromDishka[ReadEventUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Эндпоинт для создания вложений к событию.
+
+    Принимает список файлов и прикрепляет их к указанному событию.
+    Возвращает список успешно созданных вложений в формате Pydantic модели.
+    """
+
     event = await read_event_use_case(event_id, actor)
     attachments, fails = await create_attachments_use_case(
         list(map(lambda file: mappers.map_file_to_dto(file, event), files)),
@@ -46,6 +52,12 @@ async def read_attachment(
     use_case: FromDishka[use_cases.ReadAttachmentUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Эндпоинт для получения информации о вложении.
+
+    Возвращает метаданные вложения по его идентификатору
+    в формате Pydantic модели.
+    """
+
     return mappers.map_to_pydantic(await use_case(attachment_id, actor))
 
 
@@ -59,6 +71,12 @@ async def delete_attachment(
     use_case: FromDishka[use_cases.DeleteAttachmentUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Эндпоинт для удаления вложения.
+
+    Удаляет вложение по его идентификатору и возвращает
+    информацию об удаленном вложении в формате Pydantic модели.
+    """
+
     return mappers.map_to_pydantic(await use_case(attachment_id, actor))
 
 
@@ -73,6 +91,12 @@ async def update_attachment(
     use_case: FromDishka[use_cases.UpdateAttachmentUseCase],
     actor: Annotated[User, Depends(get_user)],
 ):
+    """Эндпоинт для обновления метаданных вложения.
+
+    Обновляет информацию о вложении (например, имя файла) и возвращает
+    обновленные данные в формате Pydantic модели.
+    """
+
     return mappers.map_to_pydantic(
         await use_case(mappers.map_update_dto_from_pydantic(dto, attachment_id), actor)
     )

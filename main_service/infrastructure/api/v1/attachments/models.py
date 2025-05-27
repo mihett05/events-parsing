@@ -5,6 +5,8 @@ from infrastructure.api.models import CamelModel
 
 
 class AttachmentModel(CamelModel):
+    """Pydantic модель для представления данных о вложении."""
+
     id: UUID
     filename: str
     extension: str

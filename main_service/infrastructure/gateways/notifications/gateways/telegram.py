@@ -8,6 +8,13 @@ from domain.users.entities import User
 
 
 class NotificationTelegramGateway(NotificationGateway):
+    """
+    Реализация шлюза для отправки уведомлений через Telegram Bot API.
+
+    Поддерживает различные форматы сообщений (RAW_TEXT, HTML, MARKDOWN) и
+    автоматически определяет нужный режим парсинга для каждого формата.
+    """
+
     async def __aenter__(self) -> "NotificationGateway":
         pass
 
@@ -23,6 +30,8 @@ class NotificationTelegramGateway(NotificationGateway):
         }
 
     async def send(self, notification: Notification, recipient: User) -> Notification:
+        """Отправляет уведомление через Telegram."""
+
         if recipient.telegram_id is None:
             raise FailedSendNotificationError
 
