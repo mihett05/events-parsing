@@ -44,7 +44,7 @@ class EventDatabaseModel(Base):
     end_registration: Mapped[date | None] = mapped_column(default=None)
     start_date: Mapped[date]
 
-    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="joined")
+    attachments: Mapped[list[AttachmentDatabaseModel]] = relationship(lazy="noload")
     members: Mapped[list[UserDatabaseModel]] = relationship(
         UserDatabaseModel, lazy="noload", secondary="event_users", viewonly=True
     )

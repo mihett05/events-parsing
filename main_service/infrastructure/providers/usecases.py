@@ -35,6 +35,7 @@ class UseCasesProvider(Provider):
         event_use_cases.DeleteEventUserUseCase,
         event_use_cases.ReadEventUserUseCase,
         event_use_cases.ReadICSUseCase,
+        event_use_cases.PlanningEventsNotificationsUseCase,
     )
 
     organizations = provide_all(
