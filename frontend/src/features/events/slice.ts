@@ -69,58 +69,53 @@ const eventsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchPending, (state, { meta }) => {
-        if (meta.arg.originalArgs?.page === 0) {
-          state.isLoading = true;
+      .addMatcher(api.endpoints.readAllEventsV1EventsGet.matchPending, (state, { meta }) => {
+        if (typeof meta.arg.originalArgs?.page === 'number') {
+          if (meta.arg.originalArgs?.page === 0) {
+            state.isLoading = true;
+          } else {
+            state.isFetchingMore = true;
+          }
         } else {
-          state.isFetchingMore = true;
+          state.isLoading = true;
         }
         state.error = null;
       })
       .addMatcher(
-        api.endpoints.readAllEventsV1EventsFeedGet.matchFulfilled,
+        api.endpoints.readAllEventsV1EventsGet.matchFulfilled,
         (state, { payload, meta }) => {
           state.isLoading = false;
           state.isFetchingMore = false;
           const newEvents = payload.map(mapEventToCalendarEvent).filter(Boolean) as CalendarEvent[];
-          if (meta.arg.originalArgs?.page === 0) {
-            eventsAdapter.setAll(state.events, newEvents);
+
+          if (typeof meta.arg.originalArgs?.page === 'number') {
+            if (meta.arg.originalArgs?.page === 0) {
+              eventsAdapter.setAll(state.events, newEvents);
+            } else {
+              eventsAdapter.addMany(state.events, newEvents);
+            }
           } else {
-            eventsAdapter.addMany(state.events, newEvents);
+            eventsAdapter.upsertMany(state.events, newEvents);
           }
         },
       )
-      .addMatcher(api.endpoints.readAllEventsV1EventsFeedGet.matchRejected, (state) => {
-        state.isLoading = false;
-        state.isFetchingMore = false;
-        state.error = 'feed.errorLoading';
-      })
-      .addMatcher(api.endpoints.readAllEventsV1EventsCalendarGet.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
       .addMatcher(
-        api.endpoints.readAllEventsV1EventsCalendarGet.matchFulfilled,
-        (state, { payload }) => {
+        api.endpoints.readAllEventsV1EventsGet.matchRejected,
+        (state, { error, meta }) => {
           state.isLoading = false;
-          const mappedEvents = payload
-            .map(mapEventToCalendarEvent)
-            .filter(Boolean) as CalendarEvent[];
-          eventsAdapter.upsertMany(state.events, mappedEvents);
+          state.isFetchingMore = false;
+          if (typeof meta.arg.originalArgs?.page === 'number') {
+            state.error = 'feed.errorLoading';
+          } else {
+            state.error = error?.message ?? 'calendar.errorLoading';
+          }
         },
       )
-      .addMatcher(
-        api.endpoints.readAllEventsV1EventsCalendarGet.matchRejected,
-        (state, { error }) => {
-          state.isLoading = false;
-          state.error = error.message ?? 'calendar.errorLoading';
-        },
-      )
-      .addMatcher(api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchPending, (state) => {
+      .addMatcher(api.endpoints.getFilterValuesV1EventsFiltersGet.matchPending, (state) => {
         state.isLoading = true;
       })
       .addMatcher(
-        api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchFulfilled,
+        api.endpoints.getFilterValuesV1EventsFiltersGet.matchFulfilled,
         (state, action: PayloadAction<FilterModel>) => {
           state.filterVariants.types = action.payload.type ? [...action.payload.type] : [];
           state.filterVariants.formats = action.payload.format ? [...action.payload.format] : [];
@@ -128,11 +123,12 @@ const eventsSlice = createSlice({
             ? action.payload.organization.map((org) => ({ id: org.id, title: org.title }))
             : [];
           state.areFilterVariantsLoaded = true;
+          state.isLoading = false;
           state.error = null;
         },
       )
       .addMatcher(
-        api.endpoints.getTypesAndFormatsV1EventsFeedFiltersGet.matchRejected,
+        api.endpoints.getFilterValuesV1EventsFiltersGet.matchRejected,
         (state, { error }) => {
           state.isLoading = false;
           state.error = error.message ?? 'calendar.errorLoading';

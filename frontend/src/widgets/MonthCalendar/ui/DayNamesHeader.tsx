@@ -7,7 +7,7 @@ interface DayNamesHeaderProps {
   dayNames: string[];
 }
 
-export const DayNamesHeader: React.FC<DayNamesHeaderProps> = React.memo(({ dayNames }) => {
+export const DayNamesHeader: React.FC<DayNamesHeaderProps> = ({ dayNames }) => {
   const isWeekend = (index: number): boolean => {
     return index === 5 || index === 6;
   };
@@ -49,4 +49,4 @@ export const DayNamesHeader: React.FC<DayNamesHeaderProps> = React.memo(({ dayNa
       ))}
     </Box>
   );
-});
+};

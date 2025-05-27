@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
-import {
-  useReadAllEventsV1EventsFeedGetQuery,
-  ReadAllEventsV1EventsFeedGetApiArg,
-} from '@/shared/api/api';
+import { useReadAllEventsV1EventsGetQuery, ReadAllEventsV1EventsGetApiArg } from '@/shared/api/api';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import {
   incrementPage,
@@ -22,8 +19,8 @@ export const useEventsFeed = (currentFilters: FilterState) => {
 
   const [hasMore, setHasMore] = useState(true);
 
-  const queryArgs = useMemo((): ReadAllEventsV1EventsFeedGetApiArg => {
-    const args: ReadAllEventsV1EventsFeedGetApiArg = { page, pageSize };
+  const queryArgs = useMemo((): ReadAllEventsV1EventsGetApiArg => {
+    const args: ReadAllEventsV1EventsGetApiArg = { page, pageSize };
     if (organizationId !== null) args.organizationId = organizationId;
     if (type !== null) args.type = type;
     if (format !== null) args.format = format;
@@ -35,44 +32,30 @@ export const useEventsFeed = (currentFilters: FilterState) => {
     isFetching,
     isLoading: rtkQueryIsLoading,
     error: currentQueryError,
-    refetch,
     isError: isCurrentQueryError,
     isSuccess: isCurrentQuerySuccess,
-  } = useReadAllEventsV1EventsFeedGetQuery(queryArgs);
+  } = useReadAllEventsV1EventsGetQuery(queryArgs, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const isInitialMount = useRef(true);
-  const [needsRefetchAfterPageReset, setNeedsRefetchAfterPageReset] = useState(false);
 
-  // Эффект 1: Сброс страницы и установка флага для рефетча при смене фильтров
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      setHasMore(true);
       return;
     }
     dispatch(setPage(0));
     setHasMore(true);
-    setNeedsRefetchAfterPageReset(true);
   }, [type, format, organizationId, dispatch]);
 
-  // Эффект 2: Рефетч, если страница сброшена и установлен флаг
-  useEffect(() => {
-    if (page === 0 && needsRefetchAfterPageReset) {
-      refetch();
-      setNeedsRefetchAfterPageReset(false);
-    }
-  }, [page, needsRefetchAfterPageReset, refetch]);
-
-  // Эффект 3: Обновление флага hasMore после получения данных
   useEffect(() => {
     if (isCurrentQuerySuccess && currentFetchData) {
-      if (currentFetchData.length < pageSize) {
-        setHasMore(false);
-      } else if (currentFetchData.length === 0 && page > 0) {
-        setHasMore(false);
-      }
+      setHasMore(currentFetchData.length === pageSize);
+    } else if (isCurrentQueryError) {
+      setHasMore(false);
     }
-  }, [currentFetchData, isCurrentQuerySuccess, pageSize, page]);
+  }, [currentFetchData, isCurrentQuerySuccess, isCurrentQueryError, pageSize]);
 
   const eventsFromStore = useAppSelector(selectAllEvents);
 
