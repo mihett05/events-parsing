@@ -27,6 +27,7 @@ class CreateAttachmentUseCase:
         builder: PermissionBuilder,
         role_getter: RoleGetter,
     ):
+        #тут должен быть pydoc
         self.__gateway = gateway
         self.__transaction = tx
         self.__repository = repository
