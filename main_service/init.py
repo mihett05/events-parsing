@@ -26,9 +26,7 @@ async def _create_admin(
     users_repository: UsersRepository,
     create_user: CreateUserWithPasswordUseCase,
 ):
-    dto = RegisterUserDto(
-        email=config.admin_username, password=config.admin_password
-    )
+    dto = RegisterUserDto(email=config.admin_username, password=config.admin_password)
     try:
         user = await users_repository.read_by_email(dto.email)
     except UserNotFoundError:

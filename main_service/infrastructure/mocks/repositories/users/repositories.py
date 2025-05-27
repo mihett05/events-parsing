@@ -25,12 +25,13 @@ from domain.users.repositories import (
     UserOrganizationRolesRepository,
     UsersRepository,
 )
+
 from infrastructure import config
+
 from ..crud import MockRepository, MockRepositoryConfig
 
 
 class UsersMemoryRepository(UsersRepository):
-
     class Config(MockRepositoryConfig):
         def __init__(self):
             super().__init__(

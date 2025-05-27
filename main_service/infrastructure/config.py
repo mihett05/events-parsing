@@ -18,6 +18,7 @@ class Config(BaseSettings):
     admin_username: str
     admin_password: str
     base_organization: str
+    base_url: str
 
     postgres_user: str
     postgres_password: str
