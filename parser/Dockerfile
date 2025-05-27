@@ -4,7 +4,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-eng \
-    tesseract-ocr-rus
+    tesseract-ocr-rus \
+    ffmpeg libsm6 libxext6
 
 RUN pip3 install poetry
 
