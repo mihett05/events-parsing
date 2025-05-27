@@ -6,6 +6,7 @@ from sentence_transformers import SentenceTransformer, util
 model = SentenceTransformer(
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
+"""Модель для векторного представления текстов на нескольких языках."""
 
 nltk.download("stopwords")
 nltk.download("punkt")
@@ -19,11 +20,23 @@ topic_descriptions = {
         "по программированию чаще всего самостоятельно и соревнуются друг с другом."
     ),
 }
+"""Описания тематик для классификации текстов."""
 
 
 def is_text_relates_to_topics(
     text: str, descriptions: dict[str, str], threshhold: float = 0.3
 ) -> bool:
+    """
+        Определяет, относится ли текст к одной из заданных тематик.
+
+        Args:
+            text: Анализируемый текст
+            descriptions: Словарь с описаниями тематик
+            threshhold: Порог косинусной схожести для определения соответствия
+
+        Returns:
+            bool: True если текст соответствует хотя бы одной тематике, иначе False
+        """
     text = preprocess_text(text)
     text_emb = model.encode([text])
 
@@ -59,6 +72,9 @@ def is_text_relates_to_topics(
 
 
 def preprocess_text(text: str):
+    """
+        Предварительно обрабатывает текст перед анализом.
+        """
     tokens = nltk.word_tokenize(text)
     tokens = [token.lower() for token in tokens]
 

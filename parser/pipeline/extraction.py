@@ -9,9 +9,15 @@ config = get_config()
 
 
 class OpenAiExtraction:
+    """Класс для извлечения структурированной информации о событиях из текста с помощью OpenAI.
+
+        Инкапсулирует логику взаимодействия с OpenAI API, включая парсинг ответов
+        и валидацию извлеченных данных.
+        """
     def __init__(
         self, init_prompt: dict[str, str], url: str, model: str, key: str
     ):
+        """Инициализация клиента OpenAI с настройками для обработки текстовых запросов."""
         self.client = OpenAI(
             base_url=url,
             api_key=key,
@@ -20,6 +26,7 @@ class OpenAiExtraction:
         self.init_prompt = init_prompt
 
     def extract(self, text: str) -> EventInfoModel:
+        """Извлекает данные о единичном событии из неструктурированного текста."""
         completion = self.client.chat.completions.create(
             extra_body={},
             model=self.model,
@@ -33,6 +40,8 @@ class OpenAiExtraction:
         return self.parse_response(response)
 
     def parse_response(self, response: str) -> EventInfoModel:  # noqa
+        """Преобразует сырой ответ от OpenAI в валидированную модель события."""
+
         response_dict = json.loads(
             response.replace("```", "").replace("json", "").strip()
         )
@@ -44,6 +53,8 @@ class OpenAiExtraction:
         )
 
     def extract_list(self, text: str) -> list[EventInfoModel]:
+        """Извлекает список событий из текста, фильтруя некорректные или неполные данные."""
+
         result = []
         completion = self.client.chat.completions.create(
             extra_body={},
@@ -90,6 +101,8 @@ class OpenAiExtraction:
 
 
 def get_prompt() -> dict[str, str]:
+    """Загружает шаблоны промтов для OpenAI из файлов (одиночный запрос и список)."""
+
     result = {}
     with open("./init_prompt.txt", encoding="UTF-8") as f:
         result["single"] = f.read()
@@ -107,8 +120,10 @@ api = OpenAiExtraction(
 
 
 def extract_features(text: str) -> EventInfoModel:
+    """Публичная функция для извлечения данных о событии из текста. Обертка вокруг OpenAiExtraction.extract."""
     return api.extract(text)
 
 
 def extract_list(text: str) -> list[EventInfoModel]:
+    """Публичная функция для извлечения списка событий. Обертка вокруг OpenAiExtraction.extract_list."""
     return api.extract_list(text)

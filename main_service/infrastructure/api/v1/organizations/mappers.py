@@ -30,6 +30,11 @@ def map_create_dto_from_pydantic(
 ) -> CreateOrganizationDto: ...
 
 
+"""Конвертер для преобразования модели создания организации API в DTO доменного слоя.
+Добавляет ID владельца организации на основе текущего пользователя.
+"""
+
+
 map_to_pydantic = retort.get_converter(
     Organization,
     OrganizationModel,
@@ -44,6 +49,8 @@ map_to_pydantic = retort.get_converter(
         ),
     ],
 )
+"""Конвертер для преобразования сущности организации в модель API."""
+
 
 
 @retort.impl_converter(
@@ -60,7 +67,14 @@ def map_update_dto_from_pydantic(
 ) -> UpdateOrganizationDto: ...
 
 
+"""Конвертер для преобразования модели обновления организации API в DTO прикладного слоя.
+Добавляет ID организации для идентификации обновляемой записи.
+"""
+
+
 organization_token_map_to_pydantic = retort.get_converter(
     OrganizationToken,
     OrganizationTokenModel,
 )
+"""Конвертер для преобразования сущности токена организации в модель API."""
+

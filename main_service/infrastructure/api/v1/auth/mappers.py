@@ -21,6 +21,7 @@ map_authenticate_dto_from_pydantic = retort.get_converter(
         ),
     ],
 )
+"""Конвертер для трансформации модели аутентификации API в DTO для слоя приложения."""
 
 map_create_dto_from_pydantic = retort.get_converter(
     CreateUserModelDto,
@@ -33,3 +34,4 @@ map_create_dto_from_pydantic = retort.get_converter(
         allow_unlinked_optional(P[RegisterUserDto].is_active),
     ],
 )
+"""Конвертер для трансформации модели регистрации API в DTO для слоя приложения с поддержкой опциональных полей."""

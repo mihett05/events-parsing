@@ -6,6 +6,8 @@ from infrastructure.api.models import CamelModel
 
 
 class MailModel(CamelModel):
+    """Pydantic модель для представления данных о письме."""
+
     id: int
     theme: str
     sender: str
@@ -17,12 +19,16 @@ class MailModel(CamelModel):
 
 
 class DatesInfoModel(CamelModel):
+    """Pydantic модель для представления информации о датах события."""
+
     start_date: str
     end_date: str | None
     end_registration: str | None
 
 
 class EventInfoModel(CamelModel):
+    """Pydantic модель для представления полной информации о событии."""
+
     mail_id: int | None
     title: str
     description: str | None

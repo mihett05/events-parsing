@@ -31,6 +31,8 @@ from infrastructure.rabbit import router
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
+    """Создает и настраивает приложение для работы с RabbitMQ."""
+
     broker = await container.get(RabbitBroker)
     broker.include_router(router)
     app = FastStream(broker)
@@ -38,8 +40,20 @@ async def create_rabbit_app(container: AsyncContainer) -> FastStream:
 
 
 def create_app(container: AsyncContainer, config: Config) -> FastAPI:
+    """Фабрика для создания основного FastAPI приложения.
+
+    Инициализирует жизненный цикл приложения, middleware, обработчики ошибок
+    и маршрутизацию API.
+    """
+
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI):
+        """Управляет жизненным циклом приложения.
+
+        Запускает фоновые задачи, инициализирует RabbitMQ и обеспечивает
+        корректное завершение работы.
+        """
+
         tasks = await run_background_tasks(container)
 
         rabbit_app = await create_rabbit_app(container)
@@ -64,6 +78,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):
+        """Обрабатывает ошибки поиска сущностей."""
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"message": str(exc)},
@@ -73,6 +88,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def entity_already_exists_exception_handler(
         _: Request, exc: EntityAlreadyExistsError
     ):
+        """Обрабатывает ошибки дублирования сущностей."""
+
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"message": str(exc)},
@@ -80,6 +97,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(EntityAccessDenied)
     async def entity_access_denied_handler(_: Request, exc: EntityAccessDenied):
+        """Обрабатывает ошибки доступа к сущностям."""
+
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"message": str(exc)},
@@ -89,6 +108,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_credentials_exception_handler(
         _: Request, exc: InvalidCredentialsError
     ):
+        """Обрабатывает ошибки аутентификации."""
+
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": str(exc)},
@@ -98,6 +119,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
     async def invalid_invalid_event_period_handler(
         _: Request, exc: InvalidEntityPeriodError
     ):
+        """Обрабатывает ошибки валидации временных периодов сущностей."""
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"message": str(exc)},
@@ -105,6 +127,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
     @app.exception_handler(UserNotValidated)
     async def not_activated_user(_: Request, exc: UserNotValidated):
+        """Обрабатывает ошибки доступа для неподтвержденных пользователей."""
+
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"message": str(exc)}
         )

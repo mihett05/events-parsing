@@ -22,6 +22,9 @@ map_event_info_dates_from_pydantic = retort.get_converter(
         coercer(str, datetime, lambda dt: datetime.strptime(dt, "%d-%m-%Y"))
     ],
 )
+"""Конвертирует модель данных о датах в DTO, преобразуя строки в datetime."""
+
+
 map_event_info_from_pydantic = retort.get_converter(
     EventInfoModel,
     EventInfo,
@@ -29,6 +32,8 @@ map_event_info_from_pydantic = retort.get_converter(
         coercer(DatesInfoModel, DatesInfo, map_event_info_dates_from_pydantic),
     ],
 )
+"""Конвертирует модель информации о событии в соответствующий DTO."""
+
 
 map_event_info_to_create_dto = retort.get_converter(
     EventInfo,
@@ -49,6 +54,9 @@ map_event_info_to_create_dto = retort.get_converter(
         allow_unlinked_optional(P[CreateEventDto].organization_id),
     ],
 )
+"""Преобразует информацию о событии в DTO для создания события."""
+
+
 
 map_mail_to_pydantic = retort.get_converter(
     Mail,
@@ -64,3 +72,6 @@ map_mail_to_pydantic = retort.get_converter(
         )
     ],
 )
+"""Конвертирует сущность письма в Pydantic модель для RabbitMQ."""
+
+
