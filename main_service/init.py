@@ -30,9 +30,12 @@ async def _create_admin(
         email=config.admin_username, password=config.admin_password
     )
     try:
-        return await users_repository.read_by_email(dto.email)
+        user = await users_repository.read_by_email(dto.email)
     except UserNotFoundError:
-        return await create_user(dto)
+        user = await create_user(dto)
+    finally:
+        await users_repository.change_user_active_status(user.id, True)
+        return user
 
 
 async def _create_organization(
