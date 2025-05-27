@@ -1,4 +1,4 @@
-import { useReadAllEventsV1EventsCalendarGetQuery } from '@/shared/api/api';
+import { useReadAllEventsV1EventsGetQuery } from '@/shared/api/api';
 import {
   CalendarView,
   FilterState,
@@ -66,7 +66,7 @@ export const useCalendarViewData = (
   const apiStartDate = dateRange.startDate;
   const apiEndDate = dateRange.endDate;
 
-  const { refetch } = useReadAllEventsV1EventsCalendarGetQuery(
+  const { refetch } = useReadAllEventsV1EventsGetQuery(
     {
       startDate: apiStartDate,
       endDate: apiEndDate,
