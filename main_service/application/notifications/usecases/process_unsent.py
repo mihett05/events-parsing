@@ -11,6 +11,16 @@ from .update import UpdateNotificationsStatusUseCase
 
 
 class ProcessUnsentNotificationsUseCase:
+    """
+    Юзкейс обработки неотправленных уведомлений.
+
+    Оркестрирует процесс массовой отправки уведомлений, включая:
+    - выборку неотправленных уведомлений
+    - получение данных получателей
+    - отправку через внешний сервис
+    - обновление статусов уведомлений
+    """
+
     def __init__(
         self,
         transaction: TransactionsGateway,
@@ -19,6 +29,15 @@ class ProcessUnsentNotificationsUseCase:
         send_notifications: SendNotificationsUseCase,
         update_notifications_status: UpdateNotificationsStatusUseCase,
     ):
+        """
+        Инициализирует зависимости для работы с:
+        - транзакциями
+        - данными пользователей
+        - выборкой уведомлений
+        - сервисом отправки
+        - обновлением статусов
+        """
+
         self.__transaction = transaction
 
         self.__read_users_by_ids = read_users_by_ids
@@ -27,6 +46,15 @@ class ProcessUnsentNotificationsUseCase:
         self.__update_notifications_status = update_notifications_status
 
     async def __call__(self):
+        """
+        Основной метод обработки уведомлений.
+
+        Выполняет в транзакции:
+        - получение списка неотправленных уведомлений
+        - отправку с разделением на успешные/неуспешные
+        - фиксацию результатов отправки
+        """
+
         dto = ReadNotificationsDto(
             page=0,
             page_size=50,

@@ -8,12 +8,21 @@ from application.transactions import TransactionsGateway
 
 
 class CreateMailsUseCase:
+    """
+    Сценарий создания почтовых сообщений.
+
+    Обеспечивает атомарное создание писем с вложениями,
+    включая обработку ошибок и транзакционность операций.
+    """
+
     def __init__(
         self,
         repository: MailsRepository,
         tx: TransactionsGateway,
         create_attachments_use_case: CreateAttachmentUseCase,
     ):
+        """Инициализирует зависимости для создания писем."""
+
         self.__repository = repository
         self.__transaction = tx
         self.__create_attachments = create_attachments_use_case
@@ -21,6 +30,13 @@ class CreateMailsUseCase:
     async def __call__(
         self, dtos: list[CreateMailDto], actor: User | None
     ) -> tuple[list[Mail], list[str]]:
+        """
+        Создает набор почтовых сообщений.
+
+        Возвращает кортеж из списка успешно созданных писем
+        и списка идентификаторов неудачных операций.
+        """
+
         failed: list[str] = []
         succeed: list[Mail] = []
 
@@ -36,6 +52,13 @@ class CreateMailsUseCase:
     async def __try_create_mail(
         self, dto: CreateMailDto, actor: User | None
     ) -> Mail | None:
+        """
+        Пытается создать письмо с вложениями в транзакции.
+
+        В случае неудачи при создании вложений откатывает операцию.
+        Возвращает созданное письмо или None при ошибке.
+        """
+
         async with self.__transaction.nested() as nested:
             mail = await self.__repository.create(dto)
             if len(dto.attachments) == 0:
