@@ -46,4 +46,5 @@ export const AppPaths = {
   eventsFeed: getEventsFeedPath,
   login: getLoginPath,
   profile: getProfilePath,
+  register: () => '/auth/register',
 };
