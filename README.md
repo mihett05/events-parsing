@@ -9,7 +9,7 @@
 Все классы main_service описаны в pydoc
 
 # Архитектура
-(Ссылка на доску)[https://miro.com/app/board/uXjVITyuLEU=/]
+[Ссылка на доску](https://miro.com/app/board/uXjVITyuLEU=/)
 
 # OpenAPI & Swagger
-(Ссылка на Swagger)[https://api.events.lovepaw.ru/docs]
+[Ссылка на Swagger](https://api.events.lovepaw.ru/docs)
