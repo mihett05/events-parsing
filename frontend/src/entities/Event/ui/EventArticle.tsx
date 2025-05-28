@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Chip, Typography, Paper, Grid, Stack, Divider } from '@mui/material';
+import { Box, Chip, Typography, Paper, Grid, Stack, Divider, Button } from '@mui/material';
 import { CalendarEvent } from '../model/types';
 import { format, isValid, isSameDay, Locale } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -8,6 +8,12 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import EventIcon from '@mui/icons-material/Event';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import {
+  useReadSubscribersV1EventsSubscribeEventIdGetQuery,
+  useSubscribeV1EventsSubscribeEventIdPostMutation,
+  useUnsubscribeV1EventsSubscribeEventIdDeleteMutation,
+} from '@/shared/api/api';
+import { useAppSelector } from '@/shared/store/hooks';
 
 type EventArticleProps = {
   event: CalendarEvent;
@@ -51,6 +57,18 @@ export const EventArticle = React.forwardRef<HTMLDivElement, EventArticleProps>(
 
     const isSingleDayEvent = !event.endDate || isSameDay(event.startDate, event.endDate);
 
+    const user = useAppSelector((state) => state.user.user);
+
+    const subscribers = useReadSubscribersV1EventsSubscribeEventIdGetQuery({
+      eventId: event.id,
+    });
+
+    const [subscribe, subscribeMutation] = useSubscribeV1EventsSubscribeEventIdPostMutation();
+    const [unsubscribe] = useUnsubscribeV1EventsSubscribeEventIdDeleteMutation();
+
+    const isSubscribed =
+      !subscribers.isLoading && subscribers.data?.filter((u) => u.id === user?.id).length;
+
     return (
       <Paper
         ref={ref}
@@ -65,9 +83,31 @@ export const EventArticle = React.forwardRef<HTMLDivElement, EventArticleProps>(
         }}
       >
         <Stack spacing={2}>
-          <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom sx={{ mb: 0 }}>
-            {event.title}
-          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom sx={{ mb: 0 }}>
+              {event.title}
+            </Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              disabled={user === null}
+              color={isSubscribed ? 'error' : 'primary'}
+              onClick={async () => {
+                if (!isSubscribed) {
+                  await subscribe({
+                    eventId: event.id,
+                  }).unwrap();
+                } else {
+                  await unsubscribe({
+                    eventId: event.id,
+                  }).unwrap();
+                }
+                subscribers.refetch();
+              }}
+            >
+              {isSubscribed ? 'Отписаться' : 'Подписаться'}
+            </Button>
+          </Box>
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
             <Chip
               icon={<EventIcon fontSize="small" />}
