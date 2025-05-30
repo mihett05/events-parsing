@@ -6,7 +6,8 @@
     "profile": "Профиль",
     "login": "Войти",
     "logout": "Выйти",
-    "loginRegister": "Войти / Регистрация"
+    "loginRegister": "Войти / Регистрация",
+    "admin": "Админ-панель"
   },
   "calendar": {
     "today": "Сегодня",
@@ -111,5 +112,9 @@
     "email": "E-Mail",
     "password": "Пароль",
     "login": "Войти в аккаунт"
+  },
+  "adminNavigation": {
+    "organizations": "Организации",
+    "organization": "{{title}}"
   }
 }

@@ -36,6 +36,15 @@ const getCalendarPath = (
   return path;
 };
 
+const getOrganizationsPath = () => '/organizations';
+const getOrganizationPath = (organizationId: number) =>
+  `${getOrganizationsPath()}/${organizationId}`;
+const getEventsPath = (organizationId: number) => `${getOrganizationPath(organizationId)}/events`;
+const getEventPath = (eventId: number) => `/events/${eventId}`;
+const getUsersPath = (organizationId: number) => `${getOrganizationPath(organizationId)}/users`;
+const getUserPath = (organizationId: number, userId: number) =>
+  `${getUsersPath(organizationId)}/${userId}`;
+
 export const AppPaths = {
   calendarBase: () => '/',
   calendar: getCalendarPath,
@@ -43,4 +52,10 @@ export const AppPaths = {
   profile: () => '/profile',
   login: () => '/auth/login',
   register: () => '/auth/register',
+  organizations: getOrganizationsPath,
+  organization: getOrganizationPath,
+  events: getEventsPath,
+  event: getEventPath,
+  users: getUsersPath,
+  user: getUserPath,
 };

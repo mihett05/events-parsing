@@ -5,6 +5,10 @@ import { AppPaths } from '@/shared/routes';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { OrganizationsPage } from '@/pages/OrganizationsPage';
+import { OrganizationPage } from '@/pages/OrganizationPage';
+import { EventEditPage } from '@/pages/EventEditPage';
+import { EventCreatePage } from '@/pages/EventCreatePage';
 
 export const router = createBrowserRouter([
   {
@@ -34,5 +38,25 @@ export const router = createBrowserRouter([
   {
     path: AppPaths.profile(),
     element: <ProfilePage />,
+  },
+  {
+    path: AppPaths.organizations(),
+    element: <OrganizationsPage />,
+  },
+  {
+    path: '/organizations/:organizationId',
+    element: <OrganizationPage />,
+  },
+  {
+    path: '/organizations/:organizationId/events',
+    element: <OrganizationPage />,
+  },
+  {
+    path: '/events/:eventId',
+    element: <EventEditPage />,
+  },
+  {
+    path: '/events',
+    element: <EventCreatePage />,
   },
 ]);

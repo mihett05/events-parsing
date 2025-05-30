@@ -101,6 +101,7 @@ jobs:
             ${{ secrets.CI_SERVER }}
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
+          docker system prune -f
           cd deploy
           echo "$KEY" > .ansible_key
           chmod 600 .ansible_key
@@ -111,5 +112,4 @@ jobs:
           --key-file .ansible_key \
           --inventory .ansible_inventory \
           --vault-password-file .ansible_vault_password
-          docker system prune -f
 

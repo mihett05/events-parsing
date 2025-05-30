@@ -8,3 +8,13 @@ enum Roles {
   Redactor = 'REDACTOR',
   Public = 'PUBLIC',
 }
+
+export const adminRoles = [
+  'SUPER_USER',
+  'SUPER_AUTOBUS',
+  'SUPER_ADMIN',
+  'SUPER_REDACTOR',
+  'OWNER',
+  'ADMIN',
+  'REDACTOR',
+];

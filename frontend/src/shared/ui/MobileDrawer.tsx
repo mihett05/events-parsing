@@ -12,15 +12,23 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Feed, Login, Logout, AccountBox } from '@mui/icons-material';
 import { AppPaths } from '@/shared/routes';
 import { useTranslation } from 'react-i18next';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 interface MobileDrawerProps {
   isOpen: boolean;
   isLoggedIn: boolean;
+  isAdmin: boolean;
   onClose: () => void;
   onLogout: () => void;
 }
 
-const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose, onLogout }) => {
+const MobileDrawer: React.FC<MobileDrawerProps> = ({
+  isOpen,
+  isLoggedIn,
+  isAdmin,
+  onClose,
+  onLogout,
+}) => {
   const { t } = useTranslation();
 
   const handleLogoutClick = () => {
@@ -84,6 +92,20 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, isLoggedIn, onClose
                 <ListItemText primary={t('navigation.profile')} />
               </ListItemButton>
             </ListItem>
+            {isAdmin && (
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterNavLink}
+                  to={AppPaths.organizations()}
+                  onClick={onClose}
+                >
+                  <ListItemIcon>
+                    <AdminPanelSettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t('navigation.profile')} />
+                </ListItemButton>
+              </ListItem>
+            )}
             <ListItem disablePadding>
               <ListItemButton onClick={handleLogoutClick}>
                 <ListItemIcon>

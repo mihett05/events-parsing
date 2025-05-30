@@ -1,7 +1,7 @@
 import { Breakpoint, Container } from '@mui/material';
 import Navbar from './Navbar';
 import { useAppSelector } from '../store/hooks';
-import { useGetMeV1UsersMeGetQuery } from '../api/api';
+import { useGetMeV1UsersMeGetQuery, useReadUserRolesV1UsersRolesUserIdGetQuery } from '../api/api';
 
 type LayoutProps = {
   children?: React.ReactNode;
@@ -13,6 +13,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, childrenMaxWidth = 'xl
   useGetMeV1UsersMeGetQuery(undefined, {
     skip: user !== null,
   });
+  useReadUserRolesV1UsersRolesUserIdGetQuery(
+    {
+      userId: user?.id!,
+    },
+    {
+      skip: user === null,
+    },
+  );
 
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>

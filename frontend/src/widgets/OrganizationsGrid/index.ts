@@ -1,0 +1,1 @@
+export { OrganizationsGrid } from './ui';

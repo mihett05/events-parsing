@@ -1,4 +1,4 @@
-import { NavLink as RouterNavLink } from 'react-router';
+import { NavLink as RouterNavLink, useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 interface UserSectionProps {
   isLoggedIn: boolean;
+  isAdmin: boolean;
   anchorEl: null | HTMLElement;
   onMenuOpen: (event: React.MouseEvent<HTMLElement>) => void;
   onMenuClose: () => void;
@@ -20,6 +21,7 @@ interface UserSectionProps {
 
 const UserSection: React.FC<UserSectionProps> = ({
   isLoggedIn,
+  isAdmin,
   anchorEl,
   onMenuOpen,
   onMenuClose,
@@ -27,6 +29,8 @@ const UserSection: React.FC<UserSectionProps> = ({
   onLogout,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  console.log(isAdmin);
 
   return (
     <>
@@ -45,6 +49,11 @@ const UserSection: React.FC<UserSectionProps> = ({
             onClose={onMenuClose}
           >
             <MenuItem onClick={onProfileClick}>{t('navigation.profile')}</MenuItem>
+            {isAdmin && (
+              <MenuItem onClick={() => navigate(AppPaths.organizations())}>
+                {t('navigation.admin')}
+              </MenuItem>
+            )}
             <MenuItem onClick={onLogout}>{t('navigation.logout')}</MenuItem>
           </Menu>
         </>

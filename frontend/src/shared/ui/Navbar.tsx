@@ -11,10 +11,13 @@ import UserSection from './UserSection';
 import MobileDrawer from './MobileDrawer';
 import { AppPaths } from '@/shared/routes';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../store/hooks';
+import { adminRoles } from '@/entities/User/model/roles';
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.user);
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -81,7 +84,8 @@ const Navbar: React.FC = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'block', sm: 'none' } }} />
           <DesktopNavigation />
           <UserSection
-            isLoggedIn={isLoggedIn}
+            isLoggedIn={user.user !== null}
+            isAdmin={user.organizations.some((role) => adminRoles.includes(role.role))}
             anchorEl={anchorEl}
             onMenuOpen={handleMenuOpen}
             onMenuClose={handleMenuClose}
@@ -92,7 +96,8 @@ const Navbar: React.FC = () => {
       </AppBar>
       <MobileDrawer
         isOpen={mobileOpen}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={user.user !== null}
+        isAdmin={user.organizations.some((role) => adminRoles.includes(role.role))}
         onClose={handleDrawerToggle}
         onLogout={handleLogout}
       />

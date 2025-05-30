@@ -6,11 +6,21 @@ import { Provider } from 'react-redux';
 import { store } from './shared/store/store';
 import './shared/config/i18n';
 
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+dayjs.locale('ru');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <CssBaseline />
-      <App />
-    </Provider>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+      <Provider store={store}>
+        <CssBaseline />
+        <App />
+      </Provider>
+    </LocalizationProvider>
   </React.StrictMode>,
 );
