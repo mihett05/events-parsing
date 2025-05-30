@@ -13,3 +13,6 @@
 
 # OpenAPI & Swagger
 [Ссылка на Swagger](https://api.events.lovepaw.ru/docs)
+
+# Деплой
+[Инструкция по деплою](./deploy/README.md)
