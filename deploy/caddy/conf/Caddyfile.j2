@@ -1,16 +1,16 @@
-registry.events.lovepaw.ru {
+{{ domains.registry }} {
     reverse_proxy registry:5000
 }
 
-events.lovepaw.ru {
+{{ domains.frontend }} {
     reverse_proxy frontend:3000
 }
 
-api.events.lovepaw.ru {
+{{ domains.api }} {
     reverse_proxy main-service:8080
 }
 
-files.events.lovepaw.ru {
+{{ domains.files }} {
     handle {
         reverse_proxy minio:9000
     }
