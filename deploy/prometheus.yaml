@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: rabbitmq
+    static_configs:
+      - targets: ["rabbit:15692"]
+    metrics_path: /metrics
+    params:
+      family: ["vhost", "queue"]
+
+  - job_name: postgres
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  - job_name: main-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["main-service:8080"]

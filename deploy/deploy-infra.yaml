@@ -46,6 +46,41 @@
         owner: web
         group: web
         mode: "0777"
+    - name: Copy prometheus config
+      ansible.builtin.copy:
+        src: ./prometheus.yaml
+        dest: /var/www/events/prometheus.yaml
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Create grafana dir
+      ansible.builtin.file:
+        path: /var/www/events/grafana
+        state: directory
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Create grafana provisioning dir
+      ansible.builtin.file:
+        path: /var/www/events/grafana/provisioning
+        state: directory
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy grafana prometheus source
+      ansible.builtin.copy:
+        src: ./grafana/provisioning/prometheus.yaml
+        dest: /var/www/events/grafana/provisioning/prometheus.yaml
+        owner: web
+        group: web
+        mode: "0777"
+    - name: Copy grafana security config
+      ansible.builtin.template:
+        src: ./grafana/security.ini.j2
+        dest: /var/www/events/grafana/security.ini
+        owner: web
+        group: web
+        mode: "0777"
     - name: Copy cleanup script
       ansible.builtin.copy:
         src: ./cleanup.sh
@@ -60,3 +95,4 @@
         remove_orphans: true
         files:
           - docker-compose.infra.yaml
+        state: restarted 

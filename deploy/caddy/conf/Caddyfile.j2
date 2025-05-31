@@ -18,3 +18,7 @@
         reverse_proxy minio:9001
     }
 }
+
+{{ domains.grafana }} {
+    reverse_proxy grafana:3001
+}

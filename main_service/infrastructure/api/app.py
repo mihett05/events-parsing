@@ -31,6 +31,7 @@ from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
 from infrastructure.telegram.bot import create_bot
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
@@ -99,6 +100,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    Instrumentator().instrument(app).expose(app)
 
     @app.exception_handler(EntityNotFoundError)
     async def entity_not_found_exception_handler(_: Request, exc: EntityNotFoundError):

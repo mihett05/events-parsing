@@ -44,7 +44,7 @@ def __make_response(user: User, tokens_pair: TokenPairDto):
             access_token=tokens_pair.access_token,
         ).model_dump(by_alias=True, mode="json"),
     )
-    response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token)
+    response.set_cookie(REFRESH_COOKIE, tokens_pair.refresh_token, httponly=True, samesite="none")
     return response
 
 

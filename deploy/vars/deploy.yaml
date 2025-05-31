@@ -3,6 +3,7 @@ domains:
   frontend: events.lovepaw.ru
   api: api.events.lovepaw.ru
   files: files.events.lovepaw.ru
+  grafana: grafana.events.lovepaw.ru
 
 images:
   main_service: "{{ domains.registry }}/main-service:latest"

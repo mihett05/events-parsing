@@ -43,3 +43,4 @@
         remove_orphans: true
         files:
           - docker-compose.yaml
+        state: restarted
