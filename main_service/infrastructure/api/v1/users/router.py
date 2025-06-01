@@ -1,10 +1,11 @@
-from typing import Annotated
+from typing import Annotated, Union
 
 import application.users.usecases as use_cases
 from aiogram import Bot
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.dtos import ReadAllUsersDto
 from domain.users.entities import User
+from domain.users.role_getter import RoleGetter
 from fastapi import APIRouter, Depends
 
 import infrastructure.api.v1.users.dtos as dtos
@@ -17,9 +18,11 @@ from infrastructure.api.v1.users.dtos import CreateUserRoleModelDto
 router = APIRouter(route_class=DishkaRoute, tags=["Users"])
 
 
-@router.get("/", response_model=list[models.UserModel])
+@router.get("/", response_model=list[Union[models.UserModel, models.PublicUserModel]])
 async def read_all_users(
+    actor: Annotated[User, Depends(get_user)],
     use_case: FromDishka[use_cases.ReadAllUsersUseCase],
+    role_getter: FromDishka[RoleGetter],
     page: int = 0,
     page_size: int = 50,
 ):
@@ -27,8 +30,15 @@ async def read_all_users(
 
     По умолчанию возвращает первые 50 пользователей.
     """
+    # TODO Misha посмотри
+    actor_role = await role_getter(actor)
+    if actor_role.role.value.startswith("SUPER"):
+        return map(
+            mappers.map_to_pydantic,
+            await use_case(ReadAllUsersDto(page=page, page_size=page_size)),
+        )
     return map(
-        mappers.map_to_pydantic,
+        mappers.map_to_public_pydantic,
         await use_case(ReadAllUsersDto(page=page, page_size=page_size)),
     )
 
@@ -42,13 +52,20 @@ async def get_me(user: Annotated[User, Depends(get_user)]):
 
 @router.get(
     "/{user_id}",
-    response_model=models.UserModel,
+    response_model=Union[models.UserModel, models.PublicUserModel],
     responses={404: {"model": ErrorModel}},
 )
-async def read_user(user_id: int, use_case: FromDishka[use_cases.ReadUserUseCase]):
+async def read_user(
+    user_id: int,
+    use_case: FromDishka[use_cases.ReadUserUseCase],
+    actor: Annotated[User, Depends(get_user)],
+    role_getter: FromDishka[RoleGetter],
+):
     """Получает данные пользователя по его ID."""
-
-    return mappers.map_to_pydantic(await use_case(user_id))
+    actor_role = await role_getter(actor)
+    if actor_role.role.value.startswith("SUPER"):
+        return mappers.map_to_pydantic(await use_case(user_id))
+    return mappers.map_to_public_pydantic(await use_case(user_id))
 
 
 @router.put(
@@ -62,7 +79,6 @@ async def update_user(
     use_case: FromDishka[use_cases.UpdateUserUseCase],
 ):
     """Обновляет данные текущего пользователя."""
-
     return mappers.map_to_pydantic(
         await use_case(mappers.map_update_dto_from_pydantic(dto, actor.id), actor)
     )
