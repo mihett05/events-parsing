@@ -20,3 +20,11 @@ class AuthenticateUserModelDto(CamelModel):
 
     email: EmailStr
     password: str
+
+
+class CreateNewPasswordModelDto(CamelModel):
+    email: EmailStr
+
+
+class UpdateUserPasswordModelDto(CamelModel):
+    password: str

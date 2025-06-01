@@ -34,3 +34,8 @@ class DeleteUserRoleDto:
 @dataclass
 class UpdateUserPasswordDto:
     password: str
+
+
+@dataclass
+class ForgotPasswordDto:
+    email: str

@@ -395,7 +395,14 @@ class PasswordResetTokenDatabaseRepository(UserActivationTokenRepository):
         self.__repository = PostgresRepository(session, self.__config)
 
     async def create(self, dto: dtos.CreatePasswordResetTokenDto) -> PasswordResetToken:
-        return await self.__repository.create_from_dto(dto)
+        query = (
+            insert(self.__config.model)
+            .values(id=dto.id, user_id=dto.user_id)
+            .returning(self.__config.model)
+        )
+        result = await self.__session.scalars(self.__config.add_options(query))
+        model = result.one()
+        return self.__config.entity_mapper(model)
 
     async def read(self, token_id: UUID) -> PasswordResetToken:
         return await self.__repository.read(token_id)

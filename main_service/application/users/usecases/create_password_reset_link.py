@@ -8,6 +8,7 @@ from domain.users.repositories import PasswordResetTokenRepository, UsersReposit
 from infrastructure.config import Config
 
 from application.notifications.factory import NotificationGatewayAbstractFactory
+from application.users.dtos import ForgotPasswordDto
 
 
 class CreatePasswordResetLink:
@@ -23,11 +24,12 @@ class CreatePasswordResetLink:
         self.__users_repository = users_repository
         self.__token_repository = token_repository
 
-    def __make_notification(
+    def __create_notification(
         self, user: User, token: PasswordResetToken
     ) -> Notification:
+        # TODO: гавно переделывай, конфиг харам
         return Notification(
-            text=f"Уважаемый, {user.fullname}."
+            text=f"Уважаемый, {user.fullname}. "
             f"По этой ссылке вы можете изменить ваш пароль: "
             f"{self.__config.base_url}/reset/{token.id}",
             event_id=-1,
@@ -35,12 +37,12 @@ class CreatePasswordResetLink:
             send_date=datetime.date.today(),
         )
 
-    async def __call__(self, email: str) -> PasswordResetToken:
-        user = await self.__users_repository.read_by_email(email)
+    async def __call__(self, dto: ForgotPasswordDto) -> PasswordResetToken:
+        user = await self.__users_repository.read_by_email(dto.email)
         token = await self.__token_repository.create(
             CreatePasswordResetTokenDto(user_id=user.id, user=user)
         )
-        notification = self.__make_notification(user, token)
+        notification = self.__create_notification(user, token)
         gateway = self.__gateway_factory.get(
             user, override=UserNotificationSendToEnum.EMAIL
         )
