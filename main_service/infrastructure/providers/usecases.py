@@ -78,6 +78,8 @@ class UseCasesProvider(Provider):
         users_use_cases.ReadByCalendarUUIDUseCase,
         users_use_cases.CreateCalendarLinkUseCase,
         users_use_cases.DeleteCalendarLinkUseCase,
+        users_use_cases.CreatePasswordResetLink,
+        users_use_cases.ValidatePasswordResetToken,
     )
 
     auth = provide_all(

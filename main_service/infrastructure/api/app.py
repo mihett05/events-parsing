@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
+from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.staticfiles import StaticFiles
 
 from infrastructure.api.background_tasks import (
@@ -31,7 +32,6 @@ from infrastructure.api.v1 import v1_router
 from infrastructure.config import Config
 from infrastructure.rabbit import router
 from infrastructure.telegram.bot import create_bot
-from prometheus_fastapi_instrumentator import Instrumentator
 
 
 async def create_rabbit_app(container: AsyncContainer) -> FastStream:
@@ -100,7 +100,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
+
     Instrumentator().instrument(app).expose(app)
 
     @app.exception_handler(EntityNotFoundError)

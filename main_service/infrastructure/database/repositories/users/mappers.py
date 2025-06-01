@@ -1,8 +1,13 @@
 from adaptix import P
 from adaptix.conversion import allow_unlinked_optional, coercer, link_function
 from application.auth.dtos import CreateUserWithPasswordDto
-from domain.users.dtos import CreateActivationTokenDto, CreateTelegramTokenDto
+from domain.users.dtos import (
+    CreateActivationTokenDto,
+    CreatePasswordResetTokenDto,
+    CreateTelegramTokenDto,
+)
 from domain.users.entities import (
+    PasswordResetToken,
     TelegramToken,
     User,
     UserActivationToken,
@@ -12,6 +17,7 @@ from domain.users.entities import (
 
 from ...mappers import postgres_retort
 from .models import (
+    PasswordResetTokenDatabaseModel,
     TelegramTokenDatabaseModel,
     UserActivationTokenDatabaseModel,
     UserDatabaseModel,
@@ -178,3 +184,25 @@ create_user_activation_token_map = retort.get_converter(
 """
 Преобразует DTO создания токена активации пользователя в модель базы данных, допуская отсутствие некоторых полей.
 """
+
+password_reset_token_map_from_db = retort.get_converter(
+    PasswordResetTokenDatabaseModel,
+    PasswordResetToken,
+    recipe=[coercer(UserDatabaseModel, User, map_from_db)],
+)
+
+password_reset_token_map_to_db = retort.get_converter(
+    PasswordResetToken,
+    PasswordResetTokenDatabaseModel,
+    recipe=[coercer(User, UserDatabaseModel, map_to_db)],
+)
+
+create_password_reset_token_map = retort.get_converter(
+    CreatePasswordResetTokenDto,
+    PasswordResetTokenDatabaseModel,
+    recipe=[
+        coercer(User, UserDatabaseModel, map_to_db),
+        allow_unlinked_optional(P[PasswordResetTokenDatabaseModel].id),
+        allow_unlinked_optional(P[PasswordResetTokenDatabaseModel].is_used),
+    ],
+)

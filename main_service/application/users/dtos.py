@@ -29,3 +29,8 @@ class DeleteUserRoleDto:
 
     user_id: int
     organization_id: int
+
+
+@dataclass
+class UpdateUserPasswordDto:
+    password: str

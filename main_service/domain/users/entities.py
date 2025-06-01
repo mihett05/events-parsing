@@ -51,3 +51,11 @@ class UserActivationToken:
     user_id: int
     user: User
     is_used: bool = False
+
+
+@dataclass
+class PasswordResetToken:
+    id: UUID
+    user_id: int
+    user: User
+    is_used: bool = False
