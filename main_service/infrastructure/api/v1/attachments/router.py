@@ -2,6 +2,7 @@ from typing import Annotated
 from uuid import UUID
 
 import application.attachments.usecases as use_cases
+from application.auth.permissions import PermissionGetter
 from application.events.usecases.read import ReadEventUseCase
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
@@ -100,3 +101,17 @@ async def update_attachment(
     return mappers.map_to_pydantic(
         await use_case(mappers.map_update_dto_from_pydantic(dto, attachment_id), actor)
     )
+
+
+@router.get(
+    "/permissions/{attachment_id}",
+    responses={404: {"model": ErrorModel}},
+)
+async def get_permissions(
+    attachment_id: UUID,
+    actor: Annotated[User, Depends(get_user)],
+    permission_getter: FromDishka[PermissionGetter],
+):
+    """Получения разрешений пользователя для данного вложения"""
+
+    return await permission_getter.get_attachment_perms(attachment_id, actor)

@@ -2,6 +2,7 @@ from typing import Annotated
 from uuid import UUID
 
 import application.events.usecases as use_cases
+from application.auth.permissions import PermissionGetter
 from application.auth.usecases import AuthorizeUseCase
 from application.organizations.usecases import ReadAllOrganizationUseCase
 from application.users.usecases import (
@@ -245,3 +246,17 @@ async def delete_event(
     """Удаление события."""
 
     return mappers.map_to_pydantic(await use_case(event_id, actor))
+
+
+@router.get(
+    "/permissions/{event_id}",
+    responses={404: {"model": ErrorModel}},
+)
+async def get_permissions(
+    event_id: int,
+    actor: Annotated[User, Depends(get_user)],
+    permission_getter: FromDishka[PermissionGetter],
+):
+    """Получения разрешений пользователя для данного события"""
+
+    return await permission_getter.get_event_perms(event_id, actor)

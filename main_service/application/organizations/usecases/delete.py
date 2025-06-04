@@ -8,7 +8,7 @@ from application.auth.permissions import PermissionBuilder
 from application.organizations.permissions import OrganizationPermissionProvider
 from application.organizations.usecases.read import ReadOrganizationUseCase
 from application.transactions import TransactionsGateway
-from application.users.usecases import ReadUserRolesUseCase
+from application.users.usecases.read_all_roles import ReadUserRolesUseCase
 
 
 class DeleteOrganizationUseCase:

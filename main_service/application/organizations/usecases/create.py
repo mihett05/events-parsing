@@ -13,7 +13,6 @@ from application.organizations.usecases.validate_token import (
     ValidateOrganizationTokenUseCase,
 )
 from application.transactions import TransactionsGateway
-from application.users.usecases import CreateUserRoleUseCase
 
 
 class CreateOrganizationUseCase:

@@ -4,7 +4,7 @@ from domain.notifications.dtos import ReadNotificationsDto
 from domain.notifications.enums import NotificationStatusEnum
 
 from ...transactions import TransactionsGateway
-from ...users.usecases import ReadUsersByIdsUseCase
+from ...users.usecases.read_by_ids import ReadUsersByIdsUseCase
 from .read_all import ReadAllNotificationsUseCase
 from .send import SendNotificationsUseCase
 from .update import UpdateNotificationsStatusUseCase

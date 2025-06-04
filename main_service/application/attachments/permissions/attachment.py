@@ -3,7 +3,7 @@ from domain.users.entities import UserOrganizationRole
 from domain.users.enums import RoleEnum
 
 from application.auth.enums import PermissionsEnum
-from application.auth.permissions import PermissionProvider
+from application.auth.permissions.provider import PermissionProvider
 
 
 class AttachmentPermissionProvider(PermissionProvider):

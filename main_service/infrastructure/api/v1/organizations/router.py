@@ -2,6 +2,7 @@ from typing import Annotated
 from uuid import UUID
 
 import application.organizations.usecases as use_cases
+from application.auth.permissions import PermissionGetter
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.organizations.dtos import (
     ReadOrganizationsDto,
@@ -180,3 +181,17 @@ async def delete_organization(
     """
 
     return mappers.map_to_pydantic(await use_case(organization_id, actor))
+
+
+@router.get(
+    "/permissions/{organization_id}",
+    responses={404: {"model": ErrorModel}},
+)
+async def get_permissions(
+    organization_id: int,
+    actor: Annotated[User, Depends(get_user)],
+    permission_getter: FromDishka[PermissionGetter],
+):
+    """Получения разрешений пользователя для данной организации"""
+
+    return await permission_getter.get_organization_perms(organization_id, actor)

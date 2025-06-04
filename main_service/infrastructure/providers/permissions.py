@@ -1,4 +1,4 @@
-from application.auth.permissions import PermissionBuilder
+from application.auth.permissions import PermissionBuilder, PermissionGetter
 from dishka import Provider, Scope, provide
 from domain.users.role_getter import RoleGetter
 
@@ -16,3 +16,5 @@ class PermissionProvider(Provider):
     builder = provide(source=PermissionBuilder)
 
     role_getter = provide(source=RoleGetter)
+
+    permission_getter = provide(source=PermissionGetter)
