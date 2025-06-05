@@ -4,7 +4,7 @@ import application.users.usecases as use_cases
 from aiogram import Bot
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.dtos import ReadAllUsersDto
-from domain.users.entities import User
+from domain.users.entities import User, UserOrganizationRole
 from domain.users.role_getter import RoleGetter
 from fastapi import APIRouter, Depends
 
@@ -16,6 +16,16 @@ from infrastructure.api.v1.auth.deps import get_user
 from infrastructure.api.v1.users.dtos import CreateUserRoleModelDto
 
 router = APIRouter(route_class=DishkaRoute, tags=["Users"])
+
+
+def get_user_mapper(
+    role: UserOrganizationRole,
+) -> mappers.map_to_pydantic | mappers.map_to_public_pydantic:
+    return (
+        mappers.map_to_pydantic
+        if role.role.value.startswith("SUPER")
+        else mappers.map_to_public_pydantic
+    )
 
 
 @router.get("/", response_model=list[Union[models.UserModel, models.PublicUserModel]])
@@ -30,15 +40,10 @@ async def read_all_users(
 
     По умолчанию возвращает первые 50 пользователей.
     """
-    # TODO Misha посмотри
     actor_role = await role_getter(actor)
-    if actor_role.role.value.startswith("SUPER"):
-        return map(
-            mappers.map_to_pydantic,
-            await use_case(ReadAllUsersDto(page=page, page_size=page_size)),
-        )
+    mapper = get_user_mapper(actor_role)
     return map(
-        mappers.map_to_public_pydantic,
+        mapper,
         await use_case(ReadAllUsersDto(page=page, page_size=page_size)),
     )
 
@@ -63,9 +68,8 @@ async def read_user(
 ):
     """Получает данные пользователя по его ID."""
     actor_role = await role_getter(actor)
-    if actor_role.role.value.startswith("SUPER"):
-        return mappers.map_to_pydantic(await use_case(user_id))
-    return mappers.map_to_public_pydantic(await use_case(user_id))
+    mapper = get_user_mapper(actor_role)
+    return mapper(await use_case(user_id))
 
 
 @router.put(
