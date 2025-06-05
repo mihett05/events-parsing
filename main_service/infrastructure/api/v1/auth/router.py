@@ -133,7 +133,7 @@ async def forgot_password(
     create_password_reset_link: FromDishka[CreatePasswordResetLink],
 ):
     await create_password_reset_link(map_forgot_password_dto_from_pydantic(dto))
-    return Response(status_code=status.HTTP_200_OK)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post(

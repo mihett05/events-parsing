@@ -81,7 +81,7 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
 
         await rabbit_app.broker.start()
 
-        # bot_process = start_bot_subprocess()
+        bot_process = start_bot_subprocess()
 
         try:
             yield
@@ -89,8 +89,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
             await cancel_background_task(tasks)
             await rabbit_app.broker.close()
 
-        # bot_process.terminate()
-        # bot_process.wait()
+        bot_process.terminate()
+        bot_process.wait()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(

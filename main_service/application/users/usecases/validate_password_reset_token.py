@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from domain.users.entities import User
+from domain.users.exceptions import PasswordResetTokenAlreadyUsedError
 from domain.users.repositories import PasswordResetTokenRepository, UsersRepository
 
 from application.auth.tokens.dtos import TokenPairDto
@@ -30,6 +31,8 @@ class ValidatePasswordResetToken:
     ) -> tuple[User, TokenPairDto]:
         async with self.__transaction:
             token = await self.__token_repository.read(token_uuid)
+            if token.is_used:
+                raise PasswordResetTokenAlreadyUsedError
             await self.__token_repository.change_token_used_statement(token.id)
             password_dto = self.__security_gateway.create_hashed_password(dto.password)
             token.user.hashed_password = password_dto.hashed_password

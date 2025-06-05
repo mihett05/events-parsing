@@ -1,5 +1,6 @@
 import datetime
 
+from application.transactions import TransactionsGateway
 from domain.notifications.entities import Notification
 from domain.users.dtos import CreatePasswordResetTokenDto
 from domain.users.entities import PasswordResetToken, User
@@ -18,11 +19,13 @@ class CreatePasswordResetLink:
         config: Config,
         users_repository: UsersRepository,
         token_repository: PasswordResetTokenRepository,
+        tx: TransactionsGateway,
     ):
         self.__gateway_factory = send_notification_gateway_factory
         self.__config = config
         self.__users_repository = users_repository
         self.__token_repository = token_repository
+        self.__transaction = tx
 
     def __create_notification(
         self, user: User, token: PasswordResetToken
@@ -38,13 +41,14 @@ class CreatePasswordResetLink:
         )
 
     async def __call__(self, dto: ForgotPasswordDto) -> PasswordResetToken:
-        user = await self.__users_repository.read_by_email(dto.email)
-        token = await self.__token_repository.create(
-            CreatePasswordResetTokenDto(user_id=user.id, user=user)
-        )
-        notification = self.__create_notification(user, token)
-        gateway = self.__gateway_factory.get(
-            user, override=UserNotificationSendToEnum.EMAIL
-        )
-        await gateway.send(notification, user)
-        return token
+        async with self.__transaction:
+            user = await self.__users_repository.read_by_email(dto.email)
+            token = await self.__token_repository.create(
+                CreatePasswordResetTokenDto(user_id=user.id, user=user)
+            )
+            notification = self.__create_notification(user, token)
+            gateway = self.__gateway_factory.get(
+                user, override=UserNotificationSendToEnum.EMAIL
+            )
+            await gateway.send(notification, user)
+            return token
