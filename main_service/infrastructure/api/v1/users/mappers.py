@@ -10,7 +10,7 @@ from .dtos import (
     UpdateUserModelDto,
     UpdateUserRoleModelDto,
 )
-from .models import UserModel, UserRoleModel, UserSettingsModel
+from .models import PublicUserModel, UserModel, UserRoleModel, UserSettingsModel
 
 retort = pydantic_retort.extend(recipe=[])
 
@@ -75,3 +75,15 @@ def map_delete_role_to_dto(user_id: int, organization_id: int) -> DeleteUserRole
     """
 
     return DeleteUserRoleDto(user_id, organization_id)
+
+
+map_to_public_pydantic = retort.get_converter(
+    User,
+    PublicUserModel,
+    recipe=[
+        link_function(
+            lambda user: user.id,
+            P[PublicUserModel].id,
+        )
+    ],
+)

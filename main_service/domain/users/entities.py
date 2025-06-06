@@ -19,7 +19,7 @@ class User:
 
     fullname: str
 
-    id: int | None
+    id: int
     is_active: bool
 
     salt: str

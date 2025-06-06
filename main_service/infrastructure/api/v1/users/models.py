@@ -42,3 +42,10 @@ class UserRoleModel(CamelModel):
     organization_id: int
 
     role: RoleEnum
+
+
+class PublicUserModel(CamelModel):
+    id: int
+
+    fullname: str
+    is_active: bool
