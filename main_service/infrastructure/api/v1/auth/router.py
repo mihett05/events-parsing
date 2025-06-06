@@ -8,7 +8,11 @@ from application.auth.usecases import (
     RegisterUseCase,
 )
 from application.auth.usecases.login import LoginUseCase
-from application.users.usecases import ValidateActivationTokenUseCase
+from application.users.usecases import (
+    CreatePasswordResetLink,
+    ValidateActivationTokenUseCase,
+    ValidatePasswordResetToken,
+)
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from domain.users.entities import User
 from fastapi import APIRouter, Depends
@@ -18,11 +22,15 @@ from starlette.responses import JSONResponse, Response
 from infrastructure.api.v1.auth.deps import extract_refresh_token
 from infrastructure.api.v1.auth.dtos import (
     AuthenticateUserModelDto,
+    CreateNewPasswordModelDto,
     CreateUserModelDto,
+    UpdateUserPasswordModelDto,
 )
 from infrastructure.api.v1.auth.mappers import (
     map_authenticate_dto_from_pydantic,
     map_create_dto_from_pydantic,
+    map_forgot_password_dto_from_pydantic,
+    map_update_password_dto_from_pydantic,
 )
 from infrastructure.api.v1.auth.models import UserWithTokenModel
 from infrastructure.api.v1.users.mappers import map_to_pydantic
@@ -113,4 +121,31 @@ async def refresh_token(
     user = await authorize_use_case(token_info)
     tokens_pair = await create_token_pair_use_case(user)
 
+    return __make_response(user, tokens_pair)
+
+
+@router.post(
+    "/forgot_password",
+    response_model=UserWithTokenModel,
+)
+async def forgot_password(
+    dto: CreateNewPasswordModelDto,
+    create_password_reset_link: FromDishka[CreatePasswordResetLink],
+):
+    await create_password_reset_link(map_forgot_password_dto_from_pydantic(dto))
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post(
+    "/reset/{token_uuid}",
+    response_model=UserWithTokenModel,
+)
+async def reset_password(
+    token_uuid: UUID,
+    dto: UpdateUserPasswordModelDto,
+    validate_password_reset_token: FromDishka[ValidatePasswordResetToken],
+):
+    user, tokens_pair = await validate_password_reset_token(
+        token_uuid, map_update_password_dto_from_pydantic(dto)
+    )
     return __make_response(user, tokens_pair)

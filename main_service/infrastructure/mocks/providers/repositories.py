@@ -12,7 +12,7 @@ from domain.users.repositories import (
     TelegramTokensRepository,
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
-    UsersRepository,
+    UsersRepository, PasswordResetTokenRepository,
 )
 
 from infrastructure.gateways.notifications.factory import (
@@ -75,4 +75,8 @@ class RepositoriesProvider(Provider):
     activation_token_repository = provide(
         source=UserActivationTokenMemoryRepository,
         provides=UserActivationTokenRepository,
+    )
+    password_reset_token_repository = provide(
+        source=PasswordResetTokenRepository,
+        provides=PasswordResetTokenRepository,
     )

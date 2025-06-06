@@ -4,7 +4,7 @@ from domain.exceptions import (
     EntityException,
     EntityNotFoundError,
 )
-from domain.users.entities import TelegramToken, User, UserOrganizationRole
+from domain.users.entities import TelegramToken, User, UserOrganizationRole, PasswordResetToken
 
 
 class UserNotFoundError(EntityNotFoundError):
@@ -103,3 +103,7 @@ class TelegramNotConnectedError(EntityException):
         Ошибка, которая возникает, если юзер не подключал Telegram
             update_user_use_case.py
     """
+
+class PasswordResetTokenAlreadyUsedError(EntityAccessDenied):
+    def __init__(self):
+        super().__init__()

@@ -92,3 +92,23 @@ class TelegramTokensRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def update(self, token: entities.TelegramToken) -> entities.TelegramToken: ...
+
+
+class PasswordResetTokenRepository(metaclass=ABCMeta):
+    @abstractmethod
+    async def create(
+        self, dto: dtos.CreatePasswordResetTokenDto
+    ) -> entities.PasswordResetToken: ...
+
+    @abstractmethod
+    async def read(self, token_id: UUID) -> entities.PasswordResetToken: ...
+
+    @abstractmethod
+    async def change_token_used_statement(
+        self, token_id: UUID
+    ) -> entities.PasswordResetToken: ...
+
+    @abstractmethod
+    async def delete(
+        self, token: entities.PasswordResetToken
+    ) -> entities.PasswordResetToken: ...

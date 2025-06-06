@@ -8,6 +8,7 @@ from domain.organizations.repositories import (
     OrganizationTokensRepository,
 )
 from domain.users.repositories import (
+    PasswordResetTokenRepository,
     TelegramTokensRepository,
     UserActivationTokenRepository,
     UserOrganizationRolesRepository,
@@ -29,6 +30,7 @@ from infrastructure.database.repositories.organizations import (
     OrganizationTokensDatabaseRepository,
 )
 from infrastructure.database.repositories.users import (
+    PasswordResetTokenDatabaseRepository,
     TelegramTokensDatabaseRepository,
     UserOrganizationRolesDatabaseRepository,
     UsersDatabaseRepository,
@@ -77,4 +79,8 @@ class RepositoriesProvider(Provider):
     activation_token_repository = provide(
         source=UserActivationTokenDatabaseRepository,
         provides=UserActivationTokenRepository,
+    )
+    password_reset_token_repository = provide(
+        source=PasswordResetTokenDatabaseRepository,
+        provides=PasswordResetTokenRepository,
     )

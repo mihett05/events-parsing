@@ -5,6 +5,7 @@ from application.auth.dtos import CreateUserWithPasswordDto
 from domain.exceptions import EntityAlreadyExistsError, EntityNotFoundError
 from domain.users import entities as entities
 from domain.users.entities import (
+    PasswordResetToken,
     TelegramToken,
     User,
     UserActivationToken,
@@ -34,10 +35,13 @@ from infrastructure.config import Config
 
 from ..repository import PostgresRepository, PostgresRepositoryConfig
 from .mappers import (
+    create_password_reset_token_map,
     create_user_activation_token_map,
     create_user_mapper,
     map_from_db,
     map_to_db,
+    password_reset_token_map_from_db,
+    password_reset_token_map_to_db,
     telegram_token_map_create_to_model,
     telegram_token_map_from_db,
     telegram_token_map_to_db,
@@ -47,6 +51,7 @@ from .mappers import (
     user_organization_role_map_to_db,
 )
 from .models import (
+    PasswordResetTokenDatabaseModel,
     TelegramTokenDatabaseModel,
     UserActivationTokenDatabaseModel,
     UserDatabaseModel,
@@ -363,4 +368,54 @@ class UserActivationTokenDatabaseRepository(UserActivationTokenRepository):
     async def delete(self, token: UserActivationToken) -> UserActivationToken:
         """Удаляет токен активации."""
 
+        return await self.__repository.delete(token)
+
+
+class PasswordResetTokenDatabaseRepository(UserActivationTokenRepository):
+    class Config(PostgresRepositoryConfig):
+        def __init__(self):
+            super().__init__(
+                model=PasswordResetTokenDatabaseModel,
+                entity=PasswordResetToken,
+                entity_mapper=password_reset_token_map_from_db,
+                model_mapper=password_reset_token_map_to_db,
+                create_model_mapper=create_password_reset_token_map,
+                not_found_exception=EntityNotFoundError,
+                already_exists_exception=EntityAlreadyExistsError,
+            )
+
+        def get_options(self) -> list[LoaderOption]:
+            return [
+                selectinload(self.model.user).selectinload(UserDatabaseModel.settings)
+            ]
+
+    def __init__(self, session: AsyncSession):
+        self.__config = self.Config()
+        self.__session = session
+        self.__repository = PostgresRepository(session, self.__config)
+
+    async def create(self, dto: dtos.CreatePasswordResetTokenDto) -> PasswordResetToken:
+        query = (
+            insert(self.__config.model)
+            .values(id=dto.id, user_id=dto.user_id)
+            .returning(self.__config.model)
+        )
+        result = await self.__session.scalars(self.__config.add_options(query))
+        model = result.one()
+        return self.__config.entity_mapper(model)
+
+    async def read(self, token_id: UUID) -> PasswordResetToken:
+        return await self.__repository.read(token_id)
+
+    async def change_token_used_statement(self, token_id: UUID):
+        query = (
+            update(PasswordResetTokenDatabaseModel)
+            .where(PasswordResetTokenDatabaseModel.id == token_id)
+            .values(is_used=True)
+            .execution_options(synchronize_session="fetch")
+            .returning(self.__config.model)
+        )
+        await self.__session.execute(query)
+
+    async def delete(self, token: PasswordResetToken) -> PasswordResetToken:
         return await self.__repository.delete(token)

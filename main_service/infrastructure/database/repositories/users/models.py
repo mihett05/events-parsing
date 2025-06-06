@@ -109,3 +109,17 @@ class UserActivationTokenDatabaseModel(Base):
     user: Mapped[UserDatabaseModel] = relationship("UserDatabaseModel", uselist=False)
 
     is_used: Mapped[bool] = mapped_column(default=False)
+
+
+class PasswordResetTokenDatabaseModel(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="cascade"), default=None, nullable=True
+    )
+
+    user: Mapped[UserDatabaseModel] = relationship("UserDatabaseModel", uselist=False)
+
+    is_used: Mapped[bool] = mapped_column(default=False)

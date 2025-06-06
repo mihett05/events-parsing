@@ -1,5 +1,6 @@
 from .connect_telegram import ConnectTelegramUseCase
 from .create_calendar_link import CreateCalendarLinkUseCase
+from .create_password_reset_link import CreatePasswordResetLink
 from .create_role import CreateUserRoleUseCase
 from .create_telegram_token import CreateTelegramTokenUseCase
 from .create_user_activation_token import CreateUserActivationTokenUseCase
@@ -15,6 +16,7 @@ from .read_role import ReadUserRoleUseCase
 from .read_telegram_token import ReadTelegramTokenUseCase
 from .update import UpdateUserUseCase
 from .update_role import UpdateUserRoleUseCase
+from .validate_password_reset_token import ValidatePasswordResetToken
 from .validate_token import ValidateActivationTokenUseCase
 
 __all__ = [
@@ -36,4 +38,6 @@ __all__ = [
     "ReadByCalendarUUIDUseCase",
     "CreateCalendarLinkUseCase",
     "DeleteCalendarLinkUseCase",
+    "CreatePasswordResetLink",
+    "ValidatePasswordResetToken",
 ]

@@ -89,8 +89,8 @@ def create_app(container: AsyncContainer, config: Config) -> FastAPI:
             await cancel_background_task(tasks)
             await rabbit_app.broker.close()
 
-            bot_process.terminate()
-            bot_process.wait()
+        bot_process.terminate()
+        bot_process.wait()
 
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(

@@ -21,3 +21,10 @@ class CreateActivationTokenDto:
     user_id: int
     user: User
     id: UUID = field(default_factory=uuid4)
+
+
+@dataclass
+class CreatePasswordResetTokenDto:
+    user_id: int
+    user: User
+    id: UUID = field(default_factory=uuid4)
